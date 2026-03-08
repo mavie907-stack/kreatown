@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Kreatown — Where Creators Belong</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700;1,800&family=Cabinet+Grotesk:wght@400;500;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #fffbf5;
+    --bg2: #fff8ee;
+    --black: #1a1612;
+    --brown: #2d2118;
+    --orange: #f4732a;
+    --orange-light: #ff9555;
+    --orange-pale: #fff0e6;
+    --yellow: #fbbf24;
+    --yellow-pale: #fffbeb;
+    --green: #22c55e;
+    --green-pale: #f0fdf4;
+    --pink: #f472b6;
+    --blue: #60a5fa;
+    --muted: #9c8878;
+    --border: rgba(244,115,42,0.15);
+    --card: #ffffff;
+    --font-display: 'Cabinet Grotesk', sans-serif;
+    --font-body: 'Nunito', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+    --shadow: 0 4px 24px rgba(244,115,42,0.08);
+    --shadow-lg: 0 12px 48px rgba(244,115,42,0.14);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--black);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+  }
+
+  /* ── SUBTLE PATTERN BG ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(244,115,42,0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 3rem;
+    background: rgba(255,251,245,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--black);
+    letter-spacing: -0.03em;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .nav-logo .dot {
+    width: 8px; height: 8px;
+    background: var(--orange);
+    border-radius: 50%;
+    display: inline-block;
+    margin-bottom: 2px;
+  }
+
+  nav ul { display:flex; gap:2rem; list-style:none; }
+
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 700;
+    transition: color 0.2s;
+  }
+
+  nav a:hover { color: var(--orange); }
+
+  .nav-cta {
+    background: var(--orange) !important;
+    color: #fff !important;
+    padding: 0.65rem 1.5rem;
+    border-radius: 100px;
+    font-weight: 800 !important;
+    font-size: 0.85rem !important;
+    transition: all 0.2s !important;
+    box-shadow: 0 4px 12px rgba(244,115,42,0.3);
+  }
+
+  .nav-cta:hover {
+    background: var(--orange-light) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(244,115,42,0.4) !important;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 8rem 3rem 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-blob1 {
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(244,115,42,0.12) 0%, transparent 70%);
+    top: -100px; right: -100px;
+    border-radius: 50%;
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .hero-blob2 {
+    position: absolute;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(251,191,36,0.1) 0%, transparent 70%);
+    bottom: 50px; left: -50px;
+    border-radius: 50%;
+    animation: float 10s ease-in-out infinite reverse;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-30px) scale(1.05); }
+  }
+
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-left { }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--orange-pale);
+    color: var(--orange);
+    border: 1px solid rgba(244,115,42,0.2);
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero-badge span { font-size: 0.9rem; }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 5.5vw, 5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s 0.1s ease both;
+    opacity: 0;
+  }
+
+  .hero h1 .highlight {
+    color: var(--orange);
+    position: relative;
+    display: inline-block;
+  }
+
+  .hero h1 .highlight::after {
+    content: '';
+    position: absolute;
+    bottom: 4px; left: 0; right: 0;
+    height: 6px;
+    background: rgba(244,115,42,0.2);
+    border-radius: 3px;
+    z-index: -1;
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+    font-weight: 500;
+    max-width: 44ch;
+    animation: fadeUp 0.6s 0.2s ease both;
+    opacity: 0;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 3rem;
+    animation: fadeUp 0.6s 0.3s ease both;
+    opacity: 0;
+  }
+
+  .btn-primary {
+    background: var(--orange);
+    color: #fff;
+    padding: 0.9rem 2rem;
+    border-radius: 100px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 800;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+    box-shadow: 0 6px 20px rgba(244,115,42,0.35);
+  }
+
+  .btn-primary:hover {
+    background: var(--orange-light);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(244,115,42,0.45);
+  }
+
+  .btn-secondary {
+    color: var(--black);
+    background: transparent;
+    padding: 0.9rem 2rem;
+    border-radius: 100px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border: 2px solid rgba(26,22,18,0.12);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--orange);
+    color: var(--orange);
+  }
+
+  .hero-social-proof {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: fadeUp 0.6s 0.4s ease both;
+    opacity: 0;
+  }
+
+  .avatars {
+    display: flex;
+  }
+
+  .avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid white;
+    margin-left: -8px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+
+  .avatar:first-child { margin-left: 0; }
+  .av1 { background: linear-gradient(135deg, #f4732a, #fbbf24); }
+  .av2 { background: linear-gradient(135deg, #60a5fa, #a78bfa); }
+  .av3 { background: linear-gradient(135deg, #34d399, #60a5fa); }
+  .av4 { background: linear-gradient(135deg, #f472b6, #f4732a); }
+
+  .social-text {
+    font-size: 0.82rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .social-text strong { color: var(--black); }
+
+  /* ── HERO CARD ── */
+  .hero-right {
+    animation: fadeUp 0.6s 0.2s ease both;
+    opacity: 0;
+  }
+
+  .creator-card {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(244,115,42,0.1);
+    position: relative;
+  }
+
+  .creator-card::before {
+    content: '🏡';
+    position: absolute;
+    top: -20px; right: 2rem;
+    font-size: 2.5rem;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+    animation: float 4s ease-in-out infinite;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #f5f0eb;
+  }
+
+  .creator-avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--orange), var(--yellow));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+
+  .creator-info h3 {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  .creator-info p {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .creator-badge {
+    margin-left: auto;
+    background: var(--green-pale);
+    color: var(--green);
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 0.3rem 0.7rem;
+    border-radius: 100px;
+    font-family: var(--font-mono);
+  }
+
+  .card-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .cstat {
+    background: var(--bg2);
+    border-radius: 12px;
+    padding: 0.9rem;
+    text-align: center;
+  }
+
+  .cstat-val {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--black);
+    line-height: 1;
+  }
+
+  .cstat-label {
+    font-size: 0.65rem;
+    color: var(--muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.3rem;
+  }
+
+  .card-tiers {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .tier-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.7rem 1rem;
+    border-radius: 10px;
+    background: var(--bg2);
+    border: 1px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .tier-row:hover { border-color: var(--orange); }
+
+  .tier-emoji { font-size: 1rem; }
+
+  .tier-name {
+    font-size: 0.82rem;
+    font-weight: 800;
+    flex: 1;
+  }
+
+  .tier-members {
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-family: var(--font-mono);
+  }
+
+  .tier-price {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--orange);
+  }
+
+  .card-earning {
+    background: linear-gradient(135deg, var(--orange), var(--orange-light));
+    border-radius: 14px;
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+  }
+
+  .earning-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    opacity: 0.85;
+  }
+
+  .earning-amount {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .earning-sub {
+    font-size: 0.7rem;
+    opacity: 0.75;
+    font-weight: 600;
+  }
+
+  .earning-trend {
+    background: rgba(255,255,255,0.2);
+    padding: 0.4rem 0.8rem;
+    border-radius: 100px;
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  /* ── LOGOS / TRUST ── */
+  .trust-bar {
+    padding: 2.5rem 3rem;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .trust-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    margin-right: 1rem;
+  }
+
+  .trust-items {
+    display: flex;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  .trust-item {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 900;
+    color: #ccc;
+    letter-spacing: -0.02em;
+    transition: color 0.2s;
+  }
+
+  .trust-item:hover { color: var(--orange); }
+
+  /* ── SECTIONS ── */
+  .section {
+    padding: 7rem 3rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--orange-pale);
+    color: var(--orange);
+    padding: 0.35rem 1rem;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    margin-bottom: 1.2rem;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  .section-title .hl { color: var(--orange); }
+
+  .section-sub {
+    font-size: 1rem;
+    color: var(--muted);
+    font-weight: 500;
+    line-height: 1.7;
+    max-width: 50ch;
+    margin-bottom: 3.5rem;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .step {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 2.2rem;
+    border: 1px solid rgba(244,115,42,0.1);
+    box-shadow: var(--shadow);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .step::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--orange), var(--yellow));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .step:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .step:hover::before { opacity: 1; }
+
+  .step-num {
+    font-family: var(--font-display);
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: rgba(244,115,42,0.08);
+    line-height: 1;
+    position: absolute;
+    top: 1rem; right: 1.5rem;
+  }
+
+  .step-icon {
+    font-size: 2rem;
+    margin-bottom: 1.2rem;
+    display: block;
+  }
+
+  .step h3 {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.6rem;
+  }
+
+  .step p {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.7;
+    font-weight: 500;
+  }
+
+  /* ── FEATURES ── */
+  .features-section { background: var(--bg2); }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+  }
+
+  .feat {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 1.8rem;
+    border: 1px solid rgba(244,115,42,0.08);
+    transition: all 0.3s;
+  }
+
+  .feat:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(244,115,42,0.2);
+  }
+
+  .feat-icon {
+    width: 46px; height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .feat-icon.orange { background: var(--orange-pale); }
+  .feat-icon.yellow { background: var(--yellow-pale); }
+  .feat-icon.green { background: var(--green-pale); }
+
+  .feat h3 {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.5rem;
+  }
+
+  .feat p {
+    font-size: 0.83rem;
+    color: var(--muted);
+    line-height: 1.7;
+    font-weight: 500;
+  }
+
+  /* ── DASHBOARD ── */
+  .dash-wrap {
+    background: var(--card);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(244,115,42,0.1);
+  }
+
+  .dash-bar {
+    background: #f9f5f0;
+    border-bottom: 1px solid #f0ebe4;
+    padding: 0.9rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .wdot { width:10px; height:10px; border-radius:50%; }
+  .wd-r { background:#ff5f57; }
+  .wd-y { background:#febc2e; }
+  .wd-g { background:#28c840; }
+
+  .dash-url-bar {
+    margin-left: 1rem;
+    background: white;
+    border: 1px solid #e8e0d8;
+    border-radius: 6px;
+    padding: 0.3rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    flex: 1;
+    max-width: 280px;
+  }
+
+  .dash-layout {
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    min-height: 500px;
+  }
+
+  .dash-side {
+    background: #fdf9f5;
+    border-right: 1px solid #f0ebe4;
+    padding: 1.5rem 0;
+  }
+
+  .side-logo {
+    padding: 0 1.5rem 1.2rem;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--orange);
+    border-bottom: 1px solid #f0ebe4;
+    margin-bottom: 0.8rem;
+    letter-spacing: -0.02em;
+  }
+
+  .side-item {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    cursor: pointer;
+    border-radius: 0 10px 10px 0;
+    margin-right: 0.8rem;
+    transition: all 0.15s;
+  }
+
+  .side-item:hover, .side-item.active {
+    background: var(--orange-pale);
+    color: var(--orange);
+  }
+
+  .side-item.active { font-weight: 800; }
+
+  .dash-content {
+    padding: 2rem;
+    background: var(--bg);
+  }
+
+  .dash-hello {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  .dash-hello h2 {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+
+  .dash-hello p {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-weight: 600;
+    margin-top: 0.1rem;
+  }
+
+  .new-post-btn {
+    background: var(--orange);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: all 0.2s;
+  }
+
+  .new-post-btn:hover { background: var(--orange-light); }
+
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.8rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .kpi {
+    background: white;
+    border-radius: 14px;
+    padding: 1.1rem;
+    border: 1px solid #f0ebe4;
+  }
+
+  .kpi-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .kpi-icon { font-size: 1rem; }
+
+  .kpi-change {
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 0.2rem 0.5rem;
+    border-radius: 100px;
+    font-family: var(--font-mono);
+  }
+
+  .kpi-change.up { background: var(--green-pale); color: var(--green); }
+  .kpi-change.dn { background: #fff0f0; color: #ef4444; }
+
+  .kpi-val {
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .kpi-lbl {
+    font-size: 0.65rem;
+    color: var(--muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 0.2rem;
+  }
+
+  .dash-bottom {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 1rem;
+  }
+
+  .dash-widget {
+    background: white;
+    border-radius: 14px;
+    padding: 1.2rem;
+    border: 1px solid #f0ebe4;
+  }
+
+  .widget-title {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .chart-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+    height: 80px;
+  }
+
+  .cbar {
+    flex: 1;
+    border-radius: 4px 4px 0 0;
+    background: linear-gradient(180deg, var(--orange) 0%, rgba(244,115,42,0.3) 100%);
+    transition: opacity 0.2s;
+    position: relative;
+  }
+
+  .cbar:hover { opacity: 0.75; }
+  .cbar.active { background: linear-gradient(180deg, var(--yellow) 0%, rgba(251,191,36,0.3) 100%); }
+
+  .chart-labels {
+    display: flex;
+    gap: 5px;
+    margin-top: 0.4rem;
+  }
+
+  .chart-lbl {
+    flex: 1;
+    text-align: center;
+    font-size: 0.58rem;
+    color: var(--muted);
+    font-family: var(--font-mono);
+  }
+
+  .members-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .mem-row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .mem-av {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .mem-name {
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex: 1;
+  }
+
+  .mem-tier {
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 0.2rem 0.5rem;
+    border-radius: 100px;
+    font-family: var(--font-mono);
+  }
+
+  .tier-gold { background: #fffbeb; color: #d97706; }
+  .tier-silver { background: #f8fafc; color: #64748b; }
+  .tier-free { background: #f0fdf4; color: #16a34a; }
+
+  /* ── PRICING ── */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .plan {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 2.5rem;
+    border: 2px solid rgba(244,115,42,0.1);
+    position: relative;
+    transition: all 0.3s;
+  }
+
+  .plan:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .plan.featured {
+    border-color: var(--orange);
+    background: linear-gradient(145deg, #fff8f4, #ffffff);
+  }
+
+  .plan-top-badge {
+    position: absolute;
+    top: -14px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--orange);
+    color: white;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.3rem 1.2rem;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+
+  .plan-name {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 0.8rem;
+  }
+
+  .plan-price {
+    font-family: var(--font-display);
+    font-size: 3.2rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.3rem;
+  }
+
+  .plan-price sup { font-size: 1.3rem; vertical-align: super; }
+
+  .plan-period {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 2rem;
+  }
+
+  .plan-feats {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .plan-feats li {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 0.87rem;
+    font-weight: 600;
+    color: var(--black);
+  }
+
+  .plan-feats li .check {
+    width: 18px; height: 18px;
+    background: var(--green-pale);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    color: var(--green);
+    flex-shrink: 0;
+    font-weight: 900;
+  }
+
+  /* ── ROADMAP ── */
+  .roadmap-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.2rem;
+  }
+
+  .rmap {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 1.8rem;
+    border: 1px solid rgba(244,115,42,0.1);
+    position: relative;
+    transition: all 0.3s;
+  }
+
+  .rmap:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .rmap-month {
+    background: var(--orange-pale);
+    color: var(--orange);
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.7rem;
+    border-radius: 100px;
+    margin-bottom: 1rem;
+    font-family: var(--font-mono);
+  }
+
+  .rmap h3 {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 0.6rem;
+    letter-spacing: -0.01em;
+  }
+
+  .rmap p {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.6;
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+
+  .rmap-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .rtag {
+    font-size: 0.63rem;
+    font-family: var(--font-mono);
+    color: var(--muted);
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  /* ── CTA ── */
+  .cta-section {
+    padding: 7rem 3rem;
+    text-align: center;
+    background: linear-gradient(135deg, #fff8f4, #fffbf5);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .cta-blob {
+    position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(244,115,42,0.1) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .cta-section h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 4.5vw, 4rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+
+  .cta-section p {
+    font-size: 1rem;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 2.5rem;
+    position: relative;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--black);
+    color: rgba(255,255,255,0.5);
+    padding: 2.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-logo {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .footer-logo .dot {
+    width: 7px; height: 7px;
+    background: var(--orange);
+    border-radius: 50%;
+  }
+
+  footer p { font-size: 0.8rem; font-weight: 600; }
+
+  footer a {
+    color: rgba(255,255,255,0.4);
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: color 0.2s;
+  }
+
+  footer a:hover { color: var(--orange); }
+
+  .footer-links { display: flex; gap: 1.5rem; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(20px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+  }
+
+  .reveal.visible { opacity:1; transform:none; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Kreatown<span class="dot"></span></div>
+  <ul>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#build">Roadmap</a></li>
+  </ul>
+  <a href="#pricing" class="nav-cta">Join the Waitlist 🎉</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-blob1"></div>
+  <div class="hero-blob2"></div>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-badge"><span>🏡</span> The Creator's Home</div>
+      <h1>Your town.<br>Your fans.<br><span class="highlight">Your money.</span></h1>
+      <p class="hero-sub">Stop splitting your revenue with platforms that don't care about you. Kreatown gives creators a beautiful home to build memberships, share exclusive content, and own their audience — for real.</p>
+      <div class="hero-actions">
+        <a href="#pricing" class="btn-primary">🚀 Get Early Access</a>
+        <a href="#how" class="btn-secondary">See how it works</a>
+      </div>
+      <div class="hero-social-proof">
+        <div class="avatars">
+          <div class="avatar av1">JL</div>
+          <div class="avatar av2">MK</div>
+          <div class="avatar av3">SR</div>
+          <div class="avatar av4">TN</div>
+        </div>
+        <div class="social-text"><strong>47 creators</strong> already on the waitlist</div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="creator-card">
+        <div class="card-header">
+          <div class="creator-avatar">🎨</div>
+          <div class="creator-info">
+            <h3>@alex.creates</h3>
+            <p>Digital Artist · 84K followers</p>
+          </div>
+          <div class="creator-badge">● LIVE</div>
+        </div>
+        <div class="card-stats">
+          <div class="cstat">
+            <div class="cstat-val">312</div>
+            <div class="cstat-label">Members</div>
+          </div>
+          <div class="cstat">
+            <div class="cstat-val">$2.8K</div>
+            <div class="cstat-label">This Month</div>
+          </div>
+          <div class="cstat">
+            <div class="cstat-val">95%</div>
+            <div class="cstat-label">You Keep</div>
+          </div>
+        </div>
+        <div class="card-tiers">
+          <div class="tier-row">
+            <div class="tier-emoji">🌱</div>
+            <div class="tier-name">Free Fan</div>
+            <div class="tier-members">142 members</div>
+            <div class="tier-price">Free</div>
+          </div>
+          <div class="tier-row">
+            <div class="tier-emoji">⭐</div>
+            <div class="tier-name">Silver</div>
+            <div class="tier-members">122 members</div>
+            <div class="tier-price">$9/mo</div>
+          </div>
+          <div class="tier-row">
+            <div class="tier-emoji">👑</div>
+            <div class="tier-name">Gold VIP</div>
+            <div class="tier-members">48 members</div>
+            <div class="tier-price">$29/mo</div>
+          </div>
+        </div>
+        <div class="card-earning">
+          <div>
+            <div class="earning-label">Monthly Revenue</div>
+            <div class="earning-amount">$2,840</div>
+            <div class="earning-sub">After 5% Kreatown fee</div>
+          </div>
+          <div class="earning-trend">↑ +18%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-label">Powered by</div>
+  <div class="trust-items">
+    <div class="trust-item">Stripe</div>
+    <div class="trust-item">Next.js</div>
+    <div class="trust-item">Supabase</div>
+    <div class="trust-item">Cloudinary</div>
+    <div class="trust-item">Vercel</div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="section reveal" id="how">
+  <div class="section-inner">
+    <div class="section-badge">✨ How it works</div>
+    <h2 class="section-title">Three steps to your <span class="hl">creative home</span></h2>
+    <p class="section-sub">No complicated setup. No confusing tools. Just you, your fans, and your revenue — in one beautiful place.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <span class="step-icon">🏡</span>
+        <h3>Build Your Town</h3>
+        <p>Set up your Kreatown profile in minutes. Add your story, set your membership tiers — Free, Silver, Gold — and make it yours.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <span class="step-icon">🔒</span>
+        <h3>Share Exclusive Content</h3>
+        <p>Post videos, photos, articles, audio — anything. Control who sees what. Your paying members get the good stuff, and they love it.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <span class="step-icon">💸</span>
+        <h3>Get Paid Every Month</h3>
+        <p>Stripe handles payments. You keep 95% of everything. Your dashboard shows you exactly who your most loyal fans are.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD -->
+<section class="section reveal" id="dashboard" style="background: var(--bg2); padding-top: 5rem;">
+  <div class="section-inner">
+    <div class="section-badge">📊 Creator Dashboard</div>
+    <h2 class="section-title">Everything you need, <span class="hl">nothing you don't</span></h2>
+    <p class="section-sub">A clean, friendly dashboard that shows you what matters — your revenue, your members, your growth.</p>
+    <div class="dash-wrap">
+      <div class="dash-bar">
+        <div class="wdot wd-r"></div>
+        <div class="wdot wd-y"></div>
+        <div class="wdot wd-g"></div>
+        <div class="dash-url-bar">kreatown.com/dashboard</div>
+      </div>
+      <div class="dash-layout">
+        <div class="dash-side">
+          <div class="side-logo">Kreatown·</div>
+          <div class="side-item active">📊 Overview</div>
+          <div class="side-item">📝 My Content</div>
+          <div class="side-item">👥 Members</div>
+          <div class="side-item">💬 Messages</div>
+          <div class="side-item">💰 Earnings</div>
+          <div class="side-item">🔗 My Hub Page</div>
+          <div class="side-item">⚙️ Settings</div>
+        </div>
+        <div class="dash-content">
+          <div class="dash-hello">
+            <div>
+              <h2>Hey Alex! 👋</h2>
+              <p>Saturday, March 7 · 3 new members this week</p>
+            </div>
+            <button class="new-post-btn">+ New Post</button>
+          </div>
+          <div class="kpis">
+            <div class="kpi">
+              <div class="kpi-top"><span class="kpi-icon">💰</span><span class="kpi-change up">+18%</span></div>
+              <div class="kpi-val">$2,840</div>
+              <div class="kpi-lbl">Monthly Revenue</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi-top"><span class="kpi-icon">👥</span><span class="kpi-change up">+24</span></div>
+              <div class="kpi-val">312</div>
+              <div class="kpi-lbl">Total Members</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi-top"><span class="kpi-icon">👑</span><span class="kpi-change up">+3</span></div>
+              <div class="kpi-val">48</div>
+              <div class="kpi-lbl">Gold Members</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi-top"><span class="kpi-icon">📝</span><span class="kpi-change dn">2 drafts</span></div>
+              <div class="kpi-val">67</div>
+              <div class="kpi-lbl">Posts Published</div>
+            </div>
+          </div>
+          <div class="dash-bottom">
+            <div class="dash-widget">
+              <div class="widget-title">Revenue Growth</div>
+              <div class="chart-bars">
+                <div class="cbar" style="height:28%"></div>
+                <div class="cbar" style="height:42%"></div>
+                <div class="cbar" style="height:36%"></div>
+                <div class="cbar" style="height:58%"></div>
+                <div class="cbar" style="height:52%"></div>
+                <div class="cbar" style="height:74%"></div>
+                <div class="cbar active" style="height:95%"></div>
+              </div>
+              <div class="chart-labels">
+                <div class="chart-lbl">SEP</div>
+                <div class="chart-lbl">OCT</div>
+                <div class="chart-lbl">NOV</div>
+                <div class="chart-lbl">DEC</div>
+                <div class="chart-lbl">JAN</div>
+                <div class="chart-lbl">FEB</div>
+                <div class="chart-lbl">MAR</div>
+              </div>
+            </div>
+            <div class="dash-widget">
+              <div class="widget-title">New Members</div>
+              <div class="members-list">
+                <div class="mem-row">
+                  <div class="mem-av" style="background:linear-gradient(135deg,#f4732a,#fbbf24)">JL</div>
+                  <div class="mem-name">@jenna_loves</div>
+                  <div class="mem-tier tier-gold">👑 Gold</div>
+                </div>
+                <div class="mem-row">
+                  <div class="mem-av" style="background:linear-gradient(135deg,#60a5fa,#a78bfa)">MK</div>
+                  <div class="mem-name">@mikek90</div>
+                  <div class="mem-tier tier-silver">⭐ Silver</div>
+                </div>
+                <div class="mem-row">
+                  <div class="mem-av" style="background:linear-gradient(135deg,#34d399,#60a5fa)">SR</div>
+                  <div class="mem-name">@sara_reads</div>
+                  <div class="mem-tier tier-gold">👑 Gold</div>
+                </div>
+                <div class="mem-row">
+                  <div class="mem-av" style="background:linear-gradient(135deg,#f472b6,#f4732a)">TN</div>
+                  <div class="mem-name">@tomnova</div>
+                  <div class="mem-tier tier-free">🌱 Free</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section features-section reveal" id="features">
+  <div class="section-inner">
+    <div class="section-badge">🛠️ Features</div>
+    <h2 class="section-title">Everything a creator <span class="hl">actually needs</span></h2>
+    <p class="section-sub">No bloat. No unnecessary features. Just the tools that help you grow, connect, and get paid.</p>
+    <div class="features-grid">
+      <div class="feat">
+        <div class="feat-icon orange">🎭</div>
+        <h3>Membership Tiers</h3>
+        <p>Free, Silver, Gold. You set the price and the perks. Your biggest fans pay more to get closer — and they will.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon yellow">📰</div>
+        <h3>Exclusive Content Feed</h3>
+        <p>Posts, videos, audio, images. Gate any content by tier. Your audience pays to get the good stuff.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon green">💬</div>
+        <h3>Direct Messaging</h3>
+        <p>Real conversations with your fans. No algorithm deciding who sees what. Gold members get priority inbox access.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon orange">📊</div>
+        <h3>Revenue Analytics</h3>
+        <p>See your MRR, top members, and best-performing content. Know what's working before you double down.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon yellow">🔗</div>
+        <h3>Your Hub Page</h3>
+        <p>One beautiful public page for everything — bio, links, tiers, latest content. Replace five scattered profiles with one.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon green">💳</div>
+        <h3>Stripe Payments</h3>
+        <p>Payments by Stripe. Monthly payouts to your bank. You keep 95%. No surprises, no waiting 30 days.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section reveal" id="pricing">
+  <div class="section-inner" style="text-align:center;">
+    <div class="section-badge" style="margin:0 auto 1.2rem;">💸 Pricing</div>
+    <h2 class="section-title" style="margin:0 auto 1rem;">Simple, <span class="hl">creator-first</span> pricing</h2>
+    <p class="section-sub" style="margin:0 auto 3.5rem;">Start free for 3 months. No credit card needed. Cancel anytime.</p>
+    <div class="pricing-grid">
+      <div class="plan">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price"><sup>$</sup>0</div>
+        <div class="plan-period">Free for 3 months · then $19/mo</div>
+        <ul class="plan-feats">
+          <li><span class="check">✓</span> Up to 100 members</li>
+          <li><span class="check">✓</span> 2 membership tiers</li>
+          <li><span class="check">✓</span> Content feed</li>
+          <li><span class="check">✓</span> Hub page</li>
+          <li><span class="check">✓</span> Stripe payouts (5% fee)</li>
+        </ul>
+        <a href="#" class="btn-secondary" style="width:100%;text-align:center;display:block;">Start Free 🌱</a>
+      </div>
+      <div class="plan featured">
+        <div class="plan-top-badge">⭐ Most Popular</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price"><sup>$</sup>29</div>
+        <div class="plan-period">per month · 5% revenue share</div>
+        <ul class="plan-feats">
+          <li><span class="check">✓</span> Unlimited members</li>
+          <li><span class="check">✓</span> 3 membership tiers</li>
+          <li><span class="check">✓</span> Direct messaging</li>
+          <li><span class="check">✓</span> Full analytics dashboard</li>
+          <li><span class="check">✓</span> Priority support</li>
+          <li><span class="check">✓</span> Stripe payouts (5% fee)</li>
+        </ul>
+        <a href="#" class="btn-primary" style="width:100%;text-align:center;justify-content:center;">Get Early Access 🚀</a>
+      </div>
+      <div class="plan">
+        <div class="plan-name">Studio</div>
+        <div class="plan-price"><sup>$</sup>49</div>
+        <div class="plan-period">per month · 3% revenue share</div>
+        <ul class="plan-feats">
+          <li><span class="check">✓</span> Everything in Pro</li>
+          <li><span class="check">✓</span> Custom domain</li>
+          <li><span class="check">✓</span> White-label Hub page</li>
+          <li><span class="check">✓</span> Team access (2 seats)</li>
+          <li><span class="check">✓</span> API access</li>
+          <li><span class="check">✓</span> Lower 3% platform fee</li>
+        </ul>
+        <a href="#" class="btn-secondary" style="width:100%;text-align:center;display:block;">Contact Us 💌</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="section features-section reveal" id="build">
+  <div class="section-inner">
+    <div class="section-badge">🗺️ Build Roadmap</div>
+    <h2 class="section-title">Exactly what to <span class="hl">build and when</span></h2>
+    <p class="section-sub">A realistic, month-by-month plan from zero to first paying creators.</p>
+    <div class="roadmap-grid">
+      <div class="rmap">
+        <div class="rmap-month">Month 1</div>
+        <h3>Core MVP</h3>
+        <p>Auth, creator profiles, membership tiers, content feed with gating, Stripe subscriptions, and public Hub page.</p>
+        <div class="rmap-tags">
+          <span class="rtag">Next.js</span>
+          <span class="rtag">Supabase</span>
+          <span class="rtag">Stripe</span>
+          <span class="rtag">Cloudinary</span>
+        </div>
+      </div>
+      <div class="rmap">
+        <div class="rmap-month">Month 2</div>
+        <h3>Growth Features</h3>
+        <p>Dashboard analytics, direct messaging, email notifications, mobile polish, and smooth onboarding flow.</p>
+        <div class="rmap-tags">
+          <span class="rtag">Recharts</span>
+          <span class="rtag">Pusher</span>
+          <span class="rtag">Resend</span>
+          <span class="rtag">Vercel</span>
+        </div>
+      </div>
+      <div class="rmap">
+        <div class="rmap-month">Month 3</div>
+        <h3>Beta Launch</h3>
+        <p>DM 50 micro-creators with 3 months free. Collect feedback, fix bugs, add most-requested features fast.</p>
+        <div class="rmap-tags">
+          <span class="rtag">Waitlist</span>
+          <span class="rtag">Referrals</span>
+          <span class="rtag">Outreach</span>
+        </div>
+      </div>
+      <div class="rmap">
+        <div class="rmap-month">Month 4</div>
+        <h3>First Revenue 🎉</h3>
+        <p>Convert beta creators to paid. Launch publicly. Target: 100 creators × $29 = $2,900 MRR. Then grow.</p>
+        <div class="rmap-tags">
+          <span class="rtag">Paid Launch</span>
+          <span class="rtag">Product Hunt</span>
+          <span class="rtag">$2.9K MRR</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section reveal">
+  <div class="cta-blob"></div>
+  <div class="section-badge" style="margin: 0 auto 1.5rem;">🏡 Join the town</div>
+  <h2>Your creative home<br>is <span style="color:var(--orange)">waiting for you.</span></h2>
+  <p>Join the waitlist today. First 50 creators get 3 months completely free.</p>
+  <a href="#" class="btn-primary" style="font-size:1rem;padding:1rem 2.5rem;">Claim Your Spot 🚀</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Kreatown<span class="dot"></span></div>
+  <p>Built for creators who are done sharing their revenue.</p>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Contact</a>
+  </div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  document.querySelectorAll('.side-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.side-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

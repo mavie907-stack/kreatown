@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>My Content — Kreatown Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800&family=Cabinet+Grotesk:wght@400;500;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg:           #fffbf5;
+    --bg2:          #fff8ee;
+    --black:        #1a1612;
+    --orange:       #f4732a;
+    --orange-light: #ff9555;
+    --orange-pale:  #fff0e6;
+    --yellow:       #fbbf24;
+    --green:        #22c55e;
+    --green-pale:   #f0fdf4;
+    --muted:        #9c8878;
+    --border:       rgba(244,115,42,0.13);
+    --card:         #ffffff;
+    --shadow:       0 4px 24px rgba(244,115,42,0.07);
+    --shadow-lg:    0 16px 48px rgba(244,115,42,0.13);
+    --sidebar-w:    220px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--black);
+    font-family: 'Nunito', sans-serif;
+    display: flex; min-height:100vh;
+  }
+
+  /* dot grid */
+  body::after {
+    content:''; position:fixed; inset:0;
+    background-image: radial-gradient(circle, rgba(244,115,42,0.035) 1px, transparent 1px);
+    background-size:28px 28px;
+    pointer-events:none; z-index:0;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: #fdf9f5;
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction:column;
+    position: fixed; top:0; left:0; bottom:0;
+    z-index:50;
+  }
+
+  .sidebar-logo {
+    padding:1.3rem 1.5rem 1.1rem;
+    font-family:'Cabinet Grotesk',sans-serif;
+    font-size:1.15rem; font-weight:900;
+    color:var(--black); letter-spacing:-0.03em;
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:center; gap:4px;
+    text-decoration:none;
+  }
+
+  .sidebar-logo .dot {
+    width:7px; height:7px; background:var(--orange);
+    border-radius:50%; margin-bottom:2px;
+  }
+
+  .sidebar-nav { flex:1; padding:0.8rem 0.5rem; overflow-y:auto; }
+
+  .nav-item {
+    display:flex; align-items:center; gap:0.7rem;
+    padding:0.6rem 1rem; border-radius:10px;
+    font-size:0.82rem; font-weight:700; color:var(--muted);
+    text-decoration:none; margin-bottom:2px;
+    transition:all 0.15s; cursor:pointer;
+    border:none; background:transparent; width:100%;
+    font-family:'Nunito',sans-serif;
+  }
+
+  .nav-item:hover    { background:var(--orange-pale); color:var(--black); }
+  .nav-item.active   { background:var(--orange-pale); color:var(--orange); font-weight:800; }
+  .nav-item .nav-icon { font-size:0.9rem; }
+
+  .sidebar-user {
+    padding:1rem 1.2rem;
+    border-top:1px solid var(--border);
+    display:flex; align-items:center; gap:0.7rem;
+  }
+
+  .user-av {
+    width:32px; height:32px; border-radius:50%;
+    background:linear-gradient(135deg,var(--orange),var(--yellow));
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.75rem; font-weight:900; color:#fff; flex-shrink:0;
+  }
+
+  .user-name  { font-size:0.78rem; font-weight:800; color:var(--black); }
+  .user-handle{ font-size:0.68rem; color:var(--muted); font-weight:600; }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex:1; min-width:0;
+    position:relative; z-index:1;
+  }
+
+  /* ── CONTENT LIST VIEW ── */
+  #view-list { display:block; }
+  #view-editor { display:none; }
+
+  .page-header {
+    padding:2rem 2.5rem 1.5rem;
+    display:flex; align-items:flex-start; justify-content:space-between;
+    border-bottom:1px solid var(--border);
+    background:rgba(255,251,245,0.8);
+    backdrop-filter:blur(12px);
+    position:sticky; top:0; z-index:10;
+  }
+
+  .page-title {
+    font-family:'Cabinet Grotesk',sans-serif;
+    font-size:1.6rem; font-weight:900;
+    letter-spacing:-0.03em; line-height:1;
+  }
+
+  .page-sub {
+    font-size:0.8rem; color:var(--muted);
+    font-weight:600; margin-top:0.3rem;
+  }
+
+  .btn-new {
+    display:inline-flex; align-items:center; gap:0.5rem;
+    background:var(--orange); color:#fff;
+    padding:0.75rem 1.4rem; border-radius:100px;
+    font-size:0.85rem; font-weight:800;
+    border:none; cursor:pointer;
+    font-family:'Nunito',sans-serif;
+    box-shadow:0 4px 16px rgba(244,115,42,0.3);
+    transition:all 0.2s;
+    white-space:nowrap;
+  }
+
+  .btn-new:hover {
+    background:var(--orange-light);
+    transform:translateY(-1px);
+    box-shadow:0 6px 22px rgba(244,115,42,0.38);
+  }
+
+  /* ── FILTERS ── */
+  .filters-row {
+    padding:1.2rem 2.5rem;
+    display:flex; align-items:center; gap:0.8rem;
+    flex-wrap:wrap;
+  }
+
+  .filter-tabs {
+    display:flex; gap:0.25rem;
+    background:var(--card); border:1px solid var(--border);
+    border-radius:10px; padding:0.25rem;
+  }
+
+  .ftab {
+    padding:0.45rem 1rem; border-radius:7px;
+    font-size:0.78rem; font-weight:800;
+    border:none; background:transparent; color:var(--muted);
+    cursor:pointer; font-family:'Nunito',sans-serif;
+    transition:all 0.15s;
+  }
+
+  .ftab.active { background:var(--orange); color:#fff; box-shadow:0 2px 8px rgba(244,115,42,0.25); }
+  .ftab:not(.active):hover { color:var(--orange); }
+
+  .search-box {
+    display:flex; align-items:center; gap:0.5rem;
+    background:var(--card); border:1px solid var(--border);
+    border-radius:10px; padding:0.45rem 1rem;
+    flex:1; max-width:280px;
+  }
+
+  .search-box input {
+    border:none; background:transparent; outline:none;
+    font-size:0.82rem; font-weight:600; color:var(--black);
+    font-family:'Nunito',sans-serif; width:100%;
+  }
+
+  .search-box input::placeholder { color:var(--muted); }
+
+  /* ── STATS MINI ── */
+  .mini-stats {
+    display:grid; grid-template-columns:repeat(4,1fr);
+    gap:1rem; padding:0 2.5rem 1.5rem;
+  }
+
+  .mstat {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:14px; padding:1rem 1.2rem;
+    display:flex; align-items:center; gap:0.9rem;
+    transition:all 0.2s;
+  }
+
+  .mstat:hover { box-shadow:var(--shadow); border-color:rgba(244,115,42,0.25); }
+
+  .mstat-icon {
+    width:38px; height:38px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.1rem; flex-shrink:0;
+  }
+
+  .mstat-val {
+    font-family:'Cabinet Grotesk',sans-serif;
+    font-size:1.4rem; font-weight:900; line-height:1;
+    letter-spacing:-0.02em;
+  }
+
+  .mstat-lbl {
+    font-size:0.65rem; font-weight:800; text-transform:uppercase;
+    letter-spacing:0.06em; color:var(--muted); margin-top:0.15rem;
+  }
+
+  /* ── POST LIST ── */
+  .post-list { padding:0 2.5rem 2rem; }
+
+  .post-row {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:16px; padding:1.1rem 1.3rem;
+    display:grid; grid-template-columns:auto 1fr auto;
+    gap:1.2rem; align-items:center;
+    margin-bottom:0.7rem;
+    transition:all 0.2s; cursor:pointer;
+    position:relative; overflow:hidden;
+  }
+
+  .post-row::before {
+    content:''; position:absolute;
+    left:0; top:0; bottom:0; width:3px;
+    background:var(--orange); opacity:0;
+    transition:opacity 0.2s;
+  }
+
+  .post-row:hover {
+    box-shadow:var(--shadow-lg);
+    border-color:rgba(244,115,42,0.22);
+    transform:translateX(2px);
+  }
+
+  .post-row:hover::before { opacity:1; }
+
+  .post-row.draft { border-style:dashed; }
+  .post-row.draft::before { background:var(--muted); }
+
+  .post-thumb-sm {
+    width:70px; height:56px; border-radius:10px;
+    object-fit:cover; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.6rem; overflow:hidden;
+  }
+
+  .post-thumb-sm.text-type {
+    background:linear-gradient(135deg,#fde8d4,#fef3e2);
+    font-size:1.4rem;
+  }
+  .post-thumb-sm.image-type { background:linear-gradient(135deg,#dbeafe,#ede9fe); }
+  .post-thumb-sm.video-type { background:linear-gradient(135deg,#fce7f3,#fde8d4); }
+  .post-thumb-sm.audio-type { background:linear-gradient(135deg,#d1fae5,#dcfce7); }
+
+  .post-meta { min-width:0; }
+
+  .post-title-sm {
+    font-family:'Cabinet Grotesk',sans-serif;
+    font-size:0.95rem; font-weight:800;
+    letter-spacing:-0.01em; line-height:1.3;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    margin-bottom:0.35rem;
+  }
+
+  .post-info-row {
+    display:flex; align-items:center; gap:0.8rem;
+    flex-wrap:wrap;
+  }
+
+  .tier-pill {
+    display:inline-flex; align-items:center; gap:0.25rem;
+    padding:0.18rem 0.6rem; border-radius:100px;
+    font-size:0.62rem; font-weight:800; font-family:'DM Mono',monospace;
+  }
+
+  .tp-free   { background:#f0fdf4; color:#16a34a; }
+  .tp-silver { background:#f8fafc; color:#64748b; }
+  .tp-gold   { background:#fffbeb; color:#d97706; }
+
+  .status-pill {
+    display:inline-flex; align-items:center; gap:0.25rem;
+    padding:0.18rem 0.6rem; border-radius:100px;
+    font-size:0.62rem; font-weight:800; font-family:'DM Mono',monospace;
+  }
+
+  .sp-published { background:var(--green-pale); color:var(--green); }
+  .sp-draft     { background:#f5f5f4; color:#a8a29e; }
+
+  .post-date-sm {
+    font-size:0.68rem; color:var(--muted);
+    font-family:'DM Mono',monospace; font-weight:500;
+  }
+
+  .post-engagment {
+    font-size:0.72rem; color:var(--muted); font-weight:700;
+    display:flex; gap:0.6rem;
+  }
+
+  .post-actions {
+    display:flex; align-items:center; gap:0.4rem; flex-shrink:0;
+  }
+
+  .act-btn {
+    width:32px; height:32px; border-radius:8px;
+    background:transparent; border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:0.85rem; transition:all 0.15s;
+  }
+
+  .act-btn:hover { background:var(--orange-pale); border-color:var(--orange); }
+  .act-btn.delete:hover { background:#fef2f2; border-color:#fca5a5; }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align:center; padding:5rem 2rem;
+  }
+
+  .empty-state .empty-icon { font-size:4rem; margin-bottom:1rem; }
+
+  .empty-state h3 {
+    font-family:'Cabinet Grotesk',sans-serif;
+    font-size:1.3rem; font-weight:900; margin-bottom:0.5rem;
+  }
+
+  .empty-state p {
+    font-size:0.88rem; color:var(--muted); font-weight:600; margin-bottom:1.5rem;
+  }
+
+  /* ══════════════════════════════════════════════
+     EDITOR VIEW
+  ══════════════════════════════════════════════ */
+  #view-editor {
+    min-height:100vh;
+  }
+
+  .editor-topbar {
+    padding:1rem 2.5rem;
+    display:flex; align-items:center; justify-content:space-between;
+    border-bottom:1px solid var(--border);
+    background:rgba(255,251,245,0.9);
+    backdrop-filter:blur(12px);
+    position:sticky; top:0; z-index:10;
+  }
+
+  .editor-breadcrumb {
+    display:flex; align-items:center; gap:0.5rem;
+    font-size:0.82rem; font-weight:700; color:var(--muted);
+  }
+
+  .editor-breadcrumb button {
+    background:none; border:none; cursor:pointer;
+    color:var(--orange); font-weight:800; font-size:0.82rem;
+    font-family:'Nunito',sans-serif;
+    padding:0; transition:opacity 0.2s;
+  }
+
+  .editor-breadcrumb button:hover { opacity:0.7; }
+
+  .editor-actions { display:flex; gap:0.6rem; align-items:center; }
+
+  .btn-save-draft {
+    padding:0.6rem 1.2rem; border-radius:100px;
+    font-size:0.82rem; font-weight:800;
+    background:transparent; border:1.5px solid var(--border);
+    color:var(--muted); cursor:pointer;
+    font-family:'Nunito',sans-serif; transition:all 0.2s;
+  }
+
+  .btn-save-draft:hover { border-color:var(--orange); color:var(--orange); }
+
+  .btn-publish {
+    padding:0.6rem 1.4rem; border-radius:100px;
+    font-size:0.82rem; font-weight:800;
+    background:var(--orange); color:#fff; border:none;
+    cursor:pointer; font-family:'Nunito',sans-serif;
+    box-shadow:0 3px 12px rgba(244,115,42,0.3);
+    transition:all 0.2s;
+    display:flex; align-items:center; gap:0.4rem;
+  }
+
+  .btn-publish:hover { background:var(--orange-light); transform:translateY(-1px); }
+
+  /* Editor layout */
+  .editor-layout {
+    display:grid; grid-template-columns:1fr 300px;
+    gap:0; min-height:calc(100vh - 65px);
+  }
+
+  .editor-main { padding:2rem 2.5rem; }
+
+  /* Title input */
+  .title-input {
+    width:100%; border:none; background:transparent; outline:none;
+    font-family:'Cabinet Grotesk',sans-serif;
+    font-size:2rem; font-weight:900; letter-spacing:-0.03em;
+    color:var(--black); line-height:1.2;
+    resize:none; overflow:hidden;
+    border-bottom:2px solid var(--border); padding-bottom:1rem;
+    margin-bottom:1.5rem;
+    transition:border-color 0.2s;
+  }
+
+  .title-input:focus { border-bottom-color:var(--orange); }
+  .title-input::placeholder { color:#d4c9be; }
+
+  /* Media upload zone */
+  .media-zone {
+    border:2px dashed var(--border); border-radius:16px;
+    padding:2.5rem; text-align:center; margin-bottom:1.5rem;
+    cursor:pointer; transition:all 0.2s; position:relative;
+    background:var(--bg2);
+  }
+
+  .media-zone:hover, .media-zone.drag-over {
+    border-color:var(--orange);
+    background:var(--orange-pale);
+  }
+
+  .media-zone-icon { font-size:2.2rem; margin-bottom:0.7rem; }
+
+  .media-zone h4 {
+    font-family:'Cabinet Grotesk',sans-serif;
+    font-size:0.95rem; font-weight:900; margin-bottom:0.3rem;
+  }
+
+  .media-zone p { font-size:0.78rem; color:var(--muted); font-weight:600; }
+
+  .media-type-btns {
+    display:flex; gap:0.5rem; justify-content:center;
+    margin-top:1rem; flex-wrap:wrap;
+  }
+
+  .media-type-btn {
+    padding:0.4rem 1rem; border-radius:100px;
+    font-size:0.75rem; font-weight:800;
+    border:1.5px solid var(--border); background:var(--card);
+    cursor:pointer; font-family:'Nunito',sans-serif;
+    color:var(--muted); transition:all 0.2s;
+  }
+
+  .media-type-btn:hover,
+  .media-type-btn.selected {
+    border-color:var(--orange); color:var(--orange);
+    background:var(--orange-pale);
+  }
+
+  /* Media preview */
+  .media-preview {
+    border-radius:14px; overflow:hidden;
+    margin-bottom:1.5rem; position:relative;
+    display:none;
+  }
+
+  .media-preview.show { display:block; }
+
+  .media-preview img {
+    width:100%; max-height:400px;
+    object-fit:cover; display:block;
+  }
+
+  .media-preview-placeholder {
+    width:100%; height:240px;
+    background:linear-gradient(135deg,#fde8d4,#fef3e2);
+    display:flex; align-items:center; justify-content:center;
+    font-size:4rem;
+  }
+
+  .media-remove {
+    position:absolute; top:0.7rem; right:0.7rem;
+    background:rgba(26,22,18,0.7); color:#fff;
+    border:none; border-radius:100px; cursor:pointer;
+    padding:0.3rem 0.7rem; font-size:0.72rem; font-weight:800;
+    font-family:'Nunito',sans-serif; transition:all 0.2s;
+  }
+
+  .media-remove:hover { background:rgba(26,22,18,0.9); }
+
+  /* Body textarea */
+  .body-toolbar {
+    display:flex; gap:0.3rem; margin-bottom:0.8rem;
+    flex-wrap:wrap;
+  }
+
+  .toolbar-btn {
+    padding:0.35rem 0.7rem; border-radius:7px;
+    font-size:0.75rem; font-weight:800;
+    border:1px solid var(--border); background:var(--card);
+    cursor:pointer; color:var(--muted); transition:all 0.15s;
+    font-family:'Nunito',sans-serif;
+  }
+
+  .toolbar-btn:hover { border-color:var(--orange); color:var(--orange); background:var(--orange-pale); }
+
+  .body-input {
+    width:100%; min-height:280px;
+    border:1.5px solid var(--border); border-radius:14px;
+    padding:1.2rem; outline:none; resize:vertical;
+    font-size:0.95rem; font-weight:600; line-height:1.8;
+    color:var(--black); font-family:'Nunito',sans-serif;
+    background:var(--card); transition:border-color 0.2s;
+  }
+
+  .body-input:focus { border-color:var(--orange); }
+  .body-input::placeholder { color:#d4c9be; }
+
+  /* Word count */
+  .word-count {
+    font-size:0.7rem; color:var(--muted); font-weight:700;
+    font-family:'DM Mono',monospace; margin-top:0.5rem;
+    text-align:right;
+  }
+
+  /* ── EDITOR SIDEBAR ── */
+  .editor-sidebar {
+    border-left:1px solid var(--border);
+    padding:1.5rem; background:#fdf9f5;
+  }
+
+  .esec { margin-bottom:1.8rem; }
+
+  .esec-title {
+    font-size:0.72rem; font-weight:800; text-transform:uppercase;
+    letter-spacing:0.08em; color:var(--muted);
+    margin-bottom:0.9rem;
+    display:flex; align-items:center; gap:0.4rem;
+  }
+
+  /* Post type selector */
+  .type-grid {
+    display:grid; grid-template-columns:repeat(2,1fr); gap:0.5rem;
+  }
+
+  .type-opt {
+    border:2px solid var(--border); border-radius:12px;
+    padding:0.8rem; text-align:center; cursor:pointer;
+    transition:all 0.2s; background:var(--card);
+  }
+
+  .type-opt:hover, .type-opt.selected {
+    border-color:var(--orange); background:var(--orange-pale);
+  }
+
+  .type-opt .type-icon { font-size:1.3rem; margin-bottom:0.3rem; }
+
+  .type-opt .type-label {
+    font-size:0.72rem; font-weight:800; color:var(--muted);
+  }
+
+  .type-opt.selected .type-label { color:var(--orange); }
+
+  /* Tier selector */
+  .tier-opts { display:flex; flex-direction:column; gap:0.5rem; }
+
+  .tier-opt {
+    display:flex; align-items:center; gap:0.8rem;
+    padding:0.8rem 1rem; border-radius:12px;
+    border:2px solid var(--border); cursor:pointer;
+    transition:all 0.2s; background:var(--card);
+  }
+
+  .tier-opt:hover { border-color:var(--orange); }
+
+  .tier-opt.selected-free   { border-color:#22c55e; background:#f0fdf4; }
+  .tier-opt.selected-silver { border-color:#94a3b8; background:#f8fafc; }
+  .tier-opt.selected-gold   { border-color:#f59e0b; background:#fffbeb; }
+
+  .tier-opt-icon { font-size:1.1rem; }
+  .tier-opt-info { flex:1; }
+
+  .tier-opt-name {
+    font-size:0.82rem; font-weight:800; line-height:1;
+    margin-bottom:0.15rem;
+  }
+
+  .tier-opt-desc { font-size:0.68rem; color:var(--muted); font-weight:600; }
+
+  .tier-opt-radio {
+    width:16px; height:16px; border-radius:50%;
+    border:2px solid var(--border); flex-shrink:0;
+    transition:all 0.2s;
+  }
+
+  .tier-opt.selected-free   .tier-opt-radio { background:#22c55e; border-color:#22c55e; }
+  .tier-opt.selected-silver .tier-opt-radio { background:#94a3b8; border-color:#94a3b8; }
+  .tier-opt.selected-gold   .tier-opt-radio { background:#f59e0b; border-color:#f59e0b; }
+
+  /* Schedule toggle */
+  .toggle-row {
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:0.8rem;
+  }
+
+  .toggle-label { font-size:0.82rem; font-weight:700; }
+
+  .toggle {
+    width:40px; height:22px; background:var(--border);
+    border-radius:100px; cursor:pointer; position:relative;
+    border:none; transition:background 0.2s;
+  }
+
+  .toggle::after {
+    content:''; position:absolute;
+    width:16px; height:16px; border-radius:50%;
+    background:#fff; top:3px; left:3px;
+    transition:transform 0.2s;
+    box-shadow:0 1px 4px rgba(0,0,0,0.15);
+  }
+
+  .toggle.on { background:var(--orange); }
+  .toggle.on::after { transform:translateX(18px); }
+
+  .schedule-input {
+    width:100%; padding:0.6rem 0.9rem;
+    border:1.5px solid var(--border); border-radius:10px;
+    font-size:0.8rem; font-weight:600; outline:none;
+    font-family:'Nunito',sans-serif; background:var(--card);
+    color:var(--black); transition:border-color 0.2s;
+  }
+
+  .schedule-input:focus { border-color:var(--orange); }
+
+  /* Preview card */
+  .preview-card {
+    border:1.5px solid var(--border); border-radius:14px;
+    overflow:hidden; background:var(--card);
+  }
+
+  .preview-thumb {
+    height:100px;
+    background:linear-gradient(135deg,#fde8d4,#fef3e2);
+    display:flex; align-items:center; justify-content:center;
+    font-size:2rem;
+  }
+
+  .preview-body { padding:0.8rem; }
+
+  .preview-title-sm {
+    font-family:'Cabinet Grotesk',sans-serif;
+    font-size:0.85rem; font-weight:800; line-height:1.3;
+    margin-bottom:0.4rem; color:var(--black);
+  }
+
+  .preview-meta {
+    display:flex; align-items:center; gap:0.5rem;
+    font-size:0.65rem; color:var(--muted); font-weight:700;
+    font-family:'DM Mono',monospace;
+  }
+
+  /* Toast notification */
+  .toast {
+    position:fixed; bottom:2rem; right:2rem; z-index:500;
+    background:var(--black); color:#fff;
+    padding:0.8rem 1.4rem; border-radius:12px;
+    font-size:0.85rem; font-weight:700;
+    display:flex; align-items:center; gap:0.6rem;
+    box-shadow:0 8px 32px rgba(0,0,0,0.2);
+    transform:translateY(100px); opacity:0;
+    transition:all 0.3s;
+  }
+
+  .toast.show { transform:translateY(0); opacity:1; }
+
+  /* Delete confirm */
+  .delete-confirm {
+    position:fixed; inset:0; z-index:200;
+    background:rgba(26,22,18,0.4); backdrop-filter:blur(4px);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none; transition:opacity 0.2s;
+  }
+
+  .delete-confirm.open { opacity:1; pointer-events:all; }
+
+  .delete-modal {
+    background:var(--card); border-radius:20px;
+    padding:2rem; max-width:340px; width:90%;
+    box-shadow:0 24px 60px rgba(0,0,0,0.15);
+    transform:scale(0.95); transition:transform 0.2s;
+  }
+
+  .delete-confirm.open .delete-modal { transform:scale(1); }
+
+  .delete-modal h3 {
+    font-family:'Cabinet Grotesk',sans-serif;
+    font-size:1.1rem; font-weight:900; margin-bottom:0.5rem;
+  }
+
+  .delete-modal p { font-size:0.85rem; color:var(--muted); font-weight:600; margin-bottom:1.5rem; }
+
+  .delete-btns { display:flex; gap:0.7rem; }
+
+  .btn-cancel {
+    flex:1; padding:0.75rem; border-radius:10px;
+    border:1.5px solid var(--border); background:transparent;
+    font-size:0.85rem; font-weight:800; cursor:pointer;
+    font-family:'Nunito',sans-serif; color:var(--muted);
+    transition:all 0.2s;
+  }
+
+  .btn-cancel:hover { border-color:var(--orange); color:var(--orange); }
+
+  .btn-delete {
+    flex:1; padding:0.75rem; border-radius:10px;
+    background:#ef4444; color:#fff; border:none;
+    font-size:0.85rem; font-weight:800; cursor:pointer;
+    font-family:'Nunito',sans-serif; transition:all 0.2s;
+  }
+
+  .btn-delete:hover { background:#dc2626; }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(12px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  .post-row { animation: fadeUp 0.4s ease both; }
+  .post-row:nth-child(1) { animation-delay:0.05s; }
+  .post-row:nth-child(2) { animation-delay:0.10s; }
+  .post-row:nth-child(3) { animation-delay:0.15s; }
+  .post-row:nth-child(4) { animation-delay:0.20s; }
+  .post-row:nth-child(5) { animation-delay:0.25s; }
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <a href="/" class="sidebar-logo">Kreatown<span class="dot"></span></a>
+  <nav class="sidebar-nav">
+    <a class="nav-item" href="#"><span class="nav-icon">📊</span> Overview</a>
+    <a class="nav-item active"><span class="nav-icon">📝</span> My Content</a>
+    <a class="nav-item" href="#"><span class="nav-icon">👥</span> Members</a>
+    <a class="nav-item" href="#"><span class="nav-icon">💬</span> Messages</a>
+    <a class="nav-item" href="#"><span class="nav-icon">💰</span> Earnings</a>
+    <a class="nav-item" href="#"><span class="nav-icon">🔗</span> My Hub Page</a>
+    <a class="nav-item" href="#"><span class="nav-icon">⚙️</span> Settings</a>
+  </nav>
+  <div class="sidebar-user">
+    <div class="user-av">AJ</div>
+    <div>
+      <div class="user-name">Alex Johnson</div>
+      <div class="user-handle">@alexjohnson</div>
+    </div>
+  </div>
+</aside>
+
+<!-- ══════════════════════════════════════════
+     LIST VIEW
+══════════════════════════════════════════ -->
+<main class="main" id="view-list">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">My Content 📝</h1>
+      <p class="page-sub">67 posts · 3 drafts · last published 2 days ago</p>
+    </div>
+    <button class="btn-new" onclick="openEditor()">
+      ✦ New Post
+    </button>
+  </div>
+
+  <!-- Mini Stats -->
+  <div class="mini-stats">
+    <div class="mstat">
+      <div class="mstat-icon" style="background:#fff0e6">📝</div>
+      <div>
+        <div class="mstat-val">67</div>
+        <div class="mstat-lbl">Total Posts</div>
+      </div>
+    </div>
+    <div class="mstat">
+      <div class="mstat-icon" style="background:#f0fdf4">🌱</div>
+      <div>
+        <div class="mstat-val">24</div>
+        <div class="mstat-lbl">Free Posts</div>
+      </div>
+    </div>
+    <div class="mstat">
+      <div class="mstat-icon" style="background:#fffbeb">👑</div>
+      <div>
+        <div class="mstat-val">40</div>
+        <div class="mstat-lbl">Exclusive</div>
+      </div>
+    </div>
+    <div class="mstat">
+      <div class="mstat-icon" style="background:#f5f5f4">📋</div>
+      <div>
+        <div class="mstat-val">3</div>
+        <div class="mstat-lbl">Drafts</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-row">
+    <div class="filter-tabs">
+      <button class="ftab active" onclick="filterPosts(this,'all')">All (67)</button>
+      <button class="ftab" onclick="filterPosts(this,'published')">Published (64)</button>
+      <button class="ftab" onclick="filterPosts(this,'draft')">Drafts (3)</button>
+    </div>
+    <div class="search-box">
+      <span>🔍</span>
+      <input type="text" placeholder="Search posts..." oninput="searchPosts(this.value)" />
+    </div>
+  </div>
+
+  <!-- Post List -->
+  <div class="post-list" id="post-list">
+
+    <div class="post-row" data-status="published" data-tier="free" data-title="My Creative Process: From Sketch to Final Art" onclick="openEditor(this)">
+      <div class="post-thumb-sm text-type">🌅</div>
+      <div class="post-meta">
+        <div class="post-title-sm">My Creative Process: From Sketch to Final Art</div>
+        <div class="post-info-row">
+          <span class="tier-pill tp-free">🌱 Free</span>
+          <span class="status-pill sp-published">● Published</span>
+          <span class="post-date-sm">Mar 5, 2026</span>
+          <span class="post-engagment">❤️ 142 &nbsp; 💬 38</span>
+        </div>
+      </div>
+      <div class="post-actions" onclick="event.stopPropagation()">
+        <button class="act-btn" title="Edit" onclick="openEditor()">✏️</button>
+        <button class="act-btn" title="View on Hub">👁️</button>
+        <button class="act-btn delete" title="Delete" onclick="confirmDelete()">🗑️</button>
+      </div>
+    </div>
+
+    <div class="post-row" data-status="published" data-tier="silver" data-title="3-Hour Character Design Timelapse + PSD File" onclick="openEditor(this)">
+      <div class="post-thumb-sm video-type">🎥</div>
+      <div class="post-meta">
+        <div class="post-title-sm">3-Hour Character Design Timelapse + PSD File</div>
+        <div class="post-info-row">
+          <span class="tier-pill tp-silver">⭐ Silver</span>
+          <span class="status-pill sp-published">● Published</span>
+          <span class="post-date-sm">Mar 3, 2026</span>
+          <span class="post-engagment">❤️ 89 &nbsp; 💬 24</span>
+        </div>
+      </div>
+      <div class="post-actions" onclick="event.stopPropagation()">
+        <button class="act-btn" title="Edit" onclick="openEditor()">✏️</button>
+        <button class="act-btn" title="View on Hub">👁️</button>
+        <button class="act-btn delete" title="Delete" onclick="confirmDelete()">🗑️</button>
+      </div>
+    </div>
+
+    <div class="post-row" data-status="published" data-tier="free" data-title="Top 5 Brushes I Use Every Single Day" onclick="openEditor(this)">
+      <div class="post-thumb-sm text-type">🖌️</div>
+      <div class="post-meta">
+        <div class="post-title-sm">Top 5 Brushes I Use Every Single Day</div>
+        <div class="post-info-row">
+          <span class="tier-pill tp-free">🌱 Free</span>
+          <span class="status-pill sp-published">● Published</span>
+          <span class="post-date-sm">Feb 28, 2026</span>
+          <span class="post-engagment">❤️ 203 &nbsp; 💬 57</span>
+        </div>
+      </div>
+      <div class="post-actions" onclick="event.stopPropagation()">
+        <button class="act-btn" title="Edit" onclick="openEditor()">✏️</button>
+        <button class="act-btn" title="View on Hub">👁️</button>
+        <button class="act-btn delete" title="Delete" onclick="confirmDelete()">🗑️</button>
+      </div>
+    </div>
+
+    <div class="post-row" data-status="published" data-tier="gold" data-title="Live Q&A Recording + My Full Client Workflow" onclick="openEditor(this)">
+      <div class="post-thumb-sm video-type">👑</div>
+      <div class="post-meta">
+        <div class="post-title-sm">Live Q&A Recording + My Full Client Workflow Revealed</div>
+        <div class="post-info-row">
+          <span class="tier-pill tp-gold">👑 Gold</span>
+          <span class="status-pill sp-published">● Published</span>
+          <span class="post-date-sm">Feb 24, 2026</span>
+          <span class="post-engagment">❤️ 61 &nbsp; 💬 19</span>
+        </div>
+      </div>
+      <div class="post-actions" onclick="event.stopPropagation()">
+        <button class="act-btn" title="Edit" onclick="openEditor()">✏️</button>
+        <button class="act-btn" title="View on Hub">👁️</button>
+        <button class="act-btn delete" title="Delete" onclick="confirmDelete()">🗑️</button>
+      </div>
+    </div>
+
+    <div class="post-row draft" data-status="draft" data-tier="silver" data-title="Behind the Scenes: My New Series Concept" onclick="openEditor(this)">
+      <div class="post-thumb-sm image-type">🎭</div>
+      <div class="post-meta">
+        <div class="post-title-sm">Behind the Scenes: My New Series Concept</div>
+        <div class="post-info-row">
+          <span class="tier-pill tp-silver">⭐ Silver</span>
+          <span class="status-pill sp-draft">○ Draft</span>
+          <span class="post-date-sm">Feb 20, 2026</span>
+        </div>
+      </div>
+      <div class="post-actions" onclick="event.stopPropagation()">
+        <button class="act-btn" title="Edit" onclick="openEditor()">✏️</button>
+        <button class="act-btn delete" title="Delete" onclick="confirmDelete()">🗑️</button>
+      </div>
+    </div>
+
+    <div class="post-row draft" data-status="draft" data-tier="gold" data-title="My Pricing Guide for Freelance Illustrators" onclick="openEditor(this)">
+      <div class="post-thumb-sm text-type">💰</div>
+      <div class="post-meta">
+        <div class="post-title-sm">My Pricing Guide for Freelance Illustrators (Draft)</div>
+        <div class="post-info-row">
+          <span class="tier-pill tp-gold">👑 Gold</span>
+          <span class="status-pill sp-draft">○ Draft</span>
+          <span class="post-date-sm">Feb 15, 2026</span>
+        </div>
+      </div>
+      <div class="post-actions" onclick="event.stopPropagation()">
+        <button class="act-btn" title="Edit" onclick="openEditor()">✏️</button>
+        <button class="act-btn delete" title="Delete" onclick="confirmDelete()">🗑️</button>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ══════════════════════════════════════════
+     EDITOR VIEW
+══════════════════════════════════════════ -->
+<main class="main" id="view-editor">
+
+  <!-- Top bar -->
+  <div class="editor-topbar">
+    <div class="editor-breadcrumb">
+      <button onclick="closeEditor()">← My Content</button>
+      <span>/</span>
+      <span id="editor-mode-label">New Post</span>
+    </div>
+    <div class="editor-actions">
+      <button class="btn-save-draft" onclick="saveDraft()">Save Draft</button>
+      <button class="btn-publish" onclick="publishPost()">
+        🚀 Publish Now
+      </button>
+    </div>
+  </div>
+
+  <div class="editor-layout">
+
+    <!-- Main editor area -->
+    <div class="editor-main">
+
+      <!-- Title -->
+      <textarea
+        class="title-input"
+        placeholder="Your post title..."
+        rows="1"
+        id="post-title"
+        oninput="autoResize(this); updatePreview()"
+      ></textarea>
+
+      <!-- Media upload zone -->
+      <div class="media-zone" id="media-zone"
+           ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="handleDrop(event)"
+           onclick="document.getElementById('file-input').click()">
+        <input type="file" id="file-input" style="display:none" accept="image/*,video/*,audio/*" onchange="handleFile(this)"/>
+        <div class="media-zone-icon">📎</div>
+        <h4>Add media to your post</h4>
+        <p>Drag & drop or click to upload · Images, Videos, Audio</p>
+        <div class="media-type-btns">
+          <button class="media-type-btn selected" onclick="selectMediaType(event,'image')">🖼️ Image</button>
+          <button class="media-type-btn" onclick="selectMediaType(event,'video')">🎥 Video</button>
+          <button class="media-type-btn" onclick="selectMediaType(event,'audio')">🎵 Audio</button>
+          <button class="media-type-btn" onclick="selectMediaType(event,'none')">📝 Text only</button>
+        </div>
+      </div>
+
+      <!-- Media preview (hidden by default) -->
+      <div class="media-preview" id="media-preview">
+        <div class="media-preview-placeholder" id="media-placeholder">🖼️</div>
+        <button class="media-remove" onclick="removeMedia()">✕ Remove</button>
+      </div>
+
+      <!-- Body toolbar -->
+      <div class="body-toolbar">
+        <button class="toolbar-btn" onclick="formatText('bold')"><b>B</b></button>
+        <button class="toolbar-btn" onclick="formatText('italic')"><i>I</i></button>
+        <button class="toolbar-btn" onclick="formatText('h2')">H2</button>
+        <button class="toolbar-btn" onclick="formatText('h3')">H3</button>
+        <button class="toolbar-btn" onclick="formatText('quote')">❝ Quote</button>
+        <button class="toolbar-btn" onclick="formatText('bullet')">• List</button>
+        <button class="toolbar-btn" onclick="formatText('divider')">— Divider</button>
+        <button class="toolbar-btn" onclick="formatText('link')">🔗 Link</button>
+      </div>
+
+      <!-- Body -->
+      <textarea
+        class="body-input"
+        id="post-body"
+        placeholder="Write something amazing for your fans...&#10;&#10;Your exclusive content starts here. Tell your story, share your process, drop your knowledge."
+        oninput="updateWordCount(); updatePreview()"
+      ></textarea>
+      <div class="word-count" id="word-count">0 words</div>
+
+    </div>
+
+    <!-- Editor Sidebar -->
+    <div class="editor-sidebar">
+
+      <!-- Post type -->
+      <div class="esec">
+        <div class="esec-title">📌 Post Type</div>
+        <div class="type-grid">
+          <div class="type-opt selected" onclick="selectType(this,'text')">
+            <div class="type-icon">📝</div>
+            <div class="type-label">Article</div>
+          </div>
+          <div class="type-opt" onclick="selectType(this,'image')">
+            <div class="type-icon">🖼️</div>
+            <div class="type-label">Image Post</div>
+          </div>
+          <div class="type-opt" onclick="selectType(this,'video')">
+            <div class="type-icon">🎥</div>
+            <div class="type-label">Video</div>
+          </div>
+          <div class="type-opt" onclick="selectType(this,'audio')">
+            <div class="type-icon">🎵</div>
+            <div class="type-label">Audio</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Who can see it -->
+      <div class="esec">
+        <div class="esec-title">🔒 Who Can See This?</div>
+        <div class="tier-opts" id="tier-opts">
+          <div class="tier-opt selected-free" onclick="selectTier(this,'free')">
+            <span class="tier-opt-icon">🌱</span>
+            <div class="tier-opt-info">
+              <div class="tier-opt-name">Everyone</div>
+              <div class="tier-opt-desc">Free + all members</div>
+            </div>
+            <div class="tier-opt-radio"></div>
+          </div>
+          <div class="tier-opt" onclick="selectTier(this,'silver')">
+            <span class="tier-opt-icon">⭐</span>
+            <div class="tier-opt-info">
+              <div class="tier-opt-name">Silver & Gold</div>
+              <div class="tier-opt-desc">Paying members only</div>
+            </div>
+            <div class="tier-opt-radio"></div>
+          </div>
+          <div class="tier-opt" onclick="selectTier(this,'gold')">
+            <span class="tier-opt-icon">👑</span>
+            <div class="tier-opt-info">
+              <div class="tier-opt-name">Gold VIP only</div>
+              <div class="tier-opt-desc">Your superfans</div>
+            </div>
+            <div class="tier-opt-radio"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Schedule -->
+      <div class="esec">
+        <div class="esec-title">📅 Publishing</div>
+        <div class="toggle-row">
+          <span class="toggle-label">Schedule for later</span>
+          <button class="toggle" id="schedule-toggle" onclick="toggleSchedule()"></button>
+        </div>
+        <input type="datetime-local" class="schedule-input" id="schedule-input" style="display:none"/>
+      </div>
+
+      <!-- Live Preview -->
+      <div class="esec">
+        <div class="esec-title">👁️ Preview</div>
+        <div class="preview-card">
+          <div class="preview-thumb" id="preview-thumb">✦</div>
+          <div class="preview-body">
+            <div class="preview-title-sm" id="preview-title">Your post title will appear here</div>
+            <div class="preview-meta">
+              <span id="preview-tier-badge" class="tier-pill tp-free" style="font-size:0.6rem">🌱 Free</span>
+              <span>· Just now</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<!-- Delete confirm modal -->
+<div class="delete-confirm" id="delete-confirm">
+  <div class="delete-modal">
+    <h3>Delete this post? 🗑️</h3>
+    <p>This action cannot be undone. Your post and all its engagement will be permanently deleted.</p>
+    <div class="delete-btns">
+      <button class="btn-cancel" onclick="closeDeleteConfirm()">Cancel</button>
+      <button class="btn-delete" onclick="deletePost()">Yes, delete it</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span id="toast-icon">✅</span>
+  <span id="toast-msg">Saved!</span>
+</div>
+
+<script>
+  // ── VIEW SWITCHING ────────────────────────────────────────
+  function openEditor(row) {
+    document.getElementById('view-list').style.display = 'none'
+    document.getElementById('view-editor').style.display = 'block'
+    if (row) {
+      document.getElementById('editor-mode-label').textContent = 'Edit Post'
+      document.getElementById('post-title').value = row.dataset.title || ''
+      updatePreview()
+      updateWordCount()
+    } else {
+      document.getElementById('editor-mode-label').textContent = 'New Post'
+      document.getElementById('post-title').value = ''
+      document.getElementById('post-body').value = ''
+      updatePreview()
+      updateWordCount()
+    }
+    window.scrollTo(0, 0)
+  }
+
+  function closeEditor() {
+    document.getElementById('view-list').style.display = 'block'
+    document.getElementById('view-editor').style.display = 'none'
+    window.scrollTo(0, 0)
+  }
+
+  // ── FILTERS ──────────────────────────────────────────────
+  function filterPosts(btn, filter) {
+    document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'))
+    btn.classList.add('active')
+    document.querySelectorAll('.post-row').forEach(row => {
+      if (filter === 'all') {
+        row.style.display = 'grid'
+      } else {
+        row.style.display = row.dataset.status === filter ? 'grid' : 'none'
+      }
+    })
+  }
+
+  function searchPosts(q) {
+    const lower = q.toLowerCase()
+    document.querySelectorAll('.post-row').forEach(row => {
+      const title = row.dataset.title?.toLowerCase() || ''
+      row.style.display = title.includes(lower) ? 'grid' : 'none'
+    })
+  }
+
+  // ── POST TYPE ────────────────────────────────────────────
+  function selectType(el, type) {
+    document.querySelectorAll('.type-opt').forEach(o => o.classList.remove('selected'))
+    el.classList.add('selected')
+  }
+
+  // ── TIER ─────────────────────────────────────────────────
+  let currentTier = 'free'
+  function selectTier(el, tier) {
+    currentTier = tier
+    document.querySelectorAll('.tier-opt').forEach(o => {
+      o.className = 'tier-opt'
+    })
+    el.className = `tier-opt selected-${tier}`
+    updatePreviewBadge()
+  }
+
+  // ── SCHEDULE ─────────────────────────────────────────────
+  function toggleSchedule() {
+    const btn   = document.getElementById('schedule-toggle')
+    const input = document.getElementById('schedule-input')
+    btn.classList.toggle('on')
+    input.style.display = btn.classList.contains('on') ? 'block' : 'none'
+  }
+
+  // ── MEDIA ────────────────────────────────────────────────
+  function dragOver(e) {
+    e.preventDefault()
+    document.getElementById('media-zone').classList.add('drag-over')
+  }
+  function dragLeave(e) {
+    document.getElementById('media-zone').classList.remove('drag-over')
+  }
+  function handleDrop(e) {
+    e.preventDefault()
+    dragLeave(e)
+    showMediaPreview('📎')
+  }
+  function handleFile(input) {
+    if (input.files?.[0]) {
+      const file = input.files[0]
+      const isImage = file.type.startsWith('image/')
+      if (isImage) {
+        const reader = new FileReader()
+        reader.onload = e => showMediaPreviewImage(e.target.result)
+        reader.readAsDataURL(file)
+      } else {
+        showMediaPreview('🎵')
+      }
+    }
+  }
+  function showMediaPreview(emoji) {
+    document.getElementById('media-zone').style.display = 'none'
+    document.getElementById('media-preview').classList.add('show')
+    document.getElementById('media-placeholder').textContent = emoji
+    document.getElementById('preview-thumb').textContent = emoji
+  }
+  function showMediaPreviewImage(src) {
+    const zone    = document.getElementById('media-zone')
+    const preview = document.getElementById('media-preview')
+    const placeholder = document.getElementById('media-placeholder')
+    zone.style.display = 'none'
+    preview.classList.add('show')
+    placeholder.innerHTML = `<img src="${src}" style="width:100%;max-height:400px;object-fit:cover;display:block;border-radius:14px"/>`
+    document.getElementById('preview-thumb').innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover"/>`
+  }
+  function removeMedia() {
+    document.getElementById('media-zone').style.display = 'block'
+    document.getElementById('media-preview').classList.remove('show')
+    document.getElementById('preview-thumb').textContent = '✦'
+  }
+  function selectMediaType(e, type) {
+    e.stopPropagation()
+    document.querySelectorAll('.media-type-btn').forEach(b => b.classList.remove('selected'))
+    e.target.classList.add('selected')
+    if (type === 'none') document.getElementById('media-zone').style.opacity = '0.5'
+    else document.getElementById('media-zone').style.opacity = '1'
+  }
+
+  // ── WORD COUNT ───────────────────────────────────────────
+  function updateWordCount() {
+    const body  = document.getElementById('post-body').value
+    const words = body.trim() === '' ? 0 : body.trim().split(/\s+/).length
+    document.getElementById('word-count').textContent = `${words} word${words !== 1 ? 's' : ''}`
+  }
+
+  // ── LIVE PREVIEW ─────────────────────────────────────────
+  function updatePreview() {
+    const title = document.getElementById('post-title').value
+    document.getElementById('preview-title').textContent = title || 'Your post title will appear here'
+    updatePreviewBadge()
+  }
+
+  function updatePreviewBadge() {
+    const badge = document.getElementById('preview-tier-badge')
+    const map = {
+      free:   { cls:'tp-free',   label:'🌱 Free'   },
+      silver: { cls:'tp-silver', label:'⭐ Silver' },
+      gold:   { cls:'tp-gold',   label:'👑 Gold'   },
+    }
+    const t = map[currentTier] || map.free
+    badge.className = `tier-pill ${t.cls}`
+    badge.textContent = t.label
+  }
+
+  // ── TEXTAREA AUTO RESIZE ──────────────────────────────────
+  function autoResize(el) {
+    el.style.height = 'auto'
+    el.style.height = el.scrollHeight + 'px'
+  }
+
+  // ── TOOLBAR ──────────────────────────────────────────────
+  function formatText(type) {
+    const ta  = document.getElementById('post-body')
+    const map = {
+      bold:    '**bold text**',
+      italic:  '_italic text_',
+      h2:      '\n## Heading\n',
+      h3:      '\n### Subheading\n',
+      quote:   '\n> Your quote here\n',
+      bullet:  '\n- Item one\n- Item two\n- Item three\n',
+      divider: '\n---\n',
+      link:    '[link text](https://)',
+    }
+    const insert = map[type] || ''
+    const pos = ta.selectionStart
+    ta.value = ta.value.slice(0, pos) + insert + ta.value.slice(ta.selectionEnd)
+    ta.selectionStart = ta.selectionEnd = pos + insert.length
+    ta.focus()
+    updateWordCount()
+  }
+
+  // ── SAVE / PUBLISH ────────────────────────────────────────
+  function saveDraft() {
+    showToast('📋', 'Draft saved!')
+  }
+
+  function publishPost() {
+    const title = document.getElementById('post-title').value.trim()
+    if (!title) {
+      showToast('⚠️', 'Please add a title first!')
+      return
+    }
+    showToast('🚀', 'Post published!')
+    setTimeout(closeEditor, 1200)
+  }
+
+  // ── DELETE ────────────────────────────────────────────────
+  function confirmDelete() {
+    document.getElementById('delete-confirm').classList.add('open')
+  }
+  function closeDeleteConfirm() {
+    document.getElementById('delete-confirm').classList.remove('open')
+  }
+  function deletePost() {
+    closeDeleteConfirm()
+    showToast('🗑️', 'Post deleted')
+  }
+
+  // ── TOAST ────────────────────────────────────────────────
+  let toastTimer
+  function showToast(icon, msg) {
+    const t = document.getElementById('toast')
+    document.getElementById('toast-icon').textContent = icon
+    document.getElementById('toast-msg').textContent  = msg
+    t.classList.add('show')
+    clearTimeout(toastTimer)
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2800)
+  }
+
+  // Keyboard shortcut
+  document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+      e.preventDefault()
+      if (document.getElementById('view-editor').style.display !== 'none') saveDraft()
+    }
+    if (e.key === 'Escape') closeDeleteConfirm()
+  })
+</script>
+
+</body>
+</html>

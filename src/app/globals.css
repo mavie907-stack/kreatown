@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg:           #fffbf5;
+    --bg2:          #fff8ee;
+    --black:        #1a1612;
+    --orange:       #f4732a;
+    --orange-light: #ff9555;
+    --orange-pale:  #fff0e6;
+    --yellow:       #fbbf24;
+    --muted:        #9c8878;
+    --border:       rgba(244, 115, 42, 0.15);
+    --shadow:       0 4px 24px rgba(244, 115, 42, 0.08);
+    --shadow-lg:    0 12px 48px rgba(244, 115, 42, 0.14);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--black);
+  }
+
+  /* Dot grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(244, 115, 42, 0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+@layer components {
+  /* ── BUTTONS ── */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 bg-brand-orange text-white
+           px-6 py-3 rounded-full font-bold text-sm
+           transition-all duration-200 cursor-pointer border-0
+           shadow-[0_6px_20px_rgba(244,115,42,0.35)]
+           hover:bg-brand-orange-light hover:-translate-y-0.5
+           hover:shadow-[0_10px_30px_rgba(244,115,42,0.45)];
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 bg-transparent text-brand-brown
+           px-6 py-3 rounded-full font-bold text-sm
+           border-2 border-black/10 transition-all duration-200
+           hover:border-brand-orange hover:text-brand-orange;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    @apply bg-white rounded-3xl border border-brand-orange/10
+           shadow-brand transition-all duration-300;
+  }
+
+  .card-hover {
+    @apply hover:-translate-y-1.5 hover:shadow-brand-lg;
+  }
+
+  /* ── BADGES ── */
+  .badge {
+    @apply inline-flex items-center gap-1.5 bg-brand-orange-pale
+           text-brand-orange border border-brand-orange/20
+           px-3 py-1 rounded-full text-xs font-bold;
+  }
+
+  .badge-green {
+    @apply inline-flex items-center gap-1 bg-green-50 text-green-600
+           px-2 py-0.5 rounded-full text-xs font-bold font-mono;
+  }
+
+  .badge-tier-gold   { @apply bg-amber-50 text-amber-600; }
+  .badge-tier-silver { @apply bg-slate-50 text-slate-500; }
+  .badge-tier-free   { @apply bg-green-50 text-green-600; }
+
+  /* ── SECTION LAYOUT ── */
+  .section-inner {
+    @apply max-width-7xl mx-auto px-6;
+  }
+
+  /* ── FORMS ── */
+  .input {
+    @apply w-full bg-brand-cream-2 border border-brand-orange/20
+           rounded-xl px-4 py-3 text-sm font-medium text-brand-brown
+           placeholder:text-brand-muted outline-none
+           focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/10
+           transition-all duration-200;
+  }
+
+  .label {
+    @apply block text-sm font-bold text-brand-brown mb-1.5;
+  }
+}
+
+@layer utilities {
+  /* Animate reveal on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Floating animation */
+  .float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-12px); }
+  }
+
+  /* Fade up */
+  .fade-up {
+    animation: fadeUp 0.6s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+}
