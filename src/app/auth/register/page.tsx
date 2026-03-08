@@ -19,8 +19,7 @@ export default function RegisterPage() {
     setLoading(true)
     setError('')
     const { error } = await supabase.auth.signUp({
-      email,
-      password,
+      email, password,
       options: { data: { username, display_name: displayName, is_creator: true } }
     })
     if (error) { setError(error.message); setLoading(false); return }
@@ -44,15 +43,11 @@ export default function RegisterPage() {
           <>
             <input type="email" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} style={{width:'100%',padding:'0.85rem 1rem',borderRadius:'12px',border:'1.5px solid rgba(244,115,42,0.2)',background:'#fff',fontSize:'0.9rem',fontFamily:'Nunito,sans-serif',marginBottom:'0.75rem',boxSizing:'border-box' as const,outline:'none'}} />
             <input type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} style={{width:'100%',padding:'0.85rem 1rem',borderRadius:'12px',border:'1.5px solid rgba(244,115,42,0.2)',background:'#fff',fontSize:'0.9rem',fontFamily:'Nunito,sans-serif',marginBottom:'1rem',boxSizing:'border-box' as const,outline:'none'}} />
-            <button onClick={handleRegister} disabled={loading} style={{width:'100%',padding:'0.9rem',background:'#f4732a',color:'#fff',border:'none',borderRadius:'12px',fontSize:'0.95rem',fontWeight:800,cursor:'pointer',fontFamily:'Nunito,sans-serif'}}>
-              {loading ? 'Creating account...' : 'Join Kreatown 🚀'}
-            </button>
-            <button onClick={()=>setStep(1)} style={{width:'100%',padding:'0.7rem',background:'transparent',color:'#9c8878',border:'none',borderRadius:'12px',fontSize:'0.85rem',fontWeight:700,cursor:'pointer',fontFamily:'Nunito,sans-serif',marginTop:'0.5rem'}}>← Back</button>
+            <button onClick={handleRegister} disabled={loading} style={{width:'100%',padding:'0.9rem',background:'#f4732a',color:'#fff',border:'none',borderRadius:'12px',fontSize:'0.95rem',fontWeight:800,cursor:'pointer',fontFamily:'Nunito,sans-serif'}}>{loading?'Creating...':'Join Kreatown 🚀'}</button>
+            <button onClick={()=>setStep(1)} style={{width:'100%',padding:'0.7rem',background:'transparent',color:'#9c8878',border:'none',fontSize:'0.85rem',fontWeight:700,cursor:'pointer',fontFamily:'Nunito,sans-serif',marginTop:'0.5rem'}}>← Back</button>
           </>
         )}
-        <p style={{textAlign:'center' as const,marginTop:'1.5rem',color:'#9c8878',fontSize:'0.85rem',fontWeight:600}}>
-          Already have an account? <Link href="/auth/login" style={{color:'#f4732a',fontWeight:800}}>Sign in</Link>
-        </p>
+        <p style={{textAlign:'center' as const,marginTop:'1.5rem',color:'#9c8878',fontSize:'0.85rem',fontWeight:600}}>Already have an account? <Link href="/auth/login" style={{color:'#f4732a',fontWeight:800}}>Sign in</Link></p>
       </div>
     </div>
   )
