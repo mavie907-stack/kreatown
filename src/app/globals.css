@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .bg-brand-cream { background-color: #fffbf5; }
+  .bg-brand-orange { background-color: #f4732a; }
+  .bg-brand-orange-pale { background-color: #fff0e6; }
+  .text-brand-orange { color: #f4732a; }
+  .text-brand-brown { color: #2d2118; }
+  .text-brand-muted { color: #9c8878; }
+  .border-brand-orange { border-color: #f4732a; }
+  .font-display { font-family: 'Cabinet Grotesk', sans-serif; }
+  .font-body { font-family: 'Nunito', sans-serif; }
+  .font-mono { font-family: 'DM Mono', monospace; }
+  .shadow-brand { box-shadow: 0 4px 24px rgba(244,115,42,0.08); }
+  .shadow-brand-lg { box-shadow: 0 12px 48px rgba(244,115,42,0.14); }
+}
+
 @layer base {
   :root {
     --bg:           #fffbf5;
