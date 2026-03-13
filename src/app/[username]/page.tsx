@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 const MOCK_PROFILE = {
-  display_name: 'Topraq Basyurt',
+  display_name: 'Topraq Toros',
   username: 'topraq',
   bio: 'Creator, storyteller, and community builder. Building my town one post at a time 🏡',
   members: 44,
@@ -132,7 +132,7 @@ export default function CreatorPage({ params }: { params: { username: string } }
           {/* Right Column — Tiers */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', position: 'sticky', top: '1.5rem' }}>
             <div style={{ fontWeight: 900, fontSize: '0.82rem', textTransform: 'uppercase', letterSpacing: '0.07em', color: '#9c8878' }}>
-              Join Topraq's community
+              Join Topraq Toros's community
             </div>
             {TIERS.map(tier => (
               <div key={tier.name} style={{ ...card, padding: '1.4rem' }}>
