@@ -2,17 +2,18 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useUser } from '@/hooks'
-import { LayoutDashboard, FileText, Users, MessageCircle, DollarSign, Settings, LogOut } from 'lucide-react'
+import { LayoutDashboard, FileText, Users, MessageCircle, DollarSign, Settings, LogOut, Globe } from 'lucide-react'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 
 const NAV = [
-  { href: '/dashboard',          icon: LayoutDashboard, label: 'Overview'   },
-  { href: '/dashboard/content',  icon: FileText,        label: 'My Content' },
-  { href: '/dashboard/members',  icon: Users,           label: 'Members'    },
-  { href: '/dashboard/messages', icon: MessageCircle,   label: 'Messages'   },
-  { href: '/dashboard/earnings', icon: DollarSign,      label: 'Earnings'   },
-  { href: '/dashboard/settings', icon: Settings,        label: 'Settings'   },
+  { href: '/dashboard',           icon: LayoutDashboard, label: 'Overview'    },
+  { href: '/dashboard/town',      icon: Globe,           label: 'Town Square' },
+  { href: '/dashboard/content',   icon: FileText,        label: 'My Content'  },
+  { href: '/dashboard/members',   icon: Users,           label: 'Members'     },
+  { href: '/dashboard/messages',  icon: MessageCircle,   label: 'Messages'    },
+  { href: '/dashboard/earnings',  icon: DollarSign,      label: 'Earnings'    },
+  { href: '/dashboard/settings',  icon: Settings,        label: 'Settings'    },
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
