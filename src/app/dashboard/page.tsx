@@ -1,345 +1,240 @@
-'use client'
-
-import { useUser } from '@/hooks'
-import DashboardOverview from '@/components/dashboard/DashboardOverview'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-
-export default function DashboardPage() {
-  const { user, loading } = useUser()
-  const router = useRouter()// src/app/dashboard/page.tsx
-'use client'
-import { useEffect, useRef, useState } from 'react'
+// src/app/page.tsx
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase'
-import { formatRevenue, formatMemberCount, timeAgo } from '@/lib/utils'
-import type { DashboardStats } from '@/types'
+import Image from 'next/image'
+import { HOUSE_LEVELS } from '@/types'
 
-// ── MOCK DATA (replace with real Supabase queries) ──
-const MOCK_STATS: DashboardStats = {
-  monthly_revenue:      2840,
-  monthly_revenue_prev: 2406,
-  total_members:        44,
-  total_members_prev:   38,
-  palace_members:       7,
-  avg_revenue_per_member: 64,
-  revenue_by_month: [
-    { month: 'Oct', amount: 820  },
-    { month: 'Nov', amount: 1100 },
-    { month: 'Dec', amount: 1450 },
-    { month: 'Jan', amount: 1890 },
-    { month: 'Feb', amount: 2400 },
-    { month: 'Mar', amount: 2840 },
-  ],
-  members_by_month: [
-    { month: 'Oct', count: 11 },
-    { month: 'Nov', count: 18 },
-    { month: 'Dec', count: 24 },
-    { month: 'Jan', count: 31 },
-    { month: 'Feb', count: 38 },
-    { month: 'Mar', count: 44 },
-  ],
-  tier_breakdown: { free: 10, silver: 15, gold: 12, palace: 7 },
-}
-
-const RECENT_MEMBERS = [
-  { name: 'Elif Yıldız',  handle: '@elif',      tier: 'palace', revenue: 1490, joined: '2026-03-12', emoji: '🌟' },
-  { name: 'Ahmet Kaya',   handle: '@ahmetkaya', tier: 'gold',   revenue: 590,  joined: '2026-03-10', emoji: '🌻' },
-  { name: 'Sara Demir',   handle: '@sarademir', tier: 'silver', revenue: 290,  joined: '2026-03-08', emoji: '📸' },
-  { name: 'Can Öztürk',   handle: '@canoz',     tier: 'free',   revenue: 0,    joined: '2026-03-07', emoji: '🌱' },
-  { name: 'Zeynep Al',    handle: '@zeynep',    tier: 'palace', revenue: 1490, joined: '2026-03-05', emoji: '💫' },
+// Mock creator data — replace with Supabase query
+const FEATURED_CREATORS = [
+  { username: 'topraq', name: 'Topraq Toros', emoji: '🎨', members: 44, revenue: 2840, level: 5, tag: 'Creator & Storyteller' },
+  { username: 'jenna',  name: 'Jenna Williams',emoji: '📸', members: 128,revenue: 6200, level: 4, tag: 'Photographer' },
+  { username: 'mikenova',name:'MikeNova',      emoji: '🎵', members: 89, revenue: 4100, level: 5, tag: 'Music Producer' },
 ]
 
-const ACTIVITY = [
-  { icon: '🏯', type: 'palace', text: 'Elif Yıldız joined Palace tier', time: '2 hours ago' },
-  { icon: '💬', type: 'msg',    text: 'Ahmet Kaya sent you a message',  time: '5 hours ago' },
-  { icon: '❤️', type: 'like',   text: 'Your post got 142 likes',        time: 'Yesterday' },
-  { icon: '🌱', type: 'free',   text: 'Can Öztürk joined as Free member', time: 'Yesterday' },
-  { icon: '🏆', type: 'rank',   text: 'You moved to #3 on leaderboard',  time: '2 days ago' },
+const STATS = [
+  { num: '500+',  label: 'Creators' },
+  { num: '$120K+',label: 'Paid out' },
+  { num: '12K+',  label: 'Members'  },
 ]
 
-const TIER_COLORS: Record<string, string> = {
-  palace: 'text-palace-light bg-palace/12 border-palace/20',
-  gold:   'text-yellow-300 bg-yellow-400/10 border-yellow-400/20',
-  silver: 'text-slate-300 bg-slate-400/10 border-slate-400/20',
-  free:   'text-emerald bg-emerald/10 border-emerald/20',
-}
-const TIER_EMOJIS: Record<string, string> = { palace: '🏯', gold: '👑', silver: '⭐', free: '🌱' }
+const FEATURES = [
+  { icon: '🏡', title: 'Your own town',      desc: 'Your creator page is a living 3D world. Share kreatown.com/@you everywhere.' },
+  { icon: '💰', title: 'Get paid monthly',   desc: 'Fans subscribe to your tiers. Automatic payouts via QNB every month.' },
+  { icon: '🔒', title: 'Gated rooms',        desc: 'Free fans get the garden. Gold gets the suite. Palace gets the penthouse.' },
+  { icon: '🎮', title: 'Competitions',       desc: 'Monthly growth challenges. Win house upgrades and platform features.' },
+  { icon: '💬', title: 'Direct messages',    desc: '1-on-1 with your biggest fans. Unlocks at 1K members.' },
+  { icon: '📊', title: 'Creator analytics',  desc: 'Revenue, growth, content performance — all in your palace dashboard.' },
+]
 
-export default function DashboardPage() {
-  const stats = MOCK_STATS
-  const revenueChartRef = useRef<HTMLCanvasElement>(null)
-  const membersChartRef = useRef<HTMLCanvasElement>(null)
-  const tierChartRef    = useRef<HTMLCanvasElement>(null)
-  const [chartsLoaded, setChartsLoaded] = useState(false)
-
-  useEffect(() => {
-    // Dynamically import Chart.js to avoid SSR issues
-    import('chart.js/auto').then(({ default: Chart }) => {
-      Chart.defaults.color = 'rgba(255,255,255,0.35)'
-      Chart.defaults.borderColor = 'rgba(255,255,255,0.07)'
-
-      // Revenue chart
-      if (revenueChartRef.current) {
-        const ctx = revenueChartRef.current.getContext('2d')!
-        const grad = ctx.createLinearGradient(0, 0, 0, 180)
-        grad.addColorStop(0, 'rgba(201,149,42,0.3)')
-        grad.addColorStop(1, 'rgba(201,149,42,0)')
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: stats.revenue_by_month.map(d => d.month),
-            datasets: [{ data: stats.revenue_by_month.map(d => d.amount), borderColor: '#c9952a', backgroundColor: grad, borderWidth: 2, fill: true, tension: 0.4, pointBackgroundColor: '#c9952a', pointRadius: 3 }]
-          },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1e1a16', callbacks: { label: ctx => ' ₺' + ctx.parsed.y.toLocaleString() } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { callback: v => '₺' + (Number(v)/1000).toFixed(1) + 'k' } } } }
-        })
-      }
-
-      // Members chart
-      if (membersChartRef.current) {
-        const ctx = membersChartRef.current.getContext('2d')!
-        const grad = ctx.createLinearGradient(0, 0, 0, 180)
-        grad.addColorStop(0, 'rgba(124,92,191,0.3)')
-        grad.addColorStop(1, 'rgba(124,92,191,0)')
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: stats.members_by_month.map(d => d.month),
-            datasets: [{ data: stats.members_by_month.map(d => d.count), borderColor: '#7c5cbf', backgroundColor: grad, borderWidth: 2, fill: true, tension: 0.4, pointBackgroundColor: '#7c5cbf', pointRadius: 3 }]
-          },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1e1a16', callbacks: { label: ctx => ' ' + ctx.parsed.y + ' members' } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(255,255,255,0.05)' } } } }
-        })
-      }
-
-      // Tier donut
-      if (tierChartRef.current) {
-        const ctx = tierChartRef.current.getContext('2d')!
-        new Chart(ctx, {
-          type: 'doughnut',
-          data: {
-            labels: ['Palace', 'Gold', 'Silver', 'Free'],
-            datasets: [{ data: [stats.tier_breakdown.palace, stats.tier_breakdown.gold, stats.tier_breakdown.silver, stats.tier_breakdown.free], backgroundColor: ['rgba(124,92,191,0.8)','rgba(201,149,42,0.8)','rgba(138,163,181,0.7)','rgba(45,171,128,0.7)'], borderColor: '#161310', borderWidth: 2 }]
-          },
-          options: { responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1e1a16' } } }
-        })
-      }
-      setChartsLoaded(true)
-    })
-  }, [])
-
-  const revenueChange = Math.round(((stats.monthly_revenue - stats.monthly_revenue_prev) / stats.monthly_revenue_prev) * 100)
-  const membersChange = stats.total_members - stats.total_members_prev
-
+export default function HomePage() {
   return (
-    <div className="p-4 md:p-8 pb-24 md:pb-8 text-white">
-
-      {/* KPI GRID */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        {[
-          { label: 'Monthly Revenue', value: '₺' + stats.monthly_revenue.toLocaleString('tr-TR'), change: `↑ ${revenueChange}% vs last month`, up: true,  icon: '💰', accent: 'text-yellow-300' },
-          { label: 'Total Members',   value: stats.total_members.toString(),                        change: `↑ ${membersChange} new this month`, up: true,  icon: '👥', accent: 'text-orange' },
-          { label: 'Palace Members',  value: stats.palace_members.toString(),                       change: '↑ 2 new this month',               up: true,  icon: '🏯', accent: 'text-palace-light' },
-          { label: 'Avg / Member',    value: '₺' + stats.avg_revenue_per_member,                  change: '↑ ₺8 vs last month',               up: true,  icon: '📈', accent: 'text-emerald' },
-        ].map(kpi => (
-          <div key={kpi.label} className="bg-dark-2 border border-white/7 rounded-2xl p-4 relative overflow-hidden hover:border-white/12 transition-colors">
-            <div className="text-[10px] font-mono-kt text-white/30 uppercase tracking-widest mb-2">{kpi.label}</div>
-            <div className={`font-display font-bold text-2xl md:text-3xl ${kpi.accent}`}>{kpi.value}</div>
-            <div className={`text-xs mt-1 ${kpi.up ? 'text-emerald' : 'text-red-400'}`}>{kpi.change}</div>
-            <div className="absolute bottom-3 right-3 text-2xl opacity-15">{kpi.icon}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* CHARTS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div className="bg-dark-2 border border-white/7 rounded-2xl p-5">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <div className="font-display font-bold text-sm text-white">Revenue over time</div>
-              <div className="text-xs text-white/30 mt-0.5">Monthly earnings · Last 6 months</div>
-            </div>
-            <span className="text-xs bg-emerald/12 text-emerald border border-emerald/20 px-2 py-0.5 rounded-full">↑ {revenueChange}% MoM</span>
-          </div>
-          <div className="h-44"><canvas ref={revenueChartRef} /></div>
+    <main>
+      {/* NAV */}
+      <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-orange-pale flex items-center justify-between px-6 md:px-12 h-14">
+        <span className="font-display font-bold text-xl text-brown">
+          Krea<span className="text-orange">Town</span>
+        </span>
+        <div className="hidden md:flex items-center gap-8">
+          <Link href="#concept" className="text-sm text-muted hover:text-brown transition-colors">How it works</Link>
+          <Link href="#creators" className="text-sm text-muted hover:text-brown transition-colors">Creators</Link>
+          <Link href="#plans"    className="text-sm text-muted hover:text-brown transition-colors">Pricing</Link>
+          <Link href="/auth/login" className="text-sm text-muted hover:text-brown transition-colors">Log in</Link>
+          <Link href="/auth/register"
+            className="bg-orange text-white text-sm font-medium px-5 py-2 rounded-full shadow-orange hover:bg-orange-light transition-all hover:-translate-y-0.5">
+            Start for free 🏡
+          </Link>
         </div>
-        <div className="bg-dark-2 border border-white/7 rounded-2xl p-5">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <div className="font-display font-bold text-sm text-white">Member growth</div>
-              <div className="text-xs text-white/30 mt-0.5">Cumulative · Last 6 months</div>
-            </div>
-            <span className="text-xs bg-emerald/12 text-emerald border border-emerald/20 px-2 py-0.5 rounded-full">↑ 16% MoM</span>
+        {/* Mobile hamburger — handled by MobileNav component */}
+        <Link href="/auth/register"
+          className="md:hidden bg-orange text-white text-sm font-medium px-4 py-2 rounded-full">
+          Start free
+        </Link>
+      </nav>
+
+      {/* HERO */}
+      <section className="min-h-screen grid md:grid-cols-2 items-center gap-8 px-6 md:px-12 pt-24 pb-12">
+        <div className="animate-fade-up">
+          <div className="inline-flex items-center gap-2 bg-orange-pale border border-orange/20 text-orange text-xs font-medium px-4 py-1.5 rounded-full mb-6 tracking-wide uppercase">
+            🏡 Your town. Your fans. Your money.
           </div>
-          <div className="h-44"><canvas ref={membersChartRef} /></div>
-        </div>
-      </div>
-
-      {/* BOTTOM GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_340px] gap-4">
-
-        {/* LEFT: Members + Tier breakdown */}
-        <div className="space-y-4">
-
-          {/* Members table */}
-          <div className="bg-dark-2 border border-white/7 rounded-2xl overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-white/7">
-              <div className="font-display font-bold text-sm text-white">Recent members</div>
-              <Link href="/dashboard/members" className="text-xs text-orange hover:opacity-70 transition-opacity">See all 44 →</Link>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-white/7">
-                    {['Member','Tier','Revenue','Joined'].map(h => (
-                      <th key={h} className="text-left text-[10px] font-mono-kt text-white/25 uppercase tracking-widest px-5 py-2">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {RECENT_MEMBERS.map(m => (
-                    <tr key={m.handle} className="border-b border-white/4 hover:bg-white/2 transition-colors">
-                      <td className="px-5 py-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-7 h-7 rounded-full bg-dark-3 flex items-center justify-center text-sm">{m.emoji}</div>
-                          <div>
-                            <div className="text-sm text-white">{m.name}</div>
-                            <div className="text-xs text-white/30">{m.handle}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-5 py-3">
-                        <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${TIER_COLORS[m.tier]}`}>
-                          {TIER_EMOJIS[m.tier]} {m.tier.charAt(0).toUpperCase() + m.tier.slice(1)}
-                        </span>
-                      </td>
-                      <td className="px-5 py-3 font-mono-kt text-xs text-yellow-300">
-                        {m.revenue > 0 ? '₺' + m.revenue.toLocaleString('tr-TR') : '—'}
-                      </td>
-                      <td className="px-5 py-3 font-mono-kt text-xs text-white/30">
-                        {new Date(m.joined).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <h1 className="font-display font-black text-5xl md:text-6xl leading-[1.08] tracking-tight mb-6">
+            Build your world.<br/>
+            <span className="text-gradient-orange">Grow your empire.</span>
+          </h1>
+          <p className="text-lg text-muted font-light leading-relaxed max-w-lg mb-8">
+            KreaTown is the only creator platform where your success literally builds your world.
+            Start with a cottage. Earn your palace.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Link href="/auth/register"
+              className="bg-orange text-white font-medium px-8 py-4 rounded-full shadow-orange hover:shadow-orange-lg hover:-translate-y-0.5 transition-all text-center flex items-center justify-center gap-2">
+              Start building free 🏡
+            </Link>
+            <Link href="#concept"
+              className="text-brown font-medium border-b border-orange pb-0.5 hover:gap-2 transition-all self-center text-center">
+              See how it works →
+            </Link>
           </div>
-
-          {/* Tier breakdown */}
-          <div className="bg-dark-2 border border-white/7 rounded-2xl p-5 grid grid-cols-2 gap-6 items-center">
-            <div>
-              <div className="font-display font-bold text-sm text-white mb-1">Tier breakdown</div>
-              <div className="text-xs text-white/30 mb-4">{stats.total_members} total members</div>
-              <div className="space-y-2.5">
-                {(['palace','gold','silver','free'] as const).map(tier => {
-                  const count = stats.tier_breakdown[tier]
-                  const revs = { palace: count * 1490, gold: count * 590, silver: count * 290, free: 0 }
-                  return (
-                    <div key={tier} className="flex justify-between text-xs">
-                      <span className={TIER_COLORS[tier].split(' ')[0]}>{TIER_EMOJIS[tier]} {tier.charAt(0).toUpperCase() + tier.slice(1)}</span>
-                      <span className="text-white/50 font-mono-kt">{count} · ₺{revs[tier].toLocaleString('tr-TR')}</span>
-                    </div>
-                  )
-                })}
+          {/* Stats */}
+          <div className="flex gap-8 mt-12 pt-8 border-t border-muted/20">
+            {STATS.map(s => (
+              <div key={s.label}>
+                <span className="font-display font-bold text-2xl text-brown block">{s.num}</span>
+                <span className="text-xs text-muted">{s.label}</span>
               </div>
-            </div>
-            <div className="h-36"><canvas ref={tierChartRef} /></div>
+            ))}
           </div>
         </div>
 
-        {/* RIGHT */}
-        <div className="space-y-4">
+        {/* Hero image */}
+        <div className="relative flex items-center justify-center">
+          <div className="relative w-full max-w-lg aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl">
+            <Image src="/Luxury.png" alt="KreaTown" fill className="object-cover object-top" priority />
+          </div>
+        </div>
+      </section>
 
-          {/* House level */}
-          <div className="bg-gradient-to-br from-palace/12 to-yellow-400/8 border border-palace/25 rounded-2xl p-5 relative overflow-hidden">
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-5xl opacity-12">🏯</div>
-            <div className="text-[10px] font-mono-kt text-palace-light uppercase tracking-widest mb-1">Current residence</div>
-            <div className="font-display font-bold text-base text-white">🏯 Hilltop Palace</div>
-            <div className="text-xs text-white/40 mt-0.5 mb-4">Level 5 · All rooms unlocked</div>
-            <div className="flex justify-between text-xs mb-1">
-              <span className="text-white/40">Progress to Legend</span>
-              <span className="text-palace-light font-mono-kt">44 / 50,000</span>
-            </div>
-            <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-              <div className="h-full rounded-full bg-gradient-to-r from-palace-light to-yellow-300" style={{ width: '0.088%' }} />
-            </div>
-            <div className="mt-3 flex items-center gap-2 bg-white/4 rounded-lg px-3 py-2 text-xs text-white/50">
-              🌟 Next unlock: <span className="text-yellow-300 font-medium">Legend Hall</span> at 50K members
-            </div>
+      {/* LEVEL SYSTEM */}
+      <section id="concept" className="bg-brown py-20 px-6 md:px-12 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,rgba(244,115,42,0.08),transparent_60%)] pointer-events-none" />
+        <div className="max-width mx-auto relative">
+          <div className="text-center mb-12">
+            <p className="font-mono-kt text-xs text-orange tracking-widest uppercase mb-3">The KreaTown System</p>
+            <h2 className="font-display font-bold text-4xl md:text-5xl text-white leading-tight">
+              Your house grows<br/>
+              <em className="not-italic text-gold-light">with your audience</em>
+            </h2>
+            <p className="text-white/50 mt-4 font-light max-w-lg mx-auto">
+              Every new member upgrades your world — from a cozy cottage to a hilltop palace.
+            </p>
           </div>
 
-          {/* Payout */}
-          <div className="bg-dark-2 border border-white/7 rounded-2xl p-5">
-            <div className="flex items-center justify-between mb-3 pb-3 border-b border-white/7">
-              <div className="font-display font-bold text-sm text-white">This month's payout</div>
-              <span className="text-[10px] text-white/25 font-mono-kt">Paid Mar 28</span>
-            </div>
-            <div className="text-xs text-white/30 mb-1">Gross revenue</div>
-            <div className="font-display font-bold text-2xl text-yellow-300 mb-4">₺2,840</div>
-            <div className="space-y-2">
-              {[
-                { label: 'Palace tier (7 × ₺1,490)', value: '+₺10,430', pos: true },
-                { label: 'Gold tier (12 × ₺590)',    value: '+₺7,080',  pos: true },
-                { label: 'Silver tier (15 × ₺290)',  value: '+₺4,350',  pos: true },
-                null,
-                { label: 'KreaTown fee (8%)',         value: '−₺1,749', pos: false },
-                { label: 'Processing fee',            value: '−₺212',   pos: false },
-                null,
-                { label: 'Net payout',               value: '₺19,899', pos: true, bold: true },
-              ].map((row, i) =>
-                row === null
-                  ? <div key={i} className="h-px bg-white/10" />
-                  : (
-                    <div key={row.label} className={`flex justify-between text-xs ${row.bold ? 'font-medium' : ''}`}>
-                      <span className={row.bold ? 'text-white' : 'text-white/40'}>{row.label}</span>
-                      <span className={`font-mono-kt ${row.bold ? 'text-yellow-300' : row.pos ? 'text-emerald' : 'text-red-400'}`}>{row.value}</span>
-                    </div>
-                  )
-              )}
-            </div>
-            <button className="w-full mt-4 py-2.5 rounded-xl bg-gradient-to-r from-yellow-600 to-yellow-500 text-[#1a0c00] text-sm font-medium hover:opacity-90 transition-opacity">
-              💳 Request payout — ₺19,899
-            </button>
-          </div>
-
-          {/* Activity */}
-          <div className="bg-dark-2 border border-white/7 rounded-2xl overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-white/7">
-              <div className="font-display font-bold text-sm text-white">Town activity</div>
-              <button className="text-xs text-orange hover:opacity-70 transition-opacity">See all</button>
-            </div>
-            {ACTIVITY.map((a, i) => (
-              <div key={i} className="flex items-start gap-3 px-5 py-3 border-b border-white/4 hover:bg-white/2 transition-colors last:border-0">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0 ${
-                  { palace: 'bg-palace/15', msg: 'bg-yellow-400/12', like: 'bg-orange/12', free: 'bg-emerald/10', rank: 'bg-palace/15' }[a.type]
-                }`}>{a.icon}</div>
-                <div>
-                  <div className="text-sm text-white/70 leading-snug" dangerouslySetInnerHTML={{ __html: a.text.replace(/\d+/g, n => `<strong class="text-white">${n}</strong>`) }} />
-                  <div className="text-[11px] text-white/25 mt-0.5 font-mono-kt">{a.time}</div>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            {(Object.entries(HOUSE_LEVELS) as [string, typeof HOUSE_LEVELS[1]][]).map(([lvl, data], i) => (
+              <div key={lvl}
+                className={`rounded-2xl p-5 text-center border transition-all hover:-translate-y-1 ${
+                  i === 2
+                    ? 'bg-orange/15 border-orange/40'
+                    : 'bg-white/5 border-white/10 hover:border-orange/30'
+                }`}>
+                <p className="font-mono-kt text-xs text-white/35 uppercase tracking-widest mb-3">Level {lvl}</p>
+                <div className="text-3xl mb-3">{data.emoji}</div>
+                <div className="font-display font-bold text-white text-sm">
+                  {data.min_members === 0 ? '0' : (data.min_members / 1000) + 'K'}
+                  {' – '}
+                  {data.max_members >= 999999 ? '∞' : (data.max_members / 1000) + 'K'}
+                </div>
+                <div className="text-white/50 text-xs mt-1">{data.name}</div>
+                <div className="text-gold-light/80 text-xs mt-3 leading-snug">{data.unlocks[0]}</div>
+                <div className="mt-3 h-1 bg-white/10 rounded-full overflow-hidden">
+                  <div className="h-full rounded-full bg-gradient-to-r from-orange to-gold-light" style={{ width: `${(i + 1) * 20}%` }} />
                 </div>
               </div>
             ))}
           </div>
         </div>
+      </section>
+
+      {/* FEATURES */}
+      <section id="features" className="py-24 px-6 md:px-12 bg-cream">
+        <div className="max-w-5xl mx-auto">
+          <div className="mb-12">
+            <p className="font-mono-kt text-xs text-orange tracking-widest uppercase mb-3">Everything you need</p>
+            <h2 className="font-display font-bold text-4xl md:text-5xl leading-tight">
+              Not just a page.<br/><em className="not-italic text-orange">A living world.</em>
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {FEATURES.map((f, i) => (
+              <div key={f.title}
+                className={`p-8 rounded-3xl border transition-all hover:-translate-y-1 hover:shadow-lg ${
+                  i === 0 ? 'bg-orange text-white border-transparent' : 'bg-white border-muted/15 hover:border-orange/25'
+                }`}>
+                <div className="text-2xl mb-4">{f.icon}</div>
+                <h3 className={`font-display font-bold text-lg mb-2 ${i === 0 ? 'text-white' : 'text-brown'}`}>{f.title}</h3>
+                <p className={`text-sm leading-relaxed font-light ${i === 0 ? 'text-white/80' : 'text-muted'}`}>{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CREATORS */}
+      <section id="creators" className="py-20 px-6 md:px-12 bg-cream-dark">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="font-mono-kt text-xs text-orange tracking-widest uppercase mb-3">Already earning</p>
+            <h2 className="font-display font-bold text-4xl">Creators building their towns</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {FEATURED_CREATORS.map(c => (
+              <Link href={`/u/${c.username}`} key={c.username}
+                className="bg-white rounded-3xl border border-muted/12 overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all block">
+                <div className="h-20 bg-gradient-to-br from-orange-pale to-gold-pale flex items-end p-3">
+                  <span className="text-xs font-medium bg-white rounded-lg px-2 py-1 shadow-sm">
+                    {HOUSE_LEVELS[c.level as 1|2|3|4|5].emoji} Level {c.level}
+                  </span>
+                </div>
+                <div className="p-5">
+                  <div className="text-3xl mb-2 -mt-8 w-12 h-12 rounded-full bg-cream-dark flex items-center justify-center border-3 border-white shadow">{c.emoji}</div>
+                  <div className="font-display font-bold text-lg text-brown">{c.name}</div>
+                  <div className="text-xs text-muted mt-0.5">{c.tag}</div>
+                  <div className="flex gap-6 mt-4 pt-4 border-t border-muted/10">
+                    <div><span className="font-display font-bold text-lg text-brown">{c.members}</span><span className="text-xs text-muted ml-1">members</span></div>
+                    <div><span className="font-display font-bold text-lg text-brown">${c.revenue.toLocaleString()}</span><span className="text-xs text-muted ml-1">/mo</span></div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-32 px-6 bg-brown text-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(244,115,42,0.15),transparent_65%)] pointer-events-none" />
+        <div className="relative">
+          <p className="font-mono-kt text-xs text-orange tracking-widest uppercase mb-4">Ready to build?</p>
+          <h2 className="font-display font-black text-5xl md:text-7xl text-white leading-tight mb-4">
+            Your town is waiting.<br/><em className="not-italic text-gold-light">Start with a cottage.</em>
+          </h2>
+          <p className="text-white/50 text-lg font-light max-w-md mx-auto mb-10">
+            Free to start. No credit card. Your palace is one audience away.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/auth/register"
+              className="bg-orange text-white font-medium px-10 py-4 rounded-full shadow-orange-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 justify-center">
+              Build your town free 🏡
+            </Link>
+            <Link href="#concept"
+              className="text-white/60 border border-white/15 px-8 py-4 rounded-full hover:border-white/40 hover:text-white transition-all">
+              See how it works
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="bg-[#0f0d0b] text-white/40 py-6 px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
+        <span className="font-display font-bold text-white text-lg">Krea<span className="text-orange">Town</span></span>
+        <span>© 2026 KreaTown. Where creators belong.</span>
+        <div className="flex gap-4">
+          <Link href="/privacy" className="hover:text-white/70 transition-colors">Privacy</Link>
+          <Link href="/terms"   className="hover:text-white/70 transition-colors">Terms</Link>
+          <Link href="/contact" className="hover:text-white/70 transition-colors">Contact</Link>
+        </div>
+      </footer>
+
+      {/* MOBILE BOTTOM BAR */}
+      <div className="mobile-bottom-bar md:hidden flex items-center gap-3 px-5 py-3">
+        <Link href="/auth/register"
+          className="flex-1 bg-orange text-white text-sm font-medium py-3 rounded-2xl text-center shadow-orange">
+          🏡 Start for free
+        </Link>
+        <Link href="/auth/login"
+          className="text-muted text-sm font-medium whitespace-nowrap">
+          Log in
+        </Link>
       </div>
-    </div>
+    </main>
   )
-}
-
-
-  useEffect(() => {
-    if (!loading && !user) router.push('/auth/login')
-  }, [user, loading, router])
-
-  if (loading || !user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-brand-muted font-bold text-sm animate-pulse">
-          ⏳ Loading your town...
-        </p>
-      </div>
-    )
-  }
-
-  return <DashboardOverview profile={user} />
 }
