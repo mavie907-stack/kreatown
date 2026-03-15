@@ -1,112 +1,95 @@
-// src/app/api/webhooks/qnb/route.ts
+// src/app/api/subscriptions/create/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase'
-import { verifyWebhookSignature } from '@/lib/qnb'
+import { createPayment, TIER_PRICES, QNB_CONFIG } from '@/lib/qnb'
+import type { Currency } from '@/lib/qnb'
 
 export async function POST(req: NextRequest) {
-  const body      = await req.text()
-  const signature = req.headers.get('x-qnb-signature') ?? ''
+  try {
+    const supabase = createClient()
 
-  // Verify the webhook is genuinely from QNB
-  if (!verifyWebhookSignature(body, signature)) {
-    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
-  }
+    // Get authenticated user
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
 
-  const event = JSON.parse(body)
-  const supabase = createClient()
+    const body = await req.json()
+    const { creatorId, tier, currency = 'TRY', paymentMethod = 'card', cardDetails } = body
 
-  switch (event.type) {
+    // Validate tier
+    if (!['silver', 'gold', 'palace'].includes(tier)) {
+      return NextResponse.json({ error: 'Invalid tier' }, { status: 400 })
+    }
 
-    // ── PAYMENT SUCCESS → activate subscription ──
-    case 'payment.success': {
-      const { transactionId, metadata, amount, currency, recurringId } = event.data
-      const { userId, creatorId, tier } = metadata
+    const amount = TIER_PRICES[tier][currency as Currency]
 
-      // Calculate next billing date (1 month from now)
+    // ── CARD PAYMENT ──
+    if (paymentMethod === 'card') {
+      const result = await createPayment({
+        amount,
+        currency: currency as Currency,
+        method: 'card',
+        cardNumber: cardDetails.cardNumber.replace(/\s/g, ''),
+        cardHolder:  cardDetails.cardHolder,
+        expiry:      cardDetails.expiry,
+        cvv:         cardDetails.cvv,
+        email:       cardDetails.email,
+        userId:      user.id,
+        creatorId,
+        tier,
+        recurring:   true,
+      })
+
+      if (result.status === 'failed') {
+        return NextResponse.json({ error: result.message ?? 'Payment failed' }, { status: 402 })
+      }
+
+      // If 3D Secure redirect needed
+      if (result.redirectUrl) {
+        return NextResponse.json({ requiresRedirect: true, redirectUrl: result.redirectUrl })
+      }
+
+      // Payment successful — subscription created by webhook
+      return NextResponse.json({ success: true, transactionId: result.transactionId })
+    }
+
+    // ── EFT / HAVALE ──
+    if (paymentMethod === 'eft') {
+      // Create pending subscription — activated when payment confirmed
       const nextBilling = new Date()
       nextBilling.setMonth(nextBilling.getMonth() + 1)
 
-      // Upsert subscription in Supabase
-      await supabase.from('subscriptions').upsert({
-        user_id:        userId,
-        creator_id:     creatorId,
+      await supabase.from('subscriptions').insert({
+        user_id:      user.id,
+        creator_id:   creatorId,
         tier,
-        status:         'active',
+        status:       'pending', // activated when QNB confirms transfer
         currency,
         amount,
-        transaction_id: transactionId,
-        recurring_id:   recurringId,
-        started_at:     new Date().toISOString(),
-        next_billing:   nextBilling.toISOString(),
-      }, { onConflict: 'user_id,creator_id' })
+        started_at:   new Date().toISOString(),
+        next_billing: nextBilling.toISOString(),
+      })
 
-      // Update creator member count
-      await supabase.rpc('increment_member_count', { p_creator_id: creatorId })
-
-      // Update creator house level based on new member count
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('member_count')
-        .eq('id', creatorId)
-        .single()
-
-      if (profile) {
-        const newLevel = getHouseLevelFromCount(profile.member_count)
-        await supabase.from('profiles').update({ house_level: newLevel }).eq('id', creatorId)
-      }
-
-      console.log(`[QNB] Payment success: ${transactionId} — ${userId} subscribed to ${creatorId} (${tier})`)
-      break
+      return NextResponse.json({
+        success: true,
+        pending: true,
+        bankDetails: {
+          bank:        'QNB Finansbank A.Ş.',
+          iban:        QNB_CONFIG.iban,
+          accountName: QNB_CONFIG.accountName,
+          amount,
+          currency,
+          reference:   `KT-${user.id.slice(0,8).toUpperCase()}-${tier.toUpperCase()}`,
+        },
+        message: 'Transfer details sent to your email. Access activates within 2 business hours.',
+      })
     }
 
-    // ── SUBSCRIPTION CANCELLED ──
-    case 'subscription.cancelled': {
-      const { userId, creatorId } = event.data.metadata
-      await supabase.from('subscriptions')
-        .update({ status: 'cancelled' })
-        .eq('user_id', userId)
-        .eq('creator_id', creatorId)
+    return NextResponse.json({ error: 'Invalid payment method' }, { status: 400 })
 
-      await supabase.rpc('decrement_member_count', { p_creator_id: creatorId })
-      console.log(`[QNB] Subscription cancelled: ${userId} → ${creatorId}`)
-      break
-    }
-
-    // ── PAYMENT FAILED ──
-    case 'payment.failed': {
-      const { userId, creatorId } = event.data.metadata
-      await supabase.from('subscriptions')
-        .update({ status: 'paused' })
-        .eq('user_id', userId)
-        .eq('creator_id', creatorId)
-
-      // TODO: send email notification via Resend
-      console.log(`[QNB] Payment failed: ${userId} → ${creatorId}`)
-      break
-    }
-
-    // ── RECURRING RENEWAL SUCCESS ──
-    case 'subscription.renewed': {
-      const { userId, creatorId, nextBilling } = event.data
-      await supabase.from('subscriptions')
-        .update({ status: 'active', next_billing: nextBilling })
-        .eq('user_id', userId)
-        .eq('creator_id', creatorId)
-      break
-    }
-
-    default:
-      console.log(`[QNB] Unhandled event type: ${event.type}`)
+  } catch (err) {
+    console.error('[Subscription Create]', err)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
-
-  return NextResponse.json({ received: true })
 }
-
-function getHouseLevelFromCount(count: number): number {
-  if (count >= 25000) return 5
-  if (count >= 10000) return 4
-  if (count >= 5000)  return 3
-  if (count >= 1000)  return 2
-  return 1
-}
-
