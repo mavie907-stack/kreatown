@@ -80,4 +80,3 @@ export function generateTxId(): string {
   return 'KT' + Date.now().toString(36).toUpperCase() +
     Math.random().toString(36).slice(2, 5).toUpperCase()
 }
-
