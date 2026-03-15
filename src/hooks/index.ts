@@ -1,136 +1,156 @@
-// src/types/index.ts
+// src/hooks/useUser.ts
+'use client'
+import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase'
+import type { User } from '@supabase/supabase-js'
 
-export type TierLevel = 'free' | 'silver' | 'gold' | 'palace'
+export function useUser() {
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+  const supabase = createClient()
 
-export type HouseLevel = 1 | 2 | 3 | 4 | 5
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user)
+      setLoading(false)
+    })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUser(session?.user ?? null)
+    })
+    return () => subscription.unsubscribe()
+  }, [])
 
-export interface Profile {
-  id: string
-  username: string
-  full_name: string
-  bio: string | null
-  avatar_url: string | null
-  banner_url: string | null
-  is_creator: boolean
-  house_level: HouseLevel
-  member_count: number
-  monthly_revenue: number
-  created_at: string
-  // Creator-specific
-  silver_price_try: number | null
-  gold_price_try: number | null
-  palace_price_try: number | null
-  silver_price_usd: number | null
-  gold_price_usd: number | null
-  palace_price_usd: number | null
+  return { user, loading }
 }
 
-export interface Post {
-  id: string
-  creator_id: string
-  title: string
-  content: string
-  excerpt: string | null
-  tier: TierLevel
-  published_at: string
-  like_count: number
-  comment_count: number
-  media_urls: string[]
-}
+// ─────────────────────────────────────────────
+// src/hooks/useProfile.ts
+// ─────────────────────────────────────────────
+// 'use client'
+// import { useEffect, useState } from 'react'
+// import { createClient } from '@/lib/supabase'
+// import type { Profile } from '@/types'
+//
+// export function useProfile(username: string) {
+//   const [profile, setProfile] = useState<Profile | null>(null)
+//   const [loading, setLoading] = useState(true)
+//   const supabase = createClient()
+//
+//   useEffect(() => {
+//     if (!username) return
+//     supabase
+//       .from('profiles')
+//       .select('*')
+//       .eq('username', username)
+//       .single()
+//       .then(({ data }) => { setProfile(data); setLoading(false) })
+//   }, [username])
+//
+//   return { profile, loading }
+// }
 
-export interface Member {
-  id: string
-  user_id: string
-  creator_id: string
-  tier: TierLevel
-  currency: 'TRY' | 'USD' | 'EUR'
-  amount: number
-  status: 'active' | 'cancelled' | 'paused'
-  started_at: string
-  next_billing: string
-  profile: {
-    username: string
-    full_name: string
-    avatar_url: string | null
-  }
-}
+// ─────────────────────────────────────────────
+// src/hooks/useMembers.ts
+// ─────────────────────────────────────────────
+// 'use client'
+// import { useEffect, useState } from 'react'
+// import { createClient } from '@/lib/supabase'
+// import type { Member } from '@/types'
+//
+// export function useMembers(creatorId: string) {
+//   const [members, setMembers] = useState<Member[]>([])
+//   const [loading, setLoading] = useState(true)
+//   const supabase = createClient()
+//
+//   useEffect(() => {
+//     if (!creatorId) return
+//     supabase
+//       .from('subscriptions')
+//       .select('*, profile:profiles(username, full_name, avatar_url)')
+//       .eq('creator_id', creatorId)
+//       .eq('status', 'active')
+//       .order('started_at', { ascending: false })
+//       .then(({ data }) => { setMembers(data ?? []); setLoading(false) })
+//   }, [creatorId])
+//
+//   return { members, loading }
+// }
 
-export interface Subscription {
-  id: string
-  tier: TierLevel
-  status: 'active' | 'cancelled' | 'paused'
-  currency: 'TRY' | 'USD' | 'EUR'
-  amount: number
-  creator_id: string
-  next_billing: string
-}
+// ─────────────────────────────────────────────
+// src/hooks/usePosts.ts
+// ─────────────────────────────────────────────
+// 'use client'
+// import { useEffect, useState } from 'react'
+// import { createClient } from '@/lib/supabase'
+// import type { Post, TierLevel } from '@/types'
+//
+// export function usePosts(creatorId: string, userTier: TierLevel = 'free') {
+//   const [posts, setPosts] = useState<Post[]>([])
+//   const [loading, setLoading] = useState(true)
+//   const supabase = createClient()
+//
+//   useEffect(() => {
+//     if (!creatorId) return
+//     supabase
+//       .from('posts')
+//       .select('*')
+//       .eq('creator_id', creatorId)
+//       .order('published_at', { ascending: false })
+//       .then(({ data }) => { setPosts(data ?? []); setLoading(false) })
+//   }, [creatorId])
+//
+//   return { posts, loading }
+// }
 
-export interface Message {
-  id: string
-  sender_id: string
-  receiver_id: string
-  content: string
-  read: boolean
-  created_at: string
-  sender: {
-    username: string
-    avatar_url: string | null
-  }
-}
+// ─────────────────────────────────────────────
+// src/hooks/useSubscription.ts
+// ─────────────────────────────────────────────
+// 'use client'
+// import { useEffect, useState } from 'react'
+// import { createClient } from '@/lib/supabase'
+// import { useUser } from './useUser'
+// import type { Subscription } from '@/types'
+//
+// export function useSubscription(creatorId: string) {
+//   const { user } = useUser()
+//   const [subscription, setSubscription] = useState<Subscription | null>(null)
+//   const [loading, setLoading] = useState(true)
+//   const supabase = createClient()
+//
+//   useEffect(() => {
+//     if (!user || !creatorId) { setLoading(false); return }
+//     supabase
+//       .from('subscriptions')
+//       .select('*')
+//       .eq('user_id', user.id)
+//       .eq('creator_id', creatorId)
+//       .eq('status', 'active')
+//       .single()
+//       .then(({ data }) => { setSubscription(data); setLoading(false) })
+//   }, [user, creatorId])
+//
+//   return { subscription, loading, tier: subscription?.tier ?? 'free' }
+// }
 
-export interface TownResident {
-  user_id: string
-  username: string
-  full_name: string
-  avatar_url: string | null
-  emoji: string
-  tier: TierLevel
-  location_x: number // percentage 0-100
-  location_y: number // percentage 0-100
-  is_online: boolean
-  joined_at: string
-}
-
-export interface DashboardStats {
-  monthly_revenue: number
-  monthly_revenue_prev: number
-  total_members: number
-  total_members_prev: number
-  palace_members: number
-  avg_revenue_per_member: number
-  revenue_by_month: { month: string; amount: number }[]
-  members_by_month: { month: string; count: number }[]
-  tier_breakdown: {
-    free: number
-    silver: number
-    gold: number
-    palace: number
-  }
-}
-
-export const HOUSE_LEVELS: Record<HouseLevel, {
-  name: string
-  emoji: string
-  min_members: number
-  max_members: number
-  unlocks: string[]
-  color: string
-}> = {
-  1: { name: 'Cottage',       emoji: '🏠', min_members: 0,     max_members: 999,   unlocks: ['Content feed', '2 tiers'],              color: '#2dab80' },
-  2: { name: 'House',         emoji: '🏡', min_members: 1000,  max_members: 4999,  unlocks: ['DMs', '3D Garden'],                     color: '#8fa3b5' },
-  3: { name: 'Villa',         emoji: '🏘️', min_members: 5000,  max_members: 9999,  unlocks: ['3D Radio 🎵', 'Pool', 'Competitions'],  color: '#c9952a' },
-  4: { name: 'Estate',        emoji: '🏰', min_members: 10000, max_members: 24999, unlocks: ['3D TV 📺', 'Live events'],              color: '#f4732a' },
-  5: { name: 'Hilltop Palace',emoji: '🏯', min_members: 25000, max_members: 999999,unlocks: ['Full town', 'Legend status 🌟'],        color: '#7c5cbf' },
-}
-
-export const TIER_CONFIG: Record<TierLevel, {
-  name: string
-  emoji: string
-  color: string
-  bgColor: string
-}> = {
-  free:   { name: 'Garden Pass',      emoji: '🌱', color: '#0a5230', bgColor: 'rgba(45,171,128,0.1)'  },
-  silver: { name: 'Inside the House', emoji: '⭐', color: '#2a4a5e', bgColor: 'rgba(143,163,181,0.12)'},
-  gold:   { name: 'Gold Suite',       emoji: '👑', color: '#7a5000', bgColor: 'rgba(201,149,42,0.12)' },
-  palace: { name: 'Palace Access',    emoji: '🏯', color: '#4a2a8f', bgColor: 'rgba(124,92,191,0.12)' },
-}
+// ─────────────────────────────────────────────
+// src/hooks/useDashboardStats.ts
+// ─────────────────────────────────────────────
+// 'use client'
+// import { useEffect, useState } from 'react'
+// import { createClient } from '@/lib/supabase'
+// import type { DashboardStats } from '@/types'
+//
+// export function useDashboardStats(creatorId: string) {
+//   const [stats, setStats] = useState<DashboardStats | null>(null)
+//   const [loading, setLoading] = useState(true)
+//   const supabase = createClient()
+//
+//   useEffect(() => {
+//     if (!creatorId) return
+//     // Call a Supabase RPC or aggregate query
+//     supabase.rpc('get_dashboard_stats', { p_creator_id: creatorId })
+//       .then(({ data }) => { setStats(data); setLoading(false) })
+//   }, [creatorId])
+//
+//   return { stats, loading }
+// }
