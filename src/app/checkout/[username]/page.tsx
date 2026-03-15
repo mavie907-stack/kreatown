@@ -1,241 +1,410 @@
-// src/app/page.tsx
+// src/app/checkout/[username]/page.tsx
+'use client'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
-import { HOUSE_LEVELS } from '@/types'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { createClient } from '@/lib/supabase'
+import { TIER_CONFIG } from '@/types'
+import { formatPrice } from '@/lib/qnb'
+import type { TierLevel } from '@/types'
+import type { Currency } from '@/lib/qnb'
 
-// Mock creator data — replace with Supabase query
-const FEATURED_CREATORS = [
-  { username: 'topraq', name: 'Topraq Toros', emoji: '🎨', members: 44, revenue: 2840, level: 5, tag: 'Creator & Storyteller' },
-  { username: 'jenna',  name: 'Jenna Williams',emoji: '📸', members: 128,revenue: 6200, level: 4, tag: 'Photographer' },
-  { username: 'mikenova',name:'MikeNova',      emoji: '🎵', members: 89, revenue: 4100, level: 5, tag: 'Music Producer' },
-]
-
-const STATS = [
-  { num: '500+',  label: 'Creators' },
-  { num: '$120K+',label: 'Paid out' },
-  { num: '12K+',  label: 'Members'  },
-]
-
-const FEATURES = [
-  { icon: '🏡', title: 'Your own town',      desc: 'Your creator page is a living 3D world. Share kreatown.com/@you everywhere.' },
-  { icon: '💰', title: 'Get paid monthly',   desc: 'Fans subscribe to your tiers. Automatic payouts via QNB every month.' },
-  { icon: '🔒', title: 'Gated rooms',        desc: 'Free fans get the garden. Gold gets the suite. Palace gets the penthouse.' },
-  { icon: '🎮', title: 'Competitions',       desc: 'Monthly growth challenges. Win house upgrades and platform features.' },
-  { icon: '💬', title: 'Direct messages',    desc: '1-on-1 with your biggest fans. Unlocks at 1K members.' },
-  { icon: '📊', title: 'Creator analytics',  desc: 'Revenue, growth, content performance — all in your palace dashboard.' },
-]
-
-export default function HomePage() {
-  return (
-    <main>
-      {/* NAV */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-orange-pale flex items-center justify-between px-6 md:px-12 h-14">
-        <span className="font-display font-bold text-xl text-brown">
-          Krea<span className="text-orange">Town</span>
-        </span>
-        <div className="hidden md:flex items-center gap-8">
-          <Link href="#concept" className="text-sm text-muted hover:text-brown transition-colors">How it works</Link>
-          <Link href="#creators" className="text-sm text-muted hover:text-brown transition-colors">Creators</Link>
-          <Link href="#plans"    className="text-sm text-muted hover:text-brown transition-colors">Pricing</Link>
-          <Link href="/auth/login" className="text-sm text-muted hover:text-brown transition-colors">Log in</Link>
-          <Link href="/auth/register"
-            className="bg-orange text-white text-sm font-medium px-5 py-2 rounded-full shadow-orange hover:bg-orange-light transition-all hover:-translate-y-0.5">
-            Start for free 🏡
-          </Link>
-        </div>
-        {/* Mobile hamburger — handled by MobileNav component */}
-        <Link href="/auth/register"
-          className="md:hidden bg-orange text-white text-sm font-medium px-4 py-2 rounded-full">
-          Start free
-        </Link>
-      </nav>
-
-      {/* HERO */}
-      <section className="min-h-screen grid md:grid-cols-2 items-center gap-8 px-6 md:px-12 pt-24 pb-12">
-        <div className="animate-fade-up">
-          <div className="inline-flex items-center gap-2 bg-orange-pale border border-orange/20 text-orange text-xs font-medium px-4 py-1.5 rounded-full mb-6 tracking-wide uppercase">
-            🏡 Your town. Your fans. Your money.
-          </div>
-          <h1 className="font-display font-black text-5xl md:text-6xl leading-[1.08] tracking-tight mb-6">
-            Build your world.<br/>
-            <span className="text-gradient-orange">Grow your empire.</span>
-          </h1>
-          <p className="text-lg text-muted font-light leading-relaxed max-w-lg mb-8">
-            KreaTown is the only creator platform where your success literally builds your world.
-            Start with a cottage. Earn your palace.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Link href="/auth/register"
-              className="bg-orange text-white font-medium px-8 py-4 rounded-full shadow-orange hover:shadow-orange-lg hover:-translate-y-0.5 transition-all text-center flex items-center justify-center gap-2">
-              Start building free 🏡
-            </Link>
-            <Link href="#concept"
-              className="text-brown font-medium border-b border-orange pb-0.5 hover:gap-2 transition-all self-center text-center">
-              See how it works →
-            </Link>
-          </div>
-          {/* Stats */}
-          <div className="flex gap-8 mt-12 pt-8 border-t border-muted/20">
-            {STATS.map(s => (
-              <div key={s.label}>
-                <span className="font-display font-bold text-2xl text-brown block">{s.num}</span>
-                <span className="text-xs text-muted">{s.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Hero image */}
-        <div className="relative flex items-center justify-center">
-          <div className="relative w-full max-w-lg aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl">
-            <Image src="/Luxury.png" alt="KreaTown" fill className="object-cover object-top" priority />
-          </div>
-        </div>
-      </section>
-
-      {/* LEVEL SYSTEM */}
-      <section id="concept" className="bg-brown py-20 px-6 md:px-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,rgba(244,115,42,0.08),transparent_60%)] pointer-events-none" />
-        <div className="max-width mx-auto relative">
-          <div className="text-center mb-12">
-            <p className="font-mono-kt text-xs text-orange tracking-widest uppercase mb-3">The KreaTown System</p>
-            <h2 className="font-display font-bold text-4xl md:text-5xl text-white leading-tight">
-              Your house grows<br/>
-              <em className="not-italic text-gold-light">with your audience</em>
-            </h2>
-            <p className="text-white/50 mt-4 font-light max-w-lg mx-auto">
-              Every new member upgrades your world — from a cozy cottage to a hilltop palace.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            {(Object.entries(HOUSE_LEVELS) as [string, typeof HOUSE_LEVELS[1]][]).map(([lvl, data], i) => (
-              <div key={lvl}
-                className={`rounded-2xl p-5 text-center border transition-all hover:-translate-y-1 ${
-                  i === 2
-                    ? 'bg-orange/15 border-orange/40'
-                    : 'bg-white/5 border-white/10 hover:border-orange/30'
-                }`}>
-                <p className="font-mono-kt text-xs text-white/35 uppercase tracking-widest mb-3">Level {lvl}</p>
-                <div className="text-3xl mb-3">{data.emoji}</div>
-                <div className="font-display font-bold text-white text-sm">
-                  {data.min_members === 0 ? '0' : (data.min_members / 1000) + 'K'}
-                  {' – '}
-                  {data.max_members >= 999999 ? '∞' : (data.max_members / 1000) + 'K'}
-                </div>
-                <div className="text-white/50 text-xs mt-1">{data.name}</div>
-                <div className="text-gold-light/80 text-xs mt-3 leading-snug">{data.unlocks[0]}</div>
-                <div className="mt-3 h-1 bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full rounded-full bg-gradient-to-r from-orange to-gold-light" style={{ width: `${(i + 1) * 20}%` }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FEATURES */}
-      <section id="features" className="py-24 px-6 md:px-12 bg-cream">
-        <div className="max-w-5xl mx-auto">
-          <div className="mb-12">
-            <p className="font-mono-kt text-xs text-orange tracking-widest uppercase mb-3">Everything you need</p>
-            <h2 className="font-display font-bold text-4xl md:text-5xl leading-tight">
-              Not just a page.<br/><em className="not-italic text-orange">A living world.</em>
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {FEATURES.map((f, i) => (
-              <div key={f.title}
-                className={`p-8 rounded-3xl border transition-all hover:-translate-y-1 hover:shadow-lg ${
-                  i === 0 ? 'bg-orange text-white border-transparent' : 'bg-white border-muted/15 hover:border-orange/25'
-                }`}>
-                <div className="text-2xl mb-4">{f.icon}</div>
-                <h3 className={`font-display font-bold text-lg mb-2 ${i === 0 ? 'text-white' : 'text-brown'}`}>{f.title}</h3>
-                <p className={`text-sm leading-relaxed font-light ${i === 0 ? 'text-white/80' : 'text-muted'}`}>{f.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CREATORS */}
-      <section id="creators" className="py-20 px-6 md:px-12 bg-cream-dark">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <p className="font-mono-kt text-xs text-orange tracking-widest uppercase mb-3">Already earning</p>
-            <h2 className="font-display font-bold text-4xl">Creators building their towns</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {FEATURED_CREATORS.map(c => (
-              <Link href={`/u/${c.username}`} key={c.username}
-                className="bg-white rounded-3xl border border-muted/12 overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all block">
-                <div className="h-20 bg-gradient-to-br from-orange-pale to-gold-pale flex items-end p-3">
-                  <span className="text-xs font-medium bg-white rounded-lg px-2 py-1 shadow-sm">
-                    {HOUSE_LEVELS[c.level as 1|2|3|4|5].emoji} Level {c.level}
-                  </span>
-                </div>
-                <div className="p-5">
-                  <div className="text-3xl mb-2 -mt-8 w-12 h-12 rounded-full bg-cream-dark flex items-center justify-center border-3 border-white shadow">{c.emoji}</div>
-                  <div className="font-display font-bold text-lg text-brown">{c.name}</div>
-                  <div className="text-xs text-muted mt-0.5">{c.tag}</div>
-                  <div className="flex gap-6 mt-4 pt-4 border-t border-muted/10">
-                    <div><span className="font-display font-bold text-lg text-brown">{c.members}</span><span className="text-xs text-muted ml-1">members</span></div>
-                    <div><span className="font-display font-bold text-lg text-brown">${c.revenue.toLocaleString()}</span><span className="text-xs text-muted ml-1">/mo</span></div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-32 px-6 bg-brown text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(244,115,42,0.15),transparent_65%)] pointer-events-none" />
-        <div className="relative">
-          <p className="font-mono-kt text-xs text-orange tracking-widest uppercase mb-4">Ready to build?</p>
-          <h2 className="font-display font-black text-5xl md:text-7xl text-white leading-tight mb-4">
-            Your town is waiting.<br/><em className="not-italic text-gold-light">Start with a cottage.</em>
-          </h2>
-          <p className="text-white/50 text-lg font-light max-w-md mx-auto mb-10">
-            Free to start. No credit card. Your palace is one audience away.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/auth/register"
-              className="bg-orange text-white font-medium px-10 py-4 rounded-full shadow-orange-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 justify-center">
-              Build your town free 🏡
-            </Link>
-            <Link href="#concept"
-              className="text-white/60 border border-white/15 px-8 py-4 rounded-full hover:border-white/40 hover:text-white transition-all">
-              See how it works
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* FOOTER */}
-      <footer className="bg-[#0f0d0b] text-white/40 py-6 px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
-        <span className="font-display font-bold text-white text-lg">Krea<span className="text-orange">Town</span></span>
-        <span>© 2026 KreaTown. Where creators belong.</span>
-        <div className="flex gap-4">
-          <Link href="/privacy" className="hover:text-white/70 transition-colors">Privacy</Link>
-          <Link href="/terms"   className="hover:text-white/70 transition-colors">Terms</Link>
-          <Link href="/contact" className="hover:text-white/70 transition-colors">Contact</Link>
-        </div>
-      </footer>
-
-      {/* MOBILE BOTTOM BAR */}
-      <div className="mobile-bottom-bar md:hidden flex items-center gap-3 px-5 py-3">
-        <Link href="/auth/register"
-          className="flex-1 bg-orange text-white text-sm font-medium py-3 rounded-2xl text-center shadow-orange">
-          🏡 Start for free
-        </Link>
-        <Link href="/auth/login"
-          className="text-muted text-sm font-medium whitespace-nowrap">
-          Log in
-        </Link>
-      </div>
-    </main>
-  )
+const PRICES = {
+  silver: { TRY: 290,  USD: 9,   EUR: 8.5  },
+  gold:   { TRY: 590,  USD: 19,  EUR: 17.5 },
+  palace: { TRY: 1490, USD: 49,  EUR: 45   },
 }
 
+const TIER_FEATURES: Record<string, string[]> = {
+  free:   ['Free posts & community', 'Town view access', 'Public radio'],
+  silver: ['All free features', 'Exclusive posts', 'Studio tours', 'Monthly calls'],
+  gold:   ['All silver features', 'Full strategy content', 'Direct messages', 'Early access', '3D Radio & TV'],
+  palace: ['All gold features', '1-on-1 sessions', 'Private station', 'Top of the hill', 'Weekly Q&A'],
+}
+
+export default function CheckoutPage({ params }: { params: { username: string } }) {
+  const router     = useRouter()
+  const search     = useSearchParams()
+  const initTier   = (search.get('tier') as TierLevel) || null
+
+  const [step,      setStep]      = useState<1|2|3>(1)
+  const [tier,      setTier]      = useState<TierLevel | null>(initTier)
+  const [currency,  setCurrency]  = useState<Currency>('TRY')
+  const [payMethod, setPayMethod] = useState<'card'|'eft'>('card')
+  const [agreed,    setAgreed]    = useState(false)
+  const [loading,   setLoading]   = useState(false)
+  const [error,     setError]     = useState('')
+  const [txId,      setTxId]      = useState('')
+
+  // Card fields
+  const [cardName,   setCardName]   = useState('')
+  const [cardNum,    setCardNum]    = useState('')
+  const [cardExpiry, setCardExpiry] = useState('')
+  const [cardCvv,    setCardCvv]    = useState('')
+  const [cardEmail,  setCardEmail]  = useState('')
+
+  const amount = tier && tier !== 'free' ? PRICES[tier as keyof typeof PRICES]?.[currency] ?? 0 : 0
+  const amountStr = tier === 'free' ? 'Free' : formatPrice(amount, currency)
+
+  const tc = tier ? TIER_CONFIG[tier] : null
+
+  // Format card number
+  function fmtCard(v: string) {
+    return v.replace(/\D/g,'').slice(0,16).replace(/(.{4})/g,'$1 ').trim()
+  }
+  function fmtExpiry(v: string) {
+    const d = v.replace(/\D/g,'').slice(0,4)
+    return d.length >= 2 ? d.slice(0,2) + ' / ' + d.slice(2) : d
+  }
+
+  async function processPayment() {
+    if (!agreed) { setError('Please agree to the terms'); return }
+    if (!tier)   { setError('Please select a tier'); return }
+
+    setLoading(true); setError('')
+
+    try {
+      const resp = await fetch('/api/subscriptions/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          creatorId:   params.username, // ideally the creator's UUID
+          tier,
+          currency,
+          paymentMethod: payMethod,
+          cardDetails: payMethod === 'card' ? {
+            cardNumber: cardNum, cardHolder: cardName,
+            expiry: cardExpiry, cvv: cardCvv, email: cardEmail,
+          } : undefined,
+        }),
+      })
+      const data = await resp.json()
+
+      if (!resp.ok) { setError(data.error ?? 'Payment failed'); return }
+      if (data.requiresRedirect) { window.location.href = data.redirectUrl; return }
+
+      setTxId(data.transactionId ?? 'KT' + Date.now().toString(36).toUpperCase())
+      setStep(3)
+    } catch {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-cream">
+      {/* Nav */}
+      <nav className="sticky top-0 z-50 glass border-b border-orange-pale flex items-center justify-between px-5 h-14">
+        <Link href="/" className="font-display font-bold text-xl text-brown">Krea<span className="text-orange">Town</span></Link>
+        <div className="flex items-center gap-1.5 text-xs text-muted">
+          <div className="w-2 h-2 rounded-full bg-emerald" />
+          Secure checkout
+        </div>
+        <Link href={`/u/${params.username}`} className="text-sm text-muted hover:text-brown transition-colors">← Back</Link>
+      </nav>
+
+      {/* Progress */}
+      {step < 3 && (
+        <div className="max-w-xl mx-auto flex items-center gap-0 px-6 pt-5 pb-1">
+          {['Choose tier','Payment','Confirm'].map((label, i) => {
+            const s = i + 1
+            const active = s === step
+            const done   = s < step
+            return (
+              <div key={label} className="flex items-center flex-1">
+                <div className="flex flex-col items-center gap-1">
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium border transition-all ${
+                    done ? 'bg-orange border-orange text-white' :
+                    active ? 'bg-orange border-orange text-white ring-4 ring-orange/12' :
+                    'bg-white border-muted/25 text-muted'
+                  }`}>{done ? '✓' : s}</div>
+                  <span className={`text-[10px] whitespace-nowrap hidden sm:block ${active || done ? 'text-orange' : 'text-muted'}`}>{label}</span>
+                </div>
+                {i < 2 && <div className={`flex-1 h-0.5 mx-1 rounded-full ${done ? 'bg-orange' : 'bg-muted/15'}`} />}
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      <div className="max-w-4xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-[1fr_360px] gap-6 pb-20 md:pb-8">
+
+        {/* LEFT */}
+        <div>
+          {/* STEP 1: TIER */}
+          {step === 1 && (
+            <div className="animate-fade-up">
+              <h2 className="font-display font-bold text-2xl text-brown mb-1">Choose your place 🏡</h2>
+              <p className="text-muted text-sm font-light mb-5">Pick the tier that fits. Upgrade or downgrade anytime.</p>
+
+              {/* Currency */}
+              <div className="flex items-center gap-2 mb-5 flex-wrap">
+                <span className="text-sm text-muted">Pay in:</span>
+                {(['TRY','USD','EUR'] as Currency[]).map(c => (
+                  <button key={c} onClick={() => setCurrency(c)}
+                    className={`px-4 py-1.5 rounded-full text-sm border transition-all ${
+                      currency === c ? 'bg-brown text-white border-brown' : 'bg-white text-brown border-muted/20 hover:border-muted/40'
+                    }`}>
+                    {{ TRY:'🇹🇷 TRY', USD:'🇺🇸 USD', EUR:'🇪🇺 EUR' }[c]}
+                  </button>
+                ))}
+              </div>
+
+              {/* Tiers */}
+              <div className="space-y-3 mb-6">
+                {(['free','silver','gold','palace'] as TierLevel[]).map(t => {
+                  const tc2 = TIER_CONFIG[t]
+                  const p   = t === 'free' ? 'Free' : formatPrice(PRICES[t as keyof typeof PRICES][currency], currency)
+                  const sel = tier === t
+                  return (
+                    <div key={t} onClick={() => setTier(t)}
+                      className={`relative flex items-center gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all hover:-translate-y-0.5 ${
+                        t === 'gold' ? '-translate-y-0.5' : ''
+                      } ${sel && t !== 'palace' ? 'border-orange shadow-orange/20 shadow-lg' : ''
+                        } ${sel && t === 'palace' ? 'border-palace shadow-palace/20 shadow-lg' : ''
+                        } ${!sel ? 'border-muted/15 bg-white hover:border-muted/30' : 'bg-white'
+                      }`}>
+                      {t === 'gold' && !sel && (
+                        <div className="absolute -top-2.5 left-4 bg-orange text-white text-[10px] font-medium px-2.5 py-0.5 rounded-full tracking-wide uppercase">Most popular</div>
+                      )}
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-xl flex-shrink-0" style={{ background: tc2.bgColor }}>
+                        {tc2.emoji}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium text-brown">{tc2.name}</div>
+                        <div className="text-xs text-muted mt-0.5 truncate">{TIER_FEATURES[t][1] ?? TIER_FEATURES[t][0]}</div>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <div className={`font-display font-bold text-lg ${sel && t === 'palace' ? 'text-palace' : sel ? 'text-orange' : 'text-brown'}`}>{p}</div>
+                        <div className="text-[10px] text-muted">{t === 'free' ? 'forever' : '/ mo'}</div>
+                      </div>
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
+                        sel ? (t === 'palace' ? 'bg-palace border-palace' : 'bg-orange border-orange') : 'border-muted/30'
+                      }`}>
+                        {sel && <div className="w-2 h-2 rounded-full bg-white" />}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+
+              <button onClick={() => tier && setStep(2)} disabled={!tier}
+                className="w-full bg-orange text-white font-medium py-4 rounded-2xl shadow-orange hover:bg-orange-light hover:-translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none">
+                Continue to payment →
+              </button>
+            </div>
+          )}
+
+          {/* STEP 2: PAYMENT */}
+          {step === 2 && (
+            <div className="animate-fade-up">
+              <h2 className="font-display font-bold text-2xl text-brown mb-1">Payment details 💳</h2>
+              <p className="text-muted text-sm font-light mb-5">Secured by QNB Finansbank.</p>
+
+              {/* Method tabs */}
+              <div className="flex bg-cream-dark rounded-xl border border-muted/15 p-1 mb-5 gap-1">
+                {[['card','💳 Credit / Debit card'],['eft','🏦 Havale / EFT']] .map(([m,label]) => (
+                  <button key={m} onClick={() => setPayMethod(m as 'card'|'eft')}
+                    className={`flex-1 py-2.5 text-sm rounded-lg transition-all ${
+                      payMethod === m ? 'bg-white text-brown font-medium shadow-sm' : 'text-muted hover:text-brown'
+                    }`}>{label}</button>
+                ))}
+              </div>
+
+              {/* Card form */}
+              {payMethod === 'card' && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs text-muted mb-1.5">Cardholder name</label>
+                    <input value={cardName} onChange={e => setCardName(e.target.value)} placeholder="Topraq Toros"
+                      className="w-full px-4 py-3 border border-muted/20 rounded-xl bg-white text-brown text-sm outline-none focus:border-orange focus:ring-2 focus:ring-orange/10 transition-all placeholder:text-muted/40" />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-muted mb-1.5">Card number</label>
+                    <input value={cardNum} onChange={e => setCardNum(fmtCard(e.target.value))} placeholder="0000 0000 0000 0000"
+                      inputMode="numeric" maxLength={19}
+                      className="w-full px-4 py-3 border border-muted/20 rounded-xl bg-white text-brown text-sm font-mono-kt outline-none focus:border-orange focus:ring-2 focus:ring-orange/10 transition-all placeholder:text-muted/40" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs text-muted mb-1.5">Expiry</label>
+                      <input value={cardExpiry} onChange={e => setCardExpiry(fmtExpiry(e.target.value))} placeholder="MM / YY"
+                        inputMode="numeric" maxLength={7}
+                        className="w-full px-4 py-3 border border-muted/20 rounded-xl bg-white text-brown text-sm font-mono-kt outline-none focus:border-orange focus:ring-2 focus:ring-orange/10 transition-all placeholder:text-muted/40" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-muted mb-1.5">CVV</label>
+                      <input value={cardCvv} onChange={e => setCardCvv(e.target.value)} placeholder="•••" type="password"
+                        inputMode="numeric" maxLength={4}
+                        className="w-full px-4 py-3 border border-muted/20 rounded-xl bg-white text-brown text-sm outline-none focus:border-orange focus:ring-2 focus:ring-orange/10 transition-all placeholder:text-muted/40" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-muted mb-1.5">Email (for receipt)</label>
+                    <input value={cardEmail} onChange={e => setCardEmail(e.target.value)} type="email" placeholder="you@example.com"
+                      className="w-full px-4 py-3 border border-muted/20 rounded-xl bg-white text-brown text-sm outline-none focus:border-orange focus:ring-2 focus:ring-orange/10 transition-all placeholder:text-muted/40" />
+                  </div>
+                </div>
+              )}
+
+              {/* EFT form */}
+              {payMethod === 'eft' && (
+                <div className="space-y-4">
+                  <div className="bg-orange-pale border border-orange/15 rounded-2xl p-4">
+                    <div className="text-sm font-medium text-brown mb-2">🏦 QNB Bank Transfer Details</div>
+                    <div className="text-xs text-muted space-y-1">
+                      <div><span className="font-mono-kt text-brown">Bank:</span> QNB Finansbank A.Ş.</div>
+                      <div><span className="font-mono-kt text-brown">IBAN:</span> TR00 0011 1000 0000 0000 0000 00</div>
+                      <div><span className="font-mono-kt text-brown">Name:</span> KreaTown Teknoloji A.Ş.</div>
+                      <div className="text-orange mt-2">⚡ Add your email as description for automatic matching.</div>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-muted mb-1.5">Your full name</label>
+                    <input value={cardName} onChange={e => setCardName(e.target.value)} placeholder="Ad Soyad"
+                      className="w-full px-4 py-3 border border-muted/20 rounded-xl bg-white text-brown text-sm outline-none focus:border-orange focus:ring-2 focus:ring-orange/10 transition-all placeholder:text-muted/40" />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-muted mb-1.5">Your email</label>
+                    <input value={cardEmail} onChange={e => setCardEmail(e.target.value)} type="email" placeholder="siz@ornek.com"
+                      className="w-full px-4 py-3 border border-muted/20 rounded-xl bg-white text-brown text-sm outline-none focus:border-orange focus:ring-2 focus:ring-orange/10 transition-all placeholder:text-muted/40" />
+                  </div>
+                  <div className="bg-cream-dark rounded-xl p-4 text-xs text-muted">
+                    Access activates within <strong className="text-brown">2 business hours</strong> of your transfer.
+                  </div>
+                </div>
+              )}
+
+              {/* Agree */}
+              <div className="flex items-start gap-3 mt-5" onClick={() => setAgreed(!agreed)}>
+                <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 cursor-pointer transition-all mt-0.5 ${agreed ? 'bg-orange border-orange' : 'border-muted/30 bg-white'}`}>
+                  {agreed && <span className="text-white text-xs font-bold">✓</span>}
+                </div>
+                <p className="text-xs text-muted leading-relaxed cursor-pointer">
+                  I agree to the <Link href="/terms" className="text-orange">Terms of Service</Link> and <Link href="/privacy" className="text-orange">Privacy Policy</Link>. I understand my subscription renews automatically each month.
+                </p>
+              </div>
+
+              {/* Secure badges */}
+              <div className="flex gap-4 mt-4 mb-5">
+                {['🔒 256-bit SSL','🏦 QNB secured','✓ PCI compliant'].map(b => (
+                  <div key={b} className="text-xs text-muted flex items-center gap-1">{b}</div>
+                ))}
+              </div>
+
+              {error && <div className="bg-red-50 border border-red-100 text-red-600 text-sm px-4 py-3 rounded-xl mb-4">{error}</div>}
+
+              <button onClick={processPayment} disabled={loading || !agreed}
+                className={`w-full text-white font-medium py-4 rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${
+                  tier === 'palace'
+                    ? 'bg-palace shadow-palace hover:opacity-90'
+                    : 'bg-orange shadow-orange hover:bg-orange-light hover:-translate-y-0.5'
+                }`}>
+                {loading
+                  ? <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Processing...</>
+                  : `Pay ${amountStr} / month`
+                }
+              </button>
+              <button onClick={() => setStep(1)} className="w-full mt-3 text-sm text-muted py-2 hover:text-brown transition-colors">← Change tier</button>
+            </div>
+          )}
+
+          {/* STEP 3: SUCCESS */}
+          {step === 3 && (
+            <div className="text-center py-8 animate-fade-up">
+              <div className="w-20 h-20 rounded-full bg-emerald/10 border-2 border-emerald/25 flex items-center justify-center text-4xl mx-auto mb-5 animate-pop-in">🏡</div>
+              <h2 className="font-display font-bold text-3xl text-brown">Welcome to the town!</h2>
+              <p className="text-muted text-sm font-light mt-2 mb-6">You're now a member of {params.username}'s world.</p>
+
+              <div className="bg-white border border-muted/12 rounded-2xl p-5 text-left mb-6 space-y-3">
+                {[
+                  ['Member',        cardName || 'Member'],
+                  ['Tier',          tc ? `${tc.emoji} ${tc.name}` : '—'],
+                  ['Amount',        amountStr + ' / mo'],
+                  ['Payment',       payMethod === 'card' ? 'Credit card' : 'Havale/EFT'],
+                  ['Transaction ID', txId],
+                  ['Next billing',  new Date(Date.now() + 30*24*3600*1000).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })],
+                ].map(([label, value]) => (
+                  <div key={label} className="flex justify-between text-sm border-b border-muted/8 pb-2 last:border-0 last:pb-0">
+                    <span className="text-muted">{label}</span>
+                    <span className="font-mono-kt text-xs text-brown">{value}</span>
+                  </div>
+                ))}
+              </div>
+
+              <Link href={`/u/${params.username}`}
+                className="inline-flex items-center gap-2 bg-orange text-white font-medium px-8 py-3.5 rounded-2xl shadow-orange hover:bg-orange-light hover:-translate-y-0.5 transition-all">
+                Enter the town 🏡
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* RIGHT: ORDER SUMMARY */}
+        <div className="md:sticky md:top-20">
+          <div className="bg-white border border-muted/12 rounded-3xl p-5">
+            {/* Creator */}
+            <div className="flex items-center gap-3 pb-4 border-b border-muted/10 mb-4">
+              <div className="w-11 h-11 rounded-full bg-gradient-to-br from-palace to-orange flex items-center justify-center text-xl border-2 border-palace/20">🎨</div>
+              <div>
+                <div className="font-display font-bold text-base text-brown capitalize">{params.username}</div>
+                <div className="text-xs text-muted">@{params.username}</div>
+                <div className="text-[10px] bg-palace-pale text-palace border border-palace/20 px-1.5 py-0.5 rounded-full inline-flex items-center gap-0.5 mt-0.5">🏯 Palace Creator</div>
+              </div>
+            </div>
+
+            <div className="text-[10px] font-mono-kt text-muted uppercase tracking-widest mb-3">Your order</div>
+
+            {tier ? (
+              <>
+                <div className="bg-cream-dark rounded-xl p-3.5 mb-4">
+                  <div className="text-sm font-medium text-brown mb-2">{tc?.emoji} {tc?.name}</div>
+                  <div className="space-y-1">
+                    {TIER_FEATURES[tier].map(f => (
+                      <div key={f} className="text-xs text-muted flex items-center gap-1.5">
+                        <span className="text-emerald text-[10px]">✓</span>{f}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="text-center bg-orange-pale rounded-xl p-3 mb-4 border border-orange/12">
+                  <div className="font-display font-bold text-2xl text-orange">{amountStr}</div>
+                  <div className="text-xs text-muted mt-0.5">{tier === 'free' ? 'forever' : 'per month'}</div>
+                  {currency !== 'TRY' && tier !== 'free' && (
+                    <div className="text-[10px] text-muted font-mono-kt mt-1">≈ ₺{PRICES[tier as keyof typeof PRICES]?.TRY.toLocaleString('tr-TR')} TRY</div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="bg-cream-dark rounded-xl p-4 text-center text-sm text-muted mb-4">Select a tier to see pricing</div>
+            )}
+
+            <div className="flex items-center gap-2 bg-cream-dark rounded-xl px-3 py-2.5">
+              <span>🏦</span>
+              <span className="text-xs text-muted">Secured by <strong className="text-brown">QNB Finansbank</strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile CTA bar */}
+      {step < 3 && (
+        <div className="md:hidden mobile-bottom-bar flex items-center gap-3 px-4 py-3">
+          {step === 1 ? (
+            <button onClick={() => tier && setStep(2)} disabled={!tier}
+              className="flex-1 bg-orange text-white font-medium py-3 rounded-2xl shadow-orange text-sm disabled:opacity-40">
+              Continue → {tier && amountStr}
+            </button>
+          ) : (
+            <button onClick={processPayment} disabled={loading || !agreed}
+              className="flex-1 bg-orange text-white font-medium py-3 rounded-2xl shadow-orange text-sm disabled:opacity-40">
+              {loading ? 'Processing...' : `Pay ${amountStr}`}
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
