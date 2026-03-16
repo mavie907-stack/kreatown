@@ -46,7 +46,7 @@ export default function LandingPage() {
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root { --orange:#f4732a; --orange-light:#ff9555; --orange-pale:#fff0e6; --cream:#fffbf5; --cream-dark:#f5efe3; --brown:#1a1612; --muted:#9c8878; --gold:#d4a843; --gold-light:#f5d58a; }
         html { scroll-behavior: smooth; }
-        body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--brown); overflow-x:hidden; }
+        body { font-family:"DM Sans",sans-serif; background:var(--cream); color:var(--brown); overflow-x:hidden; }
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
         @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
         .fade-up{animation:fadeUp 0.7s ease forwards}.fade-up-2{animation:fadeUp 0.7s 0.15s ease forwards;opacity:0}.fade-up-3{animation:fadeUp 0.7s 0.3s ease forwards;opacity:0}.fade-up-4{animation:fadeUp 0.7s 0.45s ease forwards;opacity:0}
