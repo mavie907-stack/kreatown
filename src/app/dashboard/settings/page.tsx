@@ -72,7 +72,7 @@ export default function SettingsPage() {
             </div>
             <div>
               <div style={{ fontWeight: 900, fontSize: '1rem', color: '#1a1612' }}>{user?.user_metadata?.display_name || 'Topraq Basyurt'}</div>
-              <div style={{ fontSize: '0.8rem', color: '#9c8878', fontWeight: 600 }}>@{user?.username || 'topraq'}</div>
+              <div style={{ fontSize: '0.8rem', color: '#9c8878', fontWeight: 600 }}>@{user?.user_metadata?.username || 'topraq'}</div>
             </div>
             <button style={{
               marginLeft: 'auto', padding: '0.4rem 1rem', borderRadius: '100px',
@@ -91,7 +91,7 @@ export default function SettingsPage() {
             </div>
             <div>
               <span style={label}>Username</span>
-              <input style={input} defaultValue={user?.username || 'topraq'} />
+              <input style={input} defaultValue={user?.user_metadata?.username || 'topraq'} />
             </div>
           </div>
 
