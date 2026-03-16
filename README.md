@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 🏡 Kreatown — Where Creators Belong
 
 > Your town. Your fans. Your money.
@@ -139,5 +138,4 @@ kreatown/
 
 **Target:** 100 creators × $29 = **$2,900 MRR** by Month 4
 =======
-# kreatown
->>>>>>> 8960c2df6ed00023dc280a0de54ff54cf5319334
+
