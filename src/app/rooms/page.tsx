@@ -15,7 +15,7 @@ const ROOMS = [
     atmColor: '#f5d58a',
     online: 12,
     desc: 'Where every story begins — open to all guests',
-    gradient: 'linear-gradient(160deg, #1a1208 0%, #2d1f0a 40%, #0f0c08 100%)',
+    gradient: "url('/rooms/lobby.jpg') center/cover",
     particles: ['#f5d58a','#c9952a','#f4732a'],
     messages: [
       { avatar:'🌸', name:'Selin K',  badge:'free',   time:'2m',  text:'This lobby is gorgeous, love the vibe here!' },
@@ -34,7 +34,7 @@ const ROOMS = [
     atmColor: '#c9952a',
     online: 7,
     desc: 'Intimate conversations over fine cuisine',
-    gradient: 'linear-gradient(160deg, #1a0f05 0%, #2a1a08 40%, #120a02 100%)',
+    gradient: "url('/rooms/restaurant.jpg') center/cover",
     particles: ['#c9952a','#8b4d00','#f5d58a'],
     messages: [
       { avatar:'🌿', name:'Elif Y',  badge:'silver', time:'3m',  text:'The content dropped last week was fire 🔥' },
@@ -52,7 +52,7 @@ const ROOMS = [
     atmColor: '#e8d5b0',
     online: 4,
     desc: 'Exclusive access for Gold members',
-    gradient: 'linear-gradient(160deg, #141210 0%, #1e1a16 40%, #0c0a08 100%)',
+    gradient: "url('/rooms/superior.jpg') center/cover",
     particles: ['#e8d5b0','#c9952a','#ffffff'],
     messages: [
       { avatar:'🔥', name:'Berk D',  badge:'gold',   time:'1m', text:'The Q&A doc shared today — absolute gold 📋' },
@@ -70,7 +70,7 @@ const ROOMS = [
     atmColor: '#c9952a',
     online: 3,
     desc: 'Quiet conversations in a luxury setting',
-    gradient: 'linear-gradient(160deg, #0f0f0a 0%, #1a1a10 40%, #080808 100%)',
+    gradient: "url('/rooms/resting.jpg') center/cover",
     particles: ['#c9952a','#f5d58a','#e8c87a'],
     messages: [
       { avatar:'💎', name:'Lara S',  badge:'gold', time:'5m', text:'Love having a quieter corner to chat in 🌙' },
@@ -87,7 +87,7 @@ const ROOMS = [
     atmColor: '#4ecdc4',
     online: 2,
     desc: 'Palace members only — the most exclusive space',
-    gradient: 'linear-gradient(160deg, #050e14 0%, #0a1a24 40%, #020810 100%)',
+    gradient: "url('/rooms/pool.jpg') center/cover",
     particles: ['#4ecdc4','#7c5cbf','#a8edea'],
     messages: [
       { avatar:'🏯', name:'Kaan Ö',  badge:'palace', time:'2m', text:'Just dropped the strategy session recording 🎯' },
