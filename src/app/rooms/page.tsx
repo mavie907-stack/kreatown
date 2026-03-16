@@ -15,7 +15,7 @@ const ROOMS = [
     atmColor: '#f5d58a',
     online: 12,
     desc: 'Where every story begins — open to all guests',
-    gradient: "url('/rooms/lobby.jpg') center/cover",
+    gradient: "url('/rooms/lobby.jpg') center/cover no-repeat, linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55))",
     particles: ['#f5d58a','#c9952a','#f4732a'],
     messages: [
       { avatar:'🌸', name:'Selin K',  badge:'free',   time:'2m',  text:'This lobby is gorgeous, love the vibe here!' },
@@ -34,7 +34,7 @@ const ROOMS = [
     atmColor: '#c9952a',
     online: 7,
     desc: 'Intimate conversations over fine cuisine',
-    gradient: "url('/rooms/restaurant.jpg') center/cover",
+    gradient: "url('/rooms/restaurant.jpg') center/cover no-repeat, linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55))",
     particles: ['#c9952a','#8b4d00','#f5d58a'],
     messages: [
       { avatar:'🌿', name:'Elif Y',  badge:'silver', time:'3m',  text:'The content dropped last week was fire 🔥' },
@@ -52,7 +52,7 @@ const ROOMS = [
     atmColor: '#e8d5b0',
     online: 4,
     desc: 'Exclusive access for Gold members',
-    gradient: "url('/rooms/superior.jpg') center/cover",
+    gradient: "url('/rooms/superior.jpg') center/cover no-repeat, linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55))",
     particles: ['#e8d5b0','#c9952a','#ffffff'],
     messages: [
       { avatar:'🔥', name:'Berk D',  badge:'gold',   time:'1m', text:'The Q&A doc shared today — absolute gold 📋' },
@@ -70,7 +70,7 @@ const ROOMS = [
     atmColor: '#c9952a',
     online: 3,
     desc: 'Quiet conversations in a luxury setting',
-    gradient: "url('/rooms/resting.jpg') center/cover",
+    gradient: "url('/rooms/resting.jpg') center/cover no-repeat, linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55))",
     particles: ['#c9952a','#f5d58a','#e8c87a'],
     messages: [
       { avatar:'💎', name:'Lara S',  badge:'gold', time:'5m', text:'Love having a quieter corner to chat in 🌙' },
@@ -87,7 +87,7 @@ const ROOMS = [
     atmColor: '#4ecdc4',
     online: 2,
     desc: 'Palace members only — the most exclusive space',
-    gradient: "url('/rooms/pool.jpg') center/cover",
+    gradient: "url('/rooms/pool.jpg') center/cover no-repeat, linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55))",
     particles: ['#4ecdc4','#7c5cbf','#a8edea'],
     messages: [
       { avatar:'🏯', name:'Kaan Ö',  badge:'palace', time:'2m', text:'Just dropped the strategy session recording 🎯' },
