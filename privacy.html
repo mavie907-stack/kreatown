@@ -4,9 +4,106 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Privacy Policy — KreaTown</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --orange: #f4732a; --orange-light: #ff9555; --orange-pale: #fff0e6; --cream: #fffbf5; --brown: #1a1612; --muted: #9c8878; --border: #ede8e3; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Nunito', sans-serif; background: var(--cream); color: var(--brown); line-height: 1.8; }
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 2rem; border-bottom: 1px solid var(--border); background: var(--cream); position: sticky; top: 0; z-index: 100; }
+    .nav-logo { font-family: 'Cabinet Grotesk', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--brown); text-decoration: none; }
+    .nav-logo span { color: var(--orange); }
+    .nav-back { font-size: 0.9rem; font-weight: 600; color: var(--muted); text-decoration: none; }
+    .nav-back:hover { color: var(--orange); }
+    .hero { background: var(--orange-pale); border-bottom: 1px solid var(--border); padding: 4rem 2rem 3rem; text-align: center; }
+    .hero-badge { display: inline-block; background: var(--orange); color: white; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.3rem 0.9rem; border-radius: 999px; margin-bottom: 1.2rem; }
+    .hero h1 { font-family: 'Cabinet Grotesk', sans-serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; margin-bottom: 0.8rem; }
+    .hero p { color: var(--muted); font-size: 1rem; font-weight: 500; }
+    .container { max-width: 760px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+    .section { margin-bottom: 2.5rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--border); }
+    .section:last-child { border-bottom: none; }
+    .section h2 { font-family: 'Cabinet Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+    .section h2 .icon { width: 28px; height: 28px; background: var(--orange-pale); border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.9rem; }
+    .section p { color: #3d3530; margin-bottom: 0.8rem; font-size: 0.97rem; }
+    .section ul { list-style: none; padding: 0; margin: 0.5rem 0; }
+    .section ul li { padding: 0.3rem 0 0.3rem 1.4rem; position: relative; color: #3d3530; font-size: 0.97rem; }
+    .section ul li::before { content: '→'; position: absolute; left: 0; color: var(--orange); font-weight: 700; }
+    footer { text-align: center; padding: 2rem; border-top: 1px solid var(--border); font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+    footer a { color: var(--orange); text-decoration: none; }
+  </style>
 </head>
 <body>
-  <h1>Privacy Policy</h1>
-  <p>Coming soon.</p>
+  <nav>
+    <a href="kreatown.html" class="nav-logo">KreaTown<span>.</span></a>
+    <a href="kreatown.html" class="nav-back">← Back to home</a>
+  </nav>
+  <div class="hero">
+    <div class="hero-badge">Legal</div>
+    <h1>Privacy Policy</h1>
+    <p>Last updated: March 2026 · Effective immediately</p>
+  </div>
+  <div class="container">
+    <div class="section">
+      <h2><span class="icon">👋</span> Introduction</h2>
+      <p>Welcome to KreaTown. We're committed to protecting your personal information and being transparent about how we use it. This policy explains what data we collect, why we collect it, and how you can control it.</p>
+      <p>By using KreaTown, you agree to the collection and use of information in accordance with this policy.</p>
+    </div>
+    <div class="section">
+      <h2><span class="icon">📦</span> Information We Collect</h2>
+      <p>We collect information you provide directly to us, including:</p>
+      <ul>
+        <li>Name, email address, and password when you register</li>
+        <li>Profile information such as username, bio, and profile photo</li>
+        <li>Payment information processed securely through Stripe</li>
+        <li>Content you post, upload, or share on the platform</li>
+        <li>Messages sent between creators and fans</li>
+        <li>Communications with our support team</li>
+      </ul>
+      <p>We also collect information automatically, such as device info, IP address, browser type, and usage data.</p>
+    </div>
+    <div class="section">
+      <h2><span class="icon">🎯</span> How We Use Your Information</h2>
+      <ul>
+        <li>Provide, operate, and improve the KreaTown platform</li>
+        <li>Process payments and send payout notifications</li>
+        <li>Send you updates, newsletters, and platform announcements</li>
+        <li>Respond to your questions and support requests</li>
+        <li>Monitor and analyze usage trends to improve your experience</li>
+        <li>Detect and prevent fraud or abuse</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h2><span class="icon">🤝</span> Sharing Your Information</h2>
+      <p>We do not sell your personal information. We may share your data with:</p>
+      <ul>
+        <li><strong>Stripe</strong> — for secure payment processing and creator payouts</li>
+        <li><strong>Supabase</strong> — our database and authentication provider</li>
+        <li><strong>Cloudinary</strong> — for media storage and delivery</li>
+        <li><strong>Pusher</strong> — for real-time messaging features</li>
+        <li><strong>Resend</strong> — for transactional email delivery</li>
+        <li>Law enforcement when required by applicable law</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h2><span class="icon">🔒</span> Data Security</h2>
+      <p>We take reasonable measures to protect your personal information. All data is encrypted in transit using SSL/TLS. Passwords are hashed and never stored in plain text.</p>
+    </div>
+    <div class="section">
+      <h2><span class="icon">⚙️</span> Your Rights & Choices</h2>
+      <ul>
+        <li>Access and download your personal data at any time</li>
+        <li>Correct inaccurate information in your profile</li>
+        <li>Delete your account and associated data</li>
+        <li>Opt out of marketing emails at any time</li>
+      </ul>
+      <p>To exercise any of these rights, contact us at <a href="mailto:privacy@kreatown.com" style="color:var(--orange);font-weight:700;">privacy@kreatown.com</a>.</p>
+    </div>
+    <div class="section">
+      <h2><span class="icon">✉️</span> Contact Us</h2>
+      <p>Questions? Reach out at <a href="mailto:privacy@kreatown.com" style="color:var(--orange);font-weight:700;">privacy@kreatown.com</a>.</p>
+    </div>
+  </div>
+  <footer>
+    <p>© 2026 KreaTown. Where creators belong. · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="mailto:hello@kreatown.com">Contact</a></p>
+  </footer>
 </body>
 </html>
