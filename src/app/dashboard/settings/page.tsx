@@ -68,10 +68,10 @@ export default function SettingsPage() {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '1.4rem', fontWeight: 900, color: '#fff', flexShrink: 0
             }}>
-              {user?.display_name?.[0]?.toUpperCase() || 'T'}
+              {user?.user_metadata?.display_name?.[0]?.toUpperCase() || 'T'}
             </div>
             <div>
-              <div style={{ fontWeight: 900, fontSize: '1rem', color: '#1a1612' }}>{user?.display_name || 'Topraq Basyurt'}</div>
+              <div style={{ fontWeight: 900, fontSize: '1rem', color: '#1a1612' }}>{user?.user_metadata?.display_name || 'Topraq Basyurt'}</div>
               <div style={{ fontSize: '0.8rem', color: '#9c8878', fontWeight: 600 }}>@{user?.username || 'topraq'}</div>
             </div>
             <button style={{
@@ -87,7 +87,7 @@ export default function SettingsPage() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
             <div>
               <span style={label}>Display Name</span>
-              <input style={input} defaultValue={user?.display_name || 'Topraq Basyurt'} />
+              <input style={input} defaultValue={user?.user_metadata?.display_name || 'Topraq Basyurt'} />
             </div>
             <div>
               <span style={label}>Username</span>
