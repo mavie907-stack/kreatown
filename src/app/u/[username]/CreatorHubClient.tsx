@@ -1,350 +1,159 @@
 'use client'
 
-// src/app/u/[username]/CreatorHubClient.tsx
 import { useState } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import type { CreatorProfile, Tier, Post } from '@/types/creator'
-import PostCard from '@/components/creator/PostCard'
-import TierCard from '@/components/creator/TierCard'
-import SubscribeModal from '@/components/creator/SubscribeModal'
 
 interface Props {
-  creator: CreatorProfile
-  tiers: Tier[]
-  posts: Post[]
+  creator: any
+  tiers: any[]
+  posts: any[]
   memberCount: number
   subscribedTierId: string | null
   currentUserId: string | null
 }
 
-type Tab = 'posts' | 'about' | 'tiers'
+type Tab = 'posts' | 'tiers' | 'about'
 
-export default function CreatorHubClient({
-  creator,
-  tiers,
-  posts,
-  memberCount,
-  subscribedTierId,
-  currentUserId,
-}: Props) {
+export default function CreatorHubClient({ creator, tiers, posts, memberCount, subscribedTierId, currentUserId }: Props) {
   const router = useRouter()
-  const supabase = createClientComponentClient as any // temp fix()
   const [activeTab, setActiveTab] = useState<Tab>('posts')
-  const [selectedTier, setSelectedTier] = useState<Tier | null>(null)
   const [isSubscribeOpen, setIsSubscribeOpen] = useState(false)
-  const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set())
+  const [selectedTier, setSelectedTier] = useState(tiers[0] ?? null)
 
   const isOwner = currentUserId === creator.id
   const isSubscribed = subscribedTierId !== null
+  const lowestPrice = tiers.length > 0 ? Math.min(...tiers.map((t: any) => t.price_monthly)) : null
 
-  const freePosts = posts.filter(p => p.tier_required === 'free')
-  const lockedPosts = posts.filter(p => p.tier_required !== 'free')
-
-  const handleSubscribe = (tier: Tier) => {
-    if (!currentUserId) {
-      router.push('/auth/login?redirect=/u/' + creator.username)
-      return
-    }
-    setSelectedTier(tier)
-    setIsSubscribeOpen(true)
+  const handleSubscribe = (tier: any) => {
+    if (!currentUserId) { router.push('/auth/login?redirect=/u/' + creator.username); return }
+    router.push(`/checkout?tier=${tier.id}&creator=${creator.username}`)
   }
-
-  const handleLike = async (postId: string) => {
-    if (!currentUserId) {
-      router.push('/auth/login')
-      return
-    }
-    if (likedPosts.has(postId)) return
-    setLikedPosts(prev => new Set([...prev, postId]))
-    await supabase.from('post_likes').insert({ post_id: postId, user_id: currentUserId })
-  }
-
-  const lowestTierPrice = tiers.length > 0
-    ? Math.min(...tiers.map(t => t.price_monthly))
-    : null
 
   return (
-    <div className="min-h-screen" style={{ background: '#0e0c0a', color: '#f0ece4' }}>
+    <div style={{ minHeight: '100vh', background: '#0e0c0a', color: '#f0ece4', fontFamily: "'DM Sans', sans-serif" }}>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap');`}</style>
 
-      {/* ── Cover image ── */}
-      <div className="relative w-full h-56 md:h-72 overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #1a1410 0%, #2a1f0e 50%, #1a1214 100%)' }}>
-        {creator.cover_url && (
-          <Image
-            src={creator.cover_url}
-            alt="Cover"
-            fill
-            className="object-cover opacity-60"
-            priority
-          />
-        )}
-        {/* Gradient overlay */}
-        <div className="absolute inset-0"
-          style={{ background: 'linear-gradient(to bottom, transparent 40%, #0e0c0a 100%)' }} />
-
+      {/* Cover */}
+      <div style={{ height: 220, background: 'linear-gradient(135deg, #1a1410, #2a1f0e, #1a1214)', position: 'relative' }}>
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 40%, #0e0c0a 100%)' }} />
         {isOwner && (
-          <Link
-            href="/dashboard/settings"
-            className="absolute top-4 right-4 text-xs px-3 py-1.5 rounded-full border"
-            style={{ borderColor: 'rgba(244,115,42,0.4)', color: '#f4732a', background: 'rgba(14,12,10,0.7)' }}
-          >
+          <Link href="/dashboard/settings" style={{ position: 'absolute', top: 16, right: 16, fontSize: '0.75rem', padding: '0.4rem 1rem', borderRadius: 100, border: '1px solid rgba(244,115,42,0.4)', color: '#f4732a', background: 'rgba(14,12,10,0.7)', textDecoration: 'none' }}>
             Edit profile
           </Link>
         )}
       </div>
 
-      {/* ── Profile header ── */}
-      <div className="max-w-4xl mx-auto px-4 md:px-6">
-        <div className="flex flex-col md:flex-row md:items-end gap-4 -mt-12 mb-6">
-          {/* Avatar */}
-          <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-2xl overflow-hidden border-4 flex-shrink-0"
-            style={{ borderColor: '#0e0c0a', background: '#2a2420' }}>
-            {creator.avatar_url ? (
-              <Image src={creator.avatar_url} alt={creator.display_name} fill className="object-cover" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-3xl font-semibold"
-                style={{ background: 'linear-gradient(135deg, #f4732a, #7c5cbf)', color: '#fff' }}>
-                {creator.display_name[0].toUpperCase()}
+      <div style={{ maxWidth: 900, margin: '0 auto', padding: '0 1.5rem' }}>
+
+        {/* Profile header */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: -48, marginBottom: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 16, flexWrap: 'wrap' }}>
+            <div style={{ width: 96, height: 96, borderRadius: 16, background: 'linear-gradient(135deg, #f4732a, #7c5cbf)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', border: '4px solid #0e0c0a', flexShrink: 0 }}>
+              {creator.avatar_url ? <img src={creator.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 12 }} /> : (creator.display_name?.[0] ?? '🎨')}
+            </div>
+            <div style={{ flex: 1, paddingBottom: 4 }}>
+              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 700, margin: 0 }}>{creator.display_name ?? creator.username}</h1>
+              <p style={{ color: '#9c8878', fontSize: '0.85rem', margin: '4px 0 8px' }}>@{creator.username}</p>
+              <div style={{ display: 'flex', gap: 16, fontSize: '0.82rem' }}>
+                <span style={{ color: '#f5d58a' }}><strong>{memberCount}</strong> <span style={{ color: '#9c8878' }}>members</span></span>
+                <span style={{ color: '#9c8878' }}>{posts.length} posts</span>
+                {lowestPrice !== null && lowestPrice > 0 && <span style={{ color: '#9c8878' }}>from <span style={{ color: '#f4732a' }}>${lowestPrice}/mo</span></span>}
               </div>
+            </div>
+            {!isOwner && (
+              <button onClick={() => tiers[0] && handleSubscribe(tiers[0])}
+                style={{ padding: '0.6rem 1.5rem', borderRadius: 100, background: isSubscribed ? 'transparent' : '#f4732a', color: isSubscribed ? '#f5d58a' : 'white', border: isSubscribed ? '1px solid rgba(245,213,138,0.3)' : 'none', fontWeight: 500, cursor: 'pointer', fontSize: '0.9rem' }}>
+                {isSubscribed ? '✓ Subscribed' : lowestPrice !== null && lowestPrice > 0 ? `Join from $${lowestPrice}/mo` : 'Follow'}
+              </button>
             )}
           </div>
-
-          {/* Name + stats */}
-          <div className="flex-1 pb-1">
-            <h1 className="text-2xl md:text-3xl font-semibold" style={{ fontFamily: 'Playfair Display, serif' }}>
-              {creator.display_name}
-            </h1>
-            <p className="text-sm mt-0.5" style={{ color: '#9c8878' }}>@{creator.username}</p>
-            <div className="flex items-center gap-4 mt-2">
-              <span className="text-sm" style={{ color: '#f5d58a' }}>
-                <span className="font-semibold">{memberCount.toLocaleString()}</span>
-                <span className="ml-1" style={{ color: '#9c8878' }}>members</span>
-              </span>
-              <span className="text-sm" style={{ color: '#9c8878' }}>
-                {posts.length} posts
-              </span>
-              {lowestTierPrice !== null && (
-                <span className="text-sm" style={{ color: '#9c8878' }}>
-                  from <span style={{ color: '#f4732a' }}>${lowestTierPrice}/mo</span>
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* CTA */}
-          {!isOwner && (
-            <div className="flex gap-2 pb-1">
-              {isSubscribed ? (
-                <span className="px-4 py-2 rounded-xl text-sm font-medium"
-                  style={{ background: 'rgba(245,213,138,0.1)', color: '#f5d58a', border: '1px solid rgba(245,213,138,0.3)' }}>
-                  ✓ Subscribed
-                </span>
-              ) : (
-                <button
-                  onClick={() => tiers[0] && handleSubscribe(tiers[0])}
-                  className="px-5 py-2 rounded-xl text-sm font-semibold transition-opacity hover:opacity-90"
-                  style={{ background: '#f4732a', color: '#fff' }}
-                >
-                  {lowestTierPrice !== null ? `Join from $${lowestTierPrice}/mo` : 'Subscribe'}
-                </button>
-              )}
-            </div>
-          )}
+          {creator.bio && <p style={{ color: '#c4b5a5', fontSize: '0.9rem', lineHeight: 1.7, maxWidth: 560, margin: 0 }}>{creator.bio}</p>}
         </div>
 
-        {/* Bio */}
-        {creator.bio && (
-          <p className="text-sm leading-relaxed mb-6 max-w-xl" style={{ color: '#c4b5a5' }}>
-            {creator.bio}
-          </p>
-        )}
-
-        {/* ── Tabs ── */}
-        <div className="flex gap-1 mb-6 border-b" style={{ borderColor: 'rgba(255,255,255,0.07)' }}>
+        {/* Tabs */}
+        <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid rgba(255,255,255,0.07)', marginBottom: 24 }}>
           {(['posts', 'tiers', 'about'] as Tab[]).map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className="px-4 py-2.5 text-sm capitalize transition-colors relative"
-              style={{
-                color: activeTab === tab ? '#f4732a' : '#9c8878',
-                fontWeight: activeTab === tab ? 600 : 400,
-              }}
-            >
+            <button key={tab} onClick={() => setActiveTab(tab)}
+              style={{ padding: '0.6rem 1rem', fontSize: '0.85rem', background: 'transparent', border: 'none', cursor: 'pointer', color: activeTab === tab ? '#f4732a' : '#9c8878', fontWeight: activeTab === tab ? 600 : 400, borderBottom: activeTab === tab ? '2px solid #f4732a' : '2px solid transparent', textTransform: 'capitalize' }}>
               {tab}
-              {activeTab === tab && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
-                  style={{ background: '#f4732a' }} />
-              )}
             </button>
           ))}
         </div>
 
-        {/* ── Posts tab ── */}
+        {/* Posts tab */}
         {activeTab === 'posts' && (
-          <div className="pb-16">
+          <div style={{ paddingBottom: 64 }}>
             {posts.length === 0 ? (
-              <div className="text-center py-16" style={{ color: '#9c8878' }}>
-                <p className="text-lg mb-2">No posts yet</p>
-                {isOwner && (
-                  <Link href="/dashboard/content"
-                    className="text-sm underline" style={{ color: '#f4732a' }}>
-                    Create your first post →
-                  </Link>
-                )}
+              <div style={{ textAlign: 'center', padding: '4rem 0', color: '#9c8878' }}>
+                <p>No posts yet</p>
+                {isOwner && <Link href="/dashboard/content" style={{ color: '#f4732a', fontSize: '0.85rem' }}>Create your first post →</Link>}
               </div>
             ) : (
-              <>
-                {/* Free posts */}
-                {freePosts.length > 0 && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    {freePosts.map(post => (
-                      <PostCard
-                        key={post.id}
-                        post={post}
-                        isLocked={false}
-                        onLike={() => handleLike(post.id)}
-                        isLiked={likedPosts.has(post.id)}
-                        creatorUsername={creator.username}
-                      />
-                    ))}
-                  </div>
-                )}
-
-                {/* Locked posts — show blurred previews */}
-                {lockedPosts.length > 0 && !isSubscribed && !isOwner && (
-                  <div className="relative">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 opacity-40 pointer-events-none select-none blur-[2px]">
-                      {lockedPosts.slice(0, 4).map(post => (
-                        <PostCard
-                          key={post.id}
-                          post={post}
-                          isLocked={true}
-                          onLike={() => {}}
-                          isLiked={false}
-                          creatorUsername={creator.username}
-                        />
-                      ))}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+                {posts.map((post: any) => (
+                  <div key={post.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 16, padding: 16 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                      <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: 100, background: 'rgba(244,115,42,0.1)', color: '#f4732a' }}>{post.tier_level ?? 'free'}</span>
+                      <span style={{ fontSize: '0.7rem', color: '#9c8878' }}>{new Date(post.created_at).toLocaleDateString()}</span>
                     </div>
-                    {/* Unlock gate */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl"
-                      style={{ background: 'rgba(14,12,10,0.6)' }}>
-                      <div className="text-center p-6 rounded-2xl border"
-                        style={{ background: 'rgba(20,16,12,0.9)', borderColor: 'rgba(244,115,42,0.25)' }}>
-                        <p className="text-lg font-semibold mb-1" style={{ fontFamily: 'Playfair Display, serif' }}>
-                          {lockedPosts.length} exclusive {lockedPosts.length === 1 ? 'post' : 'posts'} locked
-                        </p>
-                        <p className="text-sm mb-4" style={{ color: '#9c8878' }}>
-                          Subscribe to unlock all content from {creator.display_name}
-                        </p>
-                        <button
-                          onClick={() => tiers[0] && handleSubscribe(tiers[0])}
-                          className="px-5 py-2 rounded-xl text-sm font-semibold"
-                          style={{ background: '#f4732a', color: '#fff' }}
-                        >
-                          {lowestTierPrice !== null ? `Unlock from $${lowestTierPrice}/mo` : 'Subscribe'}
-                        </button>
-                      </div>
-                    </div>
+                    <div style={{ fontWeight: 600, fontSize: '0.95rem', marginBottom: 8 }}>{post.title}</div>
+                    {post.body && <p style={{ fontSize: '0.8rem', color: '#9c8878', lineHeight: 1.6, margin: 0 }}>{post.body.slice(0, 120)}{post.body.length > 120 ? '...' : ''}</p>}
                   </div>
-                )}
-
-                {/* Subscribed — show all posts unlocked */}
-                {lockedPosts.length > 0 && (isSubscribed || isOwner) && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {lockedPosts.map(post => (
-                      <PostCard
-                        key={post.id}
-                        post={post}
-                        isLocked={false}
-                        onLike={() => handleLike(post.id)}
-                        isLiked={likedPosts.has(post.id)}
-                        creatorUsername={creator.username}
-                      />
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        )}
-
-        {/* ── Tiers tab ── */}
-        {activeTab === 'tiers' && (
-          <div className="pb-16">
-            {tiers.length === 0 ? (
-              <div className="text-center py-16" style={{ color: '#9c8878' }}>
-                <p className="text-lg mb-2">No tiers set up yet</p>
-                {isOwner && (
-                  <Link href="/dashboard/settings"
-                    className="text-sm underline" style={{ color: '#f4732a' }}>
-                    Create membership tiers →
-                  </Link>
-                )}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {tiers.map((tier, i) => (
-                  <TierCard
-                    key={tier.id}
-                    tier={tier}
-                    isPopular={i === 1 && tiers.length === 3}
-                    isSubscribed={subscribedTierId === tier.id}
-                    onSubscribe={() => handleSubscribe(tier)}
-                    isOwner={isOwner}
-                  />
                 ))}
               </div>
             )}
           </div>
         )}
 
-        {/* ── About tab ── */}
+        {/* Tiers tab */}
+        {activeTab === 'tiers' && (
+          <div style={{ paddingBottom: 64 }}>
+            {tiers.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '4rem 0', color: '#9c8878' }}>
+                <p>No tiers set up yet</p>
+                {isOwner && <Link href="/dashboard/settings" style={{ color: '#f4732a', fontSize: '0.85rem' }}>Create membership tiers →</Link>}
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
+                {tiers.map((tier: any, i: number) => (
+                  <div key={tier.id} style={{ background: 'rgba(255,255,255,0.03)', border: `1px solid ${i === 1 ? 'rgba(124,92,191,0.4)' : 'rgba(255,255,255,0.07)'}`, borderRadius: 16, padding: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', fontWeight: 700 }}>{tier.name}</div>
+                    <div style={{ fontSize: '2rem', fontWeight: 700, color: '#f4732a' }}>${tier.price_monthly}<span style={{ fontSize: '0.8rem', color: '#9c8878', fontWeight: 400 }}>/mo</span></div>
+                    {tier.description && <p style={{ fontSize: '0.8rem', color: '#9c8878', margin: 0 }}>{tier.description}</p>}
+                    {!isOwner && (
+                      <button onClick={() => handleSubscribe(tier)}
+                        style={{ padding: '0.6rem', borderRadius: 10, background: subscribedTierId === tier.id ? 'transparent' : '#f4732a', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 500, marginTop: 'auto' }}>
+                        {subscribedTierId === tier.id ? '✓ Current plan' : `Join ${tier.name}`}
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* About tab */}
         {activeTab === 'about' && (
-          <div className="pb-16 max-w-xl">
-            <div className="rounded-2xl p-6 border"
-              style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.07)' }}>
-              <h2 className="text-lg font-semibold mb-3" style={{ fontFamily: 'Playfair Display, serif' }}>
-                About {creator.display_name}
-              </h2>
-              <p className="text-sm leading-relaxed mb-6" style={{ color: '#c4b5a5' }}>
-                {creator.bio ?? 'This creator hasn\'t added a bio yet.'}
-              </p>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="rounded-xl p-4" style={{ background: 'rgba(244,115,42,0.07)' }}>
-                  <p className="text-2xl font-semibold" style={{ color: '#f4732a' }}>
-                    {memberCount.toLocaleString()}
-                  </p>
-                  <p className="text-xs mt-0.5" style={{ color: '#9c8878' }}>Members</p>
+          <div style={{ paddingBottom: 64, maxWidth: 520 }}>
+            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 16, padding: 24 }}>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.2rem', marginBottom: 12 }}>About {creator.display_name}</h2>
+              <p style={{ color: '#c4b5a5', fontSize: '0.9rem', lineHeight: 1.7, marginBottom: 20 }}>{creator.bio ?? 'No bio yet.'}</p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div style={{ background: 'rgba(244,115,42,0.07)', borderRadius: 10, padding: 16 }}>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f4732a' }}>{memberCount}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#9c8878' }}>Members</div>
                 </div>
-                <div className="rounded-xl p-4" style={{ background: 'rgba(124,92,191,0.07)' }}>
-                  <p className="text-2xl font-semibold" style={{ color: '#7c5cbf' }}>
-                    {posts.length}
-                  </p>
-                  <p className="text-xs mt-0.5" style={{ color: '#9c8878' }}>Posts</p>
+                <div style={{ background: 'rgba(124,92,191,0.07)', borderRadius: 10, padding: 16 }}>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#7c5cbf' }}>{posts.length}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#9c8878' }}>Posts</div>
                 </div>
               </div>
-              <p className="text-xs mt-4" style={{ color: '#9c8878' }}>
-                Member since {new Date(creator.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-              </p>
             </div>
           </div>
         )}
       </div>
-
-      {/* ── Subscribe modal ── */}
-      {isSubscribeOpen && selectedTier && (
-        <SubscribeModal
-          creator={creator}
-          tier={selectedTier}
-          allTiers={tiers}
-          onClose={() => setIsSubscribeOpen(false)}
-          onTierChange={setSelectedTier}
-        />
-      )}
     </div>
   )
 }
