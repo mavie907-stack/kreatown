@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topraq's Town — KreaTown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cream: #fffbf5;
+  --brown: #1a1612;
+  --muted: #9c8878;
+  --orange: #f4732a;
+  --orange2: #ff9555;
+  --gold: #c9952a;
+  --gold2: #f5d58a;
+  --palace: #7c5cbf;
+  --palace2: #b8a0e8;
+  --silver: #8fa3b5;
+  --emerald: #2dab80;
+}
+html, body { height: 100%; overflow: hidden; background: #0a0806; }
+body { font-family: 'DM Sans', sans-serif; }
+
+/* NAV */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.85rem 1.75rem; height: 56px;
+  background: rgba(255,251,245,0.9); backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(244,115,42,0.12);
+}
+.nav-logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--brown); text-decoration: none; }
+.nav-logo span { color: var(--orange); }
+.nav-center { display: flex; align-items: center; gap: 0.5rem; background: rgba(245,239,227,0.8); border-radius: 100px; padding: 0.35rem 0.85rem; border: 1px solid rgba(156,136,120,0.2); font-size: 0.78rem; color: var(--muted); }
+.ndot { width: 7px; height: 7px; border-radius: 50%; background: var(--emerald); animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.35);opacity:0.7} }
+.nav-right { display: flex; gap: 0.55rem; align-items: center; }
+.btn { padding: 0.42rem 0.9rem; border-radius: 100px; font-size: 0.75rem; font-weight: 500; cursor: pointer; border: none; font-family: 'DM Sans',sans-serif; transition: all .18s; text-decoration: none; }
+.btn-o { background: white; color: var(--brown); border: 1px solid rgba(156,136,120,0.22); }
+.btn-o:hover { border-color: var(--orange); color: var(--orange); }
+.btn-f { background: var(--orange); color: white; box-shadow: 0 2px 10px rgba(244,115,42,.28); }
+.btn-f:hover { background: var(--orange2); transform: translateY(-1px); }
+
+/* TOWN */
+.town-wrap { position: fixed; inset: 0; top: 56px; overflow: hidden; cursor: grab; }
+.town-wrap:active { cursor: grabbing; }
+.town-canvas { position: absolute; width: 900px; height: 1200px; transform-origin: 0 0; user-select: none; }
+.town-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; display: block; }
+.town-vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, transparent 45%, rgba(10,8,6,0.3) 100%); pointer-events: none; z-index: 1; }
+
+/* ZONE LABELS */
+.zlabel {
+  position: absolute; z-index: 5;
+  display: flex; align-items: center; gap: 0.3rem;
+  background: rgba(8,6,4,0.58); backdrop-filter: blur(6px);
+  color: rgba(255,255,255,0.9); font-size: 0.62rem; font-weight: 500;
+  padding: 0.2rem 0.6rem; border-radius: 100px;
+  border: 1px solid rgba(255,255,255,0.1);
+  pointer-events: none; font-family: 'DM Sans',sans-serif;
+  letter-spacing: 0.01em;
+}
+
+/* AVATAR PINS */
+.apin {
+  position: absolute; z-index: 10; cursor: pointer;
+  animation: abounce 3s ease-in-out infinite;
+  transform-origin: bottom center; transition: transform .2s;
+}
+.apin:nth-child(2n)  { animation-duration: 3.4s; }
+.apin:nth-child(3n)  { animation-duration: 2.7s; animation-delay: -1.2s; }
+.apin:nth-child(4n)  { animation-duration: 3.1s; animation-delay: -0.6s; }
+.apin:hover { transform: scale(1.18) translateY(-5px) !important; animation-play-state: paused; }
+@keyframes abounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+
+.abubble {
+  position: relative; width: 44px; height: 44px; border-radius: 50%;
+  background: white; display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; border: 3px solid white;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.28);
+}
+.abubble::after {
+  content: ''; position: absolute; bottom: -9px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 7px solid transparent; border-right: 7px solid transparent;
+  border-top: 10px solid white;
+}
+.rp { border-color: var(--palace) !important; box-shadow: 0 4px 18px rgba(124,92,191,0.45); }
+.rg { border-color: var(--gold)   !important; box-shadow: 0 4px 18px rgba(201,149,42,0.45); }
+.rs { border-color: var(--silver) !important; box-shadow: 0 4px 18px rgba(143,163,181,0.4); }
+.rf { border-color: var(--emerald)!important; box-shadow: 0 4px 18px rgba(45,171,128,0.4); }
+.rp::after { border-top-color: var(--palace) !important; }
+.rg::after { border-top-color: var(--gold)   !important; }
+.rs::after { border-top-color: var(--silver) !important; }
+.rf::after { border-top-color: var(--emerald)!important; }
+
+/* Admin bigger */
+.pin-admin .abubble { width: 56px; height: 56px; font-size: 1.5rem; }
+
+.aname {
+  position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%);
+  background: rgba(8,6,4,0.76); color: rgba(255,255,255,0.9);
+  font-size: 0.58rem; padding: 0.16rem 0.52rem; border-radius: 100px;
+  white-space: nowrap; pointer-events: none; backdrop-filter: blur(4px);
+  font-family: 'DM Sans',sans-serif;
+}
+.odot {
+  position: absolute; bottom: 1px; right: 1px;
+  width: 11px; height: 11px; border-radius: 50%;
+  background: var(--emerald); border: 2.5px solid white; z-index: 2;
+}
+
+/* TOOLTIP */
+.tip {
+  position: fixed; z-index: 500; background: white; border-radius: 1rem;
+  padding: 0.9rem 1rem; width: 205px;
+  box-shadow: 0 12px 48px rgba(26,22,18,0.18); pointer-events: none;
+  opacity: 0; transition: opacity .16s, transform .16s; transform: translateY(5px);
+  border: 1px solid rgba(156,136,120,0.1);
+}
+.tip.on { opacity: 1; transform: translateY(0); }
+.tip-top { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.6rem; }
+.tip-emo { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; flex-shrink: 0; }
+.tip-name { font-family: 'Playfair Display',serif; font-size: 0.9rem; font-weight: 700; color: var(--brown); }
+.tip-handle { font-size: 0.65rem; color: var(--muted); }
+.tip-tier { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.62rem; font-weight: 500; padding: 0.15rem 0.52rem; border-radius: 100px; margin-bottom: 0.4rem; }
+.tip-row { font-size: 0.65rem; color: var(--muted); margin-top: 0.18rem; display: flex; align-items: center; gap: 0.28rem; }
+.tip-row b { color: var(--brown); font-weight: 500; }
+
+/* LEGEND */
+.legend {
+  position: fixed; bottom: 1.1rem; left: 1.1rem; z-index: 100;
+  background: rgba(255,251,245,0.93); backdrop-filter: blur(14px);
+  border-radius: 0.875rem; padding: 0.75rem 0.9rem;
+  border: 1px solid rgba(156,136,120,0.14);
+  box-shadow: 0 4px 18px rgba(26,22,18,0.1);
+}
+.leg-title { font-size: 0.58rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 0.45rem; font-family: 'DM Mono',monospace; }
+.leg-row { display: flex; align-items: center; gap: 0.45rem; font-size: 0.68rem; color: var(--brown); margin-bottom: 0.25rem; }
+.leg-dot { width: 11px; height: 11px; border-radius: 50%; border: 2.5px solid; flex-shrink: 0; }
+
+/* CONTROLS */
+.ctrls { position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 100; display: flex; flex-direction: column; gap: 0.32rem; }
+.cbtn { width: 34px; height: 34px; background: rgba(255,251,245,0.93); backdrop-filter: blur(12px); border: 1px solid rgba(156,136,120,0.18); border-radius: 0.55rem; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.95rem; color: var(--brown); transition: all .14s; box-shadow: 0 2px 8px rgba(26,22,18,0.07); font-family: 'DM Sans',sans-serif; }
+.cbtn:hover { background: white; border-color: var(--orange); color: var(--orange); }
+
+/* STATS */
+.sbar { position: fixed; top: 66px; left: 50%; transform: translateX(-50%); background: rgba(255,251,245,0.93); backdrop-filter: blur(14px); border-radius: 100px; padding: 0.36rem 0.95rem; border: 1px solid rgba(156,136,120,0.13); display: flex; align-items: center; gap: 0.65rem; font-size: 0.7rem; color: var(--muted); box-shadow: 0 2px 12px rgba(26,22,18,0.08); z-index: 150; }
+.snum { font-family: 'Playfair Display',serif; font-size: 0.88rem; font-weight: 700; color: var(--brown); }
+.sdiv { width: 1px; height: 13px; background: rgba(156,136,120,0.2); }
+
+/* SHARE */
+.sharebtn { position: fixed; top: 66px; right: 1.4rem; z-index: 150; background: var(--orange); color: white; border: none; border-radius: 100px; cursor: pointer; padding: 0.44rem 1rem; font-size: 0.72rem; font-weight: 500; font-family: 'DM Sans',sans-serif; box-shadow: 0 3px 14px rgba(244,115,42,.28); display: flex; align-items: center; gap: 0.32rem; transition: all .18s; }
+.sharebtn:hover { background: var(--orange2); transform: translateY(-1px); }
+
+/* TOAST */
+.toast { position: fixed; bottom: 4.8rem; left: 50%; transform: translateX(-50%) translateY(16px); background: var(--brown); color: white; padding: 0.55rem 1.2rem; border-radius: 100px; font-size: 0.75rem; z-index: 600; transition: all .3s cubic-bezier(.34,1.56,.64,1); opacity: 0; white-space: nowrap; pointer-events: none; }
+.toast.on { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+@media (max-width: 600px) {
+  .nav { padding: 0.7rem 1rem; height: 50px; }
+  .nav-logo { font-size: 1rem; }
+  .nav-center { font-size: 0.65rem; padding: 0.28rem 0.65rem; }
+  .nav-center .ndot { width: 6px; height: 6px; }
+  .nav-right .btn-o:first-child { display: none; }
+  .btn { font-size: 0.68rem; padding: 0.35rem 0.75rem; }
+
+  .town-wrap { top: 50px; }
+
+  .sbar { font-size: 0.62rem; padding: 0.3rem 0.75rem; gap: 0.5rem; top: 58px; }
+  .snum { font-size: 0.78rem; }
+  .sdiv { height: 11px; }
+
+  .sharebtn { top: 58px; right: 0.875rem; font-size: 0.65rem; padding: 0.36rem 0.75rem; }
+
+  .legend { bottom: 0.875rem; left: 0.875rem; padding: 0.65rem 0.875rem; }
+  .leg-title { font-size: 0.55rem; }
+  .leg-row { font-size: 0.62rem; gap: 0.4rem; }
+  .leg-dot { width: 9px; height: 9px; }
+
+  .ctrls { bottom: 0.875rem; right: 0.875rem; gap: 0.28rem; }
+  .cbtn { width: 30px; height: 30px; font-size: 0.82rem; border-radius: 0.45rem; }
+
+  .zlabel { font-size: 0.55rem; padding: 0.16rem 0.5rem; gap: 0.25rem; }
+
+  .apin .abubble { width: 36px; height: 36px; font-size: 1rem; border-width: 2.5px; }
+  .pin-admin .abubble { width: 46px; height: 46px; font-size: 1.2rem; }
+  .abubble::after { bottom: -7px; border-left-width: 5px; border-right-width: 5px; border-top-width: 8px; }
+  .aname { font-size: 0.5rem; padding: 0.13rem 0.45rem; bottom: calc(100% + 8px); }
+  .odot { width: 9px; height: 9px; border-width: 2px; }
+
+  .tip { width: 180px; padding: 0.75rem 0.875rem; border-radius: 0.875rem; }
+  .tip-top { gap: 0.5rem; margin-bottom: 0.5rem; }
+  .tip-emo { width: 30px; height: 30px; font-size: 1rem; }
+  .tip-name { font-size: 0.82rem; }
+  .tip-handle { font-size: 0.6rem; }
+  .tip-tier { font-size: 0.58rem; padding: 0.12rem 0.45rem; }
+  .tip-row { font-size: 0.6rem; }
+}
+
+@media (max-width: 380px) {
+  .sbar { display: none; }
+  .aname { display: none; }
+}
+
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="topraq-hub.html" class="nav-logo">Krea<span>Town</span></a>
+  <div class="nav-center"><div class="ndot"></div><span>Topraq's Town · Live</span></div>
+  <div class="nav-right">
+    <a href="topraq-hub.html" class="btn btn-o">← Hub</a>
+    <a href="dashboard.html"  class="btn btn-o">Dashboard</a>
+    <button class="btn btn-f" onclick="showToast('📸 Screenshot saved!')">📸 Screenshot</button>
+  </div>
+</nav>
+
+<div class="sbar">
+  <span class="snum">44</span><span>members</span>
+  <div class="sdiv"></div>
+  <span class="snum" style="color:var(--palace)">🏯</span><span>Hilltop Palace</span>
+  <div class="sdiv"></div>
+  <span class="snum" style="color:var(--emerald)">12</span><span>online</span>
+  <div class="sdiv"></div>
+  <span class="snum" style="color:var(--gold)">#3</span><span>leaderboard</span>
+</div>
+
+<button class="sharebtn" onclick="showToast('🔗 Link copied! Share your spot')">📤 Share my spot</button>
+
+<div class="town-wrap" id="tw">
+<div class="town-canvas" id="tc">
+
+  <!-- YOUR DESIGN AS THE MAP -->
+  <img class="town-bg" src="Luxury.png" alt=""
+       onerror="this.style.background='linear-gradient(160deg,#3a2060 0%,#7c3a10 50%,#1a3a10 100%)'">
+  <div class="town-vignette"></div>
+
+  <!-- ZONE LABELS — mapped to buildings visible in Luxury.png -->
+  <div class="zlabel" style="top:14%;left:37%">🏯 Topraq's Palace</div>
+  <div class="zlabel" style="top:36%;left:5%">👑 Gold villas</div>
+  <div class="zlabel" style="top:40%;left:60%">👑 Gold villas</div>
+  <div class="zlabel" style="top:58%;left:48%">⭐ Silver houses</div>
+  <div class="zlabel" style="top:74%;left:7%">🌱 Free cottages</div>
+  <div class="zlabel" style="top:74%;left:52%">🌱 Free cottages</div>
+
+  <!-- ── AVATAR PINS ── -->
+  <!-- Positioned to sit on top of buildings in the actual image -->
+
+  <!-- TOPRAQ — the big palace at top center (~42%, 18%) -->
+  <div class="apin pin-admin" style="left:41%;top:17%;" onclick="tip('you',event)">
+    <div class="aname">Topraq · Admin 👑</div>
+    <div class="abubble rp">🎨<div class="odot"></div></div>
+  </div>
+
+  <!-- PALACE MEMBERS — around the palace -->
+  <div class="apin" style="left:34%;top:23%;animation-delay:-1s" onclick="tip('elif',event)">
+    <div class="aname">Elif · Palace</div>
+    <div class="abubble rp">🌟<div class="odot"></div></div>
+  </div>
+  <div class="apin" style="left:50%;top:21%;animation-delay:-2.1s" onclick="tip('zeynep',event)">
+    <div class="aname">Zeynep · Palace</div>
+    <div class="abubble rp">💫</div>
+  </div>
+  <div class="apin" style="left:44%;top:27%;animation-delay:-0.6s" onclick="tip('kemal',event)">
+    <div class="aname">Kemal · Palace</div>
+    <div class="abubble rp">🔥<div class="odot"></div></div>
+  </div>
+
+  <!-- GOLD MEMBERS — villas on the left hillside (~10-25%, 38-48%) and right (~62-76%, 36-46%) -->
+  <div class="apin" style="left:11%;top:40%;animation-delay:-1.6s" onclick="tip('ahmet',event)">
+    <div class="aname">Ahmet · Gold</div>
+    <div class="abubble rg">🌻<div class="odot"></div></div>
+  </div>
+  <div class="apin" style="left:22%;top:45%;animation-delay:-0.9s" onclick="tip('maria',event)">
+    <div class="aname">Maria · Gold</div>
+    <div class="abubble rg">🦋</div>
+  </div>
+  <div class="apin" style="left:63%;top:38%;animation-delay:-2.3s" onclick="tip('james',event)">
+    <div class="aname">James · Gold</div>
+    <div class="abubble rg">🎸<div class="odot"></div></div>
+  </div>
+  <div class="apin" style="left:74%;top:44%;animation-delay:-1.2s" onclick="tip('nina',event)">
+    <div class="aname">Nina · Gold</div>
+    <div class="abubble rg">🎹</div>
+  </div>
+
+  <!-- SILVER MEMBERS — houses lower center-right (~48-68%, 57-65%) -->
+  <div class="apin" style="left:50%;top:58%;animation-delay:-3.1s" onclick="tip('sara',event)">
+    <div class="aname">Sara · Silver</div>
+    <div class="abubble rs">📸<div class="odot"></div></div>
+  </div>
+  <div class="apin" style="left:62%;top:62%;animation-delay:-1.5s" onclick="tip('leo',event)">
+    <div class="aname">Leo · Silver</div>
+    <div class="abubble rs">🎨</div>
+  </div>
+  <div class="apin" style="left:46%;top:54%;animation-delay:-0.3s" onclick="tip('aya',event)">
+    <div class="aname">Aya · Silver</div>
+    <div class="abubble rs">🌙<div class="odot"></div></div>
+  </div>
+
+  <!-- FREE MEMBERS — cottages at bottom (~8-24%, 75-82%) and (~52-68%, 73-80%) -->
+  <div class="apin" style="left:9%;top:76%;animation-delay:-2.7s" onclick="tip('can',event)">
+    <div class="aname">Can · Free</div>
+    <div class="abubble rf" style="width:38px;height:38px;font-size:1rem">🌱<div class="odot"></div></div>
+  </div>
+  <div class="apin" style="left:21%;top:79%;animation-delay:-1.8s" onclick="tip('mia',event)">
+    <div class="aname">Mia · Free</div>
+    <div class="abubble rf" style="width:38px;height:38px;font-size:1rem">🌸</div>
+  </div>
+  <div class="apin" style="left:53%;top:75%;animation-delay:-0.8s" onclick="tip('anil',event)">
+    <div class="aname">Anıl · Free</div>
+    <div class="abubble rf" style="width:38px;height:38px;font-size:1rem">⚡<div class="odot"></div></div>
+  </div>
+  <div class="apin" style="left:65%;top:78%;animation-delay:-2s" onclick="tip('lena',event)">
+    <div class="aname">Lena · Free</div>
+    <div class="abubble rf" style="width:38px;height:38px;font-size:1rem">🍃</div>
+  </div>
+
+</div>
+</div>
+
+<div class="legend">
+  <div class="leg-title">Member tiers</div>
+  <div class="leg-row"><div class="leg-dot" style="border-color:var(--palace)"></div>Palace · Hilltop</div>
+  <div class="leg-row"><div class="leg-dot" style="border-color:var(--gold)"></div>Gold · Villas</div>
+  <div class="leg-row"><div class="leg-dot" style="border-color:var(--silver)"></div>Silver · Houses</div>
+  <div class="leg-row"><div class="leg-dot" style="border-color:var(--emerald)"></div>Free · Cottages</div>
+</div>
+
+<div class="ctrls">
+  <button class="cbtn" id="zi">+</button>
+  <button class="cbtn" id="zo">−</button>
+  <button class="cbtn" id="zr">⌖</button>
+</div>
+
+<div class="tip" id="tipEl"></div>
+<div class="toast" id="toastEl"></div>
+
+<script>
+const wrap = document.getElementById('tw');
+const canv = document.getElementById('tc');
+
+const initScale = () => {
+  const s1 = wrap.clientWidth / 900;
+  const s2 = wrap.clientHeight / 1200;
+  return Math.max(s1, s2) * 0.97;
+};
+let sc = initScale();
+let tx = (wrap.clientWidth - 900*sc)/2;
+let ty = (wrap.clientHeight - 1200*sc)/2;
+const applyT = () => canv.style.transform = `translate(${tx}px,${ty}px) scale(${sc})`;
+applyT();
+
+let drag=false, sx,sy,stx,sty;
+wrap.addEventListener('mousedown', e => { drag=true; sx=e.clientX; sy=e.clientY; stx=tx; sty=ty; });
+window.addEventListener('mousemove', e => { if(!drag) return; tx=stx+(e.clientX-sx); ty=sty+(e.clientY-sy); applyT(); });
+window.addEventListener('mouseup', () => drag=false);
+wrap.addEventListener('wheel', e => {
+  e.preventDefault();
+  const d = e.deltaY>0 ? 0.92:1.09;
+  const ns = Math.max(0.25, Math.min(3.5, sc*d));
+  const r = wrap.getBoundingClientRect();
+  tx = (e.clientX-r.left) - ((e.clientX-r.left)-tx)*(ns/sc);
+  ty = (e.clientY-r.top)  - ((e.clientY-r.top)-ty)*(ns/sc);
+  sc=ns; applyT();
+}, {passive:false});
+
+document.getElementById('zi').onclick = () => { sc=Math.min(3.5,sc*1.14); applyT(); };
+document.getElementById('zo').onclick = () => { sc=Math.max(0.25,sc*0.87); applyT(); };
+document.getElementById('zr').onclick = () => { sc=initScale(); tx=(wrap.clientWidth-900*sc)/2; ty=(wrap.clientHeight-1200*sc)/2; applyT(); };
+
+let ltx,lty;
+wrap.addEventListener('touchstart', e=>{ltx=e.touches[0].clientX;lty=e.touches[0].clientY;},{passive:true});
+wrap.addEventListener('touchmove',  e=>{tx+=e.touches[0].clientX-ltx;ty+=e.touches[0].clientY-lty;ltx=e.touches[0].clientX;lty=e.touches[0].clientY;applyT();},{passive:true});
+
+const pdata = {
+  you:    {n:'Topraq Toros', h:'@topraq',   tier:'🏯 Palace · Admin', tc:'rgba(124,92,191,0.12)',cc:'#4a2a8f',bg:'rgba(124,92,191,0.15)',loc:'🏯 Hilltop Palace — top of the hill',since:'Platform founder',e:'🎨'},
+  elif:   {n:'Elif Yıldız',  h:'@elif',      tier:'🏯 Palace',         tc:'rgba(124,92,191,0.12)',cc:'#4a2a8f',bg:'rgba(124,92,191,0.15)',loc:'🏯 Palace east terrace',              since:'Joined Mar 12',   e:'🌟'},
+  zeynep: {n:'Zeynep Al',    h:'@zeynep',    tier:'🏯 Palace',         tc:'rgba(124,92,191,0.12)',cc:'#4a2a8f',bg:'rgba(124,92,191,0.15)',loc:'🏯 Palace west wing',                 since:'Joined Mar 5',    e:'💫'},
+  kemal:  {n:'Kemal Arslan', h:'@kemal',     tier:'🏯 Palace',         tc:'rgba(124,92,191,0.12)',cc:'#4a2a8f',bg:'rgba(124,92,191,0.15)',loc:'🏯 Palace garden suite',              since:'Joined Feb 14',   e:'🔥'},
+  ahmet:  {n:'Ahmet Kaya',   h:'@ahmetkaya', tier:'👑 Gold',           tc:'rgba(201,149,42,0.12)',cc:'#7a5000',bg:'rgba(201,149,42,0.12)',loc:'🏡 Left hillside villa',              since:'Joined Mar 10',   e:'🌻'},
+  maria:  {n:'Maria Santos', h:'@maria',     tier:'👑 Gold',           tc:'rgba(201,149,42,0.12)',cc:'#7a5000',bg:'rgba(201,149,42,0.12)',loc:'🏡 Villa with infinity pool',         since:'Joined Feb 28',   e:'🦋'},
+  james:  {n:'James Wright', h:'@james',     tier:'👑 Gold',           tc:'rgba(201,149,42,0.12)',cc:'#7a5000',bg:'rgba(201,149,42,0.12)',loc:'🏡 Right hillside villa',             since:'Joined Mar 1',    e:'🎸'},
+  nina:   {n:'Nina Park',    h:'@nina',      tier:'👑 Gold',           tc:'rgba(201,149,42,0.12)',cc:'#7a5000',bg:'rgba(201,149,42,0.12)',loc:'🏡 Villa near the waterfall',         since:'Joined Mar 3',    e:'🎹'},
+  sara:   {n:'Sara Demir',   h:'@sarademir', tier:'⭐ Silver',         tc:'rgba(143,163,181,0.15)',cc:'#1a3a4e',bg:'rgba(143,163,181,0.12)',loc:'🏠 House by the river',             since:'Joined Mar 8',    e:'📸'},
+  leo:    {n:'Leo Park',     h:'@leo',       tier:'⭐ Silver',         tc:'rgba(143,163,181,0.15)',cc:'#1a3a4e',bg:'rgba(143,163,181,0.12)',loc:'🏠 House near the bridge',          since:'Joined Feb 20',   e:'🎨'},
+  aya:    {n:'Aya Tanaka',   h:'@aya',       tier:'⭐ Silver',         tc:'rgba(143,163,181,0.15)',cc:'#1a3a4e',bg:'rgba(143,163,181,0.12)',loc:'🏠 House with mountain view',       since:'Joined Mar 6',    e:'🌙'},
+  can:    {n:'Can Öztürk',   h:'@canoz',     tier:'🌱 Free',           tc:'rgba(45,171,128,0.1)',  cc:'#084a28',bg:'rgba(45,171,128,0.1)', loc:'🌿 Front garden cottage',            since:'Joined Mar 7',    e:'🌱'},
+  mia:    {n:'Mia Chen',     h:'@mia',       tier:'🌱 Free',           tc:'rgba(45,171,128,0.1)',  cc:'#084a28',bg:'rgba(45,171,128,0.1)', loc:'🌿 Riverside cottage',               since:'Joined Mar 9',    e:'🌸'},
+  anil:   {n:'Anıl Yılmaz',  h:'@anil',      tier:'🌱 Free',           tc:'rgba(45,171,128,0.1)',  cc:'#084a28',bg:'rgba(45,171,128,0.1)', loc:'🌿 Cottage near the pool',           since:'Joined Mar 11',   e:'⚡'},
+  lena:   {n:'Lena Müller',  h:'@lena',      tier:'🌱 Free',           tc:'rgba(45,171,128,0.1)',  cc:'#084a28',bg:'rgba(45,171,128,0.1)', loc:'🌿 Garden cottage south',            since:'Joined Mar 13',   e:'🍃'},
+};
+
+const tipEl = document.getElementById('tipEl');
+let ttimer;
+function tip(key, e) {
+  const a = pdata[key]; if(!a) return;
+  tipEl.innerHTML = `
+    <div class="tip-top">
+      <div class="tip-emo" style="background:${a.bg}">${a.e}</div>
+      <div><div class="tip-name">${a.n}</div><div class="tip-handle">${a.h}</div></div>
+    </div>
+    <span class="tip-tier" style="background:${a.tc};color:${a.cc};border:1px solid ${a.tc.replace('0.1','0.25').replace('0.12','0.25').replace('0.15','0.25')}">${a.tier}</span>
+    <div class="tip-row">📍 <b>${a.loc}</b></div>
+    <div class="tip-row">🗓 ${a.since}</div>
+  `;
+  const x = Math.min(e.clientX+14, window.innerWidth-220);
+  const y = Math.min(e.clientY-10, window.innerHeight-155);
+  tipEl.style.left = x+'px'; tipEl.style.top = y+'px';
+  tipEl.classList.add('on');
+  clearTimeout(ttimer);
+  ttimer = setTimeout(()=>tipEl.classList.remove('on'), 3600);
+  e.stopPropagation();
+}
+wrap.addEventListener('click', ()=>tipEl.classList.remove('on'));
+
+function showToast(msg) {
+  const el = document.getElementById('toastEl');
+  el.textContent=msg; el.classList.add('on');
+  setTimeout(()=>el.classList.remove('on'), 2700);
+}
+</script>
+</body>
+</html>

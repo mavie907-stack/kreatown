@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Radio — Topraq's Town · KreaTown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:       #0c0906;
+  --bg2:      #140f0a;
+  --bg3:      #1c1510;
+  --bg4:      #241a12;
+  --walnut:   #3a2410;
+  --walnut2:  #5a3a1e;
+  --walnut3:  #7a5030;
+  --amber:    #d4882a;
+  --amber2:   #f0a840;
+  --amber3:   #ffd070;
+  --amber-pale: rgba(212,136,42,0.12);
+  --orange:   #f4732a;
+  --gold:     #c9952a;
+  --gold2:    #f5d58a;
+  --palace:   #7c5cbf;
+  --cream:    #fffbf5;
+  --text1:    rgba(255,245,230,0.92);
+  --text2:    rgba(255,235,200,0.55);
+  --text3:    rgba(255,225,180,0.28);
+  --border:   rgba(212,136,42,0.15);
+  --border2:  rgba(212,136,42,0.28);
+}
+
+html, body { min-height: 100vh; background: var(--bg); color: var(--text1); font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
+
+/* ── BACKGROUND ROOM ── */
+.room-bg {
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(212,136,42,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 20% 80%, rgba(124,92,191,0.05) 0%, transparent 50%),
+    linear-gradient(180deg, #0c0906 0%, #100b06 100%);
+}
+.room-grain {
+  position: fixed; inset: 0; z-index: 0; opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 128px;
+  pointer-events: none;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.85rem 2rem;
+  background: rgba(12,9,6,0.88); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--text1); text-decoration: none; }
+.nav-logo span { color: var(--amber2); }
+.nav-crumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: var(--text3); }
+.nav-crumb a { color: var(--text2); text-decoration: none; transition: color .15s; }
+.nav-crumb a:hover { color: var(--amber2); }
+.nav-crumb span { opacity: 0.4; }
+.nav-right { display: flex; align-items: center; gap: 0.75rem; }
+.nav-tier {
+  font-size: 0.65rem; padding: 0.2rem 0.65rem; border-radius: 100px;
+  background: rgba(124,92,191,0.15); color: var(--palace);
+  border: 1px solid rgba(124,92,191,0.3); font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.nav-link { font-size: 0.78rem; color: var(--text2); text-decoration: none; transition: color .15s; }
+.nav-link:hover { color: var(--amber2); }
+
+/* ── PAGE LAYOUT ── */
+.page { position: relative; z-index: 1; max-width: 1000px; margin: 0 auto; padding: 2.5rem 2rem 4rem; }
+
+/* ROOM HEADER */
+.room-header { text-align: center; margin-bottom: 2.5rem; }
+.room-tag {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-family: 'DM Mono', monospace; font-size: 0.65rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--amber); margin-bottom: 0.75rem;
+}
+.room-tag::before, .room-tag::after { content: '·'; opacity: 0.5; }
+.room-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 4vw, 3rem); font-weight: 900;
+  color: var(--text1); letter-spacing: -0.025em; line-height: 1.1;
+}
+.room-title em { font-style: italic; color: var(--amber2); }
+.room-sub { font-size: 0.9rem; color: var(--text2); margin-top: 0.6rem; font-weight: 300; }
+
+/* ── THE RADIO ── */
+.radio-stage {
+  display: flex; align-items: flex-start; justify-content: center;
+  gap: 2rem; margin-bottom: 2.5rem; flex-wrap: wrap;
+}
+
+/* THE CABINET */
+.radio-cabinet {
+  width: 420px; flex-shrink: 0;
+  background: linear-gradient(160deg, #3e2818 0%, #2a1a0c 50%, #1e1208 100%);
+  border-radius: 1.5rem 1.5rem 1rem 1rem;
+  border: 1px solid rgba(120,80,40,0.4);
+  box-shadow:
+    0 32px 80px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,200,100,0.08),
+    inset 0 -1px 0 rgba(0,0,0,0.4);
+  padding: 1.75rem 1.75rem 1.5rem;
+  position: relative; overflow: hidden;
+}
+.radio-cabinet::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(240,168,64,0.4), transparent);
+}
+/* wood grain lines */
+.radio-cabinet::after {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(
+    170deg, transparent 0px, transparent 8px,
+    rgba(255,255,255,0.012) 8px, rgba(255,255,255,0.012) 9px
+  );
+  border-radius: inherit;
+}
+
+/* BRAND PLATE */
+.radio-brand {
+  text-align: center; margin-bottom: 1.25rem;
+  position: relative;
+}
+.brand-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--amber2); letter-spacing: 0.08em;
+}
+.brand-model {
+  font-family: 'DM Mono', monospace; font-size: 0.6rem;
+  color: var(--text3); letter-spacing: 0.15em; text-transform: uppercase;
+  margin-top: 0.1rem;
+}
+
+/* SPEAKER GRILLE */
+.speaker-grille {
+  width: 100%; height: 88px;
+  background: #1a0e06;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(120,80,40,0.35);
+  margin-bottom: 1.25rem;
+  display: grid; grid-template-columns: repeat(22, 1fr);
+  gap: 3px; padding: 10px;
+  position: relative; overflow: hidden;
+}
+.grille-dot {
+  border-radius: 50%;
+  background: rgba(60,30,10,0.8);
+  aspect-ratio: 1;
+}
+/* Glow behind grille when playing */
+.speaker-grille.playing::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, rgba(212,136,42,0.12) 0%, transparent 70%);
+  animation: speakerpulse 1.8s ease-in-out infinite;
+}
+@keyframes speakerpulse { 0%,100%{opacity:0.6} 50%{opacity:1} }
+
+/* DISPLAY PANEL */
+.display-panel {
+  background: #0a0604;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(212,136,42,0.2);
+  padding: 1rem 1.1rem 0.9rem;
+  margin-bottom: 1.25rem;
+  position: relative;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.6);
+}
+.display-panel::before {
+  content: '';
+  position: absolute; inset: 0; border-radius: inherit;
+  background: linear-gradient(180deg, rgba(212,136,42,0.03) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* FREQUENCY DISPLAY */
+.freq-display {
+  font-family: 'DM Mono', monospace;
+  font-size: 2rem; font-weight: 500;
+  color: var(--amber2); letter-spacing: 0.08em;
+  text-align: center; line-height: 1;
+  text-shadow: 0 0 20px rgba(240,168,64,0.4);
+  margin-bottom: 0.3rem;
+}
+.freq-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem; color: var(--text3);
+  text-align: center; letter-spacing: 0.12em; text-transform: uppercase;
+}
+
+/* NOW PLAYING */
+.now-playing {
+  margin-top: 0.75rem; padding-top: 0.75rem;
+  border-top: 1px solid rgba(212,136,42,0.1);
+}
+.np-station {
+  font-size: 0.72rem; color: var(--amber);
+  font-family: 'DM Mono', monospace; letter-spacing: 0.06em;
+  display: flex; align-items: center; gap: 0.4rem;
+}
+.np-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--amber2); flex-shrink: 0;
+  animation: blink 1s ease-in-out infinite;
+}
+.np-dot.off { background: var(--text3); animation: none; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.np-track {
+  font-size: 0.8rem; color: var(--text1); font-weight: 400;
+  margin-top: 0.2rem; white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis;
+}
+.np-track.scrolling { animation: marquee 14s linear infinite; }
+@keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-40%)} }
+
+/* EQUALIZER BARS */
+.eq-wrap {
+  display: flex; align-items: flex-end; gap: 3px;
+  height: 28px; margin-top: 0.6rem;
+}
+.eq-bar {
+  flex: 1; border-radius: 1px 1px 0 0;
+  background: linear-gradient(180deg, var(--amber2), var(--amber));
+  transition: height .08s ease;
+  min-height: 2px;
+}
+.eq-bar.off { background: rgba(212,136,42,0.15); height: 2px !important; transition: height .3s; }
+
+/* TUNER DIAL */
+.tuner-row {
+  margin-bottom: 1.25rem;
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.tuner-track {
+  flex: 1; height: 6px; background: rgba(212,136,42,0.12);
+  border-radius: 100px; position: relative;
+  border: 1px solid rgba(212,136,42,0.2);
+  cursor: pointer;
+}
+.tuner-fill {
+  height: 100%; border-radius: 100px;
+  background: linear-gradient(90deg, var(--amber), var(--amber2));
+  transition: width .2s;
+}
+.tuner-needle {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--amber3); border: 2px solid rgba(255,255,255,0.3);
+  box-shadow: 0 0 8px rgba(240,168,64,0.6);
+  transition: left .2s; margin-left: -6px;
+  cursor: grab;
+}
+.tuner-label {
+  font-family: 'DM Mono', monospace; font-size: 0.6rem;
+  color: var(--text3); white-space: nowrap;
+}
+
+/* CONTROL BUTTONS ROW */
+.controls-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.75rem;
+}
+.ctrl-btn {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: linear-gradient(160deg, #4a3020, #2e1e10);
+  border: 1px solid rgba(212,136,42,0.25);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 0.9rem; color: var(--text2);
+  transition: all .18s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,200,100,0.08);
+}
+.ctrl-btn:hover { background: linear-gradient(160deg, #5a3a24, #3a2214); border-color: var(--amber); color: var(--amber2); transform: translateY(-1px); }
+.ctrl-btn:active { transform: translateY(0) scale(0.96); }
+.ctrl-btn.play-btn {
+  width: 56px; height: 56px; font-size: 1.2rem;
+  background: linear-gradient(160deg, var(--amber), #a05c10);
+  border-color: rgba(240,168,64,0.5); color: #1a0c00;
+  box-shadow: 0 4px 20px rgba(212,136,42,0.35);
+}
+.ctrl-btn.play-btn:hover { background: linear-gradient(160deg, var(--amber2), #c07018); box-shadow: 0 6px 28px rgba(212,136,42,0.5); }
+
+/* VOLUME KNOB */
+.volume-row {
+  display: flex; align-items: center; gap: 0.6rem; margin-top: 1rem;
+}
+.vol-icon { font-size: 0.75rem; color: var(--text3); flex-shrink: 0; }
+.vol-slider {
+  flex: 1; -webkit-appearance: none; appearance: none;
+  height: 4px; border-radius: 100px;
+  background: linear-gradient(90deg, var(--amber) 70%, rgba(212,136,42,0.15) 70%);
+  outline: none; cursor: pointer;
+}
+.vol-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 14px; height: 14px;
+  border-radius: 50%; background: var(--amber2);
+  border: 2px solid rgba(255,255,255,0.2);
+  box-shadow: 0 0 6px rgba(240,168,64,0.4);
+  cursor: grab;
+}
+.vol-label { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--text3); min-width: 28px; text-align: right; }
+
+/* ── STATION LIST (sidebar) ── */
+.station-panel {
+  flex: 1; min-width: 260px;
+  display: flex; flex-direction: column; gap: 1rem;
+}
+
+.panel-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 1.1rem; overflow: hidden;
+}
+.panel-header {
+  padding: 0.85rem 1.1rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.panel-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.88rem; font-weight: 700; color: var(--text1);
+}
+.panel-sub { font-size: 0.65rem; color: var(--text3); }
+
+/* STATION ITEMS */
+.station-item {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.7rem 1.1rem; cursor: pointer;
+  border-bottom: 1px solid rgba(212,136,42,0.06);
+  transition: background .15s;
+  position: relative;
+}
+.station-item:last-child { border-bottom: none; }
+.station-item:hover { background: rgba(212,136,42,0.05); }
+.station-item.active { background: rgba(212,136,42,0.08); }
+.station-item.locked { opacity: 0.45; cursor: not-allowed; }
+.si-icon {
+  width: 34px; height: 34px; border-radius: 0.5rem;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+.si-info { flex: 1; min-width: 0; }
+.si-name { font-size: 0.8rem; font-weight: 500; color: var(--text1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.si-genre { font-size: 0.65rem; color: var(--text3); margin-top: 0.1rem; }
+.si-tier {
+  font-size: 0.58rem; padding: 0.1rem 0.4rem; border-radius: 100px; font-weight: 500;
+  flex-shrink: 0;
+}
+.tier-free { background: rgba(45,171,128,0.12); color: #1a7a50; }
+.tier-gold { background: rgba(201,149,42,0.12); color: #8a6000; }
+.tier-palace { background: rgba(124,92,191,0.12); color: #5a3a8f; }
+.si-playing {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--amber2); border-radius: 0 2px 2px 0;
+}
+
+/* LOCK OVERLAY */
+.station-item.locked .si-icon::after { content: '🔒'; font-size: 0.7rem; }
+
+/* UPLOAD SECTION */
+.upload-zone {
+  margin: 0.75rem 1.1rem 1rem;
+  border: 1.5px dashed rgba(212,136,42,0.25);
+  border-radius: 0.75rem; padding: 1rem;
+  text-align: center; cursor: pointer;
+  transition: all .18s; background: rgba(212,136,42,0.03);
+}
+.upload-zone:hover { border-color: rgba(212,136,42,0.5); background: rgba(212,136,42,0.06); }
+.upload-icon { font-size: 1.4rem; margin-bottom: 0.3rem; }
+.upload-text { font-size: 0.75rem; color: var(--text2); }
+.upload-hint { font-size: 0.62rem; color: var(--text3); margin-top: 0.15rem; }
+
+/* LISTENERS ONLINE */
+.listeners-row {
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.7rem 1.1rem;
+  font-size: 0.72rem; color: var(--text2);
+  border-top: 1px solid var(--border);
+}
+.listener-avatars { display: flex; }
+.l-avatar {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--bg3); border: 1.5px solid var(--bg2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem; margin-left: -5px;
+}
+.l-avatar:first-child { margin-left: 0; }
+.listeners-count { color: var(--amber); font-weight: 500; margin-left: 0.2rem; }
+
+/* ── TIER UNLOCK BANNER ── */
+.unlock-banner {
+  background: linear-gradient(135deg, rgba(212,136,42,0.08), rgba(124,92,191,0.06));
+  border: 1px solid rgba(212,136,42,0.2);
+  border-radius: 1rem; padding: 1.1rem 1.3rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  margin-bottom: 1.5rem; flex-wrap: wrap;
+}
+.ub-text {}
+.ub-title { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: var(--text1); }
+.ub-sub { font-size: 0.72rem; color: var(--text2); margin-top: 0.2rem; }
+.btn-unlock {
+  background: linear-gradient(135deg, var(--amber), #a06010);
+  color: #1a0c00; padding: 0.55rem 1.2rem; border-radius: 100px;
+  font-size: 0.78rem; font-weight: 500; cursor: pointer; border: none;
+  font-family: 'DM Sans', sans-serif; white-space: nowrap;
+  transition: all .18s; box-shadow: 0 2px 12px rgba(212,136,42,0.3);
+}
+.btn-unlock:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(212,136,42,0.4); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.fu1 { animation: fadeUp .55s .05s ease both; }
+.fu2 { animation: fadeUp .55s .15s ease both; }
+.fu3 { animation: fadeUp .55s .25s ease both; }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: rgba(212,136,42,0.2); border-radius: 2px; }
+
+@media (max-width: 720px) {
+  .radio-cabinet { width: 100%; }
+  .radio-stage { flex-direction: column; align-items: center; }
+  .page { padding: 1.5rem 1rem 3rem; }
+}
+
+@media (max-width: 720px) {
+  .radio-cabinet { width: 100%; }
+  .radio-stage { flex-direction: column; align-items: center; }
+  .page { padding: 1.5rem 1rem 3rem; }
+}
+
+@media (max-width: 600px) {
+  nav { padding: 0.75rem 1rem; }
+  .nav-crumb { display: none; }
+  .nav-right .nav-tier { display: none; }
+  .nav-link { font-size: 0.72rem; }
+
+  .page { padding: 1.25rem 0.875rem 5.5rem; }
+  .room-header { margin-bottom: 1.5rem; }
+  .room-title { font-size: clamp(1.6rem, 8vw, 2.2rem); }
+  .room-sub { font-size: 0.82rem; }
+
+  .unlock-banner { flex-direction: column; align-items: flex-start; gap: 0.75rem; padding: 0.875rem 1rem; }
+  .ub-title { font-size: 0.85rem; }
+  .ub-sub { font-size: 0.68rem; }
+  .btn-unlock { width: 100%; text-align: center; padding: 0.6rem; }
+
+  .radio-cabinet { padding: 1.25rem 1.25rem 1rem; border-radius: 1.25rem; }
+  .brand-name { font-size: 0.95rem; }
+  .speaker-grille { height: 64px; grid-template-columns: repeat(18, 1fr); }
+  .freq-display { font-size: 1.6rem; }
+  .np-station { font-size: 0.65rem; }
+  .np-track { font-size: 0.72rem; }
+  .eq-wrap { height: 22px; gap: 2px; }
+
+  .tuner-row { gap: 0.5rem; }
+  .tuner-label { font-size: 0.55rem; }
+  .tuner-needle { width: 10px; height: 10px; }
+
+  .controls-row { gap: 0.55rem; }
+  .ctrl-btn { width: 38px; height: 38px; font-size: 0.82rem; }
+  .ctrl-btn.play-btn { width: 50px; height: 50px; font-size: 1.05rem; }
+
+  .volume-row { gap: 0.5rem; margin-top: 0.75rem; }
+  .vol-label { font-size: 0.58rem; min-width: 24px; }
+
+  .station-panel { width: 100%; }
+  .panel-header { padding: 0.75rem 1rem 0.55rem; }
+  .panel-title { font-size: 0.82rem; }
+  .station-item { padding: 0.6rem 1rem; }
+  .si-icon { width: 30px; height: 30px; font-size: 0.875rem; }
+  .si-name { font-size: 0.75rem; }
+  .si-genre { font-size: 0.6rem; }
+  .si-tier { font-size: 0.55rem; }
+
+  .upload-zone { padding: 0.875rem; margin: 0.6rem 1rem 0.875rem; }
+  .upload-icon { font-size: 1.1rem; }
+  .upload-text { font-size: 0.7rem; }
+  .upload-hint { font-size: 0.58rem; }
+
+  .listeners-row { padding: 0.6rem 1rem; font-size: 0.65rem; }
+  .l-avatar { width: 18px; height: 18px; font-size: 0.55rem; }
+}
+
+@media (max-width: 380px) {
+  .room-title { font-size: 1.5rem; }
+  .freq-display { font-size: 1.4rem; }
+  .ctrl-btn.play-btn { width: 46px; height: 46px; }
+}
+
+</style>
+</head>
+<body>
+<div class="room-bg"></div>
+<div class="room-grain"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="topraq-hub.html" class="nav-logo">Krea<span>Town</span></a>
+  <div class="nav-crumb">
+    <a href="topraq-hub.html">@topraq</a>
+    <span>/</span>
+    <span style="color:var(--amber)">🎵 3D Radio</span>
+  </div>
+  <div class="nav-right">
+    <span class="nav-tier">🏯 Palace Access</span>
+    <a href="topraq-hub.html" class="nav-link">← Back to town</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- ROOM HEADER -->
+  <div class="room-header fu1">
+    <div class="room-tag">Unlocked room</div>
+    <h1 class="room-title">Topraq's<br><em>Radio Room</em></h1>
+    <p class="room-sub">Live from the hilltop palace — tune in, chill out.</p>
+  </div>
+
+  <!-- UNLOCK BANNER (for non-members) -->
+  <div class="unlock-banner fu2">
+    <div class="ub-text">
+      <div class="ub-title">🎵 Radio unlocked at 5,000 members</div>
+      <div class="ub-sub">You're listening as a Palace member — full access to all stations + creator uploads.</div>
+    </div>
+    <button class="btn-unlock" onclick="showToast('🎵 You already have full access!')">Full access active ✓</button>
+  </div>
+
+  <!-- MAIN STAGE -->
+  <div class="radio-stage fu3">
+
+    <!-- THE RADIO CABINET -->
+    <div class="radio-cabinet" id="radioCabinet">
+
+      <div class="radio-brand">
+        <div class="brand-name">KREATOWN</div>
+        <div class="brand-model">Model KT-1 · Palace Edition</div>
+      </div>
+
+      <!-- SPEAKER GRILLE -->
+      <div class="speaker-grille" id="speakerGrille">
+        <script>
+          for(let i=0;i<110;i++) document.write('<div class="grille-dot"></div>');
+        </script>
+      </div>
+
+      <!-- DISPLAY PANEL -->
+      <div class="display-panel">
+        <div class="freq-display" id="freqDisplay">88.5 FM</div>
+        <div class="freq-label">Stereo · Live Stream</div>
+        <div class="now-playing">
+          <div class="np-station">
+            <div class="np-dot off" id="npDot"></div>
+            <span id="stationName">Not playing</span>
+          </div>
+          <div class="np-track" id="trackName">Select a station to tune in</div>
+          <!-- EQ BARS -->
+          <div class="eq-wrap" id="eqWrap">
+            <div class="eq-bar off" style="height:2px"></div>
+            <div class="eq-bar off" style="height:2px"></div>
+            <div class="eq-bar off" style="height:2px"></div>
+            <div class="eq-bar off" style="height:2px"></div>
+            <div class="eq-bar off" style="height:2px"></div>
+            <div class="eq-bar off" style="height:2px"></div>
+            <div class="eq-bar off" style="height:2px"></div>
+            <div class="eq-bar off" style="height:2px"></div>
+            <div class="eq-bar off" style="height:2px"></div>
+            <div class="eq-bar off" style="height:2px"></div>
+            <div class="eq-bar off" style="height:2px"></div>
+            <div class="eq-bar off" style="height:2px"></div>
+            <div class="eq-bar off" style="height:2px"></div>
+            <div class="eq-bar off" style="height:2px"></div>
+            <div class="eq-bar off" style="height:2px"></div>
+            <div class="eq-bar off" style="height:2px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TUNER -->
+      <div class="tuner-row">
+        <span class="tuner-label">87.5</span>
+        <div class="tuner-track" id="tunerTrack">
+          <div class="tuner-fill" id="tunerFill" style="width:10%"></div>
+          <div class="tuner-needle" id="tunerNeedle" style="left:10%"></div>
+        </div>
+        <span class="tuner-label">108.0</span>
+      </div>
+
+      <!-- CONTROLS -->
+      <div class="controls-row">
+        <button class="ctrl-btn" onclick="prevStation()" title="Previous">⏮</button>
+        <button class="ctrl-btn" onclick="toggleMute()" id="muteBtn" title="Mute">🔈</button>
+        <button class="ctrl-btn play-btn" id="playBtn" onclick="togglePlay()">▶</button>
+        <button class="ctrl-btn" onclick="nextStation()" title="Next">⏭</button>
+        <button class="ctrl-btn" onclick="toggleShuffle()" id="shuffleBtn" title="Shuffle">🔀</button>
+      </div>
+
+      <!-- VOLUME -->
+      <div class="volume-row">
+        <span class="vol-icon">🔉</span>
+        <input type="range" class="vol-slider" id="volSlider" min="0" max="100" value="70"
+               oninput="setVolume(this.value)">
+        <span class="vol-label" id="volLabel">70%</span>
+      </div>
+
+    </div><!-- /radio-cabinet -->
+
+    <!-- STATION PANEL -->
+    <div class="station-panel">
+
+      <!-- LIVE STATIONS -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">🌍 Live stations</div>
+            <div class="panel-sub">Free internet radio · No login needed</div>
+          </div>
+        </div>
+
+        <div class="station-item" id="st-lofi" onclick="selectStation(0)">
+          <div class="si-icon" style="background:rgba(124,92,191,0.15)">🌙</div>
+          <div class="si-info">
+            <div class="si-name">Lofi Hip Hop Radio</div>
+            <div class="si-genre">Chill beats · Study vibes</div>
+          </div>
+          <span class="si-tier tier-free">Free</span>
+        </div>
+
+        <div class="station-item" id="st-jazz" onclick="selectStation(1)">
+          <div class="si-icon" style="background:rgba(201,149,42,0.12)">🎷</div>
+          <div class="si-info">
+            <div class="si-name">Jazz & Blues Café</div>
+            <div class="si-genre">Smooth jazz · All day</div>
+          </div>
+          <span class="si-tier tier-free">Free</span>
+        </div>
+
+        <div class="station-item" id="st-ambient" onclick="selectStation(2)">
+          <div class="si-icon" style="background:rgba(45,171,128,0.12)">🌿</div>
+          <div class="si-info">
+            <div class="si-name">Ambient Spaces</div>
+            <div class="si-genre">Atmospheric · Focus</div>
+          </div>
+          <span class="si-tier tier-free">Free</span>
+        </div>
+
+        <div class="station-item" id="st-electronic" onclick="selectStation(3)">
+          <div class="si-icon" style="background:rgba(244,115,42,0.12)">⚡</div>
+          <div class="si-info">
+            <div class="si-name">Electronic Pulse</div>
+            <div class="si-genre">Techno · House · Energy</div>
+          </div>
+          <span class="si-tier tier-gold">👑 Gold</span>
+        </div>
+
+        <div class="station-item" id="st-classical" onclick="selectStation(4)">
+          <div class="si-icon" style="background:rgba(212,136,42,0.12)">🎻</div>
+          <div class="si-info">
+            <div class="si-name">Classical Evenings</div>
+            <div class="si-genre">Orchestra · Piano · Strings</div>
+          </div>
+          <span class="si-tier tier-gold">👑 Gold</span>
+        </div>
+
+        <!-- Listeners count -->
+        <div class="listeners-row">
+          <div class="listener-avatars">
+            <div class="l-avatar">🌟</div>
+            <div class="l-avatar">🎨</div>
+            <div class="l-avatar">💫</div>
+            <div class="l-avatar">🌻</div>
+            <div class="l-avatar">📸</div>
+          </div>
+          <span><span class="listeners-count" id="listenerCount">12</span> members listening now</span>
+        </div>
+      </div>
+
+      <!-- CREATOR STATION -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">🏯 Topraq's Station</div>
+            <div class="panel-sub">Exclusive · Palace members only</div>
+          </div>
+          <span class="si-tier tier-palace">🏯 Palace</span>
+        </div>
+
+        <div class="station-item" id="st-creator1" onclick="selectStation(5)">
+          <div class="si-icon" style="background:rgba(124,92,191,0.2)">🎵</div>
+          <div class="si-info">
+            <div class="si-name">Topraq's Morning Mix</div>
+            <div class="si-genre">Personal playlist · 18 tracks</div>
+          </div>
+          <span class="si-tier tier-palace">🏯</span>
+        </div>
+
+        <div class="station-item" id="st-creator2" onclick="selectStation(6)">
+          <div class="si-icon" style="background:rgba(124,92,191,0.15)">🌅</div>
+          <div class="si-info">
+            <div class="si-name">Sunset Rooftop Set</div>
+            <div class="si-genre">Recorded live · Palace exclusive</div>
+          </div>
+          <span class="si-tier tier-palace">🏯</span>
+        </div>
+
+        <!-- Upload zone (admin only) -->
+        <div class="upload-zone" onclick="document.getElementById('fileUpload').click()">
+          <div class="upload-icon">＋</div>
+          <div class="upload-text">Add a track or playlist</div>
+          <div class="upload-hint">MP3, WAV, FLAC · or paste a stream URL</div>
+        </div>
+        <input type="file" id="fileUpload" accept="audio/*" style="display:none" onchange="handleUpload(event)">
+      </div>
+
+    </div><!-- /station-panel -->
+  </div><!-- /radio-stage -->
+
+</div><!-- /page -->
+
+<!-- TOAST -->
+<div id="toastEl" style="position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(16px);background:var(--bg3);color:var(--text1);border:1px solid var(--border2);padding:0.6rem 1.3rem;border-radius:100px;font-size:0.78rem;z-index:600;transition:all .3s cubic-bezier(.34,1.56,.64,1);opacity:0;white-space:nowrap;pointer-events:none;"></div>
+
+<!-- HIDDEN AUDIO ELEMENT -->
+<audio id="radioAudio" crossorigin="anonymous"></audio>
+
+<script>
+/* ── STATIONS DATA ── */
+const stations = [
+  {
+    id: 'lofi',
+    name: 'Lofi Hip Hop Radio',
+    freq: '90.1 FM',
+    genre: 'Chill beats · Study vibes',
+    // Using a reliable free stream URL (Radio Garden / public streams)
+    url: 'https://streams.ilovemusic.de/iloveradio17.mp3',
+    track: 'Lofi Hip Hop · Chill Beats Radio',
+    tier: 'free'
+  },
+  {
+    id: 'jazz',
+    name: 'Jazz & Blues Café',
+    freq: '94.5 FM',
+    genre: 'Smooth jazz · All day',
+    url: 'https://streams.ilovemusic.de/iloveradio2.mp3',
+    track: 'Jazz & Soul · Live Radio',
+    tier: 'free'
+  },
+  {
+    id: 'ambient',
+    name: 'Ambient Spaces',
+    freq: '88.5 FM',
+    genre: 'Atmospheric · Focus',
+    url: 'https://streams.ilovemusic.de/iloveradio21.mp3',
+    track: 'Ambient Spaces · Live Stream',
+    tier: 'free'
+  },
+  {
+    id: 'electronic',
+    name: 'Electronic Pulse',
+    freq: '101.3 FM',
+    genre: 'Techno · House · Energy',
+    url: 'https://streams.ilovemusic.de/iloveradio6.mp3',
+    track: 'Electronic Pulse · Techno Radio',
+    tier: 'gold'
+  },
+  {
+    id: 'classical',
+    name: 'Classical Evenings',
+    freq: '96.7 FM',
+    genre: 'Orchestra · Piano',
+    url: 'https://streams.ilovemusic.de/iloveradio14.mp3',
+    track: 'Classical Evenings · Live Radio',
+    tier: 'gold'
+  },
+  {
+    id: 'creator1',
+    name: "Topraq's Morning Mix",
+    freq: '107.1 FM',
+    genre: 'Personal playlist · Exclusive',
+    url: 'https://streams.ilovemusic.de/iloveradio17.mp3',
+    track: "Topraq's Morning Mix · Palace Exclusive",
+    tier: 'palace'
+  },
+  {
+    id: 'creator2',
+    name: 'Sunset Rooftop Set',
+    freq: '103.5 FM',
+    genre: 'Recorded live · Palace only',
+    url: 'https://streams.ilovemusic.de/iloveradio6.mp3',
+    track: 'Sunset Rooftop Set · Recorded Live',
+    tier: 'palace'
+  }
+];
+
+/* ── STATE ── */
+let currentStation = -1;
+let isPlaying = false;
+let isMuted = false;
+let shuffle = false;
+let eqInterval = null;
+let listenerInterval = null;
+
+const audio = document.getElementById('radioAudio');
+const playBtn = document.getElementById('playBtn');
+const npDot = document.getElementById('npDot');
+const stationNameEl = document.getElementById('stationName');
+const trackNameEl = document.getElementById('trackName');
+const freqDisplay = document.getElementById('freqDisplay');
+const speakerGrille = document.getElementById('speakerGrille');
+const eqBars = document.querySelectorAll('.eq-bar');
+
+/* ── FREQ → TUNER ── */
+const freqToPercent = freq => {
+  const nums = parseFloat(freq);
+  return ((nums - 87.5) / (108.0 - 87.5)) * 100;
+};
+
+function animateTuner(pct) {
+  document.getElementById('tunerFill').style.width = pct + '%';
+  document.getElementById('tunerNeedle').style.left = pct + '%';
+}
+
+/* ── SELECT STATION ── */
+function selectStation(idx) {
+  const s = stations[idx];
+  if (!s) return;
+
+  // Deactivate all
+  document.querySelectorAll('.station-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.station-item .si-playing').forEach(el => el.remove());
+
+  // Mark active
+  const el = document.getElementById('st-' + s.id);
+  if (el) {
+    el.classList.add('active');
+    const pip = document.createElement('div');
+    pip.className = 'si-playing'; el.appendChild(pip);
+  }
+
+  currentStation = idx;
+  freqDisplay.textContent = s.freq;
+  stationNameEl.textContent = s.name;
+  trackNameEl.textContent = s.track;
+  trackNameEl.classList.toggle('scrolling', s.track.length > 28);
+  animateTuner(freqToPercent(s.freq));
+
+  // Load and play
+  audio.src = s.url;
+  audio.volume = document.getElementById('volSlider').value / 100;
+
+  const playPromise = audio.play();
+  if (playPromise !== undefined) {
+    playPromise.then(() => {
+      setPlaying(true);
+    }).catch(() => {
+      // Autoplay blocked — show message but keep UI in "ready" state
+      setPlaying(true);
+      showToast('🎵 Click ▶ to start the stream');
+    });
+  }
+}
+
+function setPlaying(state) {
+  isPlaying = state;
+  playBtn.textContent = state ? '⏸' : '▶';
+  npDot.classList.toggle('off', !state);
+  speakerGrille.classList.toggle('playing', state);
+  if (state) startEQ(); else stopEQ();
+}
+
+/* ── PLAY / PAUSE ── */
+function togglePlay() {
+  if (currentStation < 0) { selectStation(0); return; }
+  if (isPlaying) {
+    audio.pause(); setPlaying(false);
+  } else {
+    audio.play().catch(() => showToast('⚠️ Stream unavailable — try another station'));
+    setPlaying(true);
+  }
+}
+
+function prevStation() {
+  const idx = shuffle
+    ? Math.floor(Math.random() * stations.length)
+    : (currentStation <= 0 ? stations.length - 1 : currentStation - 1);
+  selectStation(idx);
+}
+function nextStation() {
+  const idx = shuffle
+    ? Math.floor(Math.random() * stations.length)
+    : (currentStation >= stations.length - 1 ? 0 : currentStation + 1);
+  selectStation(idx);
+}
+
+function toggleMute() {
+  isMuted = !isMuted;
+  audio.muted = isMuted;
+  document.getElementById('muteBtn').textContent = isMuted ? '🔇' : '🔈';
+}
+function toggleShuffle() {
+  shuffle = !shuffle;
+  document.getElementById('shuffleBtn').style.color = shuffle ? 'var(--amber2)' : '';
+  showToast(shuffle ? '🔀 Shuffle on' : '🔀 Shuffle off');
+}
+
+function setVolume(val) {
+  audio.volume = val / 100;
+  document.getElementById('volLabel').textContent = val + '%';
+  const slider = document.getElementById('volSlider');
+  slider.style.background = `linear-gradient(90deg, var(--amber) ${val}%, rgba(212,136,42,0.15) ${val}%)`;
+}
+
+/* ── EQ ANIMATION ── */
+function startEQ() {
+  stopEQ();
+  eqBars.forEach(b => b.classList.remove('off'));
+  eqInterval = setInterval(() => {
+    eqBars.forEach(b => {
+      const h = Math.floor(Math.random() * 24) + 4;
+      b.style.height = h + 'px';
+    });
+  }, 120);
+}
+function stopEQ() {
+  clearInterval(eqInterval);
+  eqBars.forEach(b => { b.classList.add('off'); b.style.height = '2px'; });
+}
+
+/* ── LISTENER COUNT (simulated live) ── */
+let listeners = 12;
+listenerInterval = setInterval(() => {
+  const delta = Math.random() > 0.5 ? 1 : -1;
+  listeners = Math.max(8, Math.min(22, listeners + delta));
+  const el = document.getElementById('listenerCount');
+  if (el) el.textContent = listeners;
+}, 4000);
+
+/* ── UPLOAD ── */
+function handleUpload(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const url = URL.createObjectURL(file);
+  stations.push({
+    id: 'upload_' + Date.now(),
+    name: file.name.replace(/\.[^/.]+$/, ''),
+    freq: '105.9 FM',
+    genre: 'Your upload · Palace exclusive',
+    url,
+    track: file.name,
+    tier: 'palace'
+  });
+  showToast('🎵 "' + file.name.slice(0, 30) + '" added to your station!');
+}
+
+/* ── TOAST ── */
+function showToast(msg) {
+  const el = document.getElementById('toastEl');
+  el.textContent = msg; el.style.opacity = '1'; el.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateX(-50%) translateY(16px)'; }, 2800);
+}
+
+/* Auto-start with lofi on load */
+window.addEventListener('load', () => {
+  freqDisplay.textContent = '88.5 FM';
+  stationNameEl.textContent = 'Select a station';
+  animateTuner(freqToPercent('88.5 FM'));
+});
+</script>
+</body>
+</html>

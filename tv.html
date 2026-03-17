@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D TV — Topraq's Town · KreaTown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:     #080608;
+  --bg2:    #100e12;
+  --bg3:    #18151c;
+  --bg4:    #201c26;
+  --palace: #7c5cbf;
+  --palace2:#b8a0e8;
+  --palace3:#e8e0fc;
+  --gold:   #c9952a;
+  --gold2:  #f5d58a;
+  --orange: #f4732a;
+  --emerald:#2dab80;
+  --silver: #8fa3b5;
+  --red:    #e05252;
+  --text1:  rgba(240,235,255,0.93);
+  --text2:  rgba(220,210,245,0.55);
+  --text3:  rgba(200,190,230,0.28);
+  --border: rgba(124,92,191,0.18);
+  --border2:rgba(124,92,191,0.32);
+  --screen-glow: rgba(124,92,191,0.15);
+}
+
+html, body { min-height: 100vh; background: var(--bg); color: var(--text1); font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
+
+/* CINEMA ROOM BACKGROUND */
+.room-bg {
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(124,92,191,0.1) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 80%, rgba(45,171,128,0.04) 0%, transparent 40%),
+    linear-gradient(180deg, #080608 0%, #0a080c 100%);
+}
+/* Subtle ceiling light strips */
+.ceiling-lights {
+  position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 1;
+  background: linear-gradient(90deg,
+    transparent 0%, rgba(124,92,191,0.3) 20%,
+    rgba(184,160,232,0.5) 40%, rgba(245,213,138,0.3) 60%,
+    rgba(124,92,191,0.3) 80%, transparent 100%);
+  filter: blur(1px);
+}
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.85rem 2rem; height: 56px;
+  background: rgba(8,6,8,0.92); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--text1); text-decoration: none; }
+.nav-logo span { color: var(--palace2); }
+.nav-crumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: var(--text3); }
+.nav-crumb a { color: var(--text2); text-decoration: none; transition: color .15s; }
+.nav-crumb a:hover { color: var(--palace2); }
+.nav-right { display: flex; align-items: center; gap: 0.75rem; }
+.tier-pill { font-size: 0.62rem; padding: 0.18rem 0.6rem; border-radius: 100px; font-weight: 500; }
+.tp-palace { background: rgba(124,92,191,0.15); color: var(--palace2); border: 1px solid var(--border2); }
+.nav-back { font-size: 0.75rem; color: var(--text2); text-decoration: none; transition: color .15s; }
+.nav-back:hover { color: var(--palace2); }
+
+/* PAGE */
+.page { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+
+/* ROOM HEADER */
+.room-header { text-align: center; margin-bottom: 2rem; }
+.room-tag { display: inline-flex; align-items: center; gap: 0.4rem; font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--palace2); margin-bottom: 0.6rem; }
+.room-tag::before, .room-tag::after { content: '·'; opacity: 0.4; }
+.room-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 900; color: var(--text1); letter-spacing: -0.025em; line-height: 1.1; }
+.room-title em { font-style: italic; color: var(--palace2); }
+.room-sub { font-size: 0.875rem; color: var(--text2); margin-top: 0.5rem; font-weight: 300; }
+
+/* ── TV CABINET ── */
+.tv-cabinet {
+  background: linear-gradient(160deg, #1c1824, #100e14, #0c0a10);
+  border-radius: 1.5rem;
+  border: 1px solid rgba(124,92,191,0.25);
+  box-shadow:
+    0 40px 100px rgba(0,0,0,0.7),
+    0 0 0 1px rgba(124,92,191,0.08),
+    inset 0 1px 0 rgba(184,160,232,0.07);
+  padding: 1.5rem 1.5rem 1.25rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+/* Top edge glow */
+.tv-cabinet::before {
+  content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(184,160,232,0.4), transparent);
+}
+/* Screen glow reflection on surface below */
+.tv-cabinet::after {
+  content: ''; position: absolute; bottom: -30px; left: 10%; right: 10%; height: 30px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(124,92,191,0.12) 0%, transparent 70%);
+  pointer-events: none; filter: blur(6px);
+}
+
+/* TV FRAME */
+.tv-frame {
+  background: #0a0810;
+  border-radius: 0.875rem;
+  border: 3px solid #1e1828;
+  overflow: hidden; position: relative;
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(124,92,191,0.1);
+}
+/* CRT scanlines overlay */
+.tv-frame::after {
+  content: ''; position: absolute; inset: 0; z-index: 5; pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg, transparent 0px, transparent 3px,
+    rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px
+  );
+}
+
+/* SCREEN */
+.tv-screen {
+  position: relative; width: 100%;
+  padding-top: 56.25%; /* 16:9 */
+  background: #000;
+  overflow: hidden;
+}
+.tv-screen iframe {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  border: none; display: block;
+}
+/* Screen off state */
+.screen-off {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, #1a1030 0%, #080610 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 4; transition: opacity .4s;
+}
+.screen-off.hidden { opacity: 0; pointer-events: none; }
+.screen-off-icon { font-size: 3rem; margin-bottom: 0.75rem; opacity: 0.5; }
+.screen-off-text { font-size: 0.9rem; color: var(--text2); font-weight: 300; }
+.screen-off-sub { font-size: 0.72rem; color: var(--text3); margin-top: 0.3rem; }
+
+/* CHANNEL INFO BAR */
+.channel-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.75rem 1rem 0;
+  flex-wrap: wrap; gap: 0.5rem;
+}
+.ch-left { display: flex; align-items: center; gap: 0.75rem; }
+.ch-live-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--red);
+  flex-shrink: 0; animation: liveblink 1.2s ease-in-out infinite;
+}
+.ch-live-dot.off { background: var(--text3); animation: none; }
+@keyframes liveblink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.85)} }
+.ch-name { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--text1); }
+.ch-desc { font-size: 0.72rem; color: var(--text2); }
+.ch-right { display: flex; align-items: center; gap: 0.75rem; }
+.ch-viewers { font-size: 0.7rem; color: var(--text2); display: flex; align-items: center; gap: 0.3rem; }
+.ch-num { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--text3); }
+
+/* TV CONTROLS ROW */
+.tv-controls {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.6rem; padding: 0.75rem 1rem 0;
+}
+.tv-btn {
+  height: 34px; border-radius: 0.5rem;
+  background: rgba(124,92,191,0.08); border: 1px solid var(--border);
+  color: var(--text2); font-size: 0.78rem; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: all .15s;
+  display: flex; align-items: center; gap: 0.3rem; padding: 0 0.85rem;
+}
+.tv-btn:hover { background: rgba(124,92,191,0.16); border-color: var(--border2); color: var(--palace2); }
+.tv-btn.active { background: rgba(124,92,191,0.2); border-color: var(--palace); color: var(--palace2); }
+.tv-btn-icon { font-size: 0.9rem; }
+
+/* POWER BUTTON */
+.power-btn {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(224,82,82,0.1); border: 1px solid rgba(224,82,82,0.25);
+  color: var(--red); font-size: 0.85rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s; margin-left: 0.5rem;
+}
+.power-btn.on { background: rgba(224,82,82,0.2); border-color: rgba(224,82,82,0.5); box-shadow: 0 0 10px rgba(224,82,82,0.2); }
+.power-btn:hover { background: rgba(224,82,82,0.25); }
+
+/* ── CHANNEL GRID ── */
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem; font-weight: 700; color: var(--text1);
+  margin-bottom: 0.25rem;
+}
+.section-sub { font-size: 0.75rem; color: var(--text3); margin-bottom: 1.1rem; }
+
+.channels-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.875rem; margin-bottom: 2rem;
+}
+.ch-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 1rem; overflow: hidden; cursor: pointer;
+  transition: all .2s; position: relative;
+}
+.ch-card:hover { border-color: var(--border2); transform: translateY(-3px); box-shadow: 0 8px 32px rgba(124,92,191,0.15); }
+.ch-card.active { border-color: var(--palace); box-shadow: 0 0 0 1px rgba(124,92,191,0.3), 0 8px 32px rgba(124,92,191,0.2); }
+.ch-card.locked { opacity: 0.5; cursor: not-allowed; }
+.ch-card.locked:hover { transform: none; box-shadow: none; border-color: var(--border); }
+
+.ch-thumb {
+  width: 100%; aspect-ratio: 16/9; position: relative;
+  background: var(--bg3); overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.ch-thumb-img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform .3s;
+}
+.ch-card:hover .ch-thumb-img { transform: scale(1.04); }
+.ch-thumb-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(8,6,8,0.7) 0%, transparent 60%);
+}
+.ch-thumb-emoji {
+  font-size: 2.5rem; position: absolute;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+}
+.ch-play-overlay {
+  position: absolute; inset: 0;
+  background: rgba(124,92,191,0.15); backdrop-filter: blur(2px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .2s;
+}
+.ch-card:not(.locked):hover .ch-play-overlay { opacity: 1; }
+.ch-play-icon {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--palace); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+}
+.ch-info { padding: 0.7rem 0.85rem 0.8rem; }
+.ch-title { font-size: 0.82rem; font-weight: 500; color: var(--text1); margin-bottom: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ch-meta { font-size: 0.65rem; color: var(--text3); display: flex; align-items: center; justify-content: space-between; }
+.ch-tier-tag { font-size: 0.58rem; padding: 0.1rem 0.4rem; border-radius: 100px; font-weight: 500; }
+.ctt-free    { background: rgba(45,171,128,0.12);  color: #1a7a50; }
+.ctt-gold    { background: rgba(201,149,42,0.12);  color: #8a6000; }
+.ctt-palace  { background: rgba(124,92,191,0.14);  color: var(--palace2); }
+
+/* NOW WATCHING badge */
+.now-watching-badge {
+  position: absolute; top: 0.5rem; left: 0.5rem;
+  background: var(--red); color: white;
+  font-size: 0.55rem; padding: 0.15rem 0.45rem; border-radius: 100px;
+  font-weight: 500; letter-spacing: 0.04em;
+  display: none;
+}
+.ch-card.active .now-watching-badge { display: block; }
+.lock-icon-overlay {
+  position: absolute; top: 0.5rem; right: 0.5rem;
+  font-size: 0.8rem; opacity: 0.7;
+}
+
+/* CREATOR UPLOAD */
+.creator-section { margin-bottom: 2rem; }
+.upload-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.875rem; }
+.upload-card {
+  background: var(--bg2); border: 1.5px dashed rgba(124,92,191,0.25);
+  border-radius: 1rem; padding: 1.5rem 1rem; text-align: center;
+  cursor: pointer; transition: all .18s;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 120px; gap: 0.4rem;
+}
+.upload-card:hover { border-color: var(--palace); background: rgba(124,92,191,0.06); }
+.upload-card-icon { font-size: 1.6rem; }
+.upload-card-text { font-size: 0.78rem; color: var(--text2); font-weight: 500; }
+.upload-card-hint { font-size: 0.62rem; color: var(--text3); }
+
+/* UNLOCK BANNER */
+.unlock-banner {
+  background: linear-gradient(135deg, rgba(124,92,191,0.08), rgba(201,149,42,0.05));
+  border: 1px solid rgba(124,92,191,0.2); border-radius: 1rem;
+  padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;
+}
+.ub-title { font-family: 'Playfair Display', serif; font-size: 0.9rem; font-weight: 700; color: var(--text1); }
+.ub-sub { font-size: 0.7rem; color: var(--text2); margin-top: 0.15rem; }
+.btn-upgrade {
+  background: linear-gradient(135deg, var(--palace), #5a3a9f);
+  color: white; padding: 0.5rem 1.1rem; border-radius: 100px;
+  font-size: 0.75rem; font-weight: 500; cursor: pointer; border: none;
+  font-family: 'DM Sans', sans-serif; white-space: nowrap;
+  transition: all .18s; box-shadow: 0 2px 12px rgba(124,92,191,0.3);
+}
+.btn-upgrade:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(124,92,191,0.4); }
+
+/* ANIMATIONS */
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+.fu1 { animation: fadeUp .5s .05s ease both; }
+.fu2 { animation: fadeUp .5s .15s ease both; }
+.fu3 { animation: fadeUp .5s .25s ease both; }
+.fu4 { animation: fadeUp .5s .35s ease both; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: rgba(124,92,191,0.2); border-radius: 2px; }
+
+@media (max-width: 640px) {
+  .page { padding: 1.25rem 1rem 3rem; }
+  .channels-grid { grid-template-columns: repeat(2, 1fr); }
+  .tv-controls { flex-wrap: wrap; }
+}
+
+@media (max-width: 640px) {
+  nav { padding: 0.75rem 1rem; }
+  .nav-crumb { display: none; }
+  .nav-right .tier-pill { display: none; }
+  .nav-back { font-size: 0.7rem; }
+
+  .page { padding: 1.25rem 0.875rem 5.5rem; }
+  .room-header { margin-bottom: 1.25rem; }
+  .room-title { font-size: clamp(1.5rem, 8vw, 2.2rem); }
+  .room-sub { font-size: 0.8rem; }
+
+  .unlock-banner { flex-direction: column; align-items: flex-start; gap: 0.75rem; padding: 0.875rem 1rem; margin-bottom: 1.25rem; }
+  .ub-title { font-size: 0.82rem; }
+  .ub-sub { font-size: 0.65rem; }
+  .btn-upgrade { width: 100%; text-align: center; padding: 0.55rem; }
+
+  .tv-cabinet { padding: 1rem 1rem 0.875rem; border-radius: 1.25rem; }
+  .tv-frame { border-radius: 0.625rem; border-width: 2px; }
+  .channel-bar { padding: 0.6rem 0.75rem 0; gap: 0.35rem; }
+  .ch-name { font-size: 0.85rem; }
+  .ch-desc { font-size: 0.62rem; }
+  .ch-viewers { font-size: 0.62rem; }
+  .ch-num { font-size: 0.58rem; }
+  .tv-controls { gap: 0.4rem; padding: 0.6rem 0.75rem 0; flex-wrap: wrap; justify-content: center; }
+  .tv-btn { height: 30px; font-size: 0.7rem; padding: 0 0.65rem; }
+  .tv-btn-icon { font-size: 0.8rem; }
+  .power-btn { width: 30px; height: 30px; font-size: 0.75rem; }
+
+  .section-title { font-size: 0.95rem; }
+  .section-sub { font-size: 0.65rem; margin-bottom: 0.875rem; }
+  .channels-grid { grid-template-columns: repeat(2, 1fr); gap: 0.65rem; }
+  .ch-card { border-radius: 0.75rem; }
+  .ch-thumb-emoji { font-size: 1.8rem; }
+  .ch-play-icon { width: 32px; height: 32px; font-size: 0.85rem; }
+  .ch-info { padding: 0.55rem 0.7rem 0.65rem; }
+  .ch-title { font-size: 0.72rem; }
+  .ch-meta { font-size: 0.58rem; }
+  .ch-tier-tag { font-size: 0.52rem; padding: 0.08rem 0.35rem; }
+  .now-watching-badge { font-size: 0.48rem; padding: 0.12rem 0.35rem; }
+
+  .upload-card { min-height: 90px; padding: 1rem 0.75rem; }
+  .upload-card-icon { font-size: 1.2rem; }
+  .upload-card-text { font-size: 0.7rem; }
+  .upload-card-hint { font-size: 0.58rem; }
+
+  /* YouTube paste row */
+  .page > div:last-child > div { flex-direction: column; padding: 0.875rem 1rem; }
+  .page > div:last-child input { width: 100%; }
+  .page > div:last-child button { width: 100%; text-align: center; padding: 0.55rem; }
+}
+
+@media (max-width: 380px) {
+  .channels-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+  .ch-title { font-size: 0.65rem; }
+  .room-title { font-size: 1.4rem; }
+}
+
+</style>
+</head>
+<body>
+<div class="room-bg"></div>
+<div class="ceiling-lights"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="topraq-hub.html" class="nav-logo">Krea<span>Town</span></a>
+  <div class="nav-crumb">
+    <a href="topraq-hub.html">@topraq</a>
+    <span style="opacity:.3">/</span>
+    <span style="color:var(--palace2)">📺 3D TV</span>
+  </div>
+  <div class="nav-right">
+    <span class="tier-pill tp-palace">🏯 Palace Access</span>
+    <a href="topraq-hub.html" class="nav-back">← Back to town</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="room-header fu1">
+    <div class="room-tag">Unlocked room</div>
+    <h1 class="room-title">Topraq's<br><em>TV Room</em></h1>
+    <p class="room-sub">Music only · Live concerts · Artist channels · Exclusive sets</p>
+  </div>
+
+  <!-- UNLOCK BANNER -->
+  <div class="unlock-banner fu2">
+    <div>
+      <div class="ub-title">📺 TV Room unlocked at 10,000 members</div>
+      <div class="ub-sub">You have Palace access — all channels open. Creator can add exclusive music video sets anytime.</div>
+    </div>
+    <button class="btn-upgrade" onclick="showToast('✓ Full TV access active!')">Full access active ✓</button>
+  </div>
+
+  <!-- TV CABINET -->
+  <div class="tv-cabinet fu2">
+
+    <!-- FRAME + SCREEN -->
+    <div class="tv-frame">
+      <div class="tv-screen">
+        <!-- Default off screen -->
+        <div class="screen-off" id="screenOff">
+          <div class="screen-off-icon">📺</div>
+          <div class="screen-off-text">Select a channel to tune in</div>
+          <div class="screen-off-sub">Music only · All channels curated by Topraq</div>
+        </div>
+        <!-- YouTube embed (hidden until selected) -->
+        <iframe id="tvIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="display:none;"></iframe>
+      </div>
+    </div>
+
+    <!-- CHANNEL INFO BAR -->
+    <div class="channel-bar">
+      <div class="ch-left">
+        <div class="ch-live-dot off" id="liveDot"></div>
+        <div>
+          <div class="ch-name" id="chName">No channel selected</div>
+          <div class="ch-desc" id="chDesc">Choose a channel below to start watching</div>
+        </div>
+      </div>
+      <div class="ch-right">
+        <div class="ch-viewers" id="chViewers" style="display:none">
+          👁 <span id="viewerCount">0</span> watching
+        </div>
+        <div class="ch-num" id="chNum">CH --</div>
+      </div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="tv-controls">
+      <button class="tv-btn" onclick="prevChannel()"><span class="tv-btn-icon">⏮</span> Prev</button>
+      <button class="tv-btn active" id="fullscreenBtn" onclick="toggleFullscreen()"><span class="tv-btn-icon">⛶</span> Fullscreen</button>
+      <button class="tv-btn" onclick="nextChannel()">Next <span class="tv-btn-icon">⏭</span></button>
+      <button class="tv-btn" id="muteBtn" onclick="toggleMute()"><span class="tv-btn-icon">🔊</span> Sound</button>
+      <button class="power-btn" id="powerBtn" onclick="powerOff()" title="Turn off">⏻</button>
+    </div>
+
+  </div><!-- /tv-cabinet -->
+
+  <!-- FREE CHANNELS -->
+  <div class="fu3">
+    <div class="section-title">🌍 Music channels</div>
+    <div class="section-sub">Free · Available to all members</div>
+    <div class="channels-grid" id="freeGrid">
+
+      <div class="ch-card" id="card-0" onclick="watchChannel(0)">
+        <div class="ch-thumb">
+          <div class="ch-thumb-emoji">🎸</div>
+          <div class="ch-thumb-overlay"></div>
+          <div class="ch-play-overlay"><div class="ch-play-icon">▶</div></div>
+          <div class="now-watching-badge">● WATCHING</div>
+        </div>
+        <div class="ch-info">
+          <div class="ch-title">Live Concert Classics</div>
+          <div class="ch-meta"><span>Rock · Legends · Live</span><span class="ch-tier-tag ctt-free">Free</span></div>
+        </div>
+      </div>
+
+      <div class="ch-card" id="card-1" onclick="watchChannel(1)">
+        <div class="ch-thumb">
+          <div class="ch-thumb-emoji">🎷</div>
+          <div class="ch-thumb-overlay"></div>
+          <div class="ch-play-overlay"><div class="ch-play-icon">▶</div></div>
+          <div class="now-watching-badge">● WATCHING</div>
+        </div>
+        <div class="ch-info">
+          <div class="ch-title">Jazz Sessions Live</div>
+          <div class="ch-meta"><span>Jazz · Soul · Piano</span><span class="ch-tier-tag ctt-free">Free</span></div>
+        </div>
+      </div>
+
+      <div class="ch-card" id="card-2" onclick="watchChannel(2)">
+        <div class="ch-thumb">
+          <div class="ch-thumb-emoji">🌙</div>
+          <div class="ch-thumb-overlay"></div>
+          <div class="ch-play-overlay"><div class="ch-play-icon">▶</div></div>
+          <div class="now-watching-badge">● WATCHING</div>
+        </div>
+        <div class="ch-info">
+          <div class="ch-title">Lofi Music Visuals</div>
+          <div class="ch-meta"><span>Chill · Animated</span><span class="ch-tier-tag ctt-free">Free</span></div>
+        </div>
+      </div>
+
+      <div class="ch-card" id="card-3" onclick="watchChannel(3)">
+        <div class="ch-thumb">
+          <div class="ch-thumb-emoji">🎹</div>
+          <div class="ch-thumb-overlay"></div>
+          <div class="ch-play-overlay"><div class="ch-play-icon">▶</div></div>
+          <div class="now-watching-badge">● WATCHING</div>
+        </div>
+        <div class="ch-info">
+          <div class="ch-title">Piano Masterclass Live</div>
+          <div class="ch-meta"><span>Classical · Piano</span><span class="ch-tier-tag ctt-free">Free</span></div>
+        </div>
+      </div>
+
+    </div><!-- /free grid -->
+  </div>
+
+  <!-- GOLD CHANNELS -->
+  <div class="fu3" style="margin-top:0.5rem;">
+    <div class="section-title">👑 Gold channels</div>
+    <div class="section-sub">Unlocked at Gold tier · $19/mo</div>
+    <div class="channels-grid">
+
+      <div class="ch-card" id="card-4" onclick="watchChannel(4)">
+        <div class="ch-thumb">
+          <div class="ch-thumb-emoji">⚡</div>
+          <div class="ch-thumb-overlay"></div>
+          <div class="ch-play-overlay"><div class="ch-play-icon">▶</div></div>
+          <div class="now-watching-badge">● WATCHING</div>
+        </div>
+        <div class="ch-info">
+          <div class="ch-title">Electronic Music Fest</div>
+          <div class="ch-meta"><span>EDM · Festival · Live</span><span class="ch-tier-tag ctt-gold">👑 Gold</span></div>
+        </div>
+      </div>
+
+      <div class="ch-card" id="card-5" onclick="watchChannel(5)">
+        <div class="ch-thumb">
+          <div class="ch-thumb-emoji">🎤</div>
+          <div class="ch-thumb-overlay"></div>
+          <div class="ch-play-overlay"><div class="ch-play-icon">▶</div></div>
+          <div class="now-watching-badge">● WATCHING</div>
+        </div>
+        <div class="ch-info">
+          <div class="ch-title">Tiny Desk Concerts</div>
+          <div class="ch-meta"><span>Indie · Acoustic · Intimate</span><span class="ch-tier-tag ctt-gold">👑 Gold</span></div>
+        </div>
+      </div>
+
+      <div class="ch-card" id="card-6" onclick="watchChannel(6)">
+        <div class="ch-thumb">
+          <div class="ch-thumb-emoji">🎺</div>
+          <div class="ch-thumb-overlay"></div>
+          <div class="ch-play-overlay"><div class="ch-play-icon">▶</div></div>
+          <div class="now-watching-badge">● WATCHING</div>
+        </div>
+        <div class="ch-info">
+          <div class="ch-title">World Music Channel</div>
+          <div class="ch-meta"><span>Global · Traditional · Fusion</span><span class="ch-tier-tag ctt-gold">👑 Gold</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PALACE CHANNELS -->
+  <div class="fu4" style="margin-top:0.5rem;">
+    <div class="section-title">🏯 Palace channels</div>
+    <div class="section-sub">Exclusive · Curated by Topraq · Palace members only</div>
+    <div class="channels-grid">
+
+      <div class="ch-card" id="card-7" onclick="watchChannel(7)">
+        <div class="ch-thumb">
+          <div class="ch-thumb-emoji">🎵</div>
+          <div class="ch-thumb-overlay"></div>
+          <div class="ch-play-overlay"><div class="ch-play-icon">▶</div></div>
+          <div class="now-watching-badge">● WATCHING</div>
+        </div>
+        <div class="ch-info">
+          <div class="ch-title">Topraq's Music Picks</div>
+          <div class="ch-meta"><span>Personal · Curated weekly</span><span class="ch-tier-tag ctt-palace">🏯 Palace</span></div>
+        </div>
+      </div>
+
+      <div class="ch-card" id="card-8" onclick="watchChannel(8)">
+        <div class="ch-thumb">
+          <div class="ch-thumb-emoji">🌅</div>
+          <div class="ch-thumb-overlay"></div>
+          <div class="ch-play-overlay"><div class="ch-play-icon">▶</div></div>
+          <div class="now-watching-badge">● WATCHING</div>
+        </div>
+        <div class="ch-info">
+          <div class="ch-title">Rooftop Sessions</div>
+          <div class="ch-meta"><span>Exclusive · Live recorded</span><span class="ch-tier-tag ctt-palace">🏯 Palace</span></div>
+        </div>
+      </div>
+
+      <!-- UPLOAD CARD (admin only) -->
+      <div class="upload-card" onclick="document.getElementById('videoUpload').click()">
+        <div class="upload-card-icon">＋</div>
+        <div class="upload-card-text">Add your channel</div>
+        <div class="upload-card-hint">Paste a YouTube link or upload</div>
+      </div>
+      <input type="file" id="videoUpload" accept="video/*" style="display:none" onchange="handleVideoUpload(event)">
+
+    </div>
+  </div>
+
+  <!-- PASTE URL SECTION -->
+  <div class="fu4" style="margin-top:1rem;">
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:1rem;padding:1.1rem 1.25rem;display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+      <div style="flex:1;min-width:200px;">
+        <div style="font-size:0.82rem;font-weight:500;color:var(--text1);margin-bottom:0.3rem;">📎 Add a YouTube music channel</div>
+        <div style="font-size:0.65rem;color:var(--text3);">Paste any YouTube video URL — music channels, concerts, live sets</div>
+      </div>
+      <div style="display:flex;gap:0.5rem;flex:1;min-width:220px;">
+        <input type="text" id="ytUrl" placeholder="https://youtube.com/watch?v=..." 
+          style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:0.5rem;padding:0.5rem 0.75rem;font-size:0.78rem;color:var(--text1);outline:none;font-family:'DM Sans',sans-serif;"
+          onfocus="this.style.borderColor='var(--palace)'" onblur="this.style.borderColor='var(--border)'">
+        <button onclick="addYouTube()" style="background:var(--palace);color:white;border:none;border-radius:0.5rem;padding:0.5rem 1rem;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:all .15s;" onmouseover="this.style.background='#9a7ad4'" onmouseout="this.style.background='var(--palace)'">Add Channel</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<!-- TOAST -->
+<div id="toastEl" style="position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(16px);background:var(--bg3);color:var(--text1);border:1px solid var(--border2);padding:0.6rem 1.3rem;border-radius:100px;font-size:0.78rem;z-index:600;transition:all .3s cubic-bezier(.34,1.56,.64,1);opacity:0;white-space:nowrap;pointer-events:none;max-width:90vw;text-align:center;"></div>
+
+<script>
+/* ── CHANNEL DATA ── */
+/* Using well-known public YouTube music content */
+const channels = [
+  { id: 0, name: 'Live Concert Classics',  desc: 'Rock · Legends · Live performances',    ytId: 'dQw4w9WgXcQ',  ch: 'CH 01', viewers: 284,  tier: 'free'   },
+  { id: 1, name: 'Jazz Sessions Live',      desc: 'Jazz · Soul · Piano & more',            ytId: '5qap5aO4i9A',  ch: 'CH 02', viewers: 142,  tier: 'free'   },
+  { id: 2, name: 'Lofi Music Visuals',      desc: 'Chill beats · Animated · Study',        ytId: 'jfKfPfyJRdk',  ch: 'CH 03', viewers: 1820, tier: 'free'   },
+  { id: 3, name: 'Piano Masterclass Live',  desc: 'Classical · Piano · Strings',           ytId: 'DHV9tFHmFrk',  ch: 'CH 04', viewers: 98,   tier: 'free'   },
+  { id: 4, name: 'Electronic Music Fest',   desc: 'EDM · Festival sets · Live',            ytId: 'ZbZSe6N_BXs',  ch: 'CH 05', viewers: 520,  tier: 'gold'   },
+  { id: 5, name: 'Tiny Desk Concerts',      desc: 'Indie · Acoustic · Intimate sessions',  ytId: 'twG8er-W3vk',  ch: 'CH 06', viewers: 340,  tier: 'gold'   },
+  { id: 6, name: 'World Music Channel',     desc: 'Global beats · Traditional · Fusion',   ytId: 'kffacxfA7G4',  ch: 'CH 07', viewers: 76,   tier: 'gold'   },
+  { id: 7, name: "Topraq's Music Picks",    desc: 'Personal curation · Updated weekly',    ytId: 'JGwWNGJdvx8',  ch: 'CH 08', viewers: 44,   tier: 'palace' },
+  { id: 8, name: 'Rooftop Sessions',        desc: 'Live recorded · Palace exclusive',      ytId: 'M7lc1UVf-VE',  ch: 'CH 09', viewers: 19,   tier: 'palace' },
+];
+
+let currentCh = -1;
+let isPowered = false;
+let isMuted = false;
+let viewerInterval = null;
+
+const iframe = document.getElementById('tvIframe');
+const screenOff = document.getElementById('screenOff');
+
+/* ── WATCH CHANNEL ── */
+function watchChannel(idx) {
+  const ch = channels[idx]; if (!ch) return;
+
+  // Deactivate all cards
+  document.querySelectorAll('.ch-card').forEach(c => c.classList.remove('active'));
+
+  currentCh = idx;
+  const card = document.getElementById('card-' + idx);
+  if (card) card.classList.add('active');
+
+  // Load YouTube embed with autoplay
+  iframe.src = `https://www.youtube.com/embed/${ch.ytId}?autoplay=1&mute=${isMuted?1:0}&rel=0&modestbranding=1`;
+  iframe.style.display = 'block';
+  screenOff.classList.add('hidden');
+
+  // Update info bar
+  document.getElementById('chName').textContent = ch.name;
+  document.getElementById('chDesc').textContent = ch.desc;
+  document.getElementById('chNum').textContent = ch.ch;
+  document.getElementById('liveDot').classList.remove('off');
+  document.getElementById('chViewers').style.display = 'flex';
+  document.getElementById('viewerCount').textContent = ch.viewers.toLocaleString();
+  document.getElementById('powerBtn').classList.add('on');
+  isPowered = true;
+
+  // Animate viewers
+  clearInterval(viewerInterval);
+  viewerInterval = setInterval(() => {
+    const v = Math.max(10, ch.viewers + Math.floor((Math.random() - 0.5) * 8));
+    const el = document.getElementById('viewerCount');
+    if (el) el.textContent = v.toLocaleString();
+  }, 3500);
+
+  showToast(`📺 Now watching: ${ch.name}`);
+}
+
+/* ── POWER OFF ── */
+function powerOff() {
+  if (!isPowered) return;
+  iframe.src = ''; iframe.style.display = 'none';
+  screenOff.classList.remove('hidden');
+  document.getElementById('chName').textContent = 'No channel selected';
+  document.getElementById('chDesc').textContent = 'Choose a channel below to start watching';
+  document.getElementById('chNum').textContent = 'CH --';
+  document.getElementById('liveDot').classList.add('off');
+  document.getElementById('chViewers').style.display = 'none';
+  document.getElementById('powerBtn').classList.remove('on');
+  document.querySelectorAll('.ch-card').forEach(c => c.classList.remove('active'));
+  clearInterval(viewerInterval);
+  isPowered = false; currentCh = -1;
+}
+
+/* ── PREV / NEXT ── */
+function prevChannel() {
+  if (currentCh < 0) { watchChannel(0); return; }
+  watchChannel(currentCh <= 0 ? channels.length - 1 : currentCh - 1);
+}
+function nextChannel() {
+  if (currentCh < 0) { watchChannel(0); return; }
+  watchChannel(currentCh >= channels.length - 1 ? 0 : currentCh + 1);
+}
+
+/* ── MUTE ── */
+function toggleMute() {
+  isMuted = !isMuted;
+  document.getElementById('muteBtn').innerHTML = `<span class="tv-btn-icon">${isMuted ? '🔇' : '🔊'}</span> ${isMuted ? 'Unmute' : 'Sound'}`;
+  if (currentCh >= 0) {
+    const ch = channels[currentCh];
+    iframe.src = `https://www.youtube.com/embed/${ch.ytId}?autoplay=1&mute=${isMuted?1:0}&rel=0&modestbranding=1`;
+  }
+}
+
+/* ── FULLSCREEN ── */
+function toggleFullscreen() {
+  const tvFrame = document.querySelector('.tv-frame');
+  if (!document.fullscreenElement) {
+    tvFrame.requestFullscreen && tvFrame.requestFullscreen();
+  } else {
+    document.exitFullscreen && document.exitFullscreen();
+  }
+}
+
+/* ── ADD YOUTUBE URL ── */
+function addYouTube() {
+  const input = document.getElementById('ytUrl');
+  const url = input.value.trim();
+  if (!url) { showToast('⚠️ Please paste a YouTube URL'); return; }
+
+  // Extract video ID
+  const match = url.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if (!match) { showToast('⚠️ Could not find a valid YouTube video ID'); return; }
+
+  const ytId = match[1];
+  const idx = channels.length;
+  const newCh = {
+    id: idx,
+    name: 'My Channel ' + (idx - 8),
+    desc: 'Added by Topraq · Palace exclusive',
+    ytId,
+    ch: 'CH ' + String(idx + 1).padStart(2, '0'),
+    viewers: 0,
+    tier: 'palace'
+  };
+  channels.push(newCh);
+
+  // Add card to palace grid
+  const grid = document.querySelector('.upload-card').parentElement;
+  const uploadCard = document.querySelector('.upload-card');
+  const card = document.createElement('div');
+  card.className = 'ch-card'; card.id = 'card-' + idx;
+  card.innerHTML = `
+    <div class="ch-thumb">
+      <img class="ch-thumb-img" src="https://img.youtube.com/vi/${ytId}/mqdefault.jpg" alt="">
+      <div class="ch-thumb-overlay"></div>
+      <div class="ch-play-overlay"><div class="ch-play-icon">▶</div></div>
+      <div class="now-watching-badge">● WATCHING</div>
+    </div>
+    <div class="ch-info">
+      <div class="ch-title">${newCh.name}</div>
+      <div class="ch-meta"><span>Palace exclusive</span><span class="ch-tier-tag ctt-palace">🏯 Palace</span></div>
+    </div>
+  `;
+  card.onclick = () => watchChannel(idx);
+  grid.insertBefore(card, uploadCard);
+
+  input.value = '';
+  showToast(`📺 Channel added! Click to watch.`);
+  watchChannel(idx);
+}
+
+/* ── VIDEO FILE UPLOAD ── */
+function handleVideoUpload(e) {
+  const file = e.target.files[0]; if (!file) return;
+  showToast(`🎬 "${file.name.slice(0, 30)}" — upload to Supabase Storage to publish`);
+}
+
+/* ── TOAST ── */
+function showToast(msg) {
+  const el = document.getElementById('toastEl');
+  el.textContent = msg; el.style.opacity = '1'; el.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateX(-50%) translateY(16px)'; }, 3000);
+}
+</script>
+</body>
+</html>

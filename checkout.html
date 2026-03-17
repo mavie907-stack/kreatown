@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Join Topraq's Town — KreaTown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cream:    #fffbf5;
+  --cream2:   #f5efe3;
+  --brown:    #1a1612;
+  --brown2:   #2e2420;
+  --muted:    #9c8878;
+  --orange:   #f4732a;
+  --orange2:  #ff9555;
+  --gold:     #c9952a;
+  --gold2:    #f5d58a;
+  --palace:   #7c5cbf;
+  --palace2:  #b8a0e8;
+  --silver:   #8fa3b5;
+  --emerald:  #2dab80;
+  --red:      #e05252;
+  --border:   rgba(156,136,120,0.18);
+  --border2:  rgba(156,136,120,0.32);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--brown);
+  min-height: 100vh;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.875rem 2rem; height: 56px;
+  background: rgba(255,251,245,0.92); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--brown); text-decoration: none; }
+.nav-logo span { color: var(--orange); }
+.nav-secure { display: flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; color: var(--muted); }
+.nav-secure-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--emerald); }
+.nav-back { font-size: 0.78rem; color: var(--muted); text-decoration: none; transition: color .15s; }
+.nav-back:hover { color: var(--orange); }
+
+/* ── PROGRESS STEPS ── */
+.progress-wrap {
+  max-width: 560px; margin: 0 auto;
+  padding: 1.5rem 1.5rem 0;
+  display: flex; align-items: center; gap: 0;
+}
+.step {
+  display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+  flex: 1; position: relative;
+}
+.step:not(:last-child)::after {
+  content: ''; position: absolute; top: 14px; left: 50%; width: 100%; height: 1.5px;
+  background: var(--border);
+  transition: background .3s;
+}
+.step.done:not(:last-child)::after { background: var(--orange); }
+.step-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 500; position: relative; z-index: 1;
+  border: 1.5px solid var(--border); background: var(--cream);
+  color: var(--muted); transition: all .3s;
+}
+.step.active .step-dot { border-color: var(--orange); background: var(--orange); color: white; box-shadow: 0 0 0 4px rgba(244,115,42,0.12); }
+.step.done .step-dot { border-color: var(--orange); background: var(--orange); color: white; }
+.step-label { font-size: 0.62rem; color: var(--muted); white-space: nowrap; }
+.step.active .step-label, .step.done .step-label { color: var(--orange); font-weight: 500; }
+
+/* ── PAGE LAYOUT ── */
+.page {
+  max-width: 960px; margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  display: grid; grid-template-columns: 1fr 380px; gap: 2rem;
+  align-items: start;
+}
+
+/* ── LEFT COLUMN: CHECKOUT STEPS ── */
+.checkout-main {}
+
+/* STEP PANELS */
+.step-panel { display: none; animation: fadeUp .4s ease both; }
+.step-panel.active { display: block; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+.panel-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem; font-weight: 700; color: var(--brown);
+  letter-spacing: -0.02em; margin-bottom: 0.25rem;
+}
+.panel-sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; font-weight: 300; }
+
+/* TIER SELECTOR */
+.tier-cards { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.75rem; }
+.tier-card {
+  border: 1.5px solid var(--border);
+  border-radius: 1rem; padding: 1.1rem 1.25rem;
+  cursor: pointer; transition: all .2s; position: relative;
+  display: flex; align-items: center; gap: 1rem;
+  background: white;
+}
+.tier-card:hover { border-color: var(--border2); box-shadow: 0 4px 16px rgba(26,22,18,0.06); }
+.tier-card.selected { border-color: var(--orange); border-width: 2px; box-shadow: 0 0 0 3px rgba(244,115,42,0.08); }
+.tier-card.selected-palace { border-color: var(--palace); box-shadow: 0 0 0 3px rgba(124,92,191,0.08); }
+.tier-card.popular::before {
+  content: 'Most popular'; position: absolute; top: -10px; left: 1.25rem;
+  background: var(--orange); color: white;
+  font-size: 0.58rem; padding: 0.15rem 0.55rem; border-radius: 100px;
+  font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase;
+}
+.tier-icon-wrap {
+  width: 42px; height: 42px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+}
+.tier-info { flex: 1; min-width: 0; }
+.tier-name { font-size: 0.9rem; font-weight: 500; color: var(--brown); }
+.tier-perks { font-size: 0.72rem; color: var(--muted); margin-top: 0.15rem; }
+.tier-price-wrap { text-align: right; flex-shrink: 0; }
+.tier-price {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem; font-weight: 700; color: var(--brown);
+}
+.tier-price.free { color: var(--emerald); }
+.tier-period { font-size: 0.65rem; color: var(--muted); }
+.tier-radio {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 1.5px solid var(--border); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .18s;
+}
+.tier-radio::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: white; opacity: 0; transition: opacity .15s; }
+.tier-card.selected .tier-radio { background: var(--orange); border-color: var(--orange); }
+.tier-card.selected .tier-radio::after { opacity: 1; }
+.tier-card.selected-palace .tier-radio { background: var(--palace); border-color: var(--palace); }
+.tier-card.selected-palace .tier-radio::after { opacity: 1; }
+
+/* CURRENCY SELECTOR */
+.currency-row {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin-bottom: 1.5rem; flex-wrap: wrap;
+}
+.currency-label { font-size: 0.82rem; color: var(--muted); font-weight: 400; }
+.currency-btn {
+  padding: 0.42rem 0.875rem; border-radius: 100px;
+  border: 1px solid var(--border); background: white;
+  font-size: 0.78rem; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: all .15s; color: var(--brown); font-weight: 400;
+}
+.currency-btn.active { background: var(--brown); color: white; border-color: var(--brown); }
+.currency-btn:hover:not(.active) { border-color: var(--border2); }
+
+/* PAYMENT METHOD TABS */
+.pay-tabs {
+  display: flex; gap: 0; margin-bottom: 1.5rem;
+  border: 1px solid var(--border); border-radius: 0.75rem;
+  overflow: hidden; background: var(--cream2);
+}
+.pay-tab {
+  flex: 1; padding: 0.7rem 0.5rem; text-align: center;
+  font-size: 0.78rem; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  color: var(--muted); background: transparent; border: none;
+  transition: all .18s; display: flex; align-items: center; justify-content: center; gap: 0.35rem;
+}
+.pay-tab.active { background: white; color: var(--brown); font-weight: 500; box-shadow: 0 1px 6px rgba(26,22,18,0.08); border-radius: 0.625rem; margin: 3px; }
+
+/* FORM */
+.form-section { display: none; }
+.form-section.active { display: block; }
+
+.form-group { margin-bottom: 1.1rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem; }
+.form-label {
+  display: block; font-size: 0.75rem; color: var(--muted);
+  margin-bottom: 0.35rem; font-weight: 400;
+}
+.form-input {
+  width: 100%; padding: 0.75rem 0.875rem;
+  border: 1px solid var(--border); border-radius: 0.625rem;
+  background: white; color: var(--brown);
+  font-size: 0.875rem; font-family: 'DM Sans', sans-serif;
+  outline: none; transition: border-color .15s;
+  -webkit-appearance: none;
+}
+.form-input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(244,115,42,0.08); }
+.form-input::placeholder { color: rgba(156,136,120,0.5); }
+.form-input.error { border-color: var(--red); }
+.form-error { font-size: 0.65rem; color: var(--red); margin-top: 0.25rem; display: none; }
+.form-error.show { display: block; }
+
+/* CARD NUMBER with icon */
+.card-input-wrap { position: relative; }
+.card-input-wrap .form-input { padding-right: 3.5rem; letter-spacing: 0.08em; font-family: 'DM Mono', monospace; }
+.card-brand-icon {
+  position: absolute; right: 0.875rem; top: 50%; transform: translateY(-50%);
+  font-size: 1.1rem;
+}
+
+/* IBAN field */
+.iban-prefix {
+  position: absolute; left: 0.875rem; top: 50%; transform: translateY(-50%);
+  font-size: 0.82rem; color: var(--muted); font-family: 'DM Mono', monospace;
+  pointer-events: none;
+}
+.iban-input { padding-left: 3rem !important; font-family: 'DM Mono', monospace; letter-spacing: 0.06em; }
+
+/* SECURE BADGES */
+.secure-row {
+  display: flex; align-items: center; gap: 0.875rem; margin-top: 1.25rem;
+  flex-wrap: wrap;
+}
+.secure-badge {
+  display: flex; align-items: center; gap: 0.3rem;
+  font-size: 0.65rem; color: var(--muted);
+}
+
+/* AGREE CHECKBOX */
+.agree-row {
+  display: flex; align-items: flex-start; gap: 0.6rem; margin-top: 1.25rem; margin-bottom: 1.25rem;
+}
+.agree-box {
+  width: 18px; height: 18px; border-radius: 4px;
+  border: 1.5px solid var(--border); flex-shrink: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s; margin-top: 1px;
+  background: white;
+}
+.agree-box.checked { background: var(--orange); border-color: var(--orange); color: white; font-size: 0.65rem; }
+.agree-text { font-size: 0.75rem; color: var(--muted); line-height: 1.5; cursor: pointer; }
+.agree-text a { color: var(--orange); text-decoration: none; }
+
+/* BTN PRIMARY */
+.btn-pay {
+  width: 100%; padding: 1rem; border-radius: 0.875rem;
+  background: var(--orange); color: white; border: none;
+  font-size: 1rem; font-weight: 500; cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  box-shadow: 0 4px 20px rgba(244,115,42,0.3);
+  transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+}
+.btn-pay:hover { background: var(--orange2); transform: translateY(-1px); box-shadow: 0 6px 28px rgba(244,115,42,0.4); }
+.btn-pay:active { transform: translateY(0); }
+.btn-pay.loading { opacity: 0.75; cursor: not-allowed; transform: none; }
+.btn-pay.palace { background: linear-gradient(135deg, var(--palace), #5a3a9f); box-shadow: 0 4px 20px rgba(124,92,191,0.3); }
+.btn-pay.palace:hover { box-shadow: 0 6px 28px rgba(124,92,191,0.4); }
+
+/* LOADING SPINNER */
+.spinner {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  animation: spin .7s linear infinite; display: none;
+}
+.btn-pay.loading .spinner { display: block; }
+.btn-pay.loading .btn-text { display: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* BACK LINK */
+.btn-back {
+  width: 100%; padding: 0.75rem; border-radius: 0.875rem; margin-top: 0.75rem;
+  background: transparent; color: var(--muted); border: 1px solid var(--border);
+  font-size: 0.875rem; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .15s;
+}
+.btn-back:hover { border-color: var(--border2); color: var(--brown); }
+
+/* ── SUCCESS SCREEN ── */
+.success-screen {
+  display: none; text-align: center; padding: 2rem 0;
+  animation: fadeUp .5s ease both;
+}
+.success-screen.active { display: block; }
+.success-icon {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: rgba(45,171,128,0.1); border: 2px solid rgba(45,171,128,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.2rem; margin: 0 auto 1.5rem;
+  animation: popIn .5s .2s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes popIn { from{transform:scale(0)} to{transform:scale(1)} }
+.success-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem; font-weight: 700; color: var(--brown); letter-spacing: -0.02em;
+}
+.success-sub { font-size: 0.9rem; color: var(--muted); margin-top: 0.5rem; font-weight: 300; line-height: 1.6; }
+.success-receipt {
+  background: white; border: 1px solid var(--border); border-radius: 1rem;
+  padding: 1.25rem; margin: 1.5rem 0; text-align: left;
+}
+.receipt-row { display: flex; justify-content: space-between; font-size: 0.82rem; padding: 0.45rem 0; border-bottom: 1px solid rgba(156,136,120,0.1); }
+.receipt-row:last-child { border-bottom: none; font-weight: 500; }
+.receipt-label { color: var(--muted); }
+.receipt-value { color: var(--brown); font-family: 'DM Mono', monospace; font-size: 0.78rem; }
+.btn-enter-town {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: var(--orange); color: white;
+  padding: 0.9rem 2rem; border-radius: 0.875rem;
+  font-size: 0.95rem; font-weight: 500; text-decoration: none;
+  box-shadow: 0 4px 20px rgba(244,115,42,0.3); transition: all .2s;
+  border: none; cursor: pointer; font-family: 'DM Sans', sans-serif;
+}
+.btn-enter-town:hover { background: var(--orange2); transform: translateY(-1px); }
+
+/* ── RIGHT COLUMN: ORDER SUMMARY ── */
+.order-summary {
+  background: white; border: 1px solid var(--border);
+  border-radius: 1.25rem; padding: 1.5rem;
+  position: sticky; top: 72px;
+}
+.summary-creator {
+  display: flex; align-items: center; gap: 0.875rem;
+  padding-bottom: 1.1rem; border-bottom: 1px solid var(--border); margin-bottom: 1.1rem;
+}
+.creator-ava {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--palace), var(--orange));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+  border: 2px solid rgba(124,92,191,0.2);
+}
+.creator-name { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: var(--brown); }
+.creator-handle { font-size: 0.72rem; color: var(--muted); }
+.palace-badge { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.6rem; padding: 0.12rem 0.45rem; border-radius: 100px; background: rgba(124,92,191,0.1); color: var(--palace); border: 1px solid rgba(124,92,191,0.2); margin-top: 0.2rem; font-weight: 500; }
+
+.summary-title { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-family: 'DM Mono', monospace; margin-bottom: 0.75rem; }
+.selected-tier-preview {
+  background: var(--cream2); border-radius: 0.75rem; padding: 0.875rem 1rem; margin-bottom: 1.1rem;
+}
+.stp-name { font-size: 0.875rem; font-weight: 500; color: var(--brown); margin-bottom: 0.5rem; }
+.stp-features { display: flex; flex-direction: column; gap: 0.3rem; }
+.stp-feat { font-size: 0.72rem; color: var(--muted); display: flex; align-items: center; gap: 0.35rem; }
+.stp-feat::before { content: '✓'; color: var(--emerald); font-size: 0.65rem; flex-shrink: 0; }
+
+.summary-rows { margin-bottom: 1rem; }
+.sum-row { display: flex; justify-content: space-between; font-size: 0.78rem; padding: 0.35rem 0; }
+.sum-label { color: var(--muted); }
+.sum-value { color: var(--brown); font-family: 'DM Mono', monospace; font-size: 0.75rem; }
+.sum-divider { height: 1px; background: var(--border); margin: 0.5rem 0; }
+.sum-total { font-size: 0.9rem; font-weight: 500; }
+.sum-total .sum-value { font-size: 0.88rem; color: var(--brown); font-weight: 500; }
+
+/* CURRENCY DISPLAY */
+.currency-display {
+  text-align: center; padding: 0.75rem;
+  background: rgba(244,115,42,0.06); border-radius: 0.625rem;
+  border: 1px solid rgba(244,115,42,0.12); margin-bottom: 1rem;
+}
+.cur-amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem; font-weight: 700; color: var(--orange); letter-spacing: -0.02em;
+}
+.cur-period { font-size: 0.7rem; color: var(--muted); margin-top: 0.1rem; }
+.cur-alt { font-size: 0.68rem; color: var(--muted); margin-top: 0.15rem; font-family: 'DM Mono', monospace; }
+
+/* QNB BADGE */
+.qnb-badge {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.6rem 0.875rem; border-radius: 0.625rem;
+  background: var(--cream2); border: 1px solid var(--border);
+  font-size: 0.68rem; color: var(--muted);
+}
+.qnb-icon { font-size: 1rem; }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(16px);
+  background: var(--brown); color: white; padding: 0.6rem 1.25rem;
+  border-radius: 100px; font-size: 0.78rem; z-index: 600;
+  transition: all .3s cubic-bezier(.34,1.56,.64,1);
+  opacity: 0; white-space: nowrap; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 780px) {
+  .page { grid-template-columns: 1fr; gap: 1.25rem; }
+  .order-summary { position: static; order: -1; }
+  .summary-creator { padding-bottom: 0.875rem; margin-bottom: 0.875rem; }
+}
+@media (max-width: 520px) {
+  nav { padding: 0.75rem 1rem; }
+  .page { padding: 1.25rem 1rem 3rem; }
+  .progress-wrap { padding: 1.25rem 1rem 0; }
+  .step-label { display: none; }
+  .panel-title { font-size: 1.15rem; }
+  .tier-card { padding: 0.875rem 1rem; }
+  .tier-icon-wrap { width: 36px; height: 36px; font-size: 1rem; }
+  .tier-name { font-size: 0.82rem; }
+  .tier-perks { font-size: 0.65rem; }
+  .tier-price { font-size: 1.1rem; }
+  .form-row { grid-template-columns: 1fr; }
+  .currency-row { gap: 0.5rem; }
+  .currency-btn { font-size: 0.72rem; padding: 0.36rem 0.65rem; }
+  .pay-tab { font-size: 0.72rem; }
+  .btn-pay { font-size: 0.9rem; padding: 0.875rem; }
+  .cur-amount { font-size: 1.3rem; }
+  .order-summary { padding: 1.1rem; }
+}
+@media (max-width: 380px) {
+  .tier-card { padding: 0.75rem 0.875rem; gap: 0.65rem; }
+  .tier-icon-wrap { width: 30px; height: 30px; font-size: 0.875rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="topraq-hub.html" class="nav-logo">Krea<span>Town</span></a>
+  <div class="nav-secure"><div class="nav-secure-dot"></div>Secure checkout</div>
+  <a href="topraq-hub.html" class="nav-back">← Back</a>
+</nav>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="step active" id="prog-1">
+    <div class="step-dot">1</div>
+    <div class="step-label">Choose tier</div>
+  </div>
+  <div class="step" id="prog-2">
+    <div class="step-dot">2</div>
+    <div class="step-label">Payment</div>
+  </div>
+  <div class="step" id="prog-3">
+    <div class="step-dot">3</div>
+    <div class="step-label">Confirm</div>
+  </div>
+</div>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- LEFT: CHECKOUT STEPS -->
+  <div class="checkout-main">
+
+    <!-- STEP 1: CHOOSE TIER -->
+    <div class="step-panel active" id="panel-1">
+      <div class="panel-title">Choose your place 🏡</div>
+      <p class="panel-sub">Pick the tier that fits. Upgrade or downgrade anytime.</p>
+
+      <!-- CURRENCY -->
+      <div class="currency-row">
+        <span class="currency-label">Pay in:</span>
+        <button class="currency-btn active" onclick="setCurrency('TRY',this)">🇹🇷 TRY</button>
+        <button class="currency-btn" onclick="setCurrency('USD',this)">🇺🇸 USD</button>
+        <button class="currency-btn" onclick="setCurrency('EUR',this)">🇪🇺 EUR</button>
+      </div>
+
+      <!-- TIERS -->
+      <div class="tier-cards">
+        <div class="tier-card" id="tier-free" onclick="selectTier('free',this)">
+          <div class="tier-icon-wrap" style="background:rgba(45,171,128,0.1)">🌱</div>
+          <div class="tier-info">
+            <div class="tier-name">Garden Pass</div>
+            <div class="tier-perks">Free posts · Community access · Town view</div>
+          </div>
+          <div class="tier-price-wrap">
+            <div class="tier-price free">Free</div>
+            <div class="tier-period">forever</div>
+          </div>
+          <div class="tier-radio"></div>
+        </div>
+
+        <div class="tier-card" id="tier-silver" onclick="selectTier('silver',this)">
+          <div class="tier-icon-wrap" style="background:rgba(143,163,181,0.12)">⭐</div>
+          <div class="tier-info">
+            <div class="tier-name">Inside the House</div>
+            <div class="tier-perks">Exclusive posts · Studio tours · Monthly calls</div>
+          </div>
+          <div class="tier-price-wrap">
+            <div class="tier-price" id="price-silver">₺290</div>
+            <div class="tier-period">/ month</div>
+          </div>
+          <div class="tier-radio"></div>
+        </div>
+
+        <div class="tier-card popular" id="tier-gold" onclick="selectTier('gold',this)">
+          <div class="tier-icon-wrap" style="background:rgba(201,149,42,0.12)">👑</div>
+          <div class="tier-info">
+            <div class="tier-name">Gold Suite</div>
+            <div class="tier-perks">Full strategy · DMs · Early access · Analytics</div>
+          </div>
+          <div class="tier-price-wrap">
+            <div class="tier-price" id="price-gold">₺590</div>
+            <div class="tier-period">/ month</div>
+          </div>
+          <div class="tier-radio"></div>
+        </div>
+
+        <div class="tier-card" id="tier-palace" onclick="selectTier('palace',this)">
+          <div class="tier-icon-wrap" style="background:rgba(124,92,191,0.12)">🏯</div>
+          <div class="tier-info">
+            <div class="tier-name">Palace Access</div>
+            <div class="tier-perks">1-on-1 sessions · Private radio · Top of the hill</div>
+          </div>
+          <div class="tier-price-wrap">
+            <div class="tier-price" id="price-palace">₺1,490</div>
+            <div class="tier-period">/ month</div>
+          </div>
+          <div class="tier-radio"></div>
+        </div>
+      </div>
+
+      <button class="btn-pay" id="btn-next-1" onclick="goToStep(2)">
+        <span class="btn-text">Continue to payment →</span>
+      </button>
+    </div>
+
+    <!-- STEP 2: PAYMENT -->
+    <div class="step-panel" id="panel-2">
+      <div class="panel-title">Payment details 💳</div>
+      <p class="panel-sub">Choose your payment method — all transactions secured by QNB.</p>
+
+      <!-- PAYMENT METHOD TABS -->
+      <div class="pay-tabs">
+        <button class="pay-tab active" id="tab-card" onclick="setPayMethod('card',this)">💳 Credit / Debit card</button>
+        <button class="pay-tab" id="tab-eft" onclick="setPayMethod('eft',this)">🏦 Havale / EFT</button>
+      </div>
+
+      <!-- CARD FORM -->
+      <div class="form-section active" id="form-card">
+        <div class="form-group">
+          <label class="form-label">Cardholder name</label>
+          <input class="form-input" id="card-name" type="text" placeholder="Topraq Toros" autocomplete="cc-name">
+          <div class="form-error" id="err-name">Please enter the cardholder name</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Card number</label>
+          <div class="card-input-wrap">
+            <input class="form-input" id="card-number" type="text" placeholder="0000 0000 0000 0000"
+              maxlength="19" inputmode="numeric" autocomplete="cc-number"
+              oninput="formatCardNumber(this)">
+            <span class="card-brand-icon" id="cardBrandIcon">💳</span>
+          </div>
+          <div class="form-error" id="err-card">Please enter a valid card number</div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Expiry date</label>
+            <input class="form-input" id="card-expiry" type="text" placeholder="MM / YY"
+              maxlength="7" inputmode="numeric" autocomplete="cc-exp"
+              oninput="formatExpiry(this)">
+            <div class="form-error" id="err-expiry">Invalid expiry date</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">CVV</label>
+            <input class="form-input" id="card-cvv" type="password" placeholder="•••"
+              maxlength="4" inputmode="numeric" autocomplete="cc-csc">
+            <div class="form-error" id="err-cvv">Invalid CVV</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email (for receipt)</label>
+          <input class="form-input" id="card-email" type="email" placeholder="you@example.com" autocomplete="email">
+          <div class="form-error" id="err-email">Please enter a valid email</div>
+        </div>
+      </div>
+
+      <!-- EFT FORM -->
+      <div class="form-section" id="form-eft">
+        <div style="background:rgba(244,115,42,0.06);border:1px solid rgba(244,115,42,0.15);border-radius:0.875rem;padding:1rem 1.1rem;margin-bottom:1.25rem;">
+          <div style="font-size:0.82rem;font-weight:500;color:var(--brown);margin-bottom:0.5rem;">🏦 QNB Bank Transfer Details</div>
+          <div style="font-size:0.75rem;color:var(--muted);line-height:1.8;">
+            <div><span style="font-family:'DM Mono',monospace;color:var(--brown)">Bank:</span> QNB Finansbank A.Ş.</div>
+            <div><span style="font-family:'DM Mono',monospace;color:var(--brown)">IBAN:</span> TR00 0011 1000 0000 0000 0000 00</div>
+            <div><span style="font-family:'DM Mono',monospace;color:var(--brown)">Account name:</span> KreaTown Teknoloji A.Ş.</div>
+            <div style="margin-top:0.35rem;font-size:0.68rem;color:var(--orange);">⚡ Add your email as description so we can match your payment automatically.</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your IBAN (for confirmation)</label>
+          <div class="card-input-wrap" style="position:relative;">
+            <span class="iban-prefix">TR</span>
+            <input class="form-input iban-input" id="eft-iban" type="text" placeholder="00 0000 0000 0000 0000 0000 00"
+              maxlength="32" inputmode="numeric" oninput="formatIBAN(this)">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your full name</label>
+          <input class="form-input" id="eft-name" type="text" placeholder="Ad Soyad">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email (to verify payment)</label>
+          <input class="form-input" id="eft-email" type="email" placeholder="siz@ornek.com">
+        </div>
+        <div style="background:var(--cream2);border-radius:0.75rem;padding:0.875rem 1rem;font-size:0.72rem;color:var(--muted);line-height:1.6;">
+          After transfer, your membership activates within <strong style="color:var(--brown)">2 business hours</strong>. You'll receive a confirmation email from KreaTown.
+        </div>
+      </div>
+
+      <!-- AGREE -->
+      <div class="agree-row">
+        <div class="agree-box" id="agreeBox" onclick="toggleAgree()"></div>
+        <div class="agree-text" onclick="toggleAgree()">
+          I agree to the <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a>. I understand my subscription renews automatically each month.
+        </div>
+      </div>
+
+      <!-- SECURE BADGES -->
+      <div class="secure-row">
+        <div class="secure-badge">🔒 256-bit SSL</div>
+        <div class="secure-badge">🏦 QNB secured</div>
+        <div class="secure-badge">✓ PCI compliant</div>
+      </div>
+
+      <button class="btn-pay" id="btn-pay" onclick="processPayment()" style="margin-top:1.25rem;">
+        <div class="spinner"></div>
+        <span class="btn-text" id="payBtnText">Pay ₺590 / month</span>
+      </button>
+      <button class="btn-back" onclick="goToStep(1)">← Change tier</button>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success-screen" id="success-screen">
+      <div class="success-icon">🏡</div>
+      <div class="success-title">Welcome to the town!</div>
+      <p class="success-sub">You're now a member of Topraq's world.<br>Your access is activated immediately.</p>
+      <div class="success-receipt" id="successReceipt">
+        <div class="receipt-row"><span class="receipt-label">Member</span><span class="receipt-value" id="r-name">—</span></div>
+        <div class="receipt-row"><span class="receipt-label">Tier</span><span class="receipt-value" id="r-tier">—</span></div>
+        <div class="receipt-row"><span class="receipt-label">Amount</span><span class="receipt-value" id="r-amount">—</span></div>
+        <div class="receipt-row"><span class="receipt-label">Payment</span><span class="receipt-value" id="r-method">—</span></div>
+        <div class="receipt-row"><span class="receipt-label">Transaction ID</span><span class="receipt-value" id="r-txid">—</span></div>
+        <div class="receipt-row"><span class="receipt-label">Next billing</span><span class="receipt-value" id="r-next">—</span></div>
+      </div>
+      <button class="btn-enter-town" onclick="window.location='topraq-hub.html'">Enter the town 🏡</button>
+    </div>
+
+  </div><!-- /checkout-main -->
+
+  <!-- RIGHT: ORDER SUMMARY -->
+  <div class="order-summary">
+    <div class="summary-creator">
+      <div class="creator-ava">🎨</div>
+      <div>
+        <div class="creator-name">Topraq Toros</div>
+        <div class="creator-handle">@topraq</div>
+        <div class="palace-badge">🏯 Hilltop Palace</div>
+      </div>
+    </div>
+
+    <div class="summary-title">Your order</div>
+
+    <div class="selected-tier-preview" id="tierPreview">
+      <div class="stp-name" id="previewName">Select a tier</div>
+      <div class="stp-features" id="previewFeatures">
+        <div class="stp-feat" style="color:rgba(156,136,120,0.5)">Choose a tier on the left to see what's included</div>
+      </div>
+    </div>
+
+    <!-- CURRENCY DISPLAY -->
+    <div class="currency-display">
+      <div class="cur-amount" id="summaryAmount">—</div>
+      <div class="cur-period" id="summaryPeriod">per month</div>
+      <div class="cur-alt" id="summaryAlt"></div>
+    </div>
+
+    <div class="summary-rows">
+      <div class="sum-row"><span class="sum-label">Subscription</span><span class="sum-value" id="sumSub">—</span></div>
+      <div class="sum-row"><span class="sum-label">Platform fee</span><span class="sum-value">₺0</span></div>
+      <div class="sum-divider"></div>
+      <div class="sum-row sum-total"><span class="sum-label">Total / month</span><span class="sum-value" id="sumTotal">—</span></div>
+    </div>
+
+    <!-- QNB BADGE -->
+    <div class="qnb-badge">
+      <span class="qnb-icon">🏦</span>
+      <span>Payments powered by <strong>QNB Finansbank</strong> · Secure & regulated</span>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<!-- TOAST -->
+<div class="toast" id="toastEl"></div>
+
+<script>
+/* ── CONFIG: plug in QNB API when ready ──
+   Replace these with your actual QNB API credentials & endpoint:
+
+   const QNB_CONFIG = {
+     apiUrl:     'https://api.qnbpay.com.tr/v1/payment',  // QNB endpoint
+     merchantId: 'YOUR_MERCHANT_ID',
+     apiKey:     'YOUR_API_KEY',
+     // For havale/EFT:
+     ibanAccount: 'TR00 0011 1000 0000 0000 0000 00',
+     accountName: 'KreaTown Teknoloji A.Ş.'
+   };
+── */
+
+/* ── PRICING TABLE ── */
+const prices = {
+  TRY: { symbol: '₺', silver: 290,   gold: 590,   palace: 1490  },
+  USD: { symbol: '$', silver: 9,     gold: 19,    palace: 49    },
+  EUR: { symbol: '€', silver: 8.5,   gold: 17.5,  palace: 45    },
+};
+const tierData = {
+  free:   { name: 'Garden Pass',       emoji: '🌱', features: ['Free posts & community','Town view access','Public radio'], color: 'emerald' },
+  silver: { name: 'Inside the House',  emoji: '⭐', features: ['All Free features','Exclusive posts','Studio tours','Monthly calls'], color: 'silver' },
+  gold:   { name: 'Gold Suite',        emoji: '👑', features: ['All Silver features','Full strategy content','Direct messages','Early access','3D Radio & TV'], color: 'gold' },
+  palace: { name: 'Palace Access',     emoji: '🏯', features: ['All Gold features','1-on-1 sessions','Private station','Top of the hill seat','Weekly Q&A'], color: 'palace' },
+};
+
+let selectedTier = null;
+let selectedCurrency = 'TRY';
+let payMethod = 'card';
+let agreed = false;
+let currentStep = 1;
+
+/* ── CURRENCY ── */
+function setCurrency(cur, btn) {
+  selectedCurrency = cur;
+  document.querySelectorAll('.currency-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  updatePrices();
+  if (selectedTier) updateSummary();
+}
+
+function updatePrices() {
+  const p = prices[selectedCurrency];
+  document.getElementById('price-silver').textContent = fmt(p.silver, selectedCurrency);
+  document.getElementById('price-gold').textContent   = fmt(p.gold,   selectedCurrency);
+  document.getElementById('price-palace').textContent = fmt(p.palace, selectedCurrency);
+  updatePayButton();
+}
+
+function fmt(amount, cur) {
+  const s = prices[cur].symbol;
+  if (cur === 'TRY') return s + amount.toLocaleString('tr-TR');
+  return s + amount;
+}
+
+/* ── TIER SELECT ── */
+function selectTier(key, el) {
+  selectedTier = key;
+  document.querySelectorAll('.tier-card').forEach(c => {
+    c.classList.remove('selected', 'selected-palace');
+  });
+  if (key === 'palace') el.classList.add('selected-palace');
+  else el.classList.add('selected');
+  updateSummary();
+  updatePayButton();
+}
+
+function updateSummary() {
+  if (!selectedTier) return;
+  const t = tierData[selectedTier];
+  const p = prices[selectedCurrency];
+  const amount = selectedTier === 'free' ? 0 : p[selectedTier];
+  const sym = p.symbol;
+  const amtStr = selectedTier === 'free' ? 'Free' : fmt(amount, selectedCurrency);
+
+  document.getElementById('previewName').textContent = t.emoji + ' ' + t.name;
+  document.getElementById('previewFeatures').innerHTML = t.features
+    .map(f => `<div class="stp-feat">${f}</div>`).join('');
+
+  document.getElementById('summaryAmount').textContent = amtStr;
+  document.getElementById('summaryPeriod').textContent = selectedTier === 'free' ? 'forever' : 'per month';
+
+  // Alt currency hint
+  if (selectedTier !== 'free' && selectedCurrency !== 'TRY') {
+    document.getElementById('summaryAlt').textContent = '≈ ' + fmt(prices.TRY[selectedTier], 'TRY') + ' TRY';
+  } else { document.getElementById('summaryAlt').textContent = ''; }
+
+  document.getElementById('sumSub').textContent = amtStr;
+  document.getElementById('sumTotal').textContent = amtStr;
+}
+
+function updatePayButton() {
+  const btn = document.getElementById('payBtnText');
+  if (!btn) return;
+  if (!selectedTier || selectedTier === 'free') { btn.textContent = 'Continue for free →'; return; }
+  const amount = fmt(prices[selectedCurrency][selectedTier], selectedCurrency);
+  btn.textContent = `Pay ${amount} / month`;
+
+  const payBtn = document.getElementById('btn-pay');
+  if (selectedTier === 'palace') payBtn.classList.add('palace');
+  else payBtn.classList.remove('palace');
+}
+
+/* ── STEP NAVIGATION ── */
+function goToStep(step) {
+  if (step === 2 && !selectedTier) { showToast('⚠️ Please select a tier first'); return; }
+
+  // Update panels
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + step).classList.add('active');
+
+  // Update progress
+  for (let i = 1; i <= 3; i++) {
+    const el = document.getElementById('prog-' + i);
+    el.classList.remove('active', 'done');
+    if (i < step) el.classList.add('done');
+    else if (i === step) el.classList.add('active');
+  }
+  currentStep = step;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  updatePayButton();
+}
+
+/* ── PAYMENT METHOD ── */
+function setPayMethod(method, btn) {
+  payMethod = method;
+  document.querySelectorAll('.pay-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.form-section').forEach(f => f.classList.remove('active'));
+  document.getElementById('form-' + method).classList.add('active');
+}
+
+/* ── CARD FORMATTING ── */
+function formatCardNumber(input) {
+  let v = input.value.replace(/\D/g, '').slice(0, 16);
+  input.value = v.replace(/(.{4})/g, '$1 ').trim();
+  // Detect brand
+  const icon = document.getElementById('cardBrandIcon');
+  if (v.startsWith('4')) icon.textContent = '💳';
+  else if (v.startsWith('5')) icon.textContent = '🟠';
+  else if (v.startsWith('3')) icon.textContent = '🟡';
+  else icon.textContent = '💳';
+}
+function formatExpiry(input) {
+  let v = input.value.replace(/\D/g, '').slice(0, 4);
+  if (v.length >= 2) v = v.slice(0,2) + ' / ' + v.slice(2);
+  input.value = v;
+}
+function formatIBAN(input) {
+  let v = input.value.replace(/\D/g, '').slice(0, 24);
+  input.value = v.replace(/(.{4})/g, '$1 ').trim();
+}
+
+/* ── AGREE ── */
+function toggleAgree() {
+  agreed = !agreed;
+  const box = document.getElementById('agreeBox');
+  box.classList.toggle('checked', agreed);
+  box.textContent = agreed ? '✓' : '';
+}
+
+/* ── VALIDATE ── */
+function validateCard() {
+  let ok = true;
+  const name = document.getElementById('card-name').value.trim();
+  const num  = document.getElementById('card-number').value.replace(/\s/g,'');
+  const exp  = document.getElementById('card-expiry').value;
+  const cvv  = document.getElementById('card-cvv').value;
+  const email= document.getElementById('card-email').value.trim();
+
+  const showErr = (id, show) => {
+    const el = document.getElementById(id);
+    el.classList.toggle('show', show);
+    const inp = el.previousElementSibling?.tagName === 'INPUT' ? el.previousElementSibling : el.parentElement.querySelector('input');
+    if (inp) inp.classList.toggle('error', show);
+  };
+
+  if (!name) { showErr('err-name', true); ok = false; } else showErr('err-name', false);
+  if (num.length < 16) { showErr('err-card', true); ok = false; } else showErr('err-card', false);
+  if (!exp.includes('/') || exp.length < 7) { showErr('err-expiry', true); ok = false; } else showErr('err-expiry', false);
+  if (cvv.length < 3) { showErr('err-cvv', true); ok = false; } else showErr('err-cvv', false);
+  if (!email.includes('@')) { showErr('err-email', true); ok = false; } else showErr('err-email', false);
+  return ok;
+}
+
+/* ── PROCESS PAYMENT ──
+   When QNB API keys arrive, replace the setTimeout mock below with a real fetch:
+
+   const response = await fetch(QNB_CONFIG.apiUrl, {
+     method: 'POST',
+     headers: {
+       'Content-Type': 'application/json',
+       'X-Merchant-ID': QNB_CONFIG.merchantId,
+       'X-API-Key':     QNB_CONFIG.apiKey,
+     },
+     body: JSON.stringify({
+       amount:      prices[selectedCurrency][selectedTier],
+       currency:    selectedCurrency,
+       cardNumber:  document.getElementById('card-number').value.replace(/\s/g,''),
+       cardHolder:  document.getElementById('card-name').value,
+       expiry:      document.getElementById('card-expiry').value,
+       cvv:         document.getElementById('card-cvv').value,
+       email:       document.getElementById('card-email').value,
+       description: `KreaTown ${tierData[selectedTier].name} - @topraq`,
+       recurring:   true,
+       interval:    'monthly',
+     })
+   });
+   const result = await response.json();
+   if (result.status === 'success') { showSuccess(result.transactionId); }
+   else { showToast('⚠️ ' + result.message); }
+── */
+async function processPayment() {
+  if (!agreed) { showToast('⚠️ Please agree to the terms first'); return; }
+  if (payMethod === 'card' && !validateCard()) { showToast('⚠️ Please check your card details'); return; }
+
+  const btn = document.getElementById('btn-pay');
+  btn.classList.add('loading');
+
+  // ── MOCK: replace with real QNB API call above ──
+  await new Promise(r => setTimeout(r, 2200));
+  btn.classList.remove('loading');
+
+  const txId = 'KT' + Date.now().toString(36).toUpperCase();
+  showSuccess(txId);
+}
+
+function showSuccess(txId) {
+  // Hide checkout, show success
+  document.getElementById('panel-2').classList.remove('active');
+  document.getElementById('success-screen').classList.add('active');
+
+  // Update progress
+  ['prog-1','prog-2','prog-3'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('active');
+    el.classList.add('done');
+  });
+
+  // Fill receipt
+  const t = tierData[selectedTier];
+  const amount = selectedTier === 'free' ? 'Free' : fmt(prices[selectedCurrency][selectedTier], selectedCurrency);
+  const name = payMethod === 'card'
+    ? document.getElementById('card-name').value
+    : document.getElementById('eft-name').value;
+  const nextDate = new Date(); nextDate.setMonth(nextDate.getMonth() + 1);
+
+  document.getElementById('r-name').textContent    = name || 'Member';
+  document.getElementById('r-tier').textContent    = t.emoji + ' ' + t.name;
+  document.getElementById('r-amount').textContent  = amount + ' / mo';
+  document.getElementById('r-method').textContent  = payMethod === 'card' ? 'Credit card' : 'Havale/EFT';
+  document.getElementById('r-txid').textContent    = txId;
+  document.getElementById('r-next').textContent    = nextDate.toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ── TOAST ── */
+function showToast(msg) {
+  const el = document.getElementById('toastEl');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+/* Init */
+updatePrices();
+</script>
+</body>
+</html>

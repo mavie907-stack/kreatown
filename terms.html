@@ -4,50 +4,164 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Terms of Service — KreaTown</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
-    :root { --orange: #f4732a; --orange-light: #ff9555; --orange-pale: #fff0e6; --cream: #fffbf5; --brown: #1a1612; --muted: #9c8878; --border: #ede8e3; }
+    :root {
+      --orange: #f4732a;
+      --orange-light: #ff9555;
+      --orange-pale: #fff0e6;
+      --cream: #fffbf5;
+      --brown: #1a1612;
+      --muted: #9c8878;
+      --border: #ede8e3;
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Nunito', sans-serif; background: var(--cream); color: var(--brown); line-height: 1.8; }
-    nav { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 2rem; border-bottom: 1px solid var(--border); background: var(--cream); position: sticky; top: 0; z-index: 100; }
-    .nav-logo { font-family: 'Cabinet Grotesk', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--brown); text-decoration: none; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--brown);
+      line-height: 1.8;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--cream);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--brown);
+      text-decoration: none;
+    }
     .nav-logo span { color: var(--orange); }
-    .nav-back { font-size: 0.9rem; font-weight: 600; color: var(--muted); text-decoration: none; }
+    .nav-back {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
     .nav-back:hover { color: var(--orange); }
-    .hero { background: var(--orange-pale); border-bottom: 1px solid var(--border); padding: 4rem 2rem 3rem; text-align: center; }
-    .hero-badge { display: inline-block; background: var(--orange); color: white; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.3rem 0.9rem; border-radius: 999px; margin-bottom: 1.2rem; }
-    .hero h1 { font-family: 'Cabinet Grotesk', sans-serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; margin-bottom: 0.8rem; }
+
+    .hero {
+      background: var(--orange-pale);
+      border-bottom: 1px solid var(--border);
+      padding: 4rem 2rem 3rem;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: var(--orange);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.9rem;
+      border-radius: 999px;
+      margin-bottom: 1.2rem;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      margin-bottom: 0.8rem;
+    }
     .hero p { color: var(--muted); font-size: 1rem; font-weight: 500; }
-    .container { max-width: 760px; margin: 0 auto; padding: 3rem 2rem 5rem; }
-    .section { margin-bottom: 2.5rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--border); }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+    }
+    .section {
+      margin-bottom: 2.5rem;
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+    }
     .section:last-child { border-bottom: none; }
-    .section h2 { font-family: 'Cabinet Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
-    .section h2 .icon { width: 28px; height: 28px; background: var(--orange-pale); border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.9rem; }
+    .section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .section h2 .icon {
+      width: 28px;
+      height: 28px;
+      background: var(--orange-pale);
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
     .section p { color: #3d3530; margin-bottom: 0.8rem; font-size: 0.97rem; }
-    .section ul { list-style: none; padding: 0; margin: 0.5rem 0; }
-    .section ul li { padding: 0.3rem 0 0.3rem 1.4rem; position: relative; color: #3d3530; font-size: 0.97rem; }
-    .section ul li::before { content: '→'; position: absolute; left: 0; color: var(--orange); font-weight: 700; }
-    footer { text-align: center; padding: 2rem; border-top: 1px solid var(--border); font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+    .section ul {
+      list-style: none;
+      padding: 0;
+      margin: 0.5rem 0;
+    }
+    .section ul li {
+      padding: 0.3rem 0 0.3rem 1.4rem;
+      position: relative;
+      color: #3d3530;
+      font-size: 0.97rem;
+    }
+    .section ul li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--orange);
+      font-weight: 700;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
     footer a { color: var(--orange); text-decoration: none; }
   </style>
 </head>
 <body>
+
   <nav>
-    <a href="kreatown.html" class="nav-logo">KreaTown<span>.</span></a>
-    <a href="kreatown.html" class="nav-back">← Back to home</a>
+    <a href="index.html" class="nav-logo">KreaTown<span>.</span></a>
+    <a href="index.html" class="nav-back">← Back to home</a>
   </nav>
+
   <div class="hero">
     <div class="hero-badge">Legal</div>
     <h1>Terms of Service</h1>
     <p>Last updated: March 2026 · Effective immediately</p>
   </div>
+
   <div class="container">
+
     <div class="section">
       <h2><span class="icon">👋</span> Welcome to KreaTown</h2>
-      <p>These Terms of Service govern your use of the KreaTown platform. By creating an account or using our services, you agree to be bound by these terms.</p>
+      <p>These Terms of Service govern your use of the KreaTown platform. By creating an account or using our services, you agree to be bound by these terms. Please read them carefully.</p>
+      <p>If you do not agree to these terms, please do not use KreaTown.</p>
     </div>
+
     <div class="section">
       <h2><span class="icon">🏡</span> Your Account</h2>
+      <p>To use KreaTown you must:</p>
       <ul>
         <li>Be at least 18 years old</li>
         <li>Provide accurate and complete registration information</li>
@@ -55,7 +169,9 @@
         <li>Be responsible for all activity that occurs under your account</li>
         <li>Notify us immediately of any unauthorized use of your account</li>
       </ul>
+      <p>You may not create multiple accounts or transfer your account to another person without our consent.</p>
     </div>
+
     <div class="section">
       <h2><span class="icon">🎨</span> Content & Conduct</h2>
       <p>You are solely responsible for the content you post on KreaTown. You agree not to post content that:</p>
@@ -66,35 +182,43 @@
         <li>Harasses, bullies, or discriminates against others</li>
         <li>Violates any applicable laws or regulations</li>
       </ul>
+      <p>KreaTown reserves the right to remove content and suspend accounts that violate these terms.</p>
     </div>
+
     <div class="section">
       <h2><span class="icon">💰</span> Payments & Fees</h2>
+      <p>KreaTown charges a platform fee on creator earnings based on your subscription plan:</p>
       <ul>
         <li><strong>Starter</strong> — Free for 3 months, then $19/mo + 5% revenue share</li>
         <li><strong>Pro</strong> — $29/mo + 5% revenue share</li>
         <li><strong>Studio</strong> — $49/mo + 3% revenue share</li>
       </ul>
-      <p>All payments are processed securely through Stripe. Payouts are subject to Stripe's terms and conditions.</p>
+      <p>All payments are processed securely through Stripe. KreaTown is not responsible for disputes between creators and their subscribers. Payouts are subject to Stripe's terms and conditions.</p>
     </div>
+
     <div class="section">
       <h2><span class="icon">🔄</span> Subscriptions & Refunds</h2>
-      <p>Subscriptions renew automatically unless cancelled. You may cancel at any time from your account settings. For billing errors contact <a href="mailto:billing@kreatown.com" style="color:var(--orange);font-weight:700;">billing@kreatown.com</a> within 14 days.</p>
+      <p>KreaTown subscriptions renew automatically unless cancelled. You may cancel your plan at any time from your account settings. Cancellations take effect at the end of the current billing period.</p>
+      <p>We generally do not offer refunds for partial months. If you believe you were charged in error, contact us at <a href="/cdn-cgi/l/email-protection#0b6962676762656c4b60796e6a7f647c6525686466" style="color:var(--orange);font-weight:700;"><span class="__cf_email__" data-cfemail="7f1d1613131611183f140d1a1e0b100811511c1012">[email&#160;protected]</span></a> within 14 days.</p>
     </div>
+
     <div class="section">
       <h2><span class="icon">🛡️</span> Intellectual Property</h2>
-      <p>You retain ownership of all content you create on KreaTown. By posting content, you grant KreaTown a non-exclusive, royalty-free license to display and distribute your content on the platform.</p>
+      <p>You retain ownership of all content you create and post on KreaTown. By posting content, you grant KreaTown a non-exclusive, royalty-free license to display and distribute your content on the platform.</p>
+      <p>The KreaTown name, logo, and platform design are the intellectual property of KreaTown and may not be used without our written permission.</p>
     </div>
+
     <div class="section">
       <h2><span class="icon">⚠️</span> Limitation of Liability</h2>
-      <p>KreaTown is provided "as is" without warranties of any kind. Our total liability to you shall not exceed the amount you paid to KreaTown in the 12 months preceding the claim.</p>
+      <p>KreaTown is provided "as is" without warranties of any kind. We are not liable for any indirect, incidental, or consequential damages arising from your use of the platform, including loss of earnings, data, or business opportunities.</p>
+      <p>Our total liability to you shall not exceed the amount you paid to KreaTown in the 12 months preceding the claim.</p>
     </div>
+
+    <div class="section">
+      <h2><span class="icon">📝</span> Changes to These Terms</h2>
+      <p>We may update these Terms from time to time. We will notify you of significant changes via email or a prominent notice on the platform. Continued use of KreaTown after changes constitutes acceptance of the new terms.</p>
+    </div>
+
     <div class="section">
       <h2><span class="icon">✉️</span> Contact Us</h2>
-      <p>Questions? Reach out at <a href="mailto:legal@kreatown.com" style="color:var(--orange);font-weight:700;">legal@kreatown.com</a>.</p>
-    </div>
-  </div>
-  <footer>
-    <p>© 2026 KreaTown. Where creators belong. · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="mailto:hello@kreatown.com">Contact</a></p>
-  </footer>
-</body>
-</html>
+      <p>For questions about these Terms of Service, please contact us at <a href="/cdn-cgi/l/email-protection#f39f9694929fb398819692879c849ddd909c9e" style="color:var(--orange);font-weight:700;"><span class="__cf_email__" data-cfemail="c1ada4a6a0ad81aab3a4a0b5aeb6afefa2aeac">[email
