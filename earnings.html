@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Earnings — KreaTown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #0e0c0a;
+  --bg2:       #161310;
+  --bg3:       #1e1a16;
+  --bg4:       #252018;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.12);
+  --orange:    #f4732a;
+  --orange2:   #ff9555;
+  --gold:      #c9952a;
+  --gold2:     #f5d58a;
+  --palace:    #8b6fd4;
+  --palace2:   #b8a0e8;
+  --emerald:   #2dab80;
+  --red:       #e05252;
+  --text1:     rgba(255,255,255,0.92);
+  --text2:     rgba(255,255,255,0.55);
+  --text3:     rgba(255,255,255,0.28);
+  --sidebar-w: 240px;
+}
+
+html, body { height: 100%; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text1);
+  display: flex;
+  overflow: hidden;
+}
+
+/* ── SIDEBAR (identical to dashboard) ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  height: 100vh; flex-shrink: 0;
+  position: relative; overflow: hidden;
+}
+.sidebar::before {
+  content: '';
+  position: absolute; bottom: -80px; left: -40px;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(139,111,212,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.sidebar-logo {
+  padding: 1.5rem 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.sidebar-logo-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem; font-weight: 700; color: var(--text1);
+}
+.sidebar-logo-text span { color: var(--orange); }
+.sidebar-creator {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.sc-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--palace), var(--orange));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+  border: 1.5px solid rgba(139,111,212,0.4);
+}
+.sc-name { font-size: 0.82rem; font-weight: 500; color: var(--text1); }
+.sc-level { font-size: 0.65rem; color: var(--palace2); display: flex; align-items: center; gap: 0.2rem; margin-top: 0.1rem; }
+.sc-badge {
+  margin-left: auto; flex-shrink: 0;
+  background: rgba(139,111,212,0.15); color: var(--palace2);
+  font-size: 0.6rem; padding: 0.15rem 0.45rem; border-radius: 100px;
+  border: 1px solid rgba(139,111,212,0.25); font-weight: 500;
+}
+.sidebar-nav { padding: 0.75rem 0; flex: 1; overflow-y: auto; }
+.nav-section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.12em;
+  padding: 0.75rem 1.25rem 0.35rem;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.65rem 1.25rem; cursor: pointer;
+  color: var(--text2); font-size: 0.82rem;
+  transition: all .18s; border: none; background: none;
+  width: 100%; text-align: left; text-decoration: none;
+  border-left: 2px solid transparent;
+  font-family: 'DM Sans', sans-serif;
+}
+.nav-item:hover { color: var(--text1); background: rgba(255,255,255,0.04); }
+.nav-item.active {
+  color: var(--orange); background: rgba(244,115,42,0.08);
+  border-left-color: var(--orange); font-weight: 500;
+}
+.nav-icon { font-size: 1rem; width: 18px; text-align: center; flex-shrink: 0; }
+.nav-badge {
+  margin-left: auto; background: var(--orange);
+  color: white; font-size: 0.58rem; padding: 0.1rem 0.4rem;
+  border-radius: 100px; font-weight: 500;
+}
+.sidebar-bottom { padding: 1rem 1.25rem; border-top: 1px solid var(--border); }
+.level-mini {
+  background: rgba(139,111,212,0.1); border-radius: 0.625rem;
+  padding: 0.75rem; border: 1px solid rgba(139,111,212,0.2);
+}
+.lm-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.lm-label { font-size: 0.7rem; color: var(--text2); }
+.lm-val { font-size: 0.68rem; color: var(--palace2); font-family: 'DM Mono', monospace; }
+.lm-track { height: 4px; background: rgba(255,255,255,0.08); border-radius: 100px; overflow: hidden; }
+.lm-fill {
+  height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--palace), var(--gold2));
+  border-radius: 100px; transition: width 1.5s ease;
+}
+
+/* ── MAIN ── */
+.main { flex: 1; overflow-y: auto; background: var(--bg); display: flex; flex-direction: column; }
+
+/* TOPBAR */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(14,12,10,0.9); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.9rem 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar-left { }
+.topbar-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; color: var(--text1); }
+.topbar-sub { font-size: 0.75rem; color: var(--text3); margin-top: 0.1rem; }
+.topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+.period-select {
+  background: var(--bg3); border: 1px solid var(--border2);
+  color: var(--text2); font-size: 0.78rem; padding: 0.45rem 0.75rem;
+  border-radius: 0.5rem; cursor: pointer; font-family: 'DM Sans', sans-serif; outline: none;
+}
+.period-select:focus { border-color: var(--orange); }
+.payout-btn {
+  display: flex; align-items: center; gap: 0.45rem;
+  background: var(--emerald); color: white;
+  border: none; border-radius: 0.5rem;
+  padding: 0.45rem 1rem; font-size: 0.8rem; font-weight: 500;
+  font-family: 'DM Sans', sans-serif; cursor: pointer;
+  transition: all 0.2s; box-shadow: 0 2px 12px rgba(45,171,128,0.3);
+}
+.payout-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.topbar-notif {
+  position: relative; width: 34px; height: 34px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 1rem; transition: border-color .2s;
+}
+.topbar-notif:hover { border-color: var(--border2); }
+.notif-dot {
+  position: absolute; top: 6px; right: 6px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--orange); border: 1.5px solid var(--bg);
+}
+
+/* ── CONTENT ── */
+.content { padding: 1.75rem 2rem 3rem; }
+
+/* ── KPI GRID ── */
+.kpi-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1rem; margin-bottom: 1.75rem;
+}
+.kpi-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 1rem; padding: 1.25rem 1.25rem 1rem;
+  position: relative; overflow: hidden;
+  transition: border-color .2s, transform .2s;
+}
+.kpi-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.kpi-card::after {
+  content: ''; position: absolute;
+  top: 0; right: 0; width: 60px; height: 60px; border-radius: 50%;
+  opacity: 0.06; transform: translate(20px, -20px);
+}
+.kpi-card.k-orange::after { background: var(--orange); }
+.kpi-card.k-gold::after   { background: var(--gold); }
+.kpi-card.k-palace::after { background: var(--palace); }
+.kpi-card.k-emerald::after{ background: var(--emerald); }
+.kpi-label {
+  font-size: 0.7rem; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  font-family: 'DM Mono', monospace; margin-bottom: 0.6rem;
+}
+.kpi-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem; font-weight: 700; line-height: 1;
+  letter-spacing: -0.02em;
+}
+.kpi-card.k-orange .kpi-val { color: var(--orange); }
+.kpi-card.k-gold   .kpi-val { color: var(--gold2); }
+.kpi-card.k-palace .kpi-val { color: var(--palace2); }
+.kpi-card.k-emerald .kpi-val{ color: var(--emerald); }
+.kpi-change { font-size: 0.72rem; margin-top: 0.4rem; display: flex; align-items: center; gap: 0.3rem; }
+.kpi-up     { color: var(--emerald); }
+.kpi-down   { color: var(--red); }
+.kpi-neutral{ color: var(--text3); }
+.kpi-icon   { position: absolute; bottom: 1rem; right: 1.1rem; font-size: 1.6rem; opacity: 0.18; }
+
+/* ── PAYOUT BANNER ── */
+.payout-banner {
+  background: linear-gradient(135deg, rgba(45,171,128,0.12) 0%, rgba(45,171,128,0.05) 100%);
+  border: 1px solid rgba(45,171,128,0.2);
+  border-radius: 1rem; padding: 1.25rem 1.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.75rem; gap: 1rem; flex-wrap: wrap;
+}
+.payout-banner-left { display: flex; align-items: center; gap: 1rem; }
+.payout-icon {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(45,171,128,0.15);
+  border: 1px solid rgba(45,171,128,0.3);
+  display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+}
+.payout-label { font-size: 0.78rem; color: var(--text2); margin-bottom: 0.2rem; }
+.payout-amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem; font-weight: 700; color: var(--emerald);
+  letter-spacing: -0.02em; line-height: 1;
+}
+.payout-note { font-size: 0.7rem; color: var(--text3); margin-top: 0.2rem; }
+.payout-actions { display: flex; gap: 0.65rem; align-items: center; }
+.btn-payout-main {
+  background: var(--emerald); color: white;
+  border: none; border-radius: 0.625rem;
+  padding: 0.65rem 1.4rem; font-size: 0.85rem; font-weight: 500;
+  font-family: 'DM Sans', sans-serif; cursor: pointer;
+  transition: all 0.2s; box-shadow: 0 4px 18px rgba(45,171,128,0.3);
+}
+.btn-payout-main:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-payout-sec {
+  background: transparent; color: var(--text2);
+  border: 1px solid var(--border2); border-radius: 0.625rem;
+  padding: 0.65rem 1.1rem; font-size: 0.82rem;
+  font-family: 'DM Sans', sans-serif; cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-payout-sec:hover { color: var(--text1); border-color: var(--border2); background: rgba(255,255,255,0.04); }
+
+/* ── CHARTS ROW ── */
+.charts-row {
+  display: grid; grid-template-columns: 1.6fr 1fr;
+  gap: 1rem; margin-bottom: 1.75rem;
+}
+.chart-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 1rem; padding: 1.25rem; overflow: hidden;
+}
+.chart-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+.chart-title { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: var(--text1); }
+.chart-sub   { font-size: 0.72rem; color: var(--text3); margin-top: 0.15rem; }
+.chart-tag   { font-size: 0.65rem; padding: 0.2rem 0.55rem; border-radius: 100px; font-weight: 500; }
+.tag-up      { background: rgba(45,171,128,0.12); color: var(--emerald); }
+.chart-canvas-wrap { position: relative; height: 200px; }
+
+/* Revenue breakdown donut */
+.donut-legend { display: flex; flex-direction: column; gap: 0.65rem; margin-top: 1rem; }
+.legend-row { display: flex; align-items: center; gap: 0.65rem; }
+.legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.legend-label { font-size: 0.78rem; color: var(--text2); flex: 1; }
+.legend-val { font-size: 0.78rem; color: var(--text1); font-family: 'DM Mono', monospace; }
+.legend-pct { font-size: 0.68rem; color: var(--text3); }
+
+/* ── BOTTOM ROW ── */
+.bottom-row { display: grid; grid-template-columns: 1.4fr 1fr; gap: 1rem; }
+
+/* TRANSACTIONS TABLE */
+.card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 1rem; overflow: hidden;
+}
+.card-header {
+  padding: 1.1rem 1.25rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-title { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: var(--text1); }
+.card-action { font-size: 0.72rem; color: var(--orange); cursor: pointer; background: none; border: none; font-family: 'DM Sans', sans-serif; transition: opacity .2s; }
+.card-action:hover { opacity: 0.7; }
+
+.tx-table { width: 100%; border-collapse: collapse; }
+.tx-table th {
+  font-size: 0.62rem; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 0.6rem 1.25rem; text-align: left;
+  font-family: 'DM Mono', monospace; font-weight: 400;
+  border-bottom: 1px solid var(--border);
+}
+.tx-table td {
+  padding: 0.75rem 1.25rem; font-size: 0.8rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: var(--text2);
+}
+.tx-table tr:last-child td { border-bottom: none; }
+.tx-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+.tx-user { display: flex; align-items: center; gap: 0.65rem; }
+.tx-av {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; flex-shrink: 0;
+}
+.tx-name { font-size: 0.8rem; color: var(--text1); font-weight: 400; }
+.tx-handle { font-size: 0.68rem; color: var(--text3); }
+
+.tx-tier {
+  font-size: 0.62rem; font-weight: 500;
+  padding: 0.15rem 0.5rem; border-radius: 100px;
+  font-family: 'DM Mono', monospace;
+}
+.tier-palace { background: rgba(139,111,212,0.15); color: var(--palace2); }
+.tier-gold   { background: rgba(201,149,42,0.15);  color: var(--gold2); }
+.tier-silver { background: rgba(143,163,181,0.15); color: #8fa3b5; }
+.tier-free   { background: rgba(45,171,128,0.12);  color: var(--emerald); }
+
+.tx-amount { font-family: 'DM Mono', monospace; font-size: 0.82rem; }
+.tx-amount.positive { color: var(--emerald); }
+.tx-amount.negative { color: var(--red); }
+
+.tx-status {
+  font-size: 0.62rem; font-weight: 500;
+  padding: 0.15rem 0.5rem; border-radius: 100px;
+  font-family: 'DM Mono', monospace;
+}
+.status-paid    { background: rgba(45,171,128,0.12); color: var(--emerald); }
+.status-pending { background: rgba(201,149,42,0.12); color: var(--gold2); }
+.status-failed  { background: rgba(224,82,82,0.12);  color: var(--red); }
+
+/* UPCOMING PAYOUTS CARD */
+.payout-list { display: flex; flex-direction: column; }
+.payout-row {
+  display: flex; align-items: center; gap: 0.85rem;
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.15s;
+}
+.payout-row:last-child { border-bottom: none; }
+.payout-row:hover { background: rgba(255,255,255,0.02); }
+.pr-icon {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.95rem; flex-shrink: 0;
+}
+.pr-icon.stripe  { background: rgba(99,91,255,0.15); }
+.pr-icon.pending { background: rgba(201,149,42,0.15); }
+.pr-icon.done    { background: rgba(45,171,128,0.12); }
+.pr-info { flex: 1; min-width: 0; }
+.pr-name { font-size: 0.82rem; color: var(--text1); font-weight: 400; }
+.pr-date { font-size: 0.68rem; color: var(--text3); margin-top: 0.1rem; font-family: 'DM Mono', monospace; }
+.pr-amount { font-family: 'DM Mono', monospace; font-size: 0.88rem; color: var(--text1); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .kpi-grid { grid-template-columns: repeat(2,1fr); }
+  .charts-row, .bottom-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-text">Krea<span>Town</span></div>
+  </div>
+  <div class="sidebar-creator">
+    <div class="sc-avatar">🎨</div>
+    <div>
+      <div class="sc-name">Topraq Toros</div>
+      <div class="sc-level">⭐ Level 7 Creator</div>
+    </div>
+    <div class="sc-badge">PRO</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <a href="dashboard.html" class="nav-item">
+      <span class="nav-icon">📊</span> Dashboard
+    </a>
+    <a href="earnings.html" class="nav-item active">
+      <span class="nav-icon">💰</span> Earnings
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">👥</span> Members
+      <span class="nav-badge">44</span>
+    </a>
+    <div class="nav-section-label">Content</div>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">✍️</span> Posts
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">🔒</span> Tiers
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">💬</span> Messages
+      <span class="nav-badge">3</span>
+    </a>
+    <div class="nav-section-label">My Town</div>
+    <a href="topraq-hub.html" class="nav-item">
+      <span class="nav-icon">🏯</span> My Palace
+    </a>
+    <a href="radio.html" class="nav-item">
+      <span class="nav-icon">🎵</span> 3D Radio
+    </a>
+    <a href="tv.html" class="nav-item">
+      <span class="nav-icon">📺</span> 3D TV
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">🏆</span> Competitions
+    </a>
+    <div class="nav-section-label">Settings</div>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">⚙️</span> Settings
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">💳</span> Stripe Connect
+    </a>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="level-mini">
+      <div class="lm-top">
+        <div class="lm-label">Level 7 → 8</div>
+        <div class="lm-val">620 / 1000 xp</div>
+      </div>
+      <div class="lm-track">
+        <div class="lm-fill" id="lvlFill"></div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<div class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">Earnings</div>
+      <div class="topbar-sub">Your revenue, payouts & transaction history</div>
+    </div>
+    <div class="topbar-right">
+      <select class="period-select" id="periodSelect" onchange="updatePeriod(this.value)">
+        <option value="7">Last 7 days</option>
+        <option value="30" selected>Last 30 days</option>
+        <option value="90">Last 90 days</option>
+        <option value="365">This year</option>
+      </select>
+      <button class="payout-btn" onclick="requestPayout()">💸 Request payout</button>
+      <div class="topbar-notif">🔔<div class="notif-dot"></div></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card k-orange">
+        <div class="kpi-label">Total revenue</div>
+        <div class="kpi-val" id="kpiRevenue">$4,820</div>
+        <div class="kpi-change kpi-up">↑ 18.4% vs last period</div>
+        <div class="kpi-icon">💰</div>
+      </div>
+      <div class="kpi-card k-emerald">
+        <div class="kpi-label">Net earnings</div>
+        <div class="kpi-val" id="kpiNet">$4,341</div>
+        <div class="kpi-change kpi-up">↑ After 5% platform fee</div>
+        <div class="kpi-icon">✅</div>
+      </div>
+      <div class="kpi-card k-gold">
+        <div class="kpi-label">Avg per member</div>
+        <div class="kpi-val" id="kpiAvg">$19.2</div>
+        <div class="kpi-change kpi-up">↑ 3.1% vs last period</div>
+        <div class="kpi-icon">👑</div>
+      </div>
+      <div class="kpi-card k-palace">
+        <div class="kpi-label">Pending payout</div>
+        <div class="kpi-val" id="kpiPending">$1,240</div>
+        <div class="kpi-change kpi-neutral">Pays out Apr 1</div>
+        <div class="kpi-icon">⏳</div>
+      </div>
+    </div>
+
+    <!-- Payout ready banner -->
+    <div class="payout-banner">
+      <div class="payout-banner-left">
+        <div class="payout-icon">💸</div>
+        <div>
+          <div class="payout-label">Available to withdraw now</div>
+          <div class="payout-amount">$3,101.00</div>
+          <div class="payout-note">Via Stripe Connect → your bank account · arrives in 2 business days</div>
+        </div>
+      </div>
+      <div class="payout-actions">
+        <button class="btn-payout-main" onclick="requestPayout()">Withdraw $3,101 →</button>
+        <button class="btn-payout-sec">Connect Stripe</button>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-row">
+
+      <!-- Revenue over time -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Revenue over time</div>
+            <div class="chart-sub">Monthly earnings breakdown</div>
+          </div>
+          <span class="chart-tag tag-up">↑ 18.4% this period</span>
+        </div>
+        <div class="chart-canvas-wrap">
+          <canvas id="revenueChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Revenue by tier donut -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Revenue by tier</div>
+            <div class="chart-sub">This period</div>
+          </div>
+        </div>
+        <div class="chart-canvas-wrap" style="height:140px">
+          <canvas id="tierChart"></canvas>
+        </div>
+        <div class="donut-legend">
+          <div class="legend-row">
+            <div class="legend-dot" style="background:#b8a0e8"></div>
+            <div class="legend-label">Palace tier</div>
+            <div class="legend-val">$1,960</div>
+            <div class="legend-pct">41%</div>
+          </div>
+          <div class="legend-row">
+            <div class="legend-dot" style="background:#f5d58a"></div>
+            <div class="legend-label">Gold tier</div>
+            <div class="legend-val">$1,540</div>
+            <div class="legend-pct">32%</div>
+          </div>
+          <div class="legend-row">
+            <div class="legend-dot" style="background:#8fa3b5"></div>
+            <div class="legend-label">Silver tier</div>
+            <div class="legend-val">$840</div>
+            <div class="legend-pct">17%</div>
+          </div>
+          <div class="legend-row">
+            <div class="legend-dot" style="background:#2dab80"></div>
+            <div class="legend-label">Free tier</div>
+            <div class="legend-val">$480</div>
+            <div class="legend-pct">10%</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom row -->
+    <div class="bottom-row">
+
+      <!-- Transactions table -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Recent transactions</div>
+          <button class="card-action">Export CSV →</button>
+        </div>
+        <table class="tx-table">
+          <thead>
+            <tr>
+              <th>Member</th>
+              <th>Tier</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="tx-user"><div class="tx-av" style="background:linear-gradient(135deg,#7c5cbf,#f4732a)">🎨</div><div><div class="tx-name">Kaan Öztürk</div><div class="tx-handle">@kaan</div></div></div></td>
+              <td><span class="tx-tier tier-palace">🏯 Palace</span></td>
+              <td><span class="tx-amount positive">+$49.00</span></td>
+              <td><span class="tx-status status-paid">Paid</span></td>
+              <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text3)">Mar 18</td>
+            </tr>
+            <tr>
+              <td><div class="tx-user"><div class="tx-av" style="background:linear-gradient(135deg,#c9952a,#f5d58a)">🌸</div><div><div class="tx-name">Selin Kaya</div><div class="tx-handle">@selinkaya</div></div></div></td>
+              <td><span class="tx-tier tier-gold">👑 Gold</span></td>
+              <td><span class="tx-amount positive">+$29.00</span></td>
+              <td><span class="tx-status status-paid">Paid</span></td>
+              <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text3)">Mar 17</td>
+            </tr>
+            <tr>
+              <td><div class="tx-user"><div class="tx-av" style="background:linear-gradient(135deg,#8fa3b5,#60a5fa)">🎸</div><div><div class="tx-name">Cem Arslan</div><div class="tx-handle">@cemarslan</div></div></div></td>
+              <td><span class="tx-tier tier-silver">⭐ Silver</span></td>
+              <td><span class="tx-amount positive">+$9.00</span></td>
+              <td><span class="tx-status status-paid">Paid</span></td>
+              <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text3)">Mar 17</td>
+            </tr>
+            <tr>
+              <td><div class="tx-user"><div class="tx-av" style="background:linear-gradient(135deg,#2dab80,#60a5fa)">🌿</div><div><div class="tx-name">Elif Yıldız</div><div class="tx-handle">@elif</div></div></div></td>
+              <td><span class="tx-tier tier-gold">👑 Gold</span></td>
+              <td><span class="tx-amount positive">+$29.00</span></td>
+              <td><span class="tx-status status-pending">Pending</span></td>
+              <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text3)">Mar 16</td>
+            </tr>
+            <tr>
+              <td><div class="tx-user"><div class="tx-av" style="background:linear-gradient(135deg,#f4732a,#fbbf24)">🔥</div><div><div class="tx-name">Berk Doğan</div><div class="tx-handle">@berkd</div></div></div></td>
+              <td><span class="tx-tier tier-palace">🏯 Palace</span></td>
+              <td><span class="tx-amount positive">+$49.00</span></td>
+              <td><span class="tx-status status-paid">Paid</span></td>
+              <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text3)">Mar 15</td>
+            </tr>
+            <tr>
+              <td><div class="tx-user"><div class="tx-av" style="background:linear-gradient(135deg,#e05252,#f4732a)">💫</div><div><div class="tx-name">Naz Aydın</div><div class="tx-handle">@naz</div></div></div></td>
+              <td><span class="tx-tier tier-silver">⭐ Silver</span></td>
+              <td><span class="tx-amount negative">−$9.00</span></td>
+              <td><span class="tx-status status-failed">Refunded</span></td>
+              <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text3)">Mar 14</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Upcoming payouts -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Payout history</div>
+          <button class="card-action">View all →</button>
+        </div>
+        <div class="payout-list">
+          <div class="payout-row">
+            <div class="pr-icon done">✅</div>
+            <div class="pr-info">
+              <div class="pr-name">March payout</div>
+              <div class="pr-date">Paid · Mar 01 · Bank transfer</div>
+            </div>
+            <div class="pr-amount">$2,840</div>
+          </div>
+          <div class="payout-row">
+            <div class="pr-icon pending">⏳</div>
+            <div class="pr-info">
+              <div class="pr-name">April payout</div>
+              <div class="pr-date">Pending · Apr 01 · estimated</div>
+            </div>
+            <div class="pr-amount" style="color:var(--gold2)">$1,240</div>
+          </div>
+          <div class="payout-row">
+            <div class="pr-icon done">✅</div>
+            <div class="pr-info">
+              <div class="pr-name">February payout</div>
+              <div class="pr-date">Paid · Feb 01 · Bank transfer</div>
+            </div>
+            <div class="pr-amount">$2,210</div>
+          </div>
+          <div class="payout-row">
+            <div class="pr-icon done">✅</div>
+            <div class="pr-info">
+              <div class="pr-name">January payout</div>
+              <div class="pr-date">Paid · Jan 01 · Bank transfer</div>
+            </div>
+            <div class="pr-amount">$1,980</div>
+          </div>
+          <div class="payout-row">
+            <div class="pr-icon done">✅</div>
+            <div class="pr-info">
+              <div class="pr-name">December payout</div>
+              <div class="pr-date">Paid · Dec 01 · Bank transfer</div>
+            </div>
+            <div class="pr-amount">$1,640</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── LEVEL BAR ── */
+setTimeout(() => { document.getElementById('lvlFill').style.width = '62%'; }, 300);
+
+/* ── REVENUE CHART ── */
+const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+const revenueChart = new Chart(revenueCtx, {
+  type: 'bar',
+  data: {
+    labels: ['Oct','Nov','Dec','Jan','Feb','Mar'],
+    datasets: [
+      {
+        label: 'Palace',
+        data: [820, 980, 1100, 1320, 1640, 1960],
+        backgroundColor: 'rgba(184,160,232,0.7)',
+        borderRadius: 4, borderSkipped: false,
+      },
+      {
+        label: 'Gold',
+        data: [560, 680, 820, 1020, 1280, 1540],
+        backgroundColor: 'rgba(245,213,138,0.6)',
+        borderRadius: 4, borderSkipped: false,
+      },
+      {
+        label: 'Silver',
+        data: [320, 380, 420, 560, 680, 840],
+        backgroundColor: 'rgba(143,163,181,0.5)',
+        borderRadius: 4, borderSkipped: false,
+      },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: {
+      backgroundColor: '#1e1a16', titleColor: 'rgba(255,255,255,0.9)',
+      bodyColor: 'rgba(255,255,255,0.55)', borderColor: 'rgba(255,255,255,0.1)',
+      borderWidth: 1, padding: 10,
+    }},
+    scales: {
+      x: { stacked: true, grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.3)', font: { size: 11 } }, border: { display: false } },
+      y: { stacked: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.3)', font: { size: 11 }, callback: v => '$' + v }, border: { display: false } }
+    }
+  }
+});
+
+/* ── TIER DONUT ── */
+const tierCtx = document.getElementById('tierChart').getContext('2d');
+new Chart(tierCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Palace','Gold','Silver','Free'],
+    datasets: [{
+      data: [1960, 1540, 840, 480],
+      backgroundColor: ['rgba(184,160,232,0.85)','rgba(245,213,138,0.85)','rgba(143,163,181,0.75)','rgba(45,171,128,0.7)'],
+      borderWidth: 0, hoverOffset: 6,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: '70%',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1e1a16', titleColor: 'rgba(255,255,255,0.9)',
+        bodyColor: 'rgba(255,255,255,0.55)', borderColor: 'rgba(255,255,255,0.1)',
+        borderWidth: 1, padding: 10,
+        callbacks: { label: ctx => ' $' + ctx.parsed.toLocaleString() }
+      }
+    }
+  }
+});
+
+/* ── PERIOD SWITCH ── */
+const periodData = {
+  '7':   { revenue:'$1,120', net:'$1,064', avg:'$18.1', pending:'$1,120' },
+  '30':  { revenue:'$4,820', net:'$4,341', avg:'$19.2', pending:'$1,240' },
+  '90':  { revenue:'$13,640',net:'$12,958',avg:'$20.1', pending:'$1,240' },
+  '365': { revenue:'$48,200',net:'$45,790',avg:'$21.4', pending:'$1,240' },
+};
+function updatePeriod(v) {
+  const d = periodData[v];
+  document.getElementById('kpiRevenue').textContent = d.revenue;
+  document.getElementById('kpiNet').textContent     = d.net;
+  document.getElementById('kpiAvg').textContent     = d.avg;
+  document.getElementById('kpiPending').textContent = d.pending;
+}
+
+/* ── PAYOUT ── */
+function requestPayout() {
+  const btn = document.querySelector('.btn-payout-main');
+  btn.textContent = '⏳ Processing…';
+  btn.disabled = true;
+  setTimeout(() => {
+    btn.textContent = '✅ Payout requested!';
+    btn.style.background = 'rgba(45,171,128,0.5)';
+  }, 1500);
+}
+</script>
+</body>
+</html>
