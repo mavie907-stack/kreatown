@@ -1,7 +1,6 @@
-import { cookies } from 'next/headers'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import { createClient } from '@supabase/supabase-js'
 import CreatorHubClient from './CreatorHubClient'
 
 interface PageProps {
@@ -9,13 +8,14 @@ interface PageProps {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  return {
-    title: `@${params.username} — KreaTown`,
-  }
+  return { title: `@${params.username} — KreaTown` }
 }
 
 export default async function CreatorHubPage({ params }: PageProps) {
-  const supabase = createServerComponentClient({ cookies })
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   const { data: creator } = await supabase
     .from('profiles')
@@ -45,8 +45,6 @@ export default async function CreatorHubPage({ params }: PageProps) {
     .eq('creator_id', creator.id)
     .eq('status', 'active')
 
-  const { data: { session } } = await supabase.auth.getSession()
-
   return (
     <CreatorHubClient
       creator={creator}
@@ -54,7 +52,7 @@ export default async function CreatorHubPage({ params }: PageProps) {
       posts={posts ?? []}
       memberCount={memberCount ?? 0}
       subscribedTierId={null}
-      currentUserId={session?.user?.id ?? null}
+      currentUserId={null}
     />
   )
 }
