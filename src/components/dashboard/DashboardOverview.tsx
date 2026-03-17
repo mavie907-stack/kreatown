@@ -2,7 +2,7 @@
 import { useDashboardStats } from '@/hooks'
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { TrendingUp, Users, Crown, FileText } from 'lucide-react'
-import type { User } from '@/types'
+// removed User import
 import Link from 'next/link'
 
 const MOCK_REVENUE = [
