@@ -1,30 +1,45 @@
 'use client'
-import { useEffect } from 'react'
 
 export default function LandingPage() {
-  useEffect(() => {
-    const btn = document.getElementById('hamBtn')
-    const menu = document.getElementById('mobileMenu')
-    if (btn && menu) btn.addEventListener('click', () => menu.classList.toggle('open'))
-  }, [])
-
   return (
     <iframe
       srcDoc={srcDoc}
-      style={{ width: '100%', height: '100vh', border: 'none' }}
+      style={{ width: '100%', height: '100vh', border: 'none', display: 'block' }}
       title="KreaTown"
     />
   )
 }
 
 const srcDoc = `<!DOCTYPE html>
-```
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KreaTown — Where Creators Belong</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
 
-Then open your `index.html`, copy everything from `<!DOCTYPE html>` to the end, paste it after that last backtick line.
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-Then close the file with just this on the very last line:
-```
-`
+  :root {
+    --orange: #f4732a;
+    --orange-light: #ff9555;
+    --orange-pale: #fff0e6;
+    --cream: #fffbf5;
+    --cream-dark: #f5efe3;
+    --brown: #1a1612;
+    --brown-mid: #4a3728;
+    --muted: #9c8878;
+    --gold: #d4a843;
+    --gold-light: #f5d58a;
+    --silver: #9eafbf;
+    --emerald: #2d8a6e;
+  }
+
+  html { scroll-behavior: smooth; }
+
   body {
     font-family: 'DM Sans', sans-serif;
     background: var(--cream);
@@ -627,26 +642,25 @@ Then close the file with just this on the very last line:
 
   .mobile-cta-bar { display: none; }
 
-      `}</style>
-      <div>
-
-
-{/* NAV */}
+</style>
+</head>
+<body>
+<!-- NAV -->
 <nav>
-{/* MOBILE MENU */}
-  <div className="nav-logo">Krea<span>Town</span></div>
-  <div className="nav-links">
+<!-- MOBILE MENU -->
+  <div class="nav-logo">Krea<span>Town</span></div>
+  <div class="nav-links">
     <a href="#concept">How it works</a>
     <a href="#creators">Creators</a>
     <a href="#plans">Pricing</a>
     <a href="/auth/login">Log in</a>
-    <a href="/auth/register" className="btn-nav">Start for free 🏡</a>
-    <button className="hamburger" id="hamBtn" onClick="toggleMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
+    <a href="/auth/register" class="btn-nav">Start for free 🏡</a>
+    <button class="hamburger" id="hamBtn" onclick="toggleMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
 </nav>
 
-{/* MOBILE MENU */}
-<div className="mobile-menu" id="mobileMenu">
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
   <a href="#concept">How it works</a>
   <a href="#features">Features</a>
   <a href="#creators">Creators</a>
@@ -654,7 +668,334 @@ Then close the file with just this on the very last line:
   <a href="/auth/login">Log in</a>
   <a href="/auth/register">Start for free 🏡</a>
 </div>
+
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-eyebrow fade-up">Your town. Your fans. Your money.</div>
+    <h1 class="hero-title fade-up-2">
+      Build your world.<br>
+      <em>Grow your empire.</em>
+    </h1>
+    <p class="hero-sub fade-up-3">
+      Kreatown is the only creator platform where your success literally builds your world. Start with a cottage. Earn your mansion. Every member gets you closer to the top of the hill.
+    </p>
+    <div class="hero-ctas fade-up-4">
+      <a href="/auth/register" class="btn-primary">Start building free 🏡</a>
+      <a href="#concept" class="btn-secondary">See how it works →</a>
+    </div>
+    <div class="hero-stats fade-up-4">
+      <div>
+        <span class="stat-num">500+</span>
+        <span class="stat-label">Creators</span>
+      </div>
+      <div>
+        <span class="stat-num">$120K+</span>
+        <span class="stat-label">Paid out</span>
+      </div>
+      <div>
+        <span class="stat-num">12K+</span>
+        <span class="stat-label">Members</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-visual fade-up-3">
+    <div class="town-container">
+      <img src="Luxury.png" alt="KreaTown — creator town" class="town-img" onerror="this.style.background='linear-gradient(135deg,#f4732a22,#d4a84322)';this.style.display='block'">
+
+      <div class="town-badge b1">
+        <div class="badge-icon">🏡</div>
+        <div class="badge-text">
+          <strong>Topraq</strong>
+          <span>44 members · Level 2</span>
+        </div>
+      </div>
+
+      <div class="town-badge b2">
+        <div class="badge-icon">💰</div>
+        <div class="badge-text">
+          <strong>$6,200/mo</strong>
+          <span>Jenna · 128 members</span>
+        </div>
+      </div>
+
+      <div class="town-badge b3">
+        <div class="badge-icon">🔥</div>
+        <div class="badge-text">
+          <strong>Level up!</strong>
+          <span>Pool unlocked</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE CONCEPT: LEVELS -->
+<section class="section-concept" id="concept">
+  <div class="concept-inner">
+    <div class="concept-header">
+      <div class="section-tag">The KreaTown system</div>
+      <h2 class="concept-title">
+        Your house grows<br>
+        <em>with your audience</em>
+      </h2>
+      <p class="concept-sub">
+        Every new member you earn upgrades your world. From a cozy starter cottage to a hilltop mansion with a helipad — the platform rewards your growth visually, tangibly, and financially.
+      </p>
+    </div>
+
+    <div class="levels-grid">
+      <div class="level-card">
+        <div class="level-num">Level 1</div>
+        <span class="level-icon">🏠</span>
+        <div class="level-members">0 – 1K</div>
+        <div class="level-name">The Cottage</div>
+        <div class="level-unlock">Basic content feed + 2 tiers</div>
+        <div class="level-bar"><div class="level-bar-fill" style="width:20%"></div></div>
+      </div>
+      <div class="level-card">
+        <div class="level-num">Level 2</div>
+        <span class="level-icon">🏡</span>
+        <div class="level-members">1K – 5K</div>
+        <div class="level-name">The House</div>
+        <div class="level-unlock">Unlock DMs + 3D garden</div>
+        <div class="level-bar"><div class="level-bar-fill" style="width:40%"></div></div>
+      </div>
+      <div class="level-card featured">
+        <div class="level-num">Level 3</div>
+        <span class="level-icon">🏘️</span>
+        <div class="level-members">5K – 10K</div>
+        <div class="level-name">The Villa</div>
+        <div class="level-unlock">3D Radio 🎵 + pool + competitions</div>
+        <div class="level-bar"><div class="level-bar-fill" style="width:60%"></div></div>
+      </div>
+      <div class="level-card">
+        <div class="level-num">Level 4</div>
+        <span class="level-icon">🏰</span>
+        <div class="level-members">10K – 25K</div>
+        <div class="level-name">The Estate</div>
+        <div class="level-unlock">3D TV 📺 + live events</div>
+        <div class="level-bar"><div class="level-bar-fill" style="width:80%"></div></div>
+      </div>
+      <div class="level-card">
+        <div class="level-num">Level 5</div>
+        <span class="level-icon">🏯</span>
+        <div class="level-members">50K+</div>
+        <div class="level-name">The Mansion</div>
+        <div class="level-unlock">Full town. Helipad. Legend status.</div>
+        <div class="level-bar"><div class="level-bar-fill" style="width:100%"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section-features" id="features">
+  <div class="features-inner">
+    <div class="features-header">
+      <div class="section-tag" style="color:var(--orange)">Everything you need</div>
+      <h2 class="features-title">
+        Not just a page.<br>
+        <em>A living world.</em>
+      </h2>
+      <p class="features-sub">Every tool a creator needs — from payments to community — built inside your growing universe.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card accent">
+        <span class="feature-icon">🏡</span>
+        <div class="feature-title">Your own town</div>
+        <p class="feature-desc">Your creator page is a living 3D world that evolves as you grow. Share kreatown.com/@you everywhere.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">💰</span>
+        <div class="feature-title">Get paid monthly</div>
+        <p class="feature-desc">Fans subscribe to your tiers. You earn automatically every month, with direct payouts via Stripe.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔒</span>
+        <div class="feature-title">Gated content rooms</div>
+        <p class="feature-desc">Different rooms of your house unlock different content. Free fans get the garden. Gold members get the penthouse.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🎮</span>
+        <div class="feature-title">Level-up competitions</div>
+        <p class="feature-desc">Compete with other creators in monthly growth challenges. Win rewards, house upgrades, and platform boosts.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">💬</span>
+        <div class="feature-title">Direct messages</div>
+        <p class="feature-desc">Connect 1-on-1 with your biggest fans through built-in messaging. Unlocks at 1K members.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📊</span>
+        <div class="feature-title">Creator analytics</div>
+        <p class="feature-desc">Track revenue, member growth, content performance, and your house level progress in one dashboard.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CREATOR SHOWCASE -->
+<section class="section-creators" id="creators">
+  <div class="creators-inner">
+    <div class="creators-header">
+      <div class="section-tag" style="color:var(--orange)">Already earning</div>
+      <h2 class="creators-title">Creators building their towns</h2>
+      <p class="creators-sub">See how creators are growing their worlds on Kreatown</p>
+    </div>
+    <div class="creators-grid">
+
+      <div class="creator-card">
+        <div class="creator-banner" style="background: linear-gradient(135deg, #f4732a22, #d4a84322);">
+          <div class="creator-level-badge">🏘️ Level 3 · Villa</div>
+        </div>
+        <div class="creator-body">
+          <div class="creator-avatar">🎨</div>
+          <div class="creator-name">Topraq Toros</div>
+          <div class="creator-handle">@topraq · Creator & Storyteller</div>
+          <div class="creator-tier tier-bronze">🔥 Growing fast</div>
+          <div class="creator-stats">
+            <div><span class="c-stat-num">44</span><span class="c-stat-label">Members</span></div>
+            <div><span class="c-stat-num">$2,840</span><span class="c-stat-label">Per month</span></div>
+            <div><span class="c-stat-num">4</span><span class="c-stat-label">Posts</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="creator-card">
+        <div class="creator-banner" style="background: linear-gradient(135deg, #9eafbf22, #d4a84322);">
+          <div class="creator-level-badge">🏰 Level 4 · Estate</div>
+        </div>
+        <div class="creator-body">
+          <div class="creator-avatar">📸</div>
+          <div class="creator-name">Jenna Williams</div>
+          <div class="creator-handle">@jenna · Photographer</div>
+          <div class="creator-tier tier-silver">⭐ Silver status</div>
+          <div class="creator-stats">
+            <div><span class="c-stat-num">128</span><span class="c-stat-label">Members</span></div>
+            <div><span class="c-stat-num">$6,200</span><span class="c-stat-label">Per month</span></div>
+            <div><span class="c-stat-num">22</span><span class="c-stat-label">Posts</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="creator-card">
+        <div class="creator-banner" style="background: linear-gradient(135deg, #d4a84322, #f4732a22);">
+          <div class="creator-level-badge">🏯 Level 5 · Mansion</div>
+        </div>
+        <div class="creator-body">
+          <div class="creator-avatar">🎵</div>
+          <div class="creator-name">MikeNova</div>
+          <div class="creator-handle">@mikenova · Music Producer</div>
+          <div class="creator-tier tier-gold">👑 Gold status</div>
+          <div class="creator-stats">
+            <div><span class="c-stat-num">89</span><span class="c-stat-label">Members</span></div>
+            <div><span class="c-stat-num">$4,100</span><span class="c-stat-label">Per month</span></div>
+            <div><span class="c-stat-num">17</span><span class="c-stat-label">Posts</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section class="section-plans" id="plans">
+  <div class="plans-inner">
+    <div class="plans-header">
+      <div class="section-tag" style="color:var(--orange)">Simple pricing</div>
+      <h2 class="plans-title">Grow together, earn together</h2>
+      <p class="plans-sub">The bigger you grow, the better your deal gets.</p>
+    </div>
+    <div class="plans-grid">
+
+      <div class="plan-card">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price"><sup>$</sup>0 <span>/ 3 months then $19/mo</span></div>
+        <div class="plan-cut">+ 5% revenue share</div>
+        <ul class="plan-features">
+          <li>Your own town page</li>
+          <li>Up to 2 membership tiers</li>
+          <li>Content feed + gating</li>
+          <li>Basic analytics</li>
+          <li>Level 1–2 house upgrades</li>
+        </ul>
+        <a href="/auth/register" class="plan-cta">Get started free</a>
+      </div>
+
+      <div class="plan-card popular">
+        <div class="popular-tag">Most Popular</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price"><sup>$</sup>29 <span>/ month</span></div>
+        <div class="plan-cut">+ 5% revenue share</div>
+        <ul class="plan-features">
+          <li>Everything in Starter</li>
+          <li>Unlimited membership tiers</li>
+          <li>DMs with fans</li>
+          <li>Level competitions access</li>
+          <li>All house levels unlocked</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="/auth/register" class="plan-cta">Start Pro free</a>
+      </div>
+
+      <div class="plan-card">
+        <div class="plan-name">Studio</div>
+        <div class="plan-price"><sup>$</sup>49 <span>/ month</span></div>
+        <div class="plan-cut">+ 3% revenue share</div>
+        <ul class="plan-features">
+          <li>Everything in Pro</li>
+          <li>Lowest revenue share (3%)</li>
+          <li>3D TV & Radio early access</li>
+          <li>Custom town branding</li>
+          <li>Advanced analytics</li>
+          <li>Dedicated account manager</li>
+        </ul>
+        <a href="/auth/register" class="plan-cta">Go Studio</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section-cta">
+  <span class="cta-tag">Ready to build?</span>
+  <h2 class="cta-title">
+    Your town is waiting.<br>
+    <em>Start with a cottage.</em>
+  </h2>
+  <p class="cta-sub">
+    Join hundreds of creators already building their worlds on KreaTown. It's free to start — no credit card needed.
+  </p>
+  <div class="cta-btns">
+    <a href="/auth/register" class="btn-cta-primary">Build your town free 🏡</a>
+    <a href="#concept" class="btn-cta-secondary">See how it works</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Krea<span>Town</span></div>
+  <div>© 2026 KreaTown. Where creators belong.</div>
+  <div style="display:flex;gap:1.5rem">
+    <a href="/">Privacy</a>
+    <a href="/">Terms</a>
+    <a href="/">Contact</a>
+  </div>
+</footer>
+
+<!-- MOBILE BOTTOM CTA BAR -->
+<div class="mobile-cta-bar">
+  <a href="/auth/register" class="btn-primary">🏡 Start free</a>
+  <a href="/auth/login" class="btn-login">Log in</a>
+</div>
 <script>
+
 function toggleMenu() {
   const btn = document.getElementById('hamBtn');
   const menu = document.getElementById('mobileMenu');
@@ -667,335 +1008,7 @@ document.querySelectorAll('.mobile-menu a').forEach(a => {
     document.getElementById('mobileMenu').classList.remove('open');
   });
 });
+
 </script>
-
-{/* HERO */}
-<section className="hero">
-  <div className="hero-text">
-    <div className="hero-eyebrow fade-up">Your town. Your fans. Your money.</div>
-    <h1 className="hero-title fade-up-2">
-      Build your world.<br>
-      <em>Grow your empire.</em>
-    </h1>
-    <p className="hero-sub fade-up-3">
-      Kreatown is the only creator platform where your success literally builds your world. Start with a cottage. Earn your mansion. Every member gets you closer to the top of the hill.
-    </p>
-    <div className="hero-ctas fade-up-4">
-      <a href="/auth/register" className="btn-primary">Start building free 🏡</a>
-      <a href="#concept" className="btn-secondary">See how it works →</a>
-    </div>
-    <div className="hero-stats fade-up-4">
-      <div>
-        <span className="stat-num">500+</span>
-        <span className="stat-label">Creators</span>
-      </div>
-      <div>
-        <span className="stat-num">$120K+</span>
-        <span className="stat-label">Paid out</span>
-      </div>
-      <div>
-        <span className="stat-num">12K+</span>
-        <span className="stat-label">Members</span>
-      </div>
-    </div>
-  </div>
-
-  <div className="hero-visual fade-up-3">
-    <div className="town-container">
-      <img src="Luxury.png" alt="KreaTown — creator town" className="town-img" onerror="this.style.background='linear-gradient(135deg,#f4732a22,#d4a84322)';this.style.display='block'">
-
-      <div className="town-badge b1">
-        <div className="badge-icon">🏡</div>
-        <div className="badge-text">
-          <strong>Topraq</strong>
-          <span>44 members · Level 2</span>
-        </div>
-      </div>
-
-      <div className="town-badge b2">
-        <div className="badge-icon">💰</div>
-        <div className="badge-text">
-          <strong>$6,200/mo</strong>
-          <span>Jenna · 128 members</span>
-        </div>
-      </div>
-
-      <div className="town-badge b3">
-        <div className="badge-icon">🔥</div>
-        <div className="badge-text">
-          <strong>Level up!</strong>
-          <span>Pool unlocked</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-{/* THE CONCEPT: LEVELS */}
-<section className="section-concept" id="concept">
-  <div className="concept-inner">
-    <div className="concept-header">
-      <div className="section-tag">The KreaTown system</div>
-      <h2 className="concept-title">
-        Your house grows<br>
-        <em>with your audience</em>
-      </h2>
-      <p className="concept-sub">
-        Every new member you earn upgrades your world. From a cozy starter cottage to a hilltop mansion with a helipad — the platform rewards your growth visually, tangibly, and financially.
-      </p>
-    </div>
-
-    <div className="levels-grid">
-      <div className="level-card">
-        <div className="level-num">Level 1</div>
-        <span className="level-icon">🏠</span>
-        <div className="level-members">0 – 1K</div>
-        <div className="level-name">The Cottage</div>
-        <div className="level-unlock">Basic content feed + 2 tiers</div>
-        <div className="level-bar"><div className="level-bar-fill" style="width:20%"></div></div>
-      </div>
-      <div className="level-card">
-        <div className="level-num">Level 2</div>
-        <span className="level-icon">🏡</span>
-        <div className="level-members">1K – 5K</div>
-        <div className="level-name">The House</div>
-        <div className="level-unlock">Unlock DMs + 3D garden</div>
-        <div className="level-bar"><div className="level-bar-fill" style="width:40%"></div></div>
-      </div>
-      <div className="level-card featured">
-        <div className="level-num">Level 3</div>
-        <span className="level-icon">🏘️</span>
-        <div className="level-members">5K – 10K</div>
-        <div className="level-name">The Villa</div>
-        <div className="level-unlock">3D Radio 🎵 + pool + competitions</div>
-        <div className="level-bar"><div className="level-bar-fill" style="width:60%"></div></div>
-      </div>
-      <div className="level-card">
-        <div className="level-num">Level 4</div>
-        <span className="level-icon">🏰</span>
-        <div className="level-members">10K – 25K</div>
-        <div className="level-name">The Estate</div>
-        <div className="level-unlock">3D TV 📺 + live events</div>
-        <div className="level-bar"><div className="level-bar-fill" style="width:80%"></div></div>
-      </div>
-      <div className="level-card">
-        <div className="level-num">Level 5</div>
-        <span className="level-icon">🏯</span>
-        <div className="level-members">50K+</div>
-        <div className="level-name">The Mansion</div>
-        <div className="level-unlock">Full town. Helipad. Legend status.</div>
-        <div className="level-bar"><div className="level-bar-fill" style="width:100%"></div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-{/* FEATURES */}
-<section className="section-features" id="features">
-  <div className="features-inner">
-    <div className="features-header">
-      <div className="section-tag" style="color:var(--orange)">Everything you need</div>
-      <h2 className="features-title">
-        Not just a page.<br>
-        <em>A living world.</em>
-      </h2>
-      <p className="features-sub">Every tool a creator needs — from payments to community — built inside your growing universe.</p>
-    </div>
-
-    <div className="features-grid">
-      <div className="feature-card accent">
-        <span className="feature-icon">🏡</span>
-        <div className="feature-title">Your own town</div>
-        <p className="feature-desc">Your creator page is a living 3D world that evolves as you grow. Share kreatown.com/@you everywhere.</p>
-      </div>
-      <div className="feature-card">
-        <span className="feature-icon">💰</span>
-        <div className="feature-title">Get paid monthly</div>
-        <p className="feature-desc">Fans subscribe to your tiers. You earn automatically every month, with direct payouts via Stripe.</p>
-      </div>
-      <div className="feature-card">
-        <span className="feature-icon">🔒</span>
-        <div className="feature-title">Gated content rooms</div>
-        <p className="feature-desc">Different rooms of your house unlock different content. Free fans get the garden. Gold members get the penthouse.</p>
-      </div>
-      <div className="feature-card">
-        <span className="feature-icon">🎮</span>
-        <div className="feature-title">Level-up competitions</div>
-        <p className="feature-desc">Compete with other creators in monthly growth challenges. Win rewards, house upgrades, and platform boosts.</p>
-      </div>
-      <div className="feature-card">
-        <span className="feature-icon">💬</span>
-        <div className="feature-title">Direct messages</div>
-        <p className="feature-desc">Connect 1-on-1 with your biggest fans through built-in messaging. Unlocks at 1K members.</p>
-      </div>
-      <div className="feature-card">
-        <span className="feature-icon">📊</span>
-        <div className="feature-title">Creator analytics</div>
-        <p className="feature-desc">Track revenue, member growth, content performance, and your house level progress in one dashboard.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-{/* CREATOR SHOWCASE */}
-<section className="section-creators" id="creators">
-  <div className="creators-inner">
-    <div className="creators-header">
-      <div className="section-tag" style="color:var(--orange)">Already earning</div>
-      <h2 className="creators-title">Creators building their towns</h2>
-      <p className="creators-sub">See how creators are growing their worlds on Kreatown</p>
-    </div>
-    <div className="creators-grid">
-
-      <div className="creator-card">
-        <div className="creator-banner" style="background: linear-gradient(135deg, #f4732a22, #d4a84322);">
-          <div className="creator-level-badge">🏘️ Level 3 · Villa</div>
-        </div>
-        <div className="creator-body">
-          <div className="creator-avatar">🎨</div>
-          <div className="creator-name">Topraq Toros</div>
-          <div className="creator-handle">@topraq · Creator & Storyteller</div>
-          <div className="creator-tier tier-bronze">🔥 Growing fast</div>
-          <div className="creator-stats">
-            <div><span className="c-stat-num">44</span><span className="c-stat-label">Members</span></div>
-            <div><span className="c-stat-num">$2,840</span><span className="c-stat-label">Per month</span></div>
-            <div><span className="c-stat-num">4</span><span className="c-stat-label">Posts</span></div>
-          </div>
-        </div>
-      </div>
-
-      <div className="creator-card">
-        <div className="creator-banner" style="background: linear-gradient(135deg, #9eafbf22, #d4a84322);">
-          <div className="creator-level-badge">🏰 Level 4 · Estate</div>
-        </div>
-        <div className="creator-body">
-          <div className="creator-avatar">📸</div>
-          <div className="creator-name">Jenna Williams</div>
-          <div className="creator-handle">@jenna · Photographer</div>
-          <div className="creator-tier tier-silver">⭐ Silver status</div>
-          <div className="creator-stats">
-            <div><span className="c-stat-num">128</span><span className="c-stat-label">Members</span></div>
-            <div><span className="c-stat-num">$6,200</span><span className="c-stat-label">Per month</span></div>
-            <div><span className="c-stat-num">22</span><span className="c-stat-label">Posts</span></div>
-          </div>
-        </div>
-      </div>
-
-      <div className="creator-card">
-        <div className="creator-banner" style="background: linear-gradient(135deg, #d4a84322, #f4732a22);">
-          <div className="creator-level-badge">🏯 Level 5 · Mansion</div>
-        </div>
-        <div className="creator-body">
-          <div className="creator-avatar">🎵</div>
-          <div className="creator-name">MikeNova</div>
-          <div className="creator-handle">@mikenova · Music Producer</div>
-          <div className="creator-tier tier-gold">👑 Gold status</div>
-          <div className="creator-stats">
-            <div><span className="c-stat-num">89</span><span className="c-stat-label">Members</span></div>
-            <div><span className="c-stat-num">$4,100</span><span className="c-stat-label">Per month</span></div>
-            <div><span className="c-stat-num">17</span><span className="c-stat-label">Posts</span></div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-{/* PLANS */}
-<section className="section-plans" id="plans">
-  <div className="plans-inner">
-    <div className="plans-header">
-      <div className="section-tag" style="color:var(--orange)">Simple pricing</div>
-      <h2 className="plans-title">Grow together, earn together</h2>
-      <p className="plans-sub">The bigger you grow, the better your deal gets.</p>
-    </div>
-    <div className="plans-grid">
-
-      <div className="plan-card">
-        <div className="plan-name">Starter</div>
-        <div className="plan-price"><sup>$</sup>0 <span>/ 3 months then $19/mo</span></div>
-        <div className="plan-cut">+ 5% revenue share</div>
-        <ul className="plan-features">
-          <li>Your own town page</li>
-          <li>Up to 2 membership tiers</li>
-          <li>Content feed + gating</li>
-          <li>Basic analytics</li>
-          <li>Level 1–2 house upgrades</li>
-        </ul>
-        <a href="/auth/register" className="plan-cta">Get started free</a>
-      </div>
-
-      <div className="plan-card popular">
-        <div className="popular-tag">Most Popular</div>
-        <div className="plan-name">Pro</div>
-        <div className="plan-price"><sup>$</sup>29 <span>/ month</span></div>
-        <div className="plan-cut">+ 5% revenue share</div>
-        <ul className="plan-features">
-          <li>Everything in Starter</li>
-          <li>Unlimited membership tiers</li>
-          <li>DMs with fans</li>
-          <li>Level competitions access</li>
-          <li>All house levels unlocked</li>
-          <li>Priority support</li>
-        </ul>
-        <a href="/auth/register" className="plan-cta">Start Pro free</a>
-      </div>
-
-      <div className="plan-card">
-        <div className="plan-name">Studio</div>
-        <div className="plan-price"><sup>$</sup>49 <span>/ month</span></div>
-        <div className="plan-cut">+ 3% revenue share</div>
-        <ul className="plan-features">
-          <li>Everything in Pro</li>
-          <li>Lowest revenue share (3%)</li>
-          <li>3D TV & Radio early access</li>
-          <li>Custom town branding</li>
-          <li>Advanced analytics</li>
-          <li>Dedicated account manager</li>
-        </ul>
-        <a href="/auth/register" className="plan-cta">Go Studio</a>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-{/* CTA */}
-<section className="section-cta">
-  <span className="cta-tag">Ready to build?</span>
-  <h2 className="cta-title">
-    Your town is waiting.<br>
-    <em>Start with a cottage.</em>
-  </h2>
-  <p className="cta-sub">
-    Join hundreds of creators already building their worlds on KreaTown. It's free to start — no credit card needed.
-  </p>
-  <div className="cta-btns">
-    <a href="/auth/register" className="btn-cta-primary">Build your town free 🏡</a>
-    <a href="#concept" className="btn-cta-secondary">See how it works</a>
-  </div>
-</section>
-
-{/* FOOTER */}
-<footer>
-  <div className="footer-logo">Krea<span>Town</span></div>
-  <div>© 2026 KreaTown. Where creators belong.</div>
-  <div style="display:flex;gap:1.5rem">
-    <a href="#">Privacy</a>
-    <a href="#">Terms</a>
-    <a href="#">Contact</a>
-  </div>
-</footer>
-
-{/* MOBILE BOTTOM CTA BAR */}
-<div className="mobile-cta-bar">
-  <a href="/auth/register" className="btn-primary">🏡 Start free</a>
-  <a href="/auth/login" className="btn-login">Log in</a>
-</div>
-
-
-      </div>
-    </>
-  )
-}
+</body>
+</html>`
