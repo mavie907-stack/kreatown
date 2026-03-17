@@ -29,7 +29,7 @@ const TIER_BADGE: Record<string, { bg: string; color: string }> = {
 }
 
 export default function DashboardOverview({ profile }: { profile: any }) {
-  const { stats, loading } = useDashboardStats(profile?.id)
+  const { stats, loading } = useDashboardStats()
 
   const greeting = () => {
     const h = new Date().getHours()
