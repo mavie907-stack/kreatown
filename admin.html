@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — KreaTown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #0a0806;
+  --bg2:     #111009;
+  --bg3:     #1a160f;
+  --bg4:     #221e15;
+  --border:  rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --orange:  #f4732a;
+  --orange2: #ff9555;
+  --gold:    #c9952a;
+  --gold2:   #f5d58a;
+  --palace:  #8b6fd4;
+  --palace2: #b8a0e8;
+  --emerald: #2dab80;
+  --red:     #e05252;
+  --blue:    #3b8bd4;
+  --text1:   rgba(255,255,255,0.92);
+  --text2:   rgba(255,255,255,0.55);
+  --text3:   rgba(255,255,255,0.28);
+}
+html, body { height: 100%; overflow: hidden; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text1); display: flex; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 220px; background: var(--bg2); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; height: 100vh; flex-shrink: 0;
+  position: relative; overflow: hidden;
+}
+.sidebar::before {
+  content: ''; position: absolute; bottom: -60px; left: -40px;
+  width: 180px; height: 180px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(244,115,42,0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.sb-logo {
+  padding: 1.25rem; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.sb-logo-text { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--text1); }
+.sb-logo-text span { color: var(--orange); }
+.admin-badge-logo {
+  font-size: 0.55rem; font-weight: 500; background: rgba(244,115,42,0.15);
+  color: var(--orange); border: 1px solid rgba(244,115,42,0.3);
+  padding: 0.12rem 0.45rem; border-radius: 100px; font-family: 'DM Mono', monospace;
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.sb-admin-info {
+  padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0.65rem;
+}
+.sb-av {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--orange), var(--gold));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.95rem; flex-shrink: 0;
+  border: 1.5px solid rgba(244,115,42,0.4);
+}
+.sb-name  { font-size: 0.78rem; font-weight: 500; color: var(--text1); }
+.sb-role  { font-size: 0.6rem; color: var(--orange); font-family: 'DM Mono', monospace; margin-top: 0.08rem; }
+.sb-nav   { padding: 0.6rem 0; flex: 1; overflow-y: auto; }
+.sb-section { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.12em; padding: 0.65rem 1.25rem 0.3rem; }
+.sb-item {
+  display: flex; align-items: center; gap: 0.65rem;
+  padding: 0.58rem 1.25rem; cursor: pointer; color: var(--text2);
+  font-size: 0.8rem; transition: all .15s; border: none; background: none;
+  width: 100%; text-align: left; text-decoration: none;
+  border-left: 2px solid transparent; font-family: 'DM Sans', sans-serif;
+}
+.sb-item:hover { color: var(--text1); background: rgba(255,255,255,0.03); }
+.sb-item.active { color: var(--orange); background: rgba(244,115,42,0.08); border-left-color: var(--orange); font-weight: 500; }
+.sb-icon { font-size: 0.95rem; width: 16px; text-align: center; flex-shrink: 0; }
+.sb-badge { margin-left: auto; background: var(--orange); color: white; font-size: 0.55rem; padding: 0.08rem 0.38rem; border-radius: 100px; }
+.sb-bottom { padding: 0.85rem 1.25rem; border-top: 1px solid var(--border); }
+.back-link { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--text3); text-decoration: none; transition: color .15s; }
+.back-link:hover { color: var(--orange); }
+
+/* ── MAIN ── */
+.main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(10,8,6,0.92); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.85rem 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--text1); }
+.topbar-sub   { font-size: 0.72rem; color: var(--text3); margin-top: 0.08rem; }
+.topbar-right { display: flex; align-items: center; gap: 0.65rem; }
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--emerald); box-shadow: 0 0 8px rgba(45,171,128,0.6); animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.3);opacity:0.7} }
+.live-label { font-size: 0.7rem; color: var(--emerald); font-family: 'DM Mono', monospace; }
+.notif-btn { position: relative; width: 32px; height: 32px; background: var(--bg3); border: 1px solid var(--border); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.9rem; }
+.notif-dot { position: absolute; top: 5px; right: 5px; width: 6px; height: 6px; border-radius: 50%; background: var(--orange); border: 1.5px solid var(--bg); }
+.content { padding: 1.5rem 2rem 3rem; }
+
+/* ── SECTIONS ── */
+.section { display: none; animation: secIn 0.3s ease both; }
+.section.active { display: block; }
+@keyframes secIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── KPI STRIP ── */
+.kpi-strip { display: grid; grid-template-columns: repeat(5,1fr); gap: 0.85rem; margin-bottom: 1.5rem; }
+.kpi { background: var(--bg2); border: 1px solid var(--border); border-radius: 0.875rem; padding: 1rem 1.1rem; position: relative; overflow: hidden; transition: border-color .2s, transform .2s; cursor: default; }
+.kpi:hover { border-color: var(--border2); transform: translateY(-2px); }
+.kpi::after { content:''; position:absolute; top:0;right:0;width:50px;height:50px;border-radius:50%;opacity:0.07;transform:translate(18px,-18px); }
+.kpi.k-o::after{background:var(--orange)} .kpi.k-g::after{background:var(--gold)} .kpi.k-p::after{background:var(--palace)} .kpi.k-e::after{background:var(--emerald)} .kpi.k-r::after{background:var(--red)}
+.kpi-lbl { font-size:0.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-family:'DM Mono',monospace;margin-bottom:0.4rem; }
+.kpi-val { font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;line-height:1;letter-spacing:-0.02em; }
+.kpi.k-o .kpi-val{color:var(--orange)} .kpi.k-g .kpi-val{color:var(--gold2)} .kpi.k-p .kpi-val{color:var(--palace2)} .kpi.k-e .kpi-val{color:var(--emerald)} .kpi.k-r .kpi-val{color:var(--red)}
+.kpi-sub { font-size:0.68rem;color:var(--text3);margin-top:0.3rem; }
+.kpi-icon { position:absolute;bottom:0.75rem;right:0.9rem;font-size:1.4rem;opacity:0.15; }
+
+/* ── CARDS ── */
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:1rem;overflow:hidden;margin-bottom:1.25rem; }
+.card-header { padding:1rem 1.25rem 0.7rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:0.75rem;flex-wrap:wrap; }
+.card-title { font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:700;color:var(--text1); }
+.card-sub   { font-size:0.7rem;color:var(--text3);margin-top:0.12rem; }
+.card-body  { padding:1.1rem 1.25rem; }
+
+/* ── TOOLBAR ── */
+.toolbar { display:flex;align-items:center;gap:0.65rem;flex-wrap:wrap; }
+.search-wrap { position:relative;flex:1;min-width:180px;max-width:300px; }
+.search-icon { position:absolute;left:0.8rem;top:50%;transform:translateY(-50%);font-size:0.85rem;opacity:0.35;pointer-events:none; }
+.search-input { width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:0.5rem;color:var(--text1);font-family:'DM Sans',sans-serif;font-size:0.8rem;padding:0.5rem 0.75rem 0.5rem 2.1rem;outline:none;transition:border-color .15s; }
+.search-input:focus{border-color:var(--border2)} .search-input::placeholder{color:var(--text3)}
+.filter-pills { display:flex;gap:0.4rem;flex-wrap:wrap; }
+.pill { padding:0.38rem 0.8rem;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:0.72rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap; }
+.pill:hover{border-color:var(--border2);color:var(--text1)}
+.pill.active{border-color:var(--orange);background:rgba(244,115,42,0.1);color:var(--orange)}
+.pill.p-banned.active{border-color:var(--red);background:rgba(224,82,82,0.1);color:var(--red)}
+.pill.p-frozen.active{border-color:var(--blue);background:rgba(59,139,212,0.1);color:var(--blue)}
+.sort-sel { background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:0.75rem;padding:0.38rem 0.65rem;border-radius:0.5rem;cursor:pointer;font-family:'DM Sans',sans-serif;outline:none;margin-left:auto; }
+
+/* ── MEMBERS TABLE ── */
+.members-table { width:100%;border-collapse:collapse; }
+.members-table th { font-size:0.6rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;padding:0.55rem 1rem;text-align:left;font-family:'DM Mono',monospace;font-weight:400;border-bottom:1px solid var(--border); }
+.members-table td { padding:0.7rem 1rem;font-size:0.78rem;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--text2); }
+.members-table tr:last-child td{border-bottom:none}
+.members-table tr:hover td{background:rgba(255,255,255,0.02)}
+.m-user{display:flex;align-items:center;gap:0.65rem}
+.m-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0}
+.m-name{font-size:0.8rem;color:var(--text1);font-weight:400}
+.m-handle{font-size:0.65rem;color:var(--text3);font-family:'DM Mono',monospace}
+.tier-badge{font-size:0.58rem;font-weight:500;padding:0.12rem 0.45rem;border-radius:100px;font-family:'DM Mono',monospace}
+.tb-palace{background:rgba(139,111,212,0.15);color:var(--palace2)} .tb-gold{background:rgba(201,149,42,0.15);color:var(--gold2)} .tb-silver{background:rgba(143,163,181,0.15);color:#8fa3b5} .tb-free{background:rgba(45,171,128,0.12);color:var(--emerald)}
+.status-badge{font-size:0.58rem;font-weight:500;padding:0.12rem 0.45rem;border-radius:100px;font-family:'DM Mono',monospace}
+.st-active{background:rgba(45,171,128,0.12);color:var(--emerald)} .st-banned{background:rgba(224,82,82,0.12);color:var(--red)} .st-frozen{background:rgba(59,139,212,0.12);color:var(--blue)}
+.action-btns{display:flex;gap:0.35rem;align-items:center}
+.act-btn{padding:0.28rem 0.6rem;border-radius:0.4rem;font-size:0.68rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap}
+.act-btn:hover{border-color:var(--border2);color:var(--text1);background:rgba(255,255,255,0.04)}
+.act-btn.ban{border-color:rgba(224,82,82,0.3);color:var(--red)} .act-btn.ban:hover{background:rgba(224,82,82,0.08)}
+.act-btn.unban{border-color:rgba(45,171,128,0.3);color:var(--emerald)} .act-btn.unban:hover{background:rgba(45,171,128,0.08)}
+.act-btn.freeze{border-color:rgba(59,139,212,0.3);color:var(--blue)} .act-btn.freeze:hover{background:rgba(59,139,212,0.08)}
+.act-btn.primary{border-color:rgba(244,115,42,0.3);color:var(--orange)} .act-btn.primary:hover{background:rgba(244,115,42,0.08)}
+.act-btn.gift{border-color:rgba(201,149,42,0.3);color:var(--gold2)} .act-btn.gift:hover{background:rgba(201,149,42,0.08)}
+
+/* ── ROOM ACCESS GRID ── */
+.rooms-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem; }
+.room-card { background:var(--bg3);border:1px solid var(--border);border-radius:0.875rem;padding:1.1rem;transition:border-color .2s; }
+.room-card:hover{border-color:var(--border2)}
+.rc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.85rem}
+.rc-icon{width:40px;height:40px;border-radius:0.75rem;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.rc-name{font-size:0.88rem;font-weight:500;color:var(--text1)}
+.rc-tier{font-size:0.65rem;color:var(--text3);margin-top:0.1rem;font-family:'DM Mono',monospace}
+.rc-online{font-size:0.7rem;color:var(--emerald);font-family:'DM Mono',monospace;display:flex;align-items:center;gap:0.3rem}
+.rc-members{display:flex;flex-direction:column;gap:0.45rem;margin-bottom:0.85rem;min-height:40px}
+.rc-member{display:flex;align-items:center;gap:0.55rem}
+.rc-m-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;flex-shrink:0}
+.rc-m-name{font-size:0.72rem;color:var(--text2);flex:1}
+.rc-m-remove{background:none;border:none;cursor:pointer;color:var(--text3);font-size:0.75rem;transition:color .15s;padding:0.1rem}
+.rc-m-remove:hover{color:var(--red)}
+.rc-actions{display:flex;gap:0.5rem}
+.rc-btn{flex:1;padding:0.45rem 0;border-radius:0.5rem;font-size:0.72rem;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text2);transition:all .15s;text-align:center}
+.rc-btn:hover{border-color:var(--border2);color:var(--text1);background:rgba(255,255,255,0.04)}
+.rc-btn.invite{border-color:rgba(244,115,42,0.3);color:var(--orange)} .rc-btn.invite:hover{background:rgba(244,115,42,0.08)}
+.rc-btn.lock{border-color:rgba(224,82,82,0.3);color:var(--red)} .rc-btn.lock:hover{background:rgba(224,82,82,0.08)}
+.rc-btn.unlock{border-color:rgba(45,171,128,0.3);color:var(--emerald)} .rc-btn.unlock:hover{background:rgba(45,171,128,0.08)}
+
+/* ── ACTIVITY FEED ── */
+.activity-feed{display:flex;flex-direction:column;gap:0;max-height:520px;overflow-y:auto}
+.activity-feed::-webkit-scrollbar{width:3px} .activity-feed::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
+.af-item{display:flex;align-items:flex-start;gap:0.85rem;padding:0.75rem 1.25rem;border-bottom:1px solid rgba(255,255,255,0.04);transition:background .15s}
+.af-item:last-child{border-bottom:none}
+.af-item:hover{background:rgba(255,255,255,0.02)}
+.af-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.af-dot.enter{background:var(--emerald)} .af-dot.leave{background:var(--text3)} .af-dot.msg{background:var(--orange)} .af-dot.join{background:var(--palace2)} .af-dot.ban{background:var(--red)} .af-dot.gift{background:var(--gold2)}
+.af-text{flex:1;font-size:0.78rem;color:var(--text2);line-height:1.5}
+.af-text strong{color:var(--text1);font-weight:500}
+.af-time{font-size:0.62rem;color:var(--text3);font-family:'DM Mono',monospace;white-space:nowrap;flex-shrink:0;margin-top:2px}
+@keyframes afIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.af-item.new{animation:afIn 0.35s ease both}
+
+/* ── NOTIFICATION BUILDER ── */
+.notif-targets{display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1rem}
+.notif-target{padding:0.38rem 0.85rem;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:0.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.notif-target:hover{border-color:var(--border2);color:var(--text1)}
+.notif-target.active{border-color:var(--orange);background:rgba(244,115,42,0.1);color:var(--orange)}
+.notif-textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:0.75rem;color:var(--text1);font-family:'DM Sans',sans-serif;font-size:0.875rem;padding:0.85rem 1rem;outline:none;resize:vertical;min-height:100px;transition:border-color .15s}
+.notif-textarea:focus{border-color:var(--border2)} .notif-textarea::placeholder{color:var(--text3)}
+.notif-type-row{display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap}
+.notif-type{padding:0.38rem 0.85rem;border-radius:0.5rem;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:0.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.notif-type.active{border-color:var(--palace);background:rgba(139,111,212,0.1);color:var(--palace2)}
+
+/* ── GIFT MEMBERSHIP ── */
+.gift-form{display:flex;flex-direction:column;gap:0.85rem}
+.form-label{font-size:0.65rem;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.35rem;display:block}
+.form-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:0.625rem;color:var(--text1);font-family:'DM Sans',sans-serif;font-size:0.875rem;padding:0.65rem 0.9rem;outline:none;transition:border-color .15s}
+.form-input:focus{border-color:var(--border2)} .form-input::placeholder{color:var(--text3)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem}
+.gift-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:0.65rem;margin-bottom:1rem}
+.gift-tier-card{padding:0.85rem 0.75rem;border-radius:0.75rem;border:1.5px solid var(--border);background:var(--bg3);cursor:pointer;text-align:center;transition:all .2s}
+.gift-tier-card:hover{border-color:var(--border2)}
+.gift-tier-card.sel-palace{border-color:var(--palace);background:rgba(139,111,212,0.1)}
+.gift-tier-card.sel-gold{border-color:var(--gold);background:rgba(201,149,42,0.1)}
+.gift-tier-card.sel-silver{border-color:#8fa3b5;background:rgba(143,163,181,0.1)}
+.gift-tier-card.sel-free{border-color:var(--emerald);background:rgba(45,171,128,0.08)}
+.gtc-icon{font-size:1.3rem;margin-bottom:0.3rem;display:block}
+.gtc-name{font-size:0.78rem;font-weight:500;color:var(--text1)}
+.gtc-price{font-size:0.65rem;color:var(--text3);font-family:'DM Mono',monospace;margin-top:0.1rem}
+
+/* ── BUTTONS ── */
+.btn{padding:0.55rem 1.1rem;border-radius:0.625rem;font-size:0.82rem;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .18s;border:1px solid var(--border);background:transparent;color:var(--text2)}
+.btn:hover{border-color:var(--border2);color:var(--text1);background:rgba(255,255,255,0.04)}
+.btn-primary{background:var(--orange);border-color:var(--orange);color:white;box-shadow:0 2px 12px rgba(244,115,42,0.3)}
+.btn-primary:hover{background:var(--orange2);border-color:var(--orange2);transform:translateY(-1px)}
+.btn-gift{background:linear-gradient(135deg,var(--gold),var(--gold2));border-color:transparent;color:#3a2000}
+.btn-gift:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btn-send{background:linear-gradient(135deg,var(--palace),var(--palace2));border-color:transparent;color:white}
+.btn-send:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btn-danger{border-color:rgba(224,82,82,0.3);color:var(--red)} .btn-danger:hover{background:rgba(224,82,82,0.08)}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);z-index:500;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+@keyframes modalIn{from{transform:scale(0.93) translateY(10px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:1.25rem;padding:2rem;width:90%;max-width:440px;animation:modalIn 0.3s ease both}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text1);margin-bottom:0.4rem}
+.modal-sub{font-size:0.78rem;color:var(--text3);margin-bottom:1.5rem;line-height:1.6}
+.modal-actions{display:flex;gap:0.6rem;margin-top:1.5rem;justify-content:flex-end}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(16px);background:var(--bg3);border:1px solid var(--border2);color:var(--text1);padding:0.6rem 1.4rem;border-radius:100px;font-size:0.8rem;z-index:1000;transition:all .3s cubic-bezier(.34,1.56,.64,1);opacity:0;pointer-events:none;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast.ok{border-color:rgba(45,171,128,0.35);color:var(--emerald)}
+.toast.warn{border-color:rgba(244,115,42,0.35);color:var(--orange)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){.sidebar{display:none}.kpi-strip{grid-template-columns:repeat(2,1fr)}.rooms-grid{grid-template-columns:1fr}.gift-cards{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-text">Krea<span>Town</span></div>
+    <div class="admin-badge-logo">ADMIN</div>
+  </div>
+  <div class="sb-admin-info">
+    <div class="sb-av">🎨</div>
+    <div>
+      <div class="sb-name">Topraq Toros</div>
+      <div class="sb-role">👑 Platform Owner</div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-section">Overview</div>
+    <button class="sb-item active" onclick="switchSection('overview')"><span class="sb-icon">📊</span> Overview</button>
+    <button class="sb-item" onclick="switchSection('activity')"><span class="sb-icon">⚡</span> Live Activity<span class="sb-badge" id="actBadge">12</span></button>
+    <div class="sb-section">Members</div>
+    <button class="sb-item" onclick="switchSection('members')"><span class="sb-icon">👥</span> All Members</button>
+    <button class="sb-item" onclick="switchSection('banned')"><span class="sb-icon">🚫</span> Banned<span class="sb-badge" id="banBadge">2</span></button>
+    <button class="sb-item" onclick="switchSection('gift')"><span class="sb-icon">🎁</span> Gift Membership</button>
+    <div class="sb-section">Rooms</div>
+    <button class="sb-item" onclick="switchSection('rooms')"><span class="sb-icon">🏠</span> Room Access</button>
+    <button class="sb-item" onclick="switchSection('notify')"><span class="sb-icon">📢</span> Notifications</button>
+    <div class="sb-section">Platform</div>
+    <button class="sb-item" onclick="switchSection('settings')"><span class="sb-icon">⚙️</span> Platform Settings</button>
+  </nav>
+  <div class="sb-bottom">
+    <a href="dashboard.html" class="back-link">← Back to dashboard</a>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Admin Panel</div>
+      <div class="topbar-sub" id="topbarSub">Platform overview · Full control</div>
+    </div>
+    <div class="topbar-right">
+      <div class="live-dot"></div>
+      <div class="live-label">LIVE</div>
+      <div class="notif-btn">🔔<div class="notif-dot"></div></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ OVERVIEW ══ -->
+    <div class="section active" id="sec-overview">
+      <div class="kpi-strip">
+        <div class="kpi k-o"><div class="kpi-lbl">Total members</div><div class="kpi-val">44</div><div class="kpi-sub">↑ 3 new this week</div><div class="kpi-icon">👥</div></div>
+        <div class="kpi k-e"><div class="kpi-lbl">Online now</div><div class="kpi-val" id="onlineCount">12</div><div class="kpi-sub">Across all rooms</div><div class="kpi-icon">🟢</div></div>
+        <div class="kpi k-g"><div class="kpi-lbl">Revenue MTD</div><div class="kpi-val">$4.8k</div><div class="kpi-sub">↑ 18% vs last month</div><div class="kpi-icon">💰</div></div>
+        <div class="kpi k-p"><div class="kpi-lbl">Active rooms</div><div class="kpi-val">5</div><div class="kpi-sub">28 messages today</div><div class="kpi-icon">🏠</div></div>
+        <div class="kpi k-r"><div class="kpi-lbl">Banned</div><div class="kpi-val">2</div><div class="kpi-sub">0 new this week</div><div class="kpi-icon">🚫</div></div>
+      </div>
+      <!-- Quick actions -->
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">Quick Actions</div><div class="card-sub">Most used admin tools</div></div></div>
+        <div class="card-body" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:0.75rem">
+          <button class="btn btn-primary" onclick="switchSection('members')">👥 Manage Members</button>
+          <button class="btn btn-gift" onclick="switchSection('gift')">🎁 Gift Membership</button>
+          <button class="btn btn-send" onclick="switchSection('notify')">📢 Send Notification</button>
+          <button class="btn" onclick="switchSection('rooms')" style="border-color:rgba(45,171,128,0.3);color:var(--emerald)">🏠 Room Access</button>
+          <button class="btn" onclick="switchSection('activity')" style="border-color:rgba(139,111,212,0.3);color:var(--palace2)">⚡ Live Activity</button>
+          <button class="btn" onclick="switchSection('banned')" style="border-color:rgba(224,82,82,0.3);color:var(--red)">🚫 Banned Members</button>
+        </div>
+      </div>
+      <!-- Recent activity mini -->
+      <div class="card">
+        <div class="card-header"><div class="card-title">Recent Activity</div><button class="btn" style="font-size:0.72rem;padding:0.3rem 0.7rem" onclick="switchSection('activity')">View all →</button></div>
+        <div class="activity-feed" id="overviewFeed" style="max-height:280px"></div>
+      </div>
+    </div>
+
+    <!-- ══ LIVE ACTIVITY ══ -->
+    <div class="section" id="sec-activity">
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">⚡ Live Activity Feed</div><div class="card-sub">Real-time member movements across all rooms</div></div>
+          <div style="display:flex;align-items:center;gap:0.5rem">
+            <div class="live-dot"></div>
+            <span style="font-size:0.72rem;color:var(--emerald);font-family:'DM Mono',monospace" id="liveCount">12 online</span>
+          </div>
+        </div>
+        <div class="activity-feed" id="liveFeed"></div>
+      </div>
+      <!-- Who's where -->
+      <div class="card">
+        <div class="card-header"><div class="card-title">Who's Where Right Now</div></div>
+        <div class="card-body" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.75rem" id="whoswhere"></div>
+      </div>
+    </div>
+
+    <!-- ══ ALL MEMBERS ══ -->
+    <div class="section" id="sec-members">
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">All Members</div><div class="card-sub" id="memberCount">44 total members</div></div>
+        </div>
+        <div class="card-body" style="padding-bottom:0">
+          <div class="toolbar" style="margin-bottom:1rem">
+            <div class="search-wrap">
+              <span class="search-icon">🔍</span>
+              <input class="search-input" id="memberSearch" placeholder="Search members…" oninput="filterMembers()">
+            </div>
+            <div class="filter-pills">
+              <button class="pill active" data-tier="all" onclick="setMemberFilter(this,'all')">All</button>
+              <button class="pill" data-tier="palace" onclick="setMemberFilter(this,'palace')">🏯 Palace</button>
+              <button class="pill" data-tier="gold" onclick="setMemberFilter(this,'gold')">👑 Gold</button>
+              <button class="pill" data-tier="silver" onclick="setMemberFilter(this,'silver')">⭐ Silver</button>
+              <button class="pill" data-tier="free" onclick="setMemberFilter(this,'free')">🌱 Free</button>
+            </div>
+            <select class="sort-sel" onchange="sortMembers(this.value)">
+              <option value="newest">Newest</option>
+              <option value="revenue">Revenue ↓</option>
+              <option value="name">Name A–Z</option>
+            </select>
+          </div>
+        </div>
+        <table class="members-table" id="membersTable">
+          <thead><tr>
+            <th>Member</th><th>Tier</th><th>Status</th><th>Revenue</th><th>Joined</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="membersTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ BANNED ══ -->
+    <div class="section" id="sec-banned">
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">🚫 Banned Members</div><div class="card-sub">Permanently or temporarily restricted accounts</div></div></div>
+        <table class="members-table">
+          <thead><tr><th>Member</th><th>Tier</th><th>Reason</th><th>Banned on</th><th>Actions</th></tr></thead>
+          <tbody id="bannedTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ GIFT MEMBERSHIP ══ -->
+    <div class="section" id="sec-gift">
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">🎁 Gift Membership</div><div class="card-sub">Give a free tier upgrade to any member</div></div></div>
+        <div class="card-body">
+          <div class="gift-form">
+            <div>
+              <label class="form-label">Select member</label>
+              <input class="form-input" id="giftMember" placeholder="Type name or @handle…" list="membersList">
+              <datalist id="membersList"></datalist>
+            </div>
+            <div>
+              <label class="form-label">Gift tier</label>
+              <div class="gift-cards" id="giftTierCards">
+                <div class="gift-tier-card" data-tier="free" onclick="selectGiftTier(this,'free')"><span class="gtc-icon">🌱</span><div class="gtc-name">Free</div><div class="gtc-price">$0</div></div>
+                <div class="gift-tier-card" data-tier="silver" onclick="selectGiftTier(this,'silver')"><span class="gtc-icon">⭐</span><div class="gtc-name">Silver</div><div class="gtc-price">$9/mo</div></div>
+                <div class="gift-tier-card sel-gold" data-tier="gold" onclick="selectGiftTier(this,'gold')"><span class="gtc-icon">👑</span><div class="gtc-name">Gold</div><div class="gtc-price">$29/mo</div></div>
+                <div class="gift-tier-card" data-tier="palace" onclick="selectGiftTier(this,'palace')"><span class="gtc-icon">🏯</span><div class="gtc-name">Palace</div><div class="gtc-price">$49/mo</div></div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div>
+                <label class="form-label">Duration</label>
+                <select class="form-input" id="giftDuration">
+                  <option value="1">1 month</option>
+                  <option value="3" selected>3 months</option>
+                  <option value="6">6 months</option>
+                  <option value="12">1 year</option>
+                  <option value="0">Permanent</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">Notify member?</label>
+                <select class="form-input">
+                  <option>Yes — send gift email</option>
+                  <option>Yes — send DM in app</option>
+                  <option>No — silent upgrade</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="form-label">Personal note (optional)</label>
+              <input class="form-input" placeholder="e.g. Welcome to the Palace! 🏯 You've earned it.">
+            </div>
+            <div style="display:flex;gap:0.75rem;align-items:center">
+              <button class="btn btn-gift" style="padding:0.7rem 1.5rem;font-size:0.88rem" onclick="sendGift()">🎁 Send Gift Membership</button>
+              <span style="font-size:0.75rem;color:var(--text3)">Member gets instant access</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Gift history -->
+      <div class="card">
+        <div class="card-header"><div class="card-title">Gift History</div></div>
+        <table class="members-table">
+          <thead><tr><th>Member</th><th>Tier gifted</th><th>Duration</th><th>Date</th><th>Status</th></tr></thead>
+          <tbody id="giftHistory">
+            <tr><td><div class="m-user"><div class="m-av" style="background:linear-gradient(135deg,#c9952a,#f5d58a)">🌸</div><div><div class="m-name">Selin Kaya</div><div class="m-handle">@selinkaya</div></div></div></td><td><span class="tier-badge tb-palace">🏯 Palace</span></td><td style="font-family:'DM Mono',monospace;font-size:0.72rem">3 months</td><td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text3)">Mar 01</td><td><span class="status-badge st-active">Active</span></td></tr>
+            <tr><td><div class="m-user"><div class="m-av" style="background:rgba(255,255,255,0.08)">🎸</div><div><div class="m-name">Cem Arslan</div><div class="m-handle">@cemarslan</div></div></div></td><td><span class="tier-badge tb-gold">👑 Gold</span></td><td style="font-family:'DM Mono',monospace;font-size:0.72rem">1 month</td><td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text3)">Feb 15</td><td><span class="status-badge" style="background:rgba(255,255,255,0.05);color:var(--text3)">Expired</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ ROOM ACCESS ══ -->
+    <div class="section" id="sec-rooms">
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">🏠 Room Access Control</div><div class="card-sub">Invite members to rooms beyond their tier · Lock / unlock rooms</div></div></div>
+        <div class="card-body">
+          <div class="rooms-grid" id="roomsGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ NOTIFICATIONS ══ -->
+    <div class="section" id="sec-notify">
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">📢 Send Notification</div><div class="card-sub">Push a message to all members or a specific tier</div></div></div>
+        <div class="card-body">
+          <div style="margin-bottom:1rem">
+            <label class="form-label" style="display:block;margin-bottom:0.5rem">Notification type</label>
+            <div class="notif-type-row">
+              <button class="notif-type active" onclick="selectNotifType(this,'announcement')">📣 Announcement</button>
+              <button class="notif-type" onclick="selectNotifType(this,'alert')">⚠️ Alert</button>
+              <button class="notif-type" onclick="selectNotifType(this,'event')">🎉 Event</button>
+              <button class="notif-type" onclick="selectNotifType(this,'content')">✍️ New content</button>
+            </div>
+          </div>
+          <div style="margin-bottom:1rem">
+            <label class="form-label" style="display:block;margin-bottom:0.5rem">Send to</label>
+            <div class="notif-targets">
+              <button class="notif-target active" onclick="toggleTarget(this)">🌍 Everyone (44)</button>
+              <button class="notif-target" onclick="toggleTarget(this)">🏯 Palace (8)</button>
+              <button class="notif-target" onclick="toggleTarget(this)">👑 Gold (14)</button>
+              <button class="notif-target" onclick="toggleTarget(this)">⭐ Silver (12)</button>
+              <button class="notif-target" onclick="toggleTarget(this)">🌱 Free (10)</button>
+            </div>
+          </div>
+          <div style="margin-bottom:0.75rem">
+            <label class="form-label" style="display:block;margin-bottom:0.4rem">Title</label>
+            <input class="form-input" id="notifTitle" placeholder="e.g. New live session tonight! 🎙️">
+          </div>
+          <div style="margin-bottom:1.25rem">
+            <label class="form-label" style="display:block;margin-bottom:0.4rem">Message</label>
+            <textarea class="notif-textarea" id="notifBody" placeholder="Write your announcement here… Keep it short and exciting!"></textarea>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap">
+            <button class="btn btn-send" style="padding:0.7rem 1.5rem;font-size:0.88rem" onclick="sendNotification()">📢 Send Now</button>
+            <button class="btn" onclick="toast('Scheduled for later — coming soon!','warn')">🕐 Schedule</button>
+            <span style="font-size:0.72rem;color:var(--text3)">Members receive push + email</span>
+          </div>
+        </div>
+      </div>
+      <!-- Notification history -->
+      <div class="card">
+        <div class="card-header"><div class="card-title">Sent Notifications</div></div>
+        <table class="members-table">
+          <thead><tr><th>Title</th><th>Sent to</th><th>Type</th><th>Date</th><th>Opened</th></tr></thead>
+          <tbody>
+            <tr><td style="color:var(--text1)">New live session in the Pool 🌊</td><td><span class="tier-badge tb-palace">🏯 Palace</span></td><td><span class="status-badge st-active">Event</span></td><td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text3)">Mar 15</td><td style="color:var(--emerald);font-family:'DM Mono',monospace;font-size:0.75rem">87%</td></tr>
+            <tr><td style="color:var(--text1)">Welcome to March! 🏡</td><td><span style="font-size:0.72rem;color:var(--text2)">Everyone</span></td><td><span class="status-badge" style="background:rgba(244,115,42,0.1);color:var(--orange)">Announcement</span></td><td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text3)">Mar 01</td><td style="color:var(--emerald);font-family:'DM Mono',monospace;font-size:0.75rem">72%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ PLATFORM SETTINGS ══ -->
+    <div class="section" id="sec-settings">
+      <div class="card">
+        <div class="card-header"><div class="card-title">⚙️ Platform Settings</div></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:0">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:0.85rem 0;border-bottom:1px solid var(--border)">
+            <div><div style="font-size:0.85rem;color:var(--text1)">Maintenance mode</div><div style="font-size:0.7rem;color:var(--text3);margin-top:0.1rem">Show maintenance page to all visitors</div></div>
+            <button class="btn btn-danger" style="font-size:0.75rem;padding:0.38rem 0.85rem" onclick="toast('Maintenance mode toggled!','warn')">Toggle</button>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:0.85rem 0;border-bottom:1px solid var(--border)">
+            <div><div style="font-size:0.85rem;color:var(--text1)">New registrations</div><div style="font-size:0.7rem;color:var(--text3);margin-top:0.1rem">Allow new creators to sign up</div></div>
+            <button class="btn" style="font-size:0.75rem;padding:0.38rem 0.85rem;border-color:rgba(45,171,128,0.3);color:var(--emerald)" onclick="toast('Registration setting saved! ✅','ok')">Enabled ✓</button>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:0.85rem 0;border-bottom:1px solid var(--border)">
+            <div><div style="font-size:0.85rem;color:var(--text1)">Force all rooms offline</div><div style="font-size:0.7rem;color:var(--text3);margin-top:0.1rem">Lock all rooms immediately</div></div>
+            <button class="btn btn-danger" style="font-size:0.75rem;padding:0.38rem 0.85rem" onclick="if(confirm('Lock all rooms?')) toast('All rooms locked! 🔒','warn')">Lock all rooms</button>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:0.85rem 0">
+            <div><div style="font-size:0.85rem;color:var(--text1)">Clear chat history</div><div style="font-size:0.7rem;color:var(--text3);margin-top:0.1rem">Wipe all room messages (irreversible)</div></div>
+            <button class="btn btn-danger" style="font-size:0.75rem;padding:0.38rem 0.85rem" onclick="if(confirm('Delete ALL chat history? This cannot be undone.')) toast('Chat history cleared.','warn')">Clear all chats</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal">
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-sub" id="modalSub"></div>
+    <div id="modalBody"></div>
+    <div class="modal-actions" id="modalActions"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════ DATA ════════ */
+const MEMBERS = [
+  { id:1,  name:'Kaan Öztürk',  handle:'kaan',      emoji:'🎨', tier:'palace', status:'active',  revenue:'$588', joined:'Jan 2026', bg:'linear-gradient(135deg,#7c5cbf,#f4732a)', online:true  },
+  { id:2,  name:'Selin Kaya',   handle:'selinkaya', emoji:'🌸', tier:'palace', status:'active',  revenue:'$522', joined:'Nov 2025', bg:'linear-gradient(135deg,#c9952a,#f5d58a)', online:true  },
+  { id:3,  name:'Berk Doğan',   handle:'berkd',     emoji:'🔥', tier:'palace', status:'active',  revenue:'$490', joined:'Oct 2025', bg:'linear-gradient(135deg,#f4732a,#fbbf24)', online:false },
+  { id:4,  name:'Naz Aydın',    handle:'naz',       emoji:'💫', tier:'palace', status:'active',  revenue:'$441', joined:'Dec 2025', bg:'rgba(255,255,255,0.08)',                  online:true  },
+  { id:5,  name:'Tarık Bal',    handle:'tarikbal',  emoji:'🌙', tier:'palace', status:'frozen',  revenue:'$392', joined:'Feb 2026', bg:'rgba(255,255,255,0.08)',                  online:false },
+  { id:6,  name:'Lara Şimşek',  handle:'lara',      emoji:'💎', tier:'gold',   status:'active',  revenue:'$294', joined:'Mar 2026', bg:'linear-gradient(135deg,#c9952a,#f5d58a)', online:true  },
+  { id:7,  name:'Cem Arslan',   handle:'cemarslan', emoji:'🎸', tier:'silver', status:'active',  revenue:'$189', joined:'Oct 2025', bg:'rgba(255,255,255,0.08)',                  online:true  },
+  { id:8,  name:'Elif Yıldız',  handle:'elif',      emoji:'🌿', tier:'gold',   status:'active',  revenue:'$319', joined:'Nov 2025', bg:'linear-gradient(135deg,#2dab80,#60a5fa)', online:false },
+  { id:9,  name:'Mert Kılıç',   handle:'mertkk',    emoji:'⚡', tier:'free',   status:'banned',  revenue:'$0',   joined:'Jan 2026', bg:'rgba(255,255,255,0.08)',                  online:false },
+  { id:10, name:'Yusuf Aktaş',  handle:'yusuf',     emoji:'🎯', tier:'gold',   status:'banned',  revenue:'$87',  joined:'Dec 2025', bg:'rgba(255,255,255,0.08)',                  online:false },
+];
+
+const ROOMS = [
+  { id:'lobby',      icon:'🛎️', name:'Hotel Lobby',    tier:'free',   color:'rgba(255,201,57,0.15)',  locked:false, members:['🌸','🎸','🌿','🔥'], online:12 },
+  { id:'restaurant', icon:'🍽️', name:'The Restaurant',  tier:'silver', color:'rgba(201,149,42,0.12)', locked:false, members:['🌿','🎨','⭐'],      online:7  },
+  { id:'superior',   icon:'🛏️', name:'Superior Room',   tier:'gold',   color:'rgba(245,213,138,0.1)', locked:false, members:['🔥','💡','🎯'],      online:4  },
+  { id:'resting',    icon:'🛋️', name:'Resting Lounge',  tier:'gold',   color:'rgba(201,149,42,0.1)',  locked:false, members:['💎','🌙'],            online:3  },
+  { id:'pool',       icon:'🌊', name:'Thermal Pool',    tier:'palace', color:'rgba(78,205,196,0.1)',  locked:false, members:['🏯','👑','🌟'],      online:2  },
+  { id:'radio',      icon:'📻', name:'3D Radio Room',   tier:'gold',   color:'rgba(212,136,42,0.12)', locked:false, members:['🎸','🌸'],            online:5  },
+  { id:'tv',         icon:'📺', name:'Cinema TV Room',  tier:'palace', color:'rgba(139,111,212,0.12)',locked:false, members:['🏯','💫'],            online:3  },
+];
+
+const ACTIVITY_LOG = [
+  { type:'enter', text:'<strong>Kaan Öztürk</strong> entered 🌊 Thermal Pool',      time:'just now' },
+  { type:'msg',   text:'<strong>Selin Kaya</strong> sent a message in 🛎️ Hotel Lobby', time:'1m' },
+  { type:'join',  text:'<strong>Lara Şimşek</strong> joined the town as 👑 Gold member', time:'3m' },
+  { type:'enter', text:'<strong>Cem Arslan</strong> entered 🍽️ The Restaurant',     time:'5m' },
+  { type:'leave', text:'<strong>Tarık Bal</strong> left 🛏️ Superior Room',          time:'7m' },
+  { type:'msg',   text:'<strong>Berk Doğan</strong> sent a message in 🌊 Thermal Pool', time:'9m' },
+  { type:'gift',  text:'Admin gifted <strong>Selin Kaya</strong> 🏯 Palace for 3 months', time:'12m' },
+  { type:'enter', text:'<strong>Naz Aydın</strong> entered 📻 3D Radio Room',        time:'14m' },
+  { type:'ban',   text:'Admin banned <strong>Mert Kılıç</strong> — spam',           time:'1h' },
+  { type:'enter', text:'<strong>Elif Yıldız</strong> entered 🍽️ The Restaurant',    time:'1h' },
+  { type:'join',  text:'<strong>Yusuf Aktaş</strong> joined as 👑 Gold member',     time:'2h' },
+  { type:'msg',   text:'<strong>Lara Şimşek</strong> sent a message in 🛎️ Lobby',   time:'2h' },
+];
+
+let memberFilter = 'all';
+let selectedGiftTier = 'gold';
+
+const TIER_BADGE = { palace:'tb-palace', gold:'tb-gold', silver:'tb-silver', free:'tb-free' };
+const TIER_LABEL = { palace:'🏯 Palace', gold:'👑 Gold', silver:'⭐ Silver', free:'🌱 Free' };
+
+/* ════════ SECTION SWITCH ════════ */
+function switchSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(b => {
+    if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + id + "'")) b.classList.add('active');
+  });
+  const titles = { overview:'Platform overview · Full control', activity:'Real-time member movements', members:'Manage all members', banned:'Restricted accounts', gift:'Gift free tier upgrades', rooms:'Room access control', notify:'Send notifications to members', settings:'Platform configuration' };
+  document.getElementById('topbarSub').textContent = titles[id] || '';
+}
+
+/* ════════ RENDER MEMBERS ════════ */
+function renderMembers() {
+  const q   = (document.getElementById('memberSearch')?.value || '').toLowerCase();
+  const body = document.getElementById('membersTbody');
+  const filtered = MEMBERS.filter(m => m.status !== 'banned').filter(m => {
+    const matchTier   = memberFilter === 'all' || m.tier === memberFilter;
+    const matchSearch = !q || m.name.toLowerCase().includes(q) || m.handle.includes(q);
+    return matchTier && matchSearch;
+  });
+  document.getElementById('memberCount').textContent = `${filtered.length} members`;
+  body.innerHTML = filtered.map(m => `
+    <tr>
+      <td><div class="m-user"><div class="m-av" style="background:${m.bg}">${m.emoji}</div><div><div class="m-name">${m.name}</div><div class="m-handle">@${m.handle}</div></div></div></td>
+      <td><span class="tier-badge ${TIER_BADGE[m.tier]}">${TIER_LABEL[m.tier]}</span></td>
+      <td><span class="status-badge ${m.status==='active'?'st-active':m.status==='frozen'?'st-frozen':'st-banned'}">${m.status==='active'?'Active':m.status==='frozen'?'Frozen':'Banned'}</span></td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--emerald)">${m.revenue}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text3)">${m.joined}</td>
+      <td>
+        <div class="action-btns">
+          <button class="act-btn primary" onclick="openTierModal(${m.id})">Change tier</button>
+          ${m.status==='active'  ? `<button class="act-btn freeze" onclick="freezeMember(${m.id})">❄️ Freeze</button>` : ''}
+          ${m.status==='frozen'  ? `<button class="act-btn unban"  onclick="unfreezeMember(${m.id})">▶ Unfreeze</button>` : ''}
+          ${m.status!=='banned'  ? `<button class="act-btn ban"    onclick="banMember(${m.id})">🚫 Ban</button>` : ''}
+          <button class="act-btn gift" onclick="quickGift(${m.id})">🎁</button>
+        </div>
+      </td>
+    </tr>`).join('') || `<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text3)">No members found</td></tr>`;
+
+  /* Update datalist for gift */
+  document.getElementById('membersList').innerHTML = MEMBERS.map(m => `<option value="${m.name} (@${m.handle})">`).join('');
+}
+
+function setMemberFilter(el, tier) {
+  document.querySelectorAll('#sec-members .pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  memberFilter = tier;
+  renderMembers();
+}
+function filterMembers() { renderMembers(); }
+function sortMembers(v) {
+  if (v === 'name')    MEMBERS.sort((a,b) => a.name.localeCompare(b.name));
+  if (v === 'revenue') MEMBERS.sort((a,b) => parseInt(b.revenue) - parseInt(a.revenue));
+  if (v === 'newest')  MEMBERS.sort((a,b) => b.id - a.id);
+  renderMembers();
+}
+
+/* ════════ BAN / FREEZE ════════ */
+function banMember(id) {
+  const m = MEMBERS.find(x => x.id === id);
+  openModal('🚫 Ban Member', `Are you sure you want to ban <strong>${m.name}</strong>? They will lose all access immediately.`,
+    `<input class="form-input" placeholder="Reason for ban (e.g. spam, abuse…)" id="banReason" style="margin-top:0">`,
+    [{ label:'Cancel', cls:'btn', fn:'closeModal()' },
+     { label:'Confirm Ban', cls:'btn btn-danger', fn:`confirmBan(${id})` }]
+  );
+}
+function confirmBan(id) {
+  const m = MEMBERS.find(x => x.id === id);
+  m.status = 'banned';
+  closeModal(); renderMembers(); renderBanned();
+  addActivity({ type:'ban', text:`Admin banned <strong>${m.name}</strong>`, time:'just now' });
+  toast(`${m.name} has been banned 🚫`);
+  document.getElementById('banBadge').textContent = MEMBERS.filter(x => x.status === 'banned').length;
+}
+function freezeMember(id) {
+  const m = MEMBERS.find(x => x.id === id);
+  m.status = 'frozen';
+  renderMembers();
+  toast(`${m.name}'s account frozen ❄️`);
+}
+function unfreezeMember(id) {
+  const m = MEMBERS.find(x => x.id === id);
+  m.status = 'active';
+  renderMembers();
+  toast(`${m.name} unfrozen ▶ Account active`,'ok');
+}
+
+/* ════════ BANNED LIST ════════ */
+function renderBanned() {
+  const banned = MEMBERS.filter(m => m.status === 'banned');
+  document.getElementById('bannedTbody').innerHTML = banned.map(m => `
+    <tr>
+      <td><div class="m-user"><div class="m-av" style="background:${m.bg}">${m.emoji}</div><div><div class="m-name">${m.name}</div><div class="m-handle">@${m.handle}</div></div></div></td>
+      <td><span class="tier-badge ${TIER_BADGE[m.tier]}">${TIER_LABEL[m.tier]}</span></td>
+      <td style="font-size:0.75rem;color:var(--text3)">Violation of terms</td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text3)">Mar 2026</td>
+      <td><div class="action-btns"><button class="act-btn unban" onclick="unbanMember(${m.id})">✅ Unban</button><button class="act-btn" onclick="toast('Member data deleted permanently.','warn')">🗑️ Delete</button></div></td>
+    </tr>`).join('') || `<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text3)">No banned members 🎉</td></tr>`;
+}
+function unbanMember(id) {
+  const m = MEMBERS.find(x => x.id === id);
+  m.status = 'active';
+  renderBanned(); renderMembers();
+  toast(`${m.name} has been unbanned ✅`,'ok');
+  document.getElementById('banBadge').textContent = MEMBERS.filter(x => x.status === 'banned').length;
+}
+
+/* ════════ TIER CHANGE ════════ */
+function openTierModal(id) {
+  const m = MEMBERS.find(x => x.id === id);
+  openModal('👑 Change Tier', `Update <strong>${m.name}</strong>'s membership tier:`,
+    `<div style="display:flex;flex-direction:column;gap:0.5rem">
+      ${['free','silver','gold','palace'].map(t => `
+        <button class="act-btn ${t===m.tier?'primary':''}" style="text-align:left;padding:0.6rem 0.9rem;width:100%" onclick="changeTier(${id},'${t}')">
+          ${TIER_LABEL[t]} ${t===m.tier?'(current)':''}
+        </button>`).join('')}
+    </div>`,
+    [{ label:'Cancel', cls:'btn', fn:'closeModal()' }]
+  );
+}
+function changeTier(id, tier) {
+  const m = MEMBERS.find(x => x.id === id);
+  m.tier = tier;
+  closeModal(); renderMembers();
+  toast(`${m.name} moved to ${TIER_LABEL[tier]}! 👑`,'ok');
+}
+
+/* ════════ GIFT ════════ */
+function selectGiftTier(el, tier) {
+  document.querySelectorAll('.gift-tier-card').forEach(c => c.className = 'gift-tier-card');
+  el.classList.add('sel-' + tier);
+  selectedGiftTier = tier;
+}
+function quickGift(id) {
+  const m = MEMBERS.find(x => x.id === id);
+  document.getElementById('giftMember').value = `${m.name} (@${m.handle})`;
+  switchSection('gift');
+}
+function sendGift() {
+  const memberVal = document.getElementById('giftMember').value;
+  const duration  = document.getElementById('giftDuration').value;
+  if (!memberVal.trim()) { toast('Please select a member first!'); return; }
+  const dur = duration === '0' ? 'permanently' : `for ${duration} month${duration>1?'s':''}`;
+  toast(`🎁 ${TIER_LABEL[selectedGiftTier]} gifted ${dur}! Member notified.`,'ok');
+  addActivity({ type:'gift', text:`Admin gifted <strong>${memberVal.split(' (')[0]}</strong> ${TIER_LABEL[selectedGiftTier]} ${dur}`, time:'just now' });
+  document.getElementById('giftMember').value = '';
+}
+
+/* ════════ ROOMS ════════ */
+function renderRooms() {
+  document.getElementById('roomsGrid').innerHTML = ROOMS.map(r => `
+    <div class="room-card">
+      <div class="rc-top">
+        <div style="display:flex;align-items:center;gap:0.75rem">
+          <div class="rc-icon" style="background:${r.color}">${r.icon}</div>
+          <div>
+            <div class="rc-name">${r.name}</div>
+            <div class="rc-tier">${TIER_LABEL[r.tier]} ${r.locked?'· 🔒 Locked':''}</div>
+          </div>
+        </div>
+        <div class="rc-online"><span style="width:6px;height:6px;border-radius:50%;background:var(--emerald);display:inline-block"></span>${r.online}</div>
+      </div>
+      <div class="rc-members">
+        ${r.members.slice(0,3).map(e => `
+          <div class="rc-member">
+            <div class="rc-m-av" style="background:rgba(255,255,255,0.08)">${e}</div>
+            <div class="rc-m-name">Member</div>
+            <button class="rc-m-remove" onclick="removeFromRoom('${r.id}','${e}')" title="Remove from room">✕</button>
+          </div>`).join('')}
+      </div>
+      <div class="rc-actions">
+        <button class="rc-btn invite" onclick="inviteToRoom('${r.id}','${r.name}')">+ Invite</button>
+        ${r.locked
+          ? `<button class="rc-btn unlock" onclick="toggleRoomLock('${r.id}',false)">🔓 Unlock</button>`
+          : `<button class="rc-btn lock"   onclick="toggleRoomLock('${r.id}',true)">🔒 Lock</button>`}
+      </div>
+    </div>`).join('');
+}
+function toggleRoomLock(roomId, lock) {
+  const r = ROOMS.find(x => x.id === roomId);
+  r.locked = lock;
+  renderRooms();
+  toast(`${r.name} ${lock?'locked 🔒':'unlocked 🔓'}`,lock?'warn':'ok');
+}
+function removeFromRoom(roomId, emoji) {
+  const r = ROOMS.find(x => x.id === roomId);
+  r.members = r.members.filter(e => e !== emoji);
+  renderRooms();
+  toast('Member removed from room','warn');
+}
+function inviteToRoom(roomId, roomName) {
+  openModal(`➕ Invite to ${roomName}`, 'Choose a member to grant special access to this room (beyond their tier):',
+    `<input class="form-input" list="membersList2" placeholder="Type name or @handle…" id="inviteInput" style="margin-top:0">
+     <datalist id="membersList2">${MEMBERS.map(m=>`<option value="${m.name} (@${m.handle})">`).join('')}</datalist>`,
+    [{ label:'Cancel', cls:'btn', fn:'closeModal()' },
+     { label:'Grant Access', cls:'btn btn-primary', fn:`confirmInvite('${roomId}','${roomName}')` }]
+  );
+}
+function confirmInvite(roomId, roomName) {
+  const val = document.getElementById('inviteInput').value;
+  if (!val) { toast('Please select a member!'); return; }
+  const r = ROOMS.find(x => x.id === roomId);
+  r.members.push('✨');
+  closeModal(); renderRooms();
+  toast(`Access granted to ${roomName}! ✅`,'ok');
+  addActivity({ type:'enter', text:`Admin invited <strong>${val.split(' (')[0]}</strong> to ${roomName}`, time:'just now' });
+}
+
+/* ════════ ACTIVITY FEED ════════ */
+function renderActivity() {
+  ['overviewFeed','liveFeed'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = ACTIVITY_LOG.map(a => `
+      <div class="af-item">
+        <div class="af-dot ${a.type}"></div>
+        <div class="af-text">${a.text}</div>
+        <div class="af-time">${a.time}</div>
+      </div>`).join('');
+  });
+}
+function addActivity(item) {
+  ACTIVITY_LOG.unshift(item);
+  renderActivity();
+  document.getElementById('actBadge').textContent = ACTIVITY_LOG.length;
+}
+
+/* ════════ WHO'S WHERE ════════ */
+function renderWhosWhere() {
+  const el = document.getElementById('whoswhere');
+  if (!el) return;
+  el.innerHTML = ROOMS.map(r => `
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:0.75rem;padding:0.85rem">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.6rem">
+        <span>${r.icon}</span>
+        <span style="font-size:0.82rem;font-weight:500;color:var(--text1)">${r.name}</span>
+        <span style="margin-left:auto;font-size:0.65rem;color:var(--emerald);font-family:'DM Mono',monospace">${r.online}</span>
+      </div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap">
+        ${r.members.map(e=>`<div style="width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:0.7rem">${e}</div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+/* ════════ NOTIFICATIONS ════════ */
+function toggleTarget(el) {
+  if (el.textContent.includes('Everyone')) {
+    document.querySelectorAll('.notif-target').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+  } else {
+    document.querySelector('.notif-target').classList.remove('active');
+    el.classList.toggle('active');
+  }
+}
+function selectNotifType(el, type) {
+  document.querySelectorAll('.notif-type').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+function sendNotification() {
+  const title = document.getElementById('notifTitle').value.trim();
+  const body  = document.getElementById('notifBody').value.trim();
+  if (!title || !body) { toast('Please fill in title and message!'); return; }
+  const targets = [...document.querySelectorAll('.notif-target.active')].map(b => b.textContent.trim()).join(', ');
+  toast(`📢 Notification sent to ${targets}!`,'ok');
+  addActivity({ type:'msg', text:`Admin sent notification: <strong>"${title}"</strong> → ${targets}`, time:'just now' });
+  document.getElementById('notifTitle').value = '';
+  document.getElementById('notifBody').value = '';
+}
+
+/* ════════ MODAL ════════ */
+function openModal(title, sub, body, actions) {
+  document.getElementById('modalTitle').innerHTML   = title;
+  document.getElementById('modalSub').innerHTML     = sub;
+  document.getElementById('modalBody').innerHTML    = body;
+  document.getElementById('modalActions').innerHTML = actions.map(a =>
+    `<button class="${a.cls}" onclick="${a.fn}">${a.label}</button>`).join('');
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+/* ════════ TOAST ════════ */
+let toastTimer;
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+/* ════════ SIMULATE LIVE ════════ */
+const liveEvents = [
+  () => addActivity({ type:'enter', text:'<strong>Selin Kaya</strong> entered 📺 Cinema TV Room', time:'just now' }),
+  () => addActivity({ type:'msg',   text:'<strong>Kaan Öztürk</strong> sent a message in 🌊 Thermal Pool', time:'just now' }),
+  () => addActivity({ type:'leave', text:'<strong>Cem Arslan</strong> left 🍽️ The Restaurant', time:'just now' }),
+  () => addActivity({ type:'join',  text:'<strong>New member</strong> joined as 🌱 Free member', time:'just now' }),
+  () => { document.getElementById('onlineCount').textContent = Math.floor(Math.random()*6)+10; document.getElementById('liveCount').textContent = Math.floor(Math.random()*6)+10 + ' online'; },
+];
+let liveIdx = 0;
+setInterval(() => { liveEvents[liveIdx % liveEvents.length](); liveIdx++; }, 8000);
+
+/* ════════ INIT ════════ */
+renderMembers();
+renderBanned();
+renderRooms();
+renderActivity();
+renderWhosWhere();
+</script>
+</body>
+</html>
