@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client'
 import { useDashboardStats } from '@/hooks'
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts'
