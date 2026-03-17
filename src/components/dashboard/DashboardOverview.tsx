@@ -28,7 +28,7 @@ const TIER_BADGE: Record<string, { bg: string; color: string }> = {
   free:   { bg: '#f0fdf4', color: '#16a34a' },
 }
 
-export default function DashboardOverview({ profile }: { profile: User }) {
+export default function DashboardOverview({ profile }: { profile: any }) {
   const { stats, loading } = useDashboardStats(profile?.id)
 
   const greeting = () => {
