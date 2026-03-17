@@ -1,40 +1,30 @@
 'use client'
-
 import { useEffect } from 'react'
 
 export default function LandingPage() {
   useEffect(() => {
-    // Mobile menu
     const btn = document.getElementById('hamBtn')
     const menu = document.getElementById('mobileMenu')
-    if (btn && menu) {
-      btn.addEventListener('click', () => menu.classList.toggle('open'))
-    }
+    if (btn && menu) btn.addEventListener('click', () => menu.classList.toggle('open'))
   }, [])
 
   return (
-    <>
-      <style>{`
+    <iframe
+      srcDoc={srcDoc}
+      style={{ width: '100%', height: '100vh', border: 'none' }}
+      title="KreaTown"
+    />
+  )
+}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+const srcDoc = `<!DOCTYPE html>
+```
 
-  :root {
-    --orange: #f4732a;
-    --orange-light: #ff9555;
-    --orange-pale: #fff0e6;
-    --cream: #fffbf5;
-    --cream-dark: #f5efe3;
-    --brown: #1a1612;
-    --brown-mid: #4a3728;
-    --muted: #9c8878;
-    --gold: #d4a843;
-    --gold-light: #f5d58a;
-    --silver: #9eafbf;
-    --emerald: #2d8a6e;
-  }
+Then open your `index.html`, copy everything from `<!DOCTYPE html>` to the end, paste it after that last backtick line.
 
-  html { scroll-behavior: smooth; }
-
+Then close the file with just this on the very last line:
+```
+`
   body {
     font-family: 'DM Sans', sans-serif;
     background: var(--cream);
