@@ -1,8 +1,12 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
+
 export default function LandingPage() {
+  const ref = useRef(null)
   return (
     <iframe
+      ref={ref}
       srcDoc={srcDoc}
       style={{ width: '100%', height: '100vh', border: 'none', display: 'block' }}
       title="KreaTown"
@@ -15,9 +19,7 @@ const srcDoc = `<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KreaTown — Where Creators Belong</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<title>KreaTown</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
 
@@ -1006,6 +1008,19 @@ document.querySelectorAll('.mobile-menu a').forEach(a => {
   a.addEventListener('click', () => {
     document.getElementById('hamBtn').classList.remove('open');
     document.getElementById('mobileMenu').classList.remove('open');
+  });
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('a[href]').forEach(function(a) {
+    var href = a.getAttribute('href');
+    if (href && !href.startsWith('#') && !href.startsWith('mailto') && !href.startsWith('http')) {
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.top.location.href = href;
+      });
+    }
   });
 });
 
