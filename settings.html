@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings — KreaTown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #0e0c0a;
+  --bg2:       #161310;
+  --bg3:       #1e1a16;
+  --bg4:       #252018;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.12);
+  --orange:    #f4732a;
+  --orange2:   #ff9555;
+  --gold:      #c9952a;
+  --gold2:     #f5d58a;
+  --palace:    #8b6fd4;
+  --palace2:   #b8a0e8;
+  --emerald:   #2dab80;
+  --red:       #e05252;
+  --text1:     rgba(255,255,255,0.92);
+  --text2:     rgba(255,255,255,0.55);
+  --text3:     rgba(255,255,255,0.28);
+  --sidebar-w: 240px;
+}
+
+html, body { height: 100%; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text1); display: flex; overflow: hidden; }
+
+/* ── SIDEBAR ── */
+.sidebar { width: var(--sidebar-w); background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; height: 100vh; flex-shrink: 0; position: relative; overflow: hidden; }
+.sidebar::before { content: ''; position: absolute; bottom: -80px; left: -40px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(139,111,212,0.12) 0%, transparent 70%); pointer-events: none; }
+.sidebar-logo { padding: 1.5rem 1.25rem 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.6rem; }
+.sidebar-logo-text { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--text1); }
+.sidebar-logo-text span { color: var(--orange); }
+.sidebar-creator { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.75rem; }
+.sc-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg,var(--palace),var(--orange)); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; border: 1.5px solid rgba(139,111,212,0.4); }
+.sc-name { font-size: 0.82rem; font-weight: 500; color: var(--text1); }
+.sc-level { font-size: 0.65rem; color: var(--palace2); margin-top: 0.1rem; }
+.sc-badge { margin-left: auto; background: rgba(139,111,212,0.15); color: var(--palace2); font-size: 0.6rem; padding: 0.15rem 0.45rem; border-radius: 100px; border: 1px solid rgba(139,111,212,0.25); }
+.sidebar-nav { padding: 0.75rem 0; flex: 1; overflow-y: auto; }
+.nav-section-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.12em; padding: 0.75rem 1.25rem 0.35rem; }
+.nav-item { display: flex; align-items: center; gap: 0.7rem; padding: 0.65rem 1.25rem; cursor: pointer; color: var(--text2); font-size: 0.82rem; transition: all .18s; border: none; background: none; width: 100%; text-align: left; text-decoration: none; border-left: 2px solid transparent; font-family: 'DM Sans', sans-serif; }
+.nav-item:hover { color: var(--text1); background: rgba(255,255,255,0.04); }
+.nav-item.active { color: var(--orange); background: rgba(244,115,42,0.08); border-left-color: var(--orange); font-weight: 500; }
+.nav-icon { font-size: 1rem; width: 18px; text-align: center; flex-shrink: 0; }
+.nav-badge { margin-left: auto; background: var(--orange); color: white; font-size: 0.58rem; padding: 0.1rem 0.4rem; border-radius: 100px; font-weight: 500; }
+.sidebar-bottom { padding: 1rem 1.25rem; border-top: 1px solid var(--border); }
+.level-mini { background: rgba(139,111,212,0.1); border-radius: 0.625rem; padding: 0.75rem; border: 1px solid rgba(139,111,212,0.2); }
+.lm-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.lm-label { font-size: 0.7rem; color: var(--text2); }
+.lm-val { font-size: 0.68rem; color: var(--palace2); font-family: 'DM Mono', monospace; }
+.lm-track { height: 4px; background: rgba(255,255,255,0.08); border-radius: 100px; overflow: hidden; }
+.lm-fill { height: 100%; width: 0; background: linear-gradient(90deg,var(--palace),var(--gold2)); border-radius: 100px; transition: width 1.5s ease; }
+
+/* ── MAIN ── */
+.main { flex: 1; overflow-y: auto; background: var(--bg); display: flex; flex-direction: column; }
+
+/* TOPBAR */
+.topbar { position: sticky; top: 0; z-index: 50; background: rgba(14,12,10,0.9); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 0.9rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+.topbar-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; color: var(--text1); }
+.topbar-sub { font-size: 0.75rem; color: var(--text3); margin-top: 0.1rem; }
+.topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+.preview-btn { display: flex; align-items: center; gap: 0.45rem; background: rgba(244,115,42,0.1); color: var(--orange); border: 1px solid rgba(244,115,42,0.25); border-radius: 0.5rem; padding: 0.45rem 1rem; font-size: 0.8rem; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .2s; text-decoration: none; }
+.preview-btn:hover { background: rgba(244,115,42,0.18); }
+.topbar-notif { position: relative; width: 34px; height: 34px; background: var(--bg3); border: 1px solid var(--border); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; transition: border-color .2s; }
+.topbar-notif:hover { border-color: var(--border2); }
+.notif-dot { position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; border-radius: 50%; background: var(--orange); border: 1.5px solid var(--bg); }
+
+/* ── SETTINGS LAYOUT ── */
+.settings-wrap { display: grid; grid-template-columns: 200px 1fr; gap: 0; flex: 1; }
+
+/* Settings nav */
+.settings-nav { border-right: 1px solid var(--border); padding: 1.5rem 0; position: sticky; top: 57px; height: calc(100vh - 57px); overflow-y: auto; background: var(--bg); }
+.sn-label { font-size: 0.6rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; font-family: 'DM Mono', monospace; padding: 0.75rem 1.25rem 0.3rem; }
+.sn-item { display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 1.25rem; cursor: pointer; color: var(--text2); font-size: 0.82rem; border: none; background: none; width: 100%; text-align: left; font-family: 'DM Sans', sans-serif; border-left: 2px solid transparent; transition: all .15s; }
+.sn-item:hover { color: var(--text1); background: rgba(255,255,255,0.03); }
+.sn-item.active { color: var(--orange); background: rgba(244,115,42,0.07); border-left-color: var(--orange); font-weight: 500; }
+.sn-icon { font-size: 0.9rem; width: 16px; text-align: center; flex-shrink: 0; }
+
+/* Settings content */
+.settings-content { padding: 2rem 2.5rem 4rem; max-width: 720px; }
+
+/* Section */
+.settings-section { display: none; animation: secIn 0.3s ease both; }
+.settings-section.active { display: block; }
+@keyframes secIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+.sec-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: var(--text1); margin-bottom: 0.3rem; }
+.sec-sub { font-size: 0.82rem; color: var(--text3); margin-bottom: 2rem; line-height: 1.6; }
+
+/* Card */
+.s-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 1rem; margin-bottom: 1.25rem; overflow: hidden; }
+.s-card-header { padding: 1.1rem 1.5rem 0.75rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.s-card-title { font-size: 0.9rem; font-weight: 500; color: var(--text1); }
+.s-card-sub { font-size: 0.72rem; color: var(--text3); margin-top: 0.15rem; }
+.s-card-body { padding: 1.25rem 1.5rem; }
+
+/* Avatar upload */
+.avatar-section { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; }
+.avatar-wrap { position: relative; flex-shrink: 0; }
+.big-avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg,var(--palace),var(--orange)); display: flex; align-items: center; justify-content: center; font-size: 2rem; border: 2px solid rgba(139,111,212,0.4); }
+.avatar-overlay { position: absolute; inset: 0; border-radius: 50%; background: rgba(0,0,0,0); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background .2s; font-size: 1.1rem; opacity: 0; }
+.avatar-wrap:hover .avatar-overlay { background: rgba(0,0,0,0.55); opacity: 1; }
+.avatar-info { flex: 1; }
+.avatar-info p { font-size: 0.78rem; color: var(--text2); line-height: 1.6; margin-bottom: 0.75rem; }
+.avatar-btns { display: flex; gap: 0.6rem; }
+
+/* Form fields */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-bottom: 0.85rem; }
+.form-group { margin-bottom: 0.85rem; }
+.form-group:last-child { margin-bottom: 0; }
+.form-label { display: block; font-size: 0.72rem; color: var(--text3); font-family: 'DM Mono', monospace; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 0.4rem; }
+.form-input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 0.625rem; color: var(--text1); font-family: 'DM Sans', sans-serif; font-size: 0.875rem; padding: 0.7rem 0.9rem; outline: none; transition: border-color .18s; }
+.form-input:focus { border-color: var(--border2); }
+.form-input::placeholder { color: var(--text3); }
+.form-textarea { min-height: 90px; resize: vertical; }
+.input-prefix { display: flex; align-items: center; background: var(--bg3); border: 1px solid var(--border); border-radius: 0.625rem; overflow: hidden; }
+.prefix-label { padding: 0.7rem 0.85rem; font-size: 0.78rem; color: var(--text3); font-family: 'DM Mono', monospace; border-right: 1px solid var(--border); white-space: nowrap; }
+.prefix-input { flex: 1; background: none; border: none; color: var(--text1); font-family: 'DM Sans', sans-serif; font-size: 0.875rem; padding: 0.7rem 0.9rem; outline: none; }
+.input-prefix:focus-within { border-color: var(--border2); }
+.char-count { font-size: 0.68rem; color: var(--text3); text-align: right; margin-top: 0.3rem; font-family: 'DM Mono', monospace; }
+
+/* Buttons */
+.btn { padding: 0.58rem 1.1rem; border-radius: 0.625rem; font-size: 0.82rem; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .18s; border: 1px solid var(--border); background: transparent; color: var(--text2); }
+.btn:hover { border-color: var(--border2); color: var(--text1); background: rgba(255,255,255,0.04); }
+.btn-primary { background: var(--orange); border-color: var(--orange); color: white; box-shadow: 0 2px 12px rgba(244,115,42,0.3); }
+.btn-primary:hover { background: var(--orange2); border-color: var(--orange2); transform: translateY(-1px); box-shadow: 0 4px 18px rgba(244,115,42,0.4); }
+.btn-danger { border-color: rgba(224,82,82,0.3); color: var(--red); }
+.btn-danger:hover { background: rgba(224,82,82,0.08); border-color: rgba(224,82,82,0.5); }
+.btn-stripe { background: linear-gradient(135deg,#635bff,#a855f7); border-color: transparent; color: white; display: flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.25rem; }
+.btn-stripe:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.save-row { display: flex; align-items: center; justify-content: space-between; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+.save-hint { font-size: 0.72rem; color: var(--text3); }
+.save-success { font-size: 0.72rem; color: var(--emerald); display: none; }
+
+/* Toggle switch */
+.toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 0; border-bottom: 1px solid var(--border); }
+.toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+.toggle-info { flex: 1; }
+.toggle-label { font-size: 0.85rem; color: var(--text1); font-weight: 400; }
+.toggle-desc { font-size: 0.72rem; color: var(--text3); margin-top: 0.15rem; line-height: 1.5; }
+.toggle-wrap { position: relative; width: 40px; height: 22px; flex-shrink: 0; margin-left: 1.5rem; }
+.toggle-wrap input { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; margin: 0; z-index: 1; }
+.toggle-track { width: 40px; height: 22px; border-radius: 100px; background: var(--bg4); border: 1px solid var(--border2); transition: background .2s; pointer-events: none; }
+.toggle-thumb { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--text3); transition: transform .2s, background .2s; pointer-events: none; }
+.toggle-wrap input:checked ~ .toggle-track { background: rgba(244,115,42,0.3); border-color: var(--orange); }
+.toggle-wrap input:checked ~ .toggle-thumb { transform: translateX(18px); background: var(--orange); }
+
+/* Tier cards */
+.tier-cards { display: flex; flex-direction: column; gap: 0.75rem; }
+.tier-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 0.875rem; padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 1rem; transition: border-color .2s; }
+.tier-card:hover { border-color: var(--border2); }
+.tc-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+.tc-info { flex: 1; }
+.tc-name { font-size: 0.88rem; font-weight: 500; color: var(--text1); }
+.tc-desc { font-size: 0.72rem; color: var(--text3); margin-top: 0.12rem; }
+.tc-price { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; }
+.tc-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+
+/* Plan badge */
+.plan-badge { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.75rem; border-radius: 100px; font-size: 0.72rem; font-weight: 500; }
+.pb-pro { background: rgba(201,149,42,0.15); color: var(--gold2); border: 1px solid rgba(201,149,42,0.25); }
+
+/* Stripe connect card */
+.stripe-card { background: linear-gradient(135deg, rgba(99,91,255,0.1) 0%, rgba(139,111,212,0.08) 100%); border: 1px solid rgba(99,91,255,0.2); border-radius: 1rem; padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.stripe-left { display: flex; align-items: center; gap: 1rem; }
+.stripe-icon { width: 46px; height: 46px; border-radius: 0.75rem; background: #635bff; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+.stripe-label { font-size: 0.72rem; color: var(--text3); margin-bottom: 0.2rem; }
+.stripe-status { font-size: 0.9rem; font-weight: 500; color: var(--text1); display: flex; align-items: center; gap: 0.4rem; }
+.stripe-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text3); }
+.stripe-dot.connected { background: var(--emerald); box-shadow: 0 0 6px rgba(45,171,128,0.5); }
+.stripe-sub { font-size: 0.72rem; color: var(--text3); margin-top: 0.1rem; }
+
+/* Danger zone */
+.danger-item { display: flex; align-items: center; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid var(--border); gap: 1rem; flex-wrap: wrap; }
+.danger-item:last-child { border-bottom: none; padding-bottom: 0; }
+.danger-item-info .di-title { font-size: 0.88rem; color: var(--text1); font-weight: 500; margin-bottom: 0.2rem; }
+.danger-item-info .di-desc { font-size: 0.72rem; color: var(--text3); line-height: 1.5; }
+
+/* Toast */
+.toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(16px); background: var(--bg3); border: 1px solid var(--border2); color: var(--text1); padding: 0.65rem 1.4rem; border-radius: 100px; font-size: 0.82rem; z-index: 1000; transition: all .3s cubic-bezier(.34,1.56,.64,1); opacity: 0; pointer-events: none; white-space: nowrap; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.toast.success { border-color: rgba(45,171,128,0.3); color: var(--emerald); }
+
+/* Responsive */
+@media (max-width: 1000px) { .settings-wrap { grid-template-columns: 1fr; } .settings-nav { display: none; } }
+@media (max-width: 768px)  { .sidebar { display: none; } .settings-content { padding: 1.5rem; } .form-row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <span style="font-size:1.2rem">🏯</span>
+    <div class="sidebar-logo-text">Krea<span>Town</span></div>
+  </div>
+  <div class="sidebar-creator">
+    <div class="sc-avatar">🎨</div>
+    <div>
+      <div class="sc-name">Topraq Toros</div>
+      <div class="sc-level">⭐ Level 7 Creator</div>
+    </div>
+    <div class="sc-badge">ADMIN</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+    <a href="earnings.html"  class="nav-item"><span class="nav-icon">💰</span> Earnings</a>
+    <a href="members.html"   class="nav-item"><span class="nav-icon">👥</span> Members<span class="nav-badge">44</span></a>
+    <div class="nav-section-label">Content</div>
+    <a href="#" class="nav-item"><span class="nav-icon">✍️</span> Posts</a>
+    <a href="#" class="nav-item"><span class="nav-icon">🔒</span> Tiers</a>
+    <a href="messages.html" class="nav-item"><span class="nav-icon">💬</span> Messages<span class="nav-badge">3</span></a>
+    <div class="nav-section-label">My Town</div>
+    <a href="topraq-hub.html" class="nav-item"><span class="nav-icon">🏯</span> My Palace</a>
+    <a href="radio.html"      class="nav-item"><span class="nav-icon">🎵</span> 3D Radio</a>
+    <a href="tv.html"         class="nav-item"><span class="nav-icon">📺</span> 3D TV</a>
+    <a href="#"               class="nav-item"><span class="nav-icon">🏆</span> Competitions</a>
+    <div class="nav-section-label">Settings</div>
+    <a href="settings.html" class="nav-item active"><span class="nav-icon">⚙️</span> Settings</a>
+    <a href="settings.html#stripe" class="nav-item" onclick="switchSection('stripe');return false;"><span class="nav-icon">💳</span> Stripe Connect</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="level-mini">
+      <div class="lm-top"><span class="lm-label">Level 7 → 8</span><span class="lm-val">620 / 1000 xp</span></div>
+      <div class="lm-track"><div class="lm-fill" id="lvlFill"></div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Settings</div>
+      <div class="topbar-sub">Manage your profile, tiers and billing</div>
+    </div>
+    <div class="topbar-right">
+      <a href="topraq-hub.html" class="preview-btn">👁 Preview my town</a>
+      <div class="topbar-notif">🔔<div class="notif-dot"></div></div>
+    </div>
+  </div>
+
+  <div class="settings-wrap">
+
+    <!-- Settings navigation -->
+    <nav class="settings-nav">
+      <div class="sn-label">Account</div>
+      <button class="sn-item active" onclick="switchSection('profile')"><span class="sn-icon">👤</span> Profile</button>
+      <button class="sn-item"        onclick="switchSection('password')"><span class="sn-icon">🔒</span> Password</button>
+      <button class="sn-item"        onclick="switchSection('notifications')"><span class="sn-icon">🔔</span> Notifications</button>
+      <div class="sn-label">Creator</div>
+      <button class="sn-item"        onclick="switchSection('tiers')"><span class="sn-icon">👑</span> Membership tiers</button>
+      <button class="sn-item"        onclick="switchSection('town')"><span class="sn-icon">🏡</span> Town settings</button>
+      <div class="sn-label">Billing</div>
+      <button class="sn-item"        onclick="switchSection('billing')"><span class="sn-icon">💎</span> Your plan</button>
+      <button class="sn-item"        onclick="switchSection('stripe')" id="stripeNavBtn"><span class="sn-icon">💳</span> Stripe Connect</button>
+      <div class="sn-label">Danger</div>
+      <button class="sn-item"        onclick="switchSection('danger')"><span class="sn-icon">⚠️</span> Danger zone</button>
+    </nav>
+
+    <!-- Settings content -->
+    <div class="settings-content">
+
+      <!-- ── PROFILE ── -->
+      <div class="settings-section active" id="sec-profile">
+        <div class="sec-title">Profile</div>
+        <div class="sec-sub">This is how your fans see you. Keep it real and on-brand.</div>
+
+        <div class="s-card">
+          <div class="s-card-header">
+            <div><div class="s-card-title">Profile photo & banner</div><div class="s-card-sub">Shown on your public Hub page</div></div>
+          </div>
+          <div class="s-card-body">
+            <div class="avatar-section">
+              <div class="avatar-wrap">
+                <div class="big-avatar">🎨</div>
+                <div class="avatar-overlay" onclick="toast('Photo upload coming with Cloudinary integration! 📸')">📷</div>
+              </div>
+              <div class="avatar-info">
+                <p>JPG, PNG or GIF. Max 2MB.<br>Recommended: 400×400px, square.</p>
+                <div class="avatar-btns">
+                  <button class="btn btn-primary" onclick="toast('Photo upload coming soon! 📸')">Upload photo</button>
+                  <button class="btn" onclick="toast('Photo removed!')">Remove</button>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Banner image</label>
+              <button class="btn" style="width:100%;justify-content:center;display:flex;gap:0.5rem;" onclick="toast('Banner upload coming with Cloudinary integration! 🖼️')">🖼️ Upload banner image</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="s-card">
+          <div class="s-card-header">
+            <div><div class="s-card-title">Public info</div><div class="s-card-sub">Displayed on your creator Hub page</div></div>
+          </div>
+          <div class="s-card-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">First name</label>
+                <input class="form-input" type="text" value="Topraq" id="firstName">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Last name</label>
+                <input class="form-input" type="text" value="Toros" id="lastName">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Display name</label>
+              <input class="form-input" type="text" value="Topraq Toros" id="displayName">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Username · kreatown.com/u/</label>
+              <div class="input-prefix">
+                <span class="prefix-label">kreatown.com/u/</span>
+                <input class="prefix-input" type="text" value="topraq" id="username">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Bio</label>
+              <textarea class="form-input form-textarea" id="bio" oninput="updateCharCount(this,'bioCount',160)">Digital creator · Storyteller · Building in public. Join my town for exclusive content, strategy sessions and real conversations.</textarea>
+              <div class="char-count"><span id="bioCount">118</span> / 160</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Category</label>
+              <select class="form-input" id="category">
+                <option>Creator & Storyteller</option>
+                <option>Business & Strategy</option>
+                <option>Music & Audio</option>
+                <option>Visual Arts</option>
+                <option>Fitness & Wellness</option>
+                <option>Education</option>
+                <option>Gaming</option>
+                <option>Lifestyle</option>
+              </select>
+            </div>
+            <div class="save-row">
+              <div>
+                <div class="save-hint">Changes are saved to your public profile</div>
+                <div class="save-success" id="profileSaved">✅ Saved successfully!</div>
+              </div>
+              <button class="btn btn-primary" onclick="saveSection('profileSaved')">Save changes</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="s-card">
+          <div class="s-card-header">
+            <div><div class="s-card-title">Social links</div><div class="s-card-sub">Shown on your Hub page</div></div>
+          </div>
+          <div class="s-card-body">
+            <div class="form-group">
+              <label class="form-label">Instagram</label>
+              <div class="input-prefix"><span class="prefix-label">instagram.com/</span><input class="prefix-input" type="text" value="topraqtoros" placeholder="yourhandle"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Twitter / X</label>
+              <div class="input-prefix"><span class="prefix-label">x.com/</span><input class="prefix-input" type="text" value="topraqtoros" placeholder="yourhandle"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">YouTube</label>
+              <div class="input-prefix"><span class="prefix-label">youtube.com/@</span><input class="prefix-input" type="text" placeholder="yourchannel"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Personal website</label>
+              <input class="form-input" type="url" placeholder="https://yoursite.com">
+            </div>
+            <div class="save-row">
+              <div class="save-hint">Links open in a new tab</div>
+              <button class="btn btn-primary" onclick="toast('Social links saved! 🔗')">Save links</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PASSWORD ── -->
+      <div class="settings-section" id="sec-password">
+        <div class="sec-title">Password & security</div>
+        <div class="sec-sub">Keep your account safe with a strong, unique password.</div>
+        <div class="s-card">
+          <div class="s-card-body">
+            <div class="form-group">
+              <label class="form-label">Current password</label>
+              <input class="form-input" type="password" placeholder="Enter current password">
+            </div>
+            <div class="form-group">
+              <label class="form-label">New password</label>
+              <input class="form-input" type="password" placeholder="At least 8 characters" id="newPass" oninput="checkPassStrength(this.value)">
+              <div style="display:flex;gap:4px;margin-top:0.5rem" id="passBars">
+                <div style="flex:1;height:3px;border-radius:100px;background:var(--border)" id="pb1"></div>
+                <div style="flex:1;height:3px;border-radius:100px;background:var(--border)" id="pb2"></div>
+                <div style="flex:1;height:3px;border-radius:100px;background:var(--border)" id="pb3"></div>
+                <div style="flex:1;height:3px;border-radius:100px;background:var(--border)" id="pb4"></div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirm new password</label>
+              <input class="form-input" type="password" placeholder="Repeat new password">
+            </div>
+            <div class="save-row">
+              <div class="save-hint">You'll be asked to log in again</div>
+              <button class="btn btn-primary" onclick="toast('Password updated! 🔒')">Update password</button>
+            </div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-header"><div><div class="s-card-title">Two-factor authentication</div><div class="s-card-sub">Extra layer of protection</div></div></div>
+          <div class="s-card-body">
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <div class="toggle-label">Enable 2FA</div>
+                <div class="toggle-desc">Use an authenticator app to confirm sign-ins</div>
+              </div>
+              <div class="toggle-wrap">
+                <input type="checkbox" onchange="toast(this.checked?'2FA enabled! 🔐':'2FA disabled')">
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── NOTIFICATIONS ── -->
+      <div class="settings-section" id="sec-notifications">
+        <div class="sec-title">Notifications</div>
+        <div class="sec-sub">Choose when and how KreaTown contacts you.</div>
+        <div class="s-card">
+          <div class="s-card-header"><div class="s-card-title">Email notifications</div></div>
+          <div class="s-card-body">
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-label">New member joins</div><div class="toggle-desc">When a fan subscribes to your town</div></div>
+              <div class="toggle-wrap"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-label">New message</div><div class="toggle-desc">When a member sends you a DM</div></div>
+              <div class="toggle-wrap"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-label">Payout processed</div><div class="toggle-desc">When your earnings are transferred</div></div>
+              <div class="toggle-wrap"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-label">Member cancels</div><div class="toggle-desc">When someone unsubscribes</div></div>
+              <div class="toggle-wrap"><input type="checkbox"><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-label">KreaTown announcements</div><div class="toggle-desc">Platform updates and new features</div></div>
+              <div class="toggle-wrap"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-header"><div class="s-card-title">Push notifications</div></div>
+          <div class="s-card-body">
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-label">Room activity</div><div class="toggle-desc">New messages in your rooms</div></div>
+              <div class="toggle-wrap"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-label">Direct messages</div><div class="toggle-desc">Real-time DM alerts</div></div>
+              <div class="toggle-wrap"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:1rem;text-align:right">
+          <button class="btn btn-primary" onclick="toast('Notification preferences saved! 🔔')">Save preferences</button>
+        </div>
+      </div>
+
+      <!-- ── MEMBERSHIP TIERS ── -->
+      <div class="settings-section" id="sec-tiers">
+        <div class="sec-title">Membership tiers</div>
+        <div class="sec-sub">Set up the tiers fans can join. Each tier unlocks different rooms and content.</div>
+        <div class="s-card">
+          <div class="s-card-header"><div><div class="s-card-title">Your tiers</div><div class="s-card-sub">Edit names, prices and perks</div></div><button class="btn btn-primary" onclick="toast('New tier created! 🎉')">+ Add tier</button></div>
+          <div class="s-card-body">
+            <div class="tier-cards">
+              <div class="tier-card">
+                <div class="tc-icon" style="background:rgba(45,171,128,0.15)">🌱</div>
+                <div class="tc-info">
+                  <div class="tc-name">Free</div>
+                  <div class="tc-desc">Hotel Lobby access · Public content</div>
+                </div>
+                <div class="tc-price" style="color:var(--emerald)">$0</div>
+                <div class="tc-actions">
+                  <button class="btn" onclick="toast('Editing Free tier…')">Edit</button>
+                </div>
+              </div>
+              <div class="tier-card">
+                <div class="tc-icon" style="background:rgba(143,163,181,0.15)">⭐</div>
+                <div class="tc-info">
+                  <div class="tc-name">Silver — Inside the House</div>
+                  <div class="tc-desc">Restaurant · Exclusive posts</div>
+                </div>
+                <div class="tc-price" style="color:#8fa3b5">$9<span style="font-size:0.7rem;color:var(--text3)">/mo</span></div>
+                <div class="tc-actions">
+                  <button class="btn" onclick="toast('Editing Silver tier…')">Edit</button>
+                </div>
+              </div>
+              <div class="tier-card">
+                <div class="tc-icon" style="background:rgba(201,149,42,0.15)">👑</div>
+                <div class="tc-info">
+                  <div class="tc-name">Gold — Gold Suite</div>
+                  <div class="tc-desc">Superior Room · Resting Lounge · Q&A access</div>
+                </div>
+                <div class="tc-price" style="color:var(--gold2)">$29<span style="font-size:0.7rem;color:var(--text3)">/mo</span></div>
+                <div class="tc-actions">
+                  <button class="btn" onclick="toast('Editing Gold tier…')">Edit</button>
+                </div>
+              </div>
+              <div class="tier-card">
+                <div class="tc-icon" style="background:rgba(139,111,212,0.15)">🏯</div>
+                <div class="tc-info">
+                  <div class="tc-name">Palace — Inner Circle</div>
+                  <div class="tc-desc">All rooms · DMs · Live sessions · 1:1 calls</div>
+                </div>
+                <div class="tc-price" style="color:var(--palace2)">$49<span style="font-size:0.7rem;color:var(--text3)">/mo</span></div>
+                <div class="tc-actions">
+                  <button class="btn" onclick="toast('Editing Palace tier…')">Edit</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TOWN SETTINGS ── -->
+      <div class="settings-section" id="sec-town">
+        <div class="sec-title">Town settings</div>
+        <div class="sec-sub">Customize how your town looks and behaves.</div>
+        <div class="s-card">
+          <div class="s-card-header"><div class="s-card-title">Town identity</div></div>
+          <div class="s-card-body">
+            <div class="form-group">
+              <label class="form-label">Town name</label>
+              <input class="form-input" type="text" value="Topraq's Town">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Town tagline</label>
+              <input class="form-input" type="text" value="Where strategy meets creativity 🏯">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Welcome message (shown to new members)</label>
+              <textarea class="form-input form-textarea" placeholder="Welcome to my town! Here you'll find…">Welcome to the town! 🏡 Explore the rooms, join the conversations and make yourself at home. Excited to have you here.</textarea>
+            </div>
+            <div class="save-row">
+              <div class="save-hint">Visible on your public Hub page</div>
+              <button class="btn btn-primary" onclick="toast('Town settings saved! 🏡')">Save</button>
+            </div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-header"><div class="s-card-title">Town features</div></div>
+          <div class="s-card-body">
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-label">Town map</div><div class="toggle-desc">Show the interactive town map to members</div></div>
+              <div class="toggle-wrap"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-label">3D Radio room</div><div class="toggle-desc">Enable the vintage radio experience</div></div>
+              <div class="toggle-wrap"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-label">3D TV room</div><div class="toggle-desc">Enable the cinema TV room</div></div>
+              <div class="toggle-wrap"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-label">Member DMs</div><div class="toggle-desc">Allow Palace members to send you direct messages</div></div>
+              <div class="toggle-wrap"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── BILLING / PLAN ── -->
+      <div class="settings-section" id="sec-billing">
+        <div class="sec-title">Your plan</div>
+        <div class="sec-sub">Manage your KreaTown subscription and billing details.</div>
+        <div class="s-card">
+          <div class="s-card-body">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem">
+              <div>
+                <div style="font-size:0.72rem;color:var(--text3);margin-bottom:0.3rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.06em">Current plan</div>
+                <div style="display:flex;align-items:center;gap:0.75rem">
+                  <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--gold2)">Pro</div>
+                  <span class="plan-badge pb-pro">👑 Active</span>
+                </div>
+                <div style="font-size:0.75rem;color:var(--text3);margin-top:0.25rem">$29/mo · 5% revenue share · Renews Apr 14, 2026</div>
+              </div>
+              <button class="btn btn-primary" onclick="toast('Plan management coming soon! 💎')">Upgrade to Studio</button>
+            </div>
+            <div style="background:var(--bg3);border-radius:0.75rem;padding:1rem;border:1px solid var(--border)">
+              <div style="font-size:0.68rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-family:'DM Mono',monospace;margin-bottom:0.75rem">Plan includes</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
+                <div style="font-size:0.78rem;color:var(--text2);display:flex;align-items:center;gap:0.4rem">✅ Unlimited members</div>
+                <div style="font-size:0.78rem;color:var(--text2);display:flex;align-items:center;gap:0.4rem">✅ All room types</div>
+                <div style="font-size:0.78rem;color:var(--text2);display:flex;align-items:center;gap:0.4rem">✅ 3D Radio + TV</div>
+                <div style="font-size:0.78rem;color:var(--text2);display:flex;align-items:center;gap:0.4rem">✅ Advanced analytics</div>
+                <div style="font-size:0.78rem;color:var(--text2);display:flex;align-items:center;gap:0.4rem">✅ Stripe Connect</div>
+                <div style="font-size:0.78rem;color:var(--text2);display:flex;align-items:center;gap:0.4rem">✅ Custom domain</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-header"><div class="s-card-title">Payment method</div></div>
+          <div class="s-card-body">
+            <div style="display:flex;align-items:center;gap:1rem;padding:0.85rem;background:var(--bg3);border-radius:0.75rem;border:1px solid var(--border)">
+              <div style="width:40px;height:26px;background:#1a1f71;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:white;font-weight:700;flex-shrink:0">VISA</div>
+              <div style="flex:1">
+                <div style="font-size:0.85rem;color:var(--text1)">Visa ending in 4242</div>
+                <div style="font-size:0.7rem;color:var(--text3);margin-top:0.1rem">Expires 08/2027</div>
+              </div>
+              <button class="btn" onclick="toast('Payment method update coming soon!')">Update</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STRIPE CONNECT ── -->
+      <div class="settings-section" id="sec-stripe">
+        <div class="sec-title">Stripe Connect</div>
+        <div class="sec-sub">Connect your Stripe account to receive payouts from your members.</div>
+
+        <div class="stripe-card">
+          <div class="stripe-left">
+            <div class="stripe-icon">💳</div>
+            <div>
+              <div class="stripe-label">Stripe account</div>
+              <div class="stripe-status">
+                <div class="stripe-dot connected"></div>
+                Connected
+              </div>
+              <div class="stripe-sub">acct_1P2xYzTopraq · Verified · Payouts enabled</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:0.6rem;flex-wrap:wrap">
+            <button class="btn btn-stripe" onclick="toast('Opening Stripe dashboard…')">💳 Stripe dashboard →</button>
+            <button class="btn" onclick="toast('Disconnecting Stripe…')">Disconnect</button>
+          </div>
+        </div>
+
+        <div class="s-card">
+          <div class="s-card-header"><div><div class="s-card-title">Payout settings</div><div class="s-card-sub">How and when you get paid</div></div></div>
+          <div class="s-card-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Payout schedule</label>
+                <select class="form-input">
+                  <option selected>Monthly (1st of month)</option>
+                  <option>Weekly (every Monday)</option>
+                  <option>Manual (on request)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Minimum payout</label>
+                <select class="form-input">
+                  <option>$50</option>
+                  <option selected>$100</option>
+                  <option>$250</option>
+                  <option>$500</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Payout currency</label>
+              <select class="form-input">
+                <option selected>USD — US Dollar</option>
+                <option>EUR — Euro</option>
+                <option>GBP — British Pound</option>
+                <option>TRY — Turkish Lira</option>
+              </select>
+            </div>
+            <div class="save-row">
+              <div class="save-hint">Changes apply from next billing cycle</div>
+              <button class="btn btn-primary" onclick="toast('Payout settings saved! 💸')">Save settings</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="s-card">
+          <div class="s-card-header"><div><div class="s-card-title">Webhook endpoint</div><div class="s-card-sub">For Stripe payment events</div></div></div>
+          <div class="s-card-body">
+            <div class="form-group">
+              <label class="form-label">Webhook URL</label>
+              <div class="input-prefix">
+                <span class="prefix-label">POST</span>
+                <input class="prefix-input" type="text" value="https://kreatown.com/api/webhooks/stripe" readonly style="font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--text2)">
+              </div>
+            </div>
+            <div style="display:flex;gap:0.6rem;margin-top:0.5rem">
+              <button class="btn" onclick="navigator.clipboard.writeText('https://kreatown.com/api/webhooks/stripe');toast('Webhook URL copied! 📋')">Copy URL</button>
+              <button class="btn" onclick="toast('Webhook test sent! ✅')">Send test event</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── DANGER ZONE ── -->
+      <div class="settings-section" id="sec-danger">
+        <div class="sec-title">Danger zone</div>
+        <div class="sec-sub">These actions are permanent. Please read carefully before proceeding.</div>
+        <div class="s-card" style="border-color:rgba(224,82,82,0.2)">
+          <div class="s-card-body">
+            <div class="danger-item">
+              <div class="danger-item-info">
+                <div class="di-title">Export all data</div>
+                <div class="di-desc">Download a full export of your account — members, earnings, content and messages.</div>
+              </div>
+              <button class="btn" onclick="toast('Preparing your data export… 📦')">Export data</button>
+            </div>
+            <div class="danger-item">
+              <div class="danger-item-info">
+                <div class="di-title">Pause my town</div>
+                <div class="di-desc">Temporarily hide your town from new members. Existing members keep access.</div>
+              </div>
+              <button class="btn" onclick="toast('Town paused. You can reactivate anytime.')">Pause town</button>
+            </div>
+            <div class="danger-item">
+              <div class="danger-item-info">
+                <div class="di-title">Cancel subscription</div>
+                <div class="di-desc">Cancel your KreaTown Pro plan. Your town stays active until the end of the billing period.</div>
+              </div>
+              <button class="btn btn-danger" onclick="if(confirm('Cancel your Pro plan? Your town stays active until Apr 14.')) toast('Subscription cancelled. Active until Apr 14.')">Cancel plan</button>
+            </div>
+            <div class="danger-item">
+              <div class="danger-item-info">
+                <div class="di-title">Delete account</div>
+                <div class="di-desc">Permanently delete your account, your town and all data. This cannot be undone.</div>
+              </div>
+              <button class="btn btn-danger" onclick="if(confirm('This will permanently delete your account. Are you absolutely sure?')) toast('Account deletion requested. Check your email.')">Delete account</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /settings-content -->
+  </div><!-- /settings-wrap -->
+</div><!-- /main -->
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── LEVEL BAR ── */
+setTimeout(() => { document.getElementById('lvlFill').style.width = '62%'; }, 300);
+
+/* ── SECTION SWITCHING ── */
+function switchSection(id) {
+  document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sn-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  const btns = document.querySelectorAll('.sn-item');
+  btns.forEach(b => { if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + id + "'")) b.classList.add('active'); });
+}
+
+/* ── SAVE SECTION ── */
+function saveSection(successId) {
+  const el = document.getElementById(successId);
+  el.style.display = 'block';
+  toast('Changes saved! ✅');
+  setTimeout(() => { el.style.display = 'none'; }, 3000);
+}
+
+/* ── CHAR COUNT ── */
+function updateCharCount(el, countId, max) {
+  document.getElementById(countId).textContent = el.value.length;
+  document.getElementById(countId).style.color = el.value.length > max * 0.9 ? 'var(--orange)' : 'var(--text3)';
+}
+
+/* ── PASSWORD STRENGTH ── */
+function checkPassStrength(val) {
+  let score = 0;
+  if (val.length >= 8)          score++;
+  if (/[A-Z]/.test(val))        score++;
+  if (/[0-9]/.test(val))        score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+  const colors = ['var(--border)','var(--red)','var(--gold)','var(--emerald)','var(--emerald)'];
+  ['pb1','pb2','pb3','pb4'].forEach((id, i) => {
+    document.getElementById(id).style.background = i < score ? colors[score] : 'var(--border)';
+  });
+}
+
+/* ── TOAST ── */
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  el.classList.toggle('success', msg.includes('✅') || msg.includes('saved') || msg.includes('Saved') || msg.includes('copied'));
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+/* ── URL HASH ── */
+if (location.hash === '#stripe') switchSection('stripe');
+</script>
+</body>
+</html>
