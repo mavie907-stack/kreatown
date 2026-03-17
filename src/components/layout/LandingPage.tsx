@@ -14,6 +14,7 @@ export default function LandingPage() {
       style={{ width: '100%', height: '100vh', border: 'none' }}
       title="KreaTown"
     />
+<<<<<<< HEAD
   )
 }
 
@@ -997,5 +998,16 @@ document.querySelectorAll('.mobile-menu a').forEach(a => {
 
       </div>
     </>
+=======
+>>>>>>> c759273 (use iframe for landing page)
   )
 }
+
+const srcDoc = `<!DOCTYPE html>
+```
+
+Then open your `index.html`, copy everything from `<!DOCTYPE html>` to the end, paste it after that last backtick line.
+
+Then close the file with just this on the very last line:
+```
+`
