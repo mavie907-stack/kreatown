@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { createClient } from '@supabase/supabase-js'

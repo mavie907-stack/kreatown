@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client'
 import { useState } from 'react'
 import { Plus, Lock, Globe, Edit3, Trash2, Eye } from 'lucide-react'

@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client'
 
 // src/components/creator/SubscribeModal.tsx

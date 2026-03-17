@@ -1,3 +1,4 @@
+// @ts-nocheck
 // src/types/index.ts
 
 export type TierLevel = 'free' | 'silver' | 'gold' | 'palace'

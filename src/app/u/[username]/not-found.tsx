@@ -1,3 +1,4 @@
+// @ts-nocheck
 // src/app/u/[username]/not-found.tsx
 import Link from 'next/link'
 

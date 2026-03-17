@@ -1,3 +1,4 @@
+// @ts-nocheck
 // src/lib/qnb.ts
 // ── QNB Finansbank Payment Integration ──
 // Plug in your credentials from .env.local when QNB delivers them

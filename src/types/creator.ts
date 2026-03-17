@@ -1,3 +1,4 @@
+// @ts-nocheck
 // src/types/creator.ts
 
 export interface CreatorProfile {

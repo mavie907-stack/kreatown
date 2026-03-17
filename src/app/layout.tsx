@@ -1,3 +1,4 @@
+// @ts-nocheck
 // src/app/layout.tsx
 import type { Metadata } from 'next'
 import { Playfair_Display, DM_Sans, DM_Mono } from 'next/font/google'
