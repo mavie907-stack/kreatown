@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Join KreaTown — Create your account</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream:       #fffbf5;
+  --cream-dark:  #f5efe3;
+  --brown:       #1a1612;
+  --muted:       #9c8878;
+  --orange:      #f4732a;
+  --orange2:     #ff9555;
+  --orange-pale: #fff0e6;
+  --gold:        #c9952a;
+  --gold2:       #f5d58a;
+  --gold-pale:   #fdf4dc;
+  --palace:      #7c5cbf;
+  --palace2:     #b8a0e8;
+  --palace-pale: #f2eefb;
+  --silver:      #8fa3b5;
+  --silver-pale: #f0f4f8;
+  --emerald:     #2dab80;
+  --red:         #e05252;
+  --border:      rgba(156,136,120,0.18);
+  --border2:     rgba(156,136,120,0.32);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--brown);
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* ── LEFT PANEL ── */
+.left-panel {
+  position: relative;
+  background: var(--brown);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2.5rem;
+  min-height: 100vh;
+}
+.left-panel::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(244,115,42,0.15) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+.blob {
+  position: absolute; border-radius: 50%;
+  pointer-events: none; filter: blur(60px);
+}
+.blob1 {
+  width: 420px; height: 420px;
+  background: radial-gradient(circle, rgba(244,115,42,0.2) 0%, transparent 70%);
+  top: -80px; right: -80px;
+  animation: blobFloat 9s ease-in-out infinite;
+}
+.blob2 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(124,92,191,0.15) 0%, transparent 70%);
+  bottom: 60px; left: -40px;
+  animation: blobFloat 12s ease-in-out infinite reverse;
+}
+@keyframes blobFloat {
+  0%,100% { transform: translate(0,0) scale(1); }
+  50%      { transform: translate(20px,-30px) scale(1.06); }
+}
+
+.left-logo {
+  position: relative; z-index: 2;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem; font-weight: 700;
+  color: white; text-decoration: none;
+}
+.left-logo span { color: var(--orange); }
+
+.left-content {
+  position: relative; z-index: 2;
+  margin: auto 0;
+}
+.left-headline {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 3.2vw, 2.8rem);
+  font-weight: 900; color: white;
+  line-height: 1.1; letter-spacing: -0.03em;
+  margin-bottom: 1.2rem;
+}
+.left-headline em {
+  font-style: italic;
+  background: linear-gradient(135deg, var(--orange), var(--gold2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.left-sub {
+  font-size: 0.9rem; color: rgba(255,255,255,0.45);
+  font-weight: 300; line-height: 1.7;
+  max-width: 32ch; margin-bottom: 2rem;
+}
+
+/* Feature list */
+.features {
+  display: flex; flex-direction: column; gap: 0.75rem;
+}
+.feat-row {
+  display: flex; align-items: center; gap: 0.85rem;
+  animation: featIn 0.5s ease both;
+}
+.feat-row:nth-child(1) { animation-delay: 0.1s; }
+.feat-row:nth-child(2) { animation-delay: 0.2s; }
+.feat-row:nth-child(3) { animation-delay: 0.3s; }
+.feat-row:nth-child(4) { animation-delay: 0.4s; }
+@keyframes featIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.feat-icon {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+.feat-text { font-size: 0.83rem; color: rgba(255,255,255,0.7); font-weight: 300; }
+.feat-text strong { color: white; font-weight: 500; }
+
+/* Bottom */
+.left-bottom {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; gap: 0.85rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.avatars { display: flex; }
+.av {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid var(--brown);
+  margin-left: -7px; font-size: 0.7rem;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-weight: 700;
+}
+.av:first-child { margin-left: 0; }
+.av1 { background: linear-gradient(135deg,#f4732a,#fbbf24); }
+.av2 { background: linear-gradient(135deg,#7c5cbf,#b8a0e8); }
+.av3 { background: linear-gradient(135deg,#2dab80,#60a5fa); }
+.av4 { background: linear-gradient(135deg,#f472b6,#f4732a); }
+.join-text { font-size: 0.75rem; color: rgba(255,255,255,0.38); }
+.join-text strong { color: rgba(255,255,255,0.7); }
+
+/* ── RIGHT PANEL ── */
+.right-panel {
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 3rem 2rem;
+  background: var(--cream);
+  position: relative;
+}
+.right-panel::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(244,115,42,0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+.form-wrap {
+  width: 100%; max-width: 420px;
+  position: relative; z-index: 1;
+}
+
+/* ── STEP INDICATOR ── */
+.step-indicator {
+  display: flex; align-items: center; gap: 0;
+  margin-bottom: 2rem;
+}
+.step-item {
+  display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+  flex: 1; position: relative;
+}
+.step-item:not(:last-child)::after {
+  content: ''; position: absolute;
+  top: 14px; left: 50%; width: 100%; height: 1.5px;
+  background: var(--border);
+  transition: background 0.4s;
+}
+.step-item.done:not(:last-child)::after,
+.step-item.active:not(:last-child)::after { background: var(--orange); }
+
+.step-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--cream);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; color: var(--muted);
+  position: relative; z-index: 1;
+  transition: all 0.3s;
+}
+.step-item.active .step-dot {
+  border-color: var(--orange); background: var(--orange);
+  color: white; box-shadow: 0 0 0 4px rgba(244,115,42,0.12);
+}
+.step-item.done .step-dot {
+  border-color: var(--orange); background: var(--orange); color: white;
+}
+.step-label {
+  font-size: 0.62rem; color: var(--muted);
+  white-space: nowrap; font-weight: 400;
+}
+.step-item.active .step-label,
+.step-item.done .step-label { color: var(--orange); font-weight: 500; }
+
+/* ── PANELS ── */
+.panel { display: none; animation: panelIn 0.4s ease both; }
+.panel.active { display: block; }
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.panel-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: var(--orange-pale); color: var(--orange);
+  border: 1px solid rgba(244,115,42,0.2);
+  font-size: 0.72rem; font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 0.3rem 0.85rem; border-radius: 100px;
+  margin-bottom: 0.9rem;
+}
+.panel-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.9rem; font-weight: 900;
+  letter-spacing: -0.03em; line-height: 1.1;
+  color: var(--brown); margin-bottom: 0.5rem;
+}
+.panel-sub {
+  font-size: 0.86rem; color: var(--muted);
+  font-weight: 300; line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+.panel-sub a { color: var(--orange); font-weight: 500; text-decoration: none; }
+.panel-sub a:hover { text-decoration: underline; }
+
+/* Social */
+.social-btns {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0.65rem; margin-bottom: 1.4rem;
+}
+.social-btn {
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  border: 1.5px solid var(--border); border-radius: 0.75rem;
+  background: white; font-size: 0.82rem; font-weight: 500;
+  color: var(--brown); cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.18s; text-decoration: none;
+}
+.social-btn:hover {
+  border-color: var(--border2);
+  box-shadow: 0 4px 16px rgba(26,22,18,0.08);
+  transform: translateY(-1px);
+}
+
+/* Divider */
+.divider {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin-bottom: 1.4rem;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+.divider span { font-size: 0.72rem; color: var(--muted); font-weight: 400; white-space: nowrap; }
+
+/* Form fields */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.form-group { margin-bottom: 0.9rem; }
+.form-label {
+  display: block; font-size: 0.75rem;
+  color: var(--muted); font-weight: 400; margin-bottom: 0.38rem;
+}
+.input-wrap { position: relative; }
+.form-input {
+  width: 100%; padding: 0.78rem 1rem 0.78rem 2.6rem;
+  border: 1.5px solid var(--border); border-radius: 0.75rem;
+  background: white; color: var(--brown);
+  font-size: 0.88rem; font-family: 'DM Sans', sans-serif;
+  font-weight: 400; outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  -webkit-appearance: none;
+}
+.form-input:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(244,115,42,0.1);
+}
+.form-input::placeholder { color: rgba(156,136,120,0.45); }
+.form-input.error { border-color: var(--red); box-shadow: 0 0 0 3px rgba(224,82,82,0.08); }
+.input-icon {
+  position: absolute; left: 0.85rem; top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.95rem; pointer-events: none; opacity: 0.45;
+}
+.toggle-pass {
+  position: absolute; right: 0.85rem; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  font-size: 0.78rem; color: var(--muted);
+  font-family: 'DM Mono', monospace; padding: 0.15rem;
+  transition: color 0.15s;
+}
+.toggle-pass:hover { color: var(--orange); }
+.form-error { font-size: 0.7rem; color: var(--red); margin-top: 0.28rem; display: none; }
+.form-error.show { display: block; }
+
+/* Password strength */
+.strength-wrap { margin-top: 0.5rem; }
+.strength-bars { display: flex; gap: 4px; margin-bottom: 0.25rem; }
+.sbar {
+  flex: 1; height: 3px; border-radius: 100px;
+  background: var(--border); transition: background 0.3s;
+}
+.sbar.weak   { background: var(--red); }
+.sbar.fair   { background: var(--gold); }
+.sbar.strong { background: var(--emerald); }
+.strength-label { font-size: 0.68rem; color: var(--muted); }
+
+/* Terms checkbox */
+.terms-row {
+  display: flex; align-items: flex-start; gap: 0.65rem;
+  margin-bottom: 1.2rem;
+}
+.checkbox-wrap {
+  position: relative; width: 18px; height: 18px;
+  flex-shrink: 0; margin-top: 1px;
+}
+.checkbox-wrap input {
+  position: absolute; opacity: 0;
+  width: 100%; height: 100%; cursor: pointer; margin: 0;
+}
+.checkbox-box {
+  width: 18px; height: 18px;
+  border: 1.5px solid var(--border); border-radius: 4px;
+  background: white; display: flex; align-items: center;
+  justify-content: center; transition: all 0.18s;
+  pointer-events: none; font-size: 0.65rem; color: white;
+}
+.checkbox-wrap input:checked ~ .checkbox-box {
+  background: var(--orange); border-color: var(--orange);
+}
+.terms-text {
+  font-size: 0.78rem; color: var(--muted);
+  font-weight: 300; line-height: 1.5;
+}
+.terms-text a { color: var(--orange); font-weight: 500; text-decoration: none; }
+.terms-text a:hover { text-decoration: underline; }
+
+/* ── PLAN CARDS (Step 2) ── */
+.plans-grid { display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.4rem; }
+.plan-card {
+  border: 1.5px solid var(--border);
+  border-radius: 1rem; padding: 1rem 1.1rem;
+  cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; gap: 1rem;
+  background: white; position: relative;
+}
+.plan-card:hover { border-color: var(--border2); box-shadow: 0 4px 18px rgba(26,22,18,0.07); }
+.plan-card.selected-orange { border-color: var(--orange); border-width: 2px; box-shadow: 0 0 0 3px rgba(244,115,42,0.08); }
+.plan-card.selected-gold   { border-color: var(--gold);   border-width: 2px; box-shadow: 0 0 0 3px rgba(201,149,42,0.1); }
+.plan-card.selected-palace { border-color: var(--palace); border-width: 2px; box-shadow: 0 0 0 3px rgba(124,92,191,0.1); }
+
+.plan-popular {
+  position: absolute; top: -10px; left: 1rem;
+  background: var(--orange); color: white;
+  font-size: 0.58rem; font-weight: 500;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 0.15rem 0.6rem; border-radius: 100px;
+}
+.plan-icon-wrap {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; flex-shrink: 0;
+}
+.plan-info { flex: 1; min-width: 0; }
+.plan-name { font-size: 0.88rem; font-weight: 500; color: var(--brown); }
+.plan-perks { font-size: 0.7rem; color: var(--muted); margin-top: 0.12rem; line-height: 1.4; }
+.plan-price-wrap { text-align: right; flex-shrink: 0; }
+.plan-price {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem; font-weight: 700; color: var(--brown);
+}
+.plan-price.free { color: var(--emerald); }
+.plan-period { font-size: 0.62rem; color: var(--muted); }
+.plan-radio {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 1.5px solid var(--border); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.18s; background: white;
+}
+.plan-radio::after {
+  content: ''; width: 8px; height: 8px; border-radius: 50%;
+  background: white; opacity: 0; transition: opacity 0.15s;
+}
+.plan-card.selected-orange .plan-radio { background: var(--orange); border-color: var(--orange); }
+.plan-card.selected-gold   .plan-radio { background: var(--gold);   border-color: var(--gold); }
+.plan-card.selected-palace .plan-radio { background: var(--palace); border-color: var(--palace); }
+.plan-card.selected-orange .plan-radio::after,
+.plan-card.selected-gold   .plan-radio::after,
+.plan-card.selected-palace .plan-radio::after { opacity: 1; }
+
+/* Buttons row */
+.btn-row { display: flex; gap: 0.75rem; margin-bottom: 1.1rem; }
+.btn-back {
+  padding: 0.88rem 1.3rem;
+  border: 1.5px solid var(--border); border-radius: 0.875rem;
+  background: white; color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem; font-weight: 400; cursor: pointer;
+  transition: all 0.18s; white-space: nowrap;
+}
+.btn-back:hover { border-color: var(--border2); color: var(--brown); }
+.btn-submit {
+  flex: 1; padding: 0.88rem 1.5rem;
+  background: var(--orange); color: white;
+  border: none; border-radius: 0.875rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem; font-weight: 500;
+  cursor: pointer; transition: all 0.2s;
+  box-shadow: 0 4px 18px rgba(244,115,42,0.32);
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  position: relative; overflow: hidden;
+}
+.btn-submit::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 60%);
+}
+.btn-submit:hover { background: var(--orange2); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(244,115,42,0.42); }
+.btn-submit:active { transform: translateY(0); }
+.btn-submit.loading { pointer-events: none; opacity: 0.8; }
+.btn-arrow { transition: transform 0.2s; }
+.btn-submit:hover .btn-arrow { transform: translateX(4px); }
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+.btn-submit.loading .spinner { display: block; }
+.btn-submit.loading .btn-text,
+.btn-submit.loading .btn-arrow { display: none; }
+
+.login-link { text-align: center; font-size: 0.82rem; color: var(--muted); }
+.login-link a { color: var(--orange); font-weight: 500; text-decoration: none; }
+.login-link a:hover { text-decoration: underline; }
+
+/* Success */
+.success-state {
+  display: none; text-align: center;
+  padding: 2.5rem 0; animation: panelIn 0.4s ease both;
+}
+.success-icon {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: rgba(45,171,128,0.1);
+  border: 2px solid rgba(45,171,128,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; margin: 0 auto 1.25rem;
+}
+.success-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem; font-weight: 700; color: var(--brown); margin-bottom: 0.5rem;
+}
+.success-sub { font-size: 0.88rem; color: var(--muted); font-weight: 300; line-height: 1.6; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  body { grid-template-columns: 1fr; }
+  .left-panel { display: none; }
+  .right-panel { padding: 2rem 1.5rem; min-height: 100vh; }
+  .form-wrap { max-width: 100%; }
+  .form-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── LEFT PANEL ── -->
+<div class="left-panel">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+
+  <a href="index.html" class="left-logo">Krea<span>Town</span></a>
+
+  <div class="left-content">
+    <h1 class="left-headline">Build your<br>own <em>Town.</em><br>Own your fans.</h1>
+    <p class="left-sub">No algorithm. No middleman. Just you, your content, and the fans who love it.</p>
+    <div class="features">
+      <div class="feat-row">
+        <div class="feat-icon">🏡</div>
+        <div class="feat-text"><strong>Your own creator town</strong> — a world fans live in</div>
+      </div>
+      <div class="feat-row">
+        <div class="feat-icon">💰</div>
+        <div class="feat-text"><strong>Keep 95%+ of earnings</strong> — we take only a small cut</div>
+      </div>
+      <div class="feat-row">
+        <div class="feat-icon">💬</div>
+        <div class="feat-text"><strong>Tiered rooms & DMs</strong> — real fan community</div>
+      </div>
+      <div class="feat-row">
+        <div class="feat-icon">📺</div>
+        <div class="feat-text"><strong>Radio, TV, live rooms</strong> — immersive experiences</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="left-bottom">
+    <div class="avatars">
+      <div class="av av1">T</div>
+      <div class="av av2">S</div>
+      <div class="av av3">C</div>
+      <div class="av av4">E</div>
+    </div>
+    <div class="join-text"><strong>1,200+ creators</strong> already building their town</div>
+  </div>
+</div>
+
+<!-- ── RIGHT PANEL ── -->
+<div class="right-panel">
+  <div class="form-wrap">
+
+    <!-- Step indicator -->
+    <div class="step-indicator">
+      <div class="step-item active" id="si1">
+        <div class="step-dot">1</div>
+        <div class="step-label">Your account</div>
+      </div>
+      <div class="step-item" id="si2">
+        <div class="step-dot">2</div>
+        <div class="step-label">Choose plan</div>
+      </div>
+    </div>
+
+    <!-- ── STEP 1 — Account details ── -->
+    <div class="panel active" id="panel1">
+      <div class="panel-eyebrow">🏡 Join KreaTown</div>
+      <h2 class="panel-title">Create your<br>account</h2>
+      <p class="panel-sub">
+        Already have an account? <a href="login.html">Log in →</a>
+      </p>
+
+      <!-- Social -->
+      <div class="social-btns">
+        <a href="#" class="social-btn"><span>🔵</span> Google</a>
+        <a href="#" class="social-btn"><span>⬛</span> Apple</a>
+      </div>
+      <div class="divider"><span>or sign up with email</span></div>
+
+      <!-- Fields -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="firstName">First name</label>
+          <div class="input-wrap">
+            <span class="input-icon">👤</span>
+            <input type="text" id="firstName" class="form-input" placeholder="Topraq" autocomplete="given-name">
+          </div>
+          <div class="form-error" id="firstNameErr">Required</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="lastName">Last name</label>
+          <div class="input-wrap">
+            <span class="input-icon">👤</span>
+            <input type="text" id="lastName" class="form-input" placeholder="Toros" autocomplete="family-name">
+          </div>
+          <div class="form-error" id="lastNameErr">Required</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="username">Username (your town URL)</label>
+        <div class="input-wrap">
+          <span class="input-icon">🏷️</span>
+          <input type="text" id="username" class="form-input" placeholder="topraq" autocomplete="username" style="padding-left:2.6rem">
+        </div>
+        <div class="form-error" id="usernameErr">Username required (letters, numbers, _ only)</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email address</label>
+        <div class="input-wrap">
+          <span class="input-icon">✉️</span>
+          <input type="email" id="email" class="form-input" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="form-error" id="emailErr">Please enter a valid email</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <div class="input-wrap">
+          <span class="input-icon">🔒</span>
+          <input type="password" id="password" class="form-input" placeholder="At least 8 characters" autocomplete="new-password" style="padding-right:3.5rem">
+          <button type="button" class="toggle-pass" id="togglePass">show</button>
+        </div>
+        <div class="strength-wrap" id="strengthWrap" style="display:none">
+          <div class="strength-bars">
+            <div class="sbar" id="sb1"></div>
+            <div class="sbar" id="sb2"></div>
+            <div class="sbar" id="sb3"></div>
+            <div class="sbar" id="sb4"></div>
+          </div>
+          <div class="strength-label" id="strengthLabel"></div>
+        </div>
+        <div class="form-error" id="passErr">Password must be at least 8 characters</div>
+      </div>
+
+      <!-- Terms -->
+      <div class="terms-row">
+        <label class="checkbox-wrap">
+          <input type="checkbox" id="terms">
+          <div class="checkbox-box">✓</div>
+        </label>
+        <div class="terms-text">
+          I agree to KreaTown's <a href="terms.html" target="_blank">Terms of Service</a> and <a href="privacy.html" target="_blank">Privacy Policy</a>
+        </div>
+      </div>
+
+      <button type="button" class="btn-submit" id="nextBtn" onclick="goToStep2()">
+        <span class="btn-text">Continue to plan →</span>
+        <span class="btn-arrow"></span>
+        <div class="spinner"></div>
+      </button>
+
+      <div class="login-link" style="margin-top:1rem">
+        Already a member? <a href="login.html">Log in here</a>
+      </div>
+    </div>
+
+    <!-- ── STEP 2 — Choose plan ── -->
+    <div class="panel" id="panel2">
+      <div class="panel-eyebrow">🏡 Almost there</div>
+      <h2 class="panel-title">Choose your<br>plan</h2>
+      <p class="panel-sub">Start free. Upgrade anytime. No hidden fees.</p>
+
+      <div class="plans-grid" id="plansGrid">
+
+        <!-- Starter -->
+        <div class="plan-card selected-orange" data-plan="starter" data-color="orange" onclick="selectPlan(this)">
+          <div class="plan-icon-wrap" style="background:var(--orange-pale)">🌱</div>
+          <div class="plan-info">
+            <div class="plan-name">Starter</div>
+            <div class="plan-perks">Free for 3 months · 5% cut · Perfect to start</div>
+          </div>
+          <div class="plan-price-wrap">
+            <div class="plan-price free">Free</div>
+            <div class="plan-period">then $19/mo</div>
+          </div>
+          <div class="plan-radio"></div>
+        </div>
+
+        <!-- Pro -->
+        <div class="plan-card" data-plan="pro" data-color="gold" onclick="selectPlan(this)">
+          <div class="plan-popular">Most popular</div>
+          <div class="plan-icon-wrap" style="background:var(--gold-pale)">👑</div>
+          <div class="plan-info">
+            <div class="plan-name">Pro</div>
+            <div class="plan-perks">$29/mo · 5% cut · Advanced analytics + rooms</div>
+          </div>
+          <div class="plan-price-wrap">
+            <div class="plan-price">$29</div>
+            <div class="plan-period">per month</div>
+          </div>
+          <div class="plan-radio"></div>
+        </div>
+
+        <!-- Studio -->
+        <div class="plan-card" data-plan="studio" data-color="palace" onclick="selectPlan(this)">
+          <div class="plan-icon-wrap" style="background:var(--palace-pale)">🏯</div>
+          <div class="plan-info">
+            <div class="plan-name">Studio</div>
+            <div class="plan-perks">$49/mo · Only 3% cut · Full platform access</div>
+          </div>
+          <div class="plan-price-wrap">
+            <div class="plan-price">$49</div>
+            <div class="plan-period">per month</div>
+          </div>
+          <div class="plan-radio"></div>
+        </div>
+
+      </div>
+
+      <div class="btn-row">
+        <button type="button" class="btn-back" onclick="goToStep1()">← Back</button>
+        <button type="button" class="btn-submit" id="createBtn" onclick="createAccount()">
+          <span class="btn-text">Create my town 🏡</span>
+          <div class="spinner"></div>
+        </button>
+      </div>
+
+      <div class="login-link">
+        Already a member? <a href="login.html">Log in here</a>
+      </div>
+    </div>
+
+    <!-- Success -->
+    <div class="success-state" id="successState">
+      <div class="success-icon">🏡</div>
+      <div class="success-title">Your town is ready!</div>
+      <p class="success-sub">Welcome to KreaTown.<br>Taking you to your dashboard now…</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ── PASSWORD TOGGLE ── */
+const passEl   = document.getElementById('password');
+const toggleBtn = document.getElementById('togglePass');
+toggleBtn.addEventListener('click', () => {
+  const isText = passEl.type === 'text';
+  passEl.type = isText ? 'password' : 'text';
+  toggleBtn.textContent = isText ? 'show' : 'hide';
+});
+
+/* ── PASSWORD STRENGTH ── */
+passEl.addEventListener('input', () => {
+  const val = passEl.value;
+  const wrap = document.getElementById('strengthWrap');
+  if (!val) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+
+  let score = 0;
+  if (val.length >= 8)  score++;
+  if (/[A-Z]/.test(val)) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+
+  const bars   = ['sb1','sb2','sb3','sb4'];
+  const labels = ['','Weak','Fair','Strong','Very strong'];
+  const cls    = ['','weak','fair','strong','strong'];
+
+  bars.forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.className = 'sbar';
+    if (i < score) el.classList.add(cls[score]);
+  });
+  document.getElementById('strengthLabel').textContent = labels[score];
+  document.getElementById('strengthLabel').style.color =
+    score <= 1 ? 'var(--red)' : score === 2 ? 'var(--gold)' : 'var(--emerald)';
+});
+
+/* ── CLEAR ERRORS ON INPUT ── */
+['firstName','lastName','username','email','password'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', () => {
+    el.classList.remove('error');
+    const err = document.getElementById(id + 'Err');
+    if (err) err.classList.remove('show');
+  });
+});
+
+/* ── PLAN SELECTION ── */
+function selectPlan(card) {
+  document.querySelectorAll('.plan-card').forEach(c => {
+    c.className = 'plan-card';
+  });
+  const color = card.dataset.color;
+  card.classList.add('selected-' + color);
+}
+
+/* ── STEP 1 VALIDATION ── */
+function validateStep1() {
+  let ok = true;
+  const fields = [
+    { id: 'firstName', errId: 'firstNameErr', test: v => v.trim().length > 0 },
+    { id: 'lastName',  errId: 'lastNameErr',  test: v => v.trim().length > 0 },
+    { id: 'username',  errId: 'usernameErr',  test: v => /^[a-zA-Z0-9_]{3,}$/.test(v.trim()) },
+    { id: 'email',     errId: 'emailErr',     test: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) },
+    { id: 'password',  errId: 'passErr',      test: v => v.length >= 8 },
+  ];
+  fields.forEach(({ id, errId, test }) => {
+    const el  = document.getElementById(id);
+    const err = document.getElementById(errId);
+    if (!test(el.value)) {
+      el.classList.add('error');
+      err.classList.add('show');
+      ok = false;
+    }
+  });
+  if (!document.getElementById('terms').checked) {
+    alert('Please agree to the Terms of Service and Privacy Policy to continue.');
+    ok = false;
+  }
+  return ok;
+}
+
+/* ── NAVIGATE ── */
+function goToStep2() {
+  if (!validateStep1()) return;
+  document.getElementById('panel1').classList.remove('active');
+  document.getElementById('panel2').classList.add('active');
+  document.getElementById('si1').classList.remove('active');
+  document.getElementById('si1').classList.add('done');
+  document.getElementById('si2').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goToStep1() {
+  document.getElementById('panel2').classList.remove('active');
+  document.getElementById('panel1').classList.add('active');
+  document.getElementById('si1').classList.remove('done');
+  document.getElementById('si1').classList.add('active');
+  document.getElementById('si2').classList.remove('active');
+}
+
+/* ── SUPABASE JS SDK ── */
+const _sUrl = 'https://pkhoyabazudqmfczkhax.supabase.co';
+const _sKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
+let _sb;
+async function initSB() {
+  const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
+  _sb = createClient(_sUrl, _sKey);
+}
+initSB();
+
+/* ── CREATE ACCOUNT ── */
+async function createAccount() {
+  const btn = document.getElementById('createBtn');
+  btn.classList.add('loading');
+
+  const email     = document.getElementById('email').value.trim();
+  const password  = document.getElementById('password').value;
+  const firstName = document.getElementById('firstName').value.trim();
+  const lastName  = document.getElementById('lastName').value.trim();
+  const username  = document.getElementById('username').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');
+
+  try {
+    const { data, error } = await _sb.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          username,
+          display_name: firstName + ' ' + lastName,
+          full_name: firstName + ' ' + lastName
+        }
+      }
+    });
+
+    if (error) {
+      btn.classList.remove('loading');
+      alert(error.message || 'Registration failed. Please try again.');
+      return;
+    }
+
+    /* Success */
+    localStorage.setItem('kt_user', JSON.stringify({
+      id: data.user.id,
+      email: data.user.email
+    }));
+
+    btn.classList.remove('loading');
+    document.getElementById('panel2').style.display = 'none';
+    document.getElementById('successState').style.display = 'block';
+    document.querySelector('.step-indicator').style.opacity = '0';
+
+    if (data.session) {
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 1800);
+    } else {
+      document.querySelector('.success-title').textContent = 'Check your email! 📧';
+      document.querySelector('.success-sub').textContent = 'We sent a confirmation link to ' + email;
+    }
+
+  } catch (err) {
+    btn.classList.remove('loading');
+    alert('Connection error: ' + err.message);
+  }
+}
+</script>
+</body>
+</html>
