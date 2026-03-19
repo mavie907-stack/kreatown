@@ -891,9 +891,9 @@ async function getProfile(userId, token) {
 async function initDashboard() {
   const session = getSession();
 
-  // If no session at all → redirect to login
+  // No redirect — just load profile if session exists
   if (!session) {
-    window.location.href = 'login.html';
+    console.log('No session found');
     return;
   }
 

@@ -384,21 +384,63 @@ body {
 </div>
 
 <script>
-/* ── DATA ── */
-const MEMBERS = [
-  { id:1,  name:'Kaan Öztürk',   handle:'kaan',       emoji:'🎨', tier:'palace', online:true,  joined:'Jan 2026', revenue:'$588', posts:24, msgs:12 },
-  { id:2,  name:'Selin Kaya',    handle:'selinkaya',  emoji:'🌸', tier:'palace', online:true,  joined:'Nov 2025', revenue:'$522', posts:18, msgs:31 },
-  { id:3,  name:'Berk Doğan',    handle:'berkd',      emoji:'🔥', tier:'palace', online:false, joined:'Oct 2025', revenue:'$490', posts:9,  msgs:7  },
-  { id:4,  name:'Naz Aydın',     handle:'naz',        handle2:'naz', emoji:'💫', tier:'palace', online:true,  joined:'Dec 2025', revenue:'$441', posts:6,  msgs:22 },
-  { id:5,  name:'Tarık Bal',     handle:'tarikbal',   emoji:'🌙', tier:'palace', online:false, joined:'Feb 2026', revenue:'$392', posts:3,  msgs:5  },
-  { id:6,  name:'Lara Şimşek',   handle:'lara',       emoji:'💎', tier:'palace', online:true,  joined:'Mar 2026', revenue:'$294', posts:2,  msgs:14 },
-  { id:7,  name:'Yusuf Aktaş',   handle:'yusuf',      emoji:'⚡', tier:'palace', online:false, joined:'Jan 2026', revenue:'$392', posts:11, msgs:3  },
-  { id:8,  name:'Mia Tanaka',    handle:'mia',        emoji:'🌺', tier:'palace', online:true,  joined:'Feb 2026', revenue:'$441', posts:7,  msgs:19 },
-  { id:9,  name:'Cem Arslan',    handle:'cemarslan',  emoji:'🎸', tier:'gold',   online:true,  joined:'Oct 2025', revenue:'$319', posts:5,  msgs:8  },
-  { id:10, name:'Elif Yıldız',   handle:'elif',       emoji:'🌿', tier:'gold',   online:false, joined:'Nov 2025', revenue:'$290', posts:14, msgs:4  },
-  { id:11, name:'Deniz Kurt',    handle:'denizkurt',  emoji:'🎯', tier:'gold',   online:true,  joined:'Dec 2025', revenue:'$261', posts:8,  msgs:17 },
-  { id:12, name:'Ayşe Mercan',   handle:'ayse',       emoji:'💡', tier:'gold',   online:false, joined:'Jan 2026', revenue:'$203', posts:3,  msgs:2  },
-];
+/* ── SUPABASE CONFIG ── */
+const SB_URL = 'https://pkhoyabazudqmfczkhax.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
+
+/* ── DEMO DATA (shown while loading) ── */
+let MEMBERS = [];
+
+/* ── LOAD FROM SUPABASE ── */
+async function loadMembers() {
+  try {
+    const session = JSON.parse(localStorage.getItem('kt_session') || '{}');
+    const token = session.access_token || SB_KEY;
+
+    const res = await fetch(SB_URL + '/rest/v1/profiles?select=*&order=created_at.desc', {
+      headers: {
+        'apikey': SB_KEY,
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!res.ok) throw new Error('Failed to load');
+
+    const data = await res.json();
+
+    // Map Supabase profiles to our format
+    MEMBERS = data.map((p, i) => ({
+      id:       p.id,
+      name:     p.display_name || p.username || 'Member',
+      handle:   p.username || 'member',
+      emoji:    p.avatar_url ? null : ['🎨','🌸','🔥','💫','🌙','💎','⚡','🌺','🎸','🌿','🎯','💡'][i % 12],
+      avatar:   p.avatar_url || null,
+      tier:     p.tier || 'free',
+      status:   p.status || 'active',
+      online:   false,
+      joined:   new Date(p.created_at).toLocaleDateString('en', {month:'short', year:'numeric'}),
+      revenue:  '$0',
+      posts:    0,
+      msgs:     0,
+      is_admin: p.is_admin || false
+    }));
+
+    // Update count
+    const countEl = document.getElementById('memberCount');
+    if (countEl) countEl.textContent = MEMBERS.length + ' total members';
+
+    const topbarSub = document.querySelector('.topbar-sub');
+    if (topbarSub) topbarSub.textContent = MEMBERS.length + ' total · ' + MEMBERS.filter(m=>m.tier==='palace').length + ' Palace · ' + MEMBERS.filter(m=>m.tier==='gold').length + ' Gold';
+
+    renderMembers();
+
+  } catch(err) {
+    console.error('Failed to load members:', err);
+    // Show empty state with message
+    document.getElementById('membersGrid').innerHTML = '<div style="padding:3rem;text-align:center;color:var(--text2);grid-column:1/-1">No members yet — they will appear here after signing up! 🏡</div>';
+  }
+}
 
 const TIER_CFG = {
   palace: { label:'🏯 Palace', badge:'badge-palace', cardClass:'mc-palace', color:'var(--palace2)', tierSel:'selected-palace' },
@@ -531,8 +573,13 @@ function closeDrawer() {
 }
 
 /* ── INIT ── */
-setTimeout(() => { document.getElementById('lvlFill').style.width = '62%'; }, 300);
-renderMembers();
+setTimeout(() => {
+  const lvl = document.getElementById('lvlFill');
+  if (lvl) lvl.style.width = '62%';
+}, 300);
+
+// Load real members from Supabase
+loadMembers();
 </script>
 </body>
 </html>

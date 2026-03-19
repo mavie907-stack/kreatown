@@ -1,5 +1,26 @@
 {
   "buildCommand": null,
   "outputDirectory": ".",
-  "framework": null
+  "framework": null,
+  "rewrites": [
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/earnings", "destination": "/earnings.html" },
+    { "source": "/members", "destination": "/members.html" },
+    { "source": "/messages", "destination": "/messages.html" },
+    { "source": "/settings", "destination": "/settings.html" },
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/register", "destination": "/register.html" },
+    { "source": "/rooms", "destination": "/rooms.html" },
+    { "source": "/radio", "destination": "/radio.html" },
+    { "source": "/tv", "destination": "/tv.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
+    }
+  ]
 }
