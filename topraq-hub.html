@@ -770,114 +770,15 @@ nav {
   <!-- FEED -->
   <div class="feed fu2">
     <div class="feed-tabs">
-      <button class="feed-tab active">All Posts</button>
-      <button class="feed-tab">Free</button>
-      <button class="feed-tab">Members</button>
-      <button class="feed-tab">Palace</button>
+      <button class="feed-tab active" onclick="filterPosts(this,'all')">All Posts</button>
+      <button class="feed-tab" onclick="filterPosts(this,'free')">🌱 Free</button>
+      <button class="feed-tab" onclick="filterPosts(this,'silver')">⭐ Silver</button>
+      <button class="feed-tab" onclick="filterPosts(this,'gold')">👑 Gold</button>
+      <button class="feed-tab" onclick="filterPosts(this,'palace')">🏯 Palace</button>
     </div>
-
-    <!-- Post 1: Free -->
-    <div class="post-card">
-      <div class="post-header">
-        <div class="post-avatar">🎨</div>
-        <div class="post-meta">
-          <div class="post-author">Topraq Toros</div>
-          <div class="post-date">March 10, 2026</div>
-        </div>
-        <span class="post-tier-badge tier-free">🌱 Free</span>
-      </div>
-      <div class="post-body">
-        <div class="post-title">🚀 How I grew to 10k followers in 6 months</div>
-        <p class="post-excerpt">In this post I break down exactly what I did — no fluff, no paid ads. Just the systems, the mindset shifts, and the exact content strategy that changed everything for me. Starting from zero, posting into the void, wondering if anyone was listening...</p>
-      </div>
-      <div class="post-footer">
-        <button class="post-action">❤️ 142</button>
-        <button class="post-action">💬 38</button>
-        <button class="post-action">🔗 Share</button>
-      </div>
+    <div id="postsContainer">
+      <div style="padding:2rem;text-align:center;color:var(--muted);font-size:0.85rem">Loading posts…</div>
     </div>
-
-    <!-- Post 2: Gold locked -->
-    <div class="post-card">
-      <div class="post-header">
-        <div class="post-avatar">🎨</div>
-        <div class="post-meta">
-          <div class="post-author">Topraq Toros</div>
-          <div class="post-date">March 8, 2026</div>
-        </div>
-        <span class="post-tier-badge tier-gold-badge">👑 Gold</span>
-      </div>
-      <div class="post-body">
-        <div class="post-title">My full content strategy breakdown</div>
-      </div>
-      <div class="post-locked">
-        <div class="post-locked-blur">
-          <span class="lock-icon">🔒</span>
-          <p class="lock-msg">This post is exclusive to Gold members. Unlock everything in the Gold tier — strategy docs, Q&As, and behind-the-scenes content.</p>
-          <button class="btn-unlock unlock-gold" onclick="openModal()">👑 Unlock Gold · $19/mo</button>
-        </div>
-      </div>
-      <div class="post-footer">
-        <button class="post-action">❤️ 89</button>
-        <button class="post-action">💬 21</button>
-        <button class="post-action">🔗 Share</button>
-      </div>
-    </div>
-
-    <!-- Post 3: Silver locked -->
-    <div class="post-card">
-      <div class="post-header">
-        <div class="post-avatar">🎨</div>
-        <div class="post-meta">
-          <div class="post-author">Topraq Toros</div>
-          <div class="post-date">March 5, 2026</div>
-        </div>
-        <span class="post-tier-badge tier-silver-badge">⭐ Silver</span>
-      </div>
-      <div class="post-body">
-        <div class="post-title">Behind the scenes: my studio setup</div>
-      </div>
-      <div class="post-locked">
-        <div class="post-locked-blur">
-          <span class="lock-icon">🔒</span>
-          <p class="lock-msg">Silver members get inside the house. Gear lists, setup tours, and monthly creator calls.</p>
-          <button class="btn-unlock unlock-gold" onclick="openModal()" style="background:rgba(143,163,181,0.12);color:#4a6275;border:1px solid rgba(143,163,181,0.3);">⭐ Unlock Silver · $9/mo</button>
-        </div>
-      </div>
-      <div class="post-footer">
-        <button class="post-action">❤️ 67</button>
-        <button class="post-action">💬 14</button>
-        <button class="post-action">🔗 Share</button>
-      </div>
-    </div>
-
-    <!-- Post 4: Palace exclusive -->
-    <div class="post-card">
-      <div class="post-header">
-        <div class="post-avatar">🎨</div>
-        <div class="post-meta">
-          <div class="post-author">Topraq Toros</div>
-          <div class="post-date">Feb 28, 2026</div>
-        </div>
-        <span class="post-tier-badge tier-palace-badge">🏯 Palace</span>
-      </div>
-      <div class="post-body">
-        <div class="post-title">1-on-1 strategy session recordings</div>
-      </div>
-      <div class="post-locked">
-        <div class="post-locked-blur">
-          <span class="lock-icon">🏯</span>
-          <p class="lock-msg">Palace members sit at the top of the hill with me. Direct access, private sessions, and the full view.</p>
-          <button class="btn-unlock unlock-palace" onclick="openModal()">🏯 Enter the Palace · $49/mo</button>
-        </div>
-      </div>
-      <div class="post-footer">
-        <button class="post-action">❤️ 203</button>
-        <button class="post-action">💬 55</button>
-        <button class="post-action">🔗 Share</button>
-      </div>
-    </div>
-
   </div><!-- /feed -->
 
   <!-- SIDEBAR -->
@@ -1054,60 +955,163 @@ nav {
 const SB_URL='https://pkhoyabazudqmfczkhax.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
 
+const TIER_ORDER = ['free','silver','gold','palace'];
+const TIER_LABELS = {free:'🌱 Free',silver:'⭐ Silver',gold:'👑 Gold',palace:'🏯 Palace'};
+const TIER_BADGE_CLASS = {free:'tier-free',silver:'tier-silver-badge',gold:'tier-gold-badge',palace:'tier-palace-badge'};
+const UNLOCK_BTN = {
+  silver:'<button class="btn-unlock" onclick="openModal()" style="background:rgba(143,163,181,0.12);color:#4a6275;border:1px solid rgba(143,163,181,0.3)">⭐ Unlock Silver · $9/mo</button>',
+  gold:'<button class="btn-unlock unlock-gold" onclick="openModal()">👑 Unlock Gold · $19/mo</button>',
+  palace:'<button class="btn-unlock unlock-palace" onclick="openModal()">🏯 Enter the Palace · $49/mo</button>'
+};
+
+let allPosts = [];
+let postFilter = 'all';
+
 function getSession(){
   try{const s=JSON.parse(localStorage.getItem('kt_session')||'{}');return s.access_token?s:null;}
   catch(e){return null;}
 }
 
-/* Load profile from Supabase on page load */
+/* Load creator profile & posts on page load */
 window.addEventListener('DOMContentLoaded', async () => {
   const session = getSession();
-  if(!session) return;
-  const userId = session.user_id || session.id;
-  const token  = session.access_token;
 
-  try{
-    const res = await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+userId+'&select=*',{
-      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token}
+  /* Load my tier */
+  let myTier = 'free';
+  let myProfile = null;
+  if(session){
+    const uid = session.user_id||session.id;
+    const res = await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+uid+'&select=tier,display_name,avatar_url,username',{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}
     });
     const data = await res.json();
-    const p = data[0];
-    if(!p) return;
+    myProfile = data[0];
+    myTier = myProfile?.tier || 'free';
 
-    // Update name
-    const nameEl = document.querySelector('.profile-name');
-    if(nameEl && p.display_name) nameEl.textContent = p.display_name;
+    /* Update sidebar avatar */
+    if(myProfile?.avatar_url){
+      const av = document.querySelector('.sc-avatar');
+      if(av) av.innerHTML = '<img src="'+myProfile.avatar_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+    }
+  }
 
-    // Update handle
-    const handleEl = document.querySelector('.profile-handle');
-    if(handleEl && p.username) handleEl.textContent = '@'+p.username;
+  /* Load creator profile (Topraq) */
+  const creatorRes = await fetch(SB_URL+'/rest/v1/profiles?username=eq.topraq&select=*',{
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+  });
+  const creatorData = await creatorRes.json();
+  const creator = creatorData[0];
 
-    // Update bio
-    const bioEl = document.querySelector('.profile-bio');
-    if(bioEl && p.bio) bioEl.textContent = p.bio;
-
-    // Update avatar — settings'ten gelen fotoğrafı göster
-    if(p.avatar_url){
+  if(creator){
+    /* Update avatar */
+    if(creator.avatar_url){
       const photo = document.getElementById('avatarPhoto');
-      if(photo){
-        photo.src = p.avatar_url+'?t='+Date.now();
-        photo.style.display = 'block';
-      }
-      const avatarEl = document.getElementById('profileAvatar');
-      if(avatarEl) avatarEl.style.fontSize = '0';
+      if(photo){ photo.src=creator.avatar_url+'?t='+Date.now(); photo.style.display='block'; }
+      const profileAv = document.getElementById('profileAvatar');
+      if(profileAv) profileAv.style.fontSize='0';
     }
-
-    // Update banner
-    if(p.banner_url){
+    /* Update banner */
+    if(creator.banner_url){
       const banner = document.querySelector('.banner-img');
-      if(banner) banner.style.backgroundImage = 'url('+p.banner_url+')';
+      if(banner) banner.style.backgroundImage='url('+creator.banner_url+')';
     }
+    /* Update bio */
+    if(creator.bio){
+      const bioEl = document.querySelector('.profile-bio');
+      if(bioEl) bioEl.textContent = creator.bio;
+    }
+  }
 
-    // Store
-    localStorage.setItem('kt_profile', JSON.stringify(p));
-
-  }catch(e){console.log('Profile load error:',e);}
+  /* Load posts */
+  await loadPosts(myTier, creator?.id);
 });
+
+async function loadPosts(myTier, creatorId){
+  try{
+    let url = SB_URL+'/rest/v1/posts?is_published=eq.true&order=created_at.desc&select=*';
+    if(creatorId) url += '&creator_id=eq.'+creatorId;
+
+    const res = await fetch(url,{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+    });
+    if(!res.ok) throw new Error('Failed');
+    allPosts = await res.json();
+    renderPosts(myTier);
+  }catch(e){
+    document.getElementById('postsContainer').innerHTML =
+      '<div style="padding:2rem;text-align:center;color:var(--muted)">No posts yet — check back soon! 🏡</div>';
+  }
+}
+
+function renderPosts(myTier){
+  const container = document.getElementById('postsContainer');
+  const myTierN   = TIER_ORDER.indexOf(myTier);
+
+  let filtered = allPosts;
+  if(postFilter !== 'all') filtered = allPosts.filter(p => p.tier_required === postFilter);
+
+  if(!filtered.length){
+    container.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--muted)">No posts in this category yet.</div>';
+    return;
+  }
+
+  container.innerHTML = filtered.map((p, i) => {
+    const postTierN = TIER_ORDER.indexOf(p.tier_required||'free');
+    const locked    = myTierN < postTierN || (myTierN === 0 && i >= 3);
+    const date      = new Date(p.created_at).toLocaleDateString('en',{month:'long',day:'numeric',year:'numeric'});
+
+    return `<div class="post-card">
+      <div class="post-header">
+        <div class="post-avatar">🎨</div>
+        <div class="post-meta">
+          <div class="post-author">Topraq Toros</div>
+          <div class="post-date">${date}</div>
+        </div>
+        <span class="post-tier-badge ${TIER_BADGE_CLASS[p.tier_required||'free']}">${TIER_LABELS[p.tier_required||'free']}</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">${p.title}</div>
+        ${!locked && p.content ? `<p class="post-excerpt">${p.excerpt||p.content.substring(0,200)}</p>` : ''}
+        ${p.cover_url && !locked ? `<img src="${p.cover_url}" style="width:100%;border-radius:0.75rem;margin-top:0.75rem;max-height:320px;object-fit:cover" alt="">` : ''}
+      </div>
+      ${locked ? `<div class="post-locked">
+        <div class="post-locked-blur">
+          <span class="lock-icon">🔒</span>
+          <p class="lock-msg">This post is for ${TIER_LABELS[p.tier_required||'free']} members.</p>
+          ${UNLOCK_BTN[p.tier_required||'silver']||''}
+        </div>
+      </div>` : ''}
+      <div class="post-footer">
+        <button class="post-action" onclick="react('${p.id}','heart',this)">❤️ ${p.reactions_heart||0}</button>
+        <button class="post-action" onclick="react('${p.id}','fire',this)">🔥 ${p.reactions_fire||0}</button>
+        <button class="post-action">🔗 Share</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterPosts(btn, filter){
+  document.querySelectorAll('.feed-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  postFilter = filter;
+  const session = getSession();
+  const myTier  = JSON.parse(localStorage.getItem('kt_profile')||'{}').tier || 'free';
+  renderPosts(myTier);
+}
+
+async function react(postId, type, btn){
+  const col = type==='heart' ? 'reactions_heart' : 'reactions_fire';
+  const emoji = type==='heart' ? '❤️' : '🔥';
+  const cur   = parseInt(btn.textContent.replace(/[^0-9]/g,''))||0;
+  btn.textContent = emoji+' '+(cur+1);
+  btn.style.color = 'var(--orange)';
+
+  await fetch(SB_URL+'/rest/v1/rpc/increment_reaction',{
+    method:'POST',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
+    body:JSON.stringify({post_id:postId,col_name:col})
+  }).catch(()=>{});
+}
 
 function openModal() {
   document.getElementById('joinModal').classList.add('open');
@@ -1119,10 +1123,13 @@ function selectTier(el) {
   document.querySelectorAll('.modal-tier').forEach(t => t.classList.remove('selected'));
   el.classList.add('selected');
   const price = el.querySelector('.modal-tier-price').textContent;
+  const name = el.querySelector('.modal-tier-name').textContent;
   const btn = document.querySelector('.btn-modal-join');
-  btn.textContent = price === 'Free'
-    ? 'Join for free — Enter the town 🏡'
-    : `Join for ${price} — Enter the town 🏡`;
+  if (price === 'Free') {
+    btn.textContent = 'Join for free — Enter the town 🏡';
+  } else {
+    btn.textContent = `Join for ${price} — Enter the town 🏡`;
+  }
 }
 
 // Tab switching
@@ -1133,71 +1140,21 @@ document.querySelectorAll('.feed-tab').forEach(tab => {
   });
 });
 
-/* Upload avatar directly from topraq-hub */
-async function handleAvatarUpload(event) {
+function handleAvatarUpload(event) {
   const file = event.target.files[0];
-  if(!file) return;
-
-  const session = getSession();
-  if(!session){ alert('Please log in first'); return; }
-
-  const userId = session.user_id || session.id;
-  const token  = session.access_token;
-  const ext    = file.name.split('.').pop();
-  const path   = userId+'.'+ext;
-
-  // Preview immediately
+  if (!file) return;
   const reader = new FileReader();
-  reader.onload = function(e){
+  reader.onload = function(e) {
     const photo = document.getElementById('avatarPhoto');
-    if(photo){ photo.src = e.target.result; photo.style.display = 'block'; }
-    const avatarEl = document.getElementById('profileAvatar');
-    if(avatarEl) avatarEl.style.fontSize = '0';
+    const avatar = document.getElementById('profileAvatar');
+    photo.src = e.target.result;
+    photo.style.display = 'block';
+    // hide the emoji once photo is set
+    avatar.childNodes.forEach(node => {
+      if (node.nodeType === 3) node.textContent = '';
+    });
   };
   reader.readAsDataURL(file);
-
-  try{
-    // Upload to Supabase Storage
-    await fetch(SB_URL+'/storage/v1/object/avatars/'+path,{
-      method:'POST',
-      headers:{
-        'apikey':SB_KEY,
-        'Authorization':'Bearer '+token,
-        'Content-Type':file.type,
-        'x-upsert':'true'
-      },
-      body:file
-    });
-
-    const avatarUrl = SB_URL+'/storage/v1/object/public/avatars/'+path;
-
-    // Save to profile
-    await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+userId,{
-      method:'PATCH',
-      headers:{
-        'apikey':SB_KEY,
-        'Authorization':'Bearer '+token,
-        'Content-Type':'application/json',
-        'Prefer':'return=minimal'
-      },
-      body:JSON.stringify({avatar_url: avatarUrl})
-    });
-
-    // Update localStorage
-    const profile = JSON.parse(localStorage.getItem('kt_profile')||'{}');
-    profile.avatar_url = avatarUrl;
-    localStorage.setItem('kt_profile', JSON.stringify(profile));
-
-    // Show success
-    const toast = document.createElement('div');
-    toast.textContent = '✅ Photo saved!';
-    toast.style.cssText = 'position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#2dab80;color:white;padding:0.6rem 1.5rem;border-radius:100px;font-size:0.85rem;z-index:9999;animation:fadeIn .3s ease';
-    document.body.appendChild(toast);
-    setTimeout(()=>toast.remove(), 2500);
-
-  }catch(err){
-    console.error('Upload error:', err);
-  }
 }
 </script>
 
