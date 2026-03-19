@@ -1005,10 +1005,20 @@ window.addEventListener('DOMContentLoaded', async () => {
   if(creator){
     /* Update avatar */
     if(creator.avatar_url){
-      const photo = document.getElementById('avatarPhoto');
-      if(photo){ photo.src=creator.avatar_url+'?t='+Date.now(); photo.style.display='block'; }
       const profileAv = document.getElementById('profileAvatar');
-      if(profileAv) profileAv.style.fontSize='0';
+      if(profileAv){
+        profileAv.style.fontSize='0';
+        profileAv.style.background='transparent';
+        // Remove existing img if any
+        const oldImg = profileAv.querySelector('img.avatar-photo');
+        if(oldImg) oldImg.remove();
+        // Create fresh img
+        const img = document.createElement('img');
+        img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;z-index:2;display:block';
+        img.src = creator.avatar_url+'?t='+Date.now();
+        img.alt = 'Profile photo';
+        profileAv.appendChild(img);
+      }
     }
     /* Update banner */
     if(creator.banner_url){
@@ -1028,8 +1038,10 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 async function loadPosts(myTier, creatorId){
   try{
+    // Show all published posts (community feed style)
     let url = SB_URL+'/rest/v1/posts?is_published=eq.true&order=created_at.desc&select=*';
-    if(creatorId) url += '&creator_id=eq.'+creatorId;
+    // Optional: filter by creator - comment out for community feed
+    // if(creatorId) url += '&creator_id=eq.'+creatorId;
 
     const res = await fetch(url,{
       headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}

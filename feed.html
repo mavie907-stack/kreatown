@@ -382,7 +382,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 async function loadFeed(){
   try{
     const res = await fetch(
-      SB_URL+'/rest/v1/posts?is_published=eq.true&order=created_at.desc&limit=50&select=*,profiles(id,username,display_name,avatar_url,tier)',
+      SB_URL+'/rest/v1/posts?is_published=eq.true&order=created_at.desc&limit=50&select=id,title,content,excerpt,cover_url,type,tier_required,reactions_heart,reactions_fire,created_at,user_id,profiles!posts_user_id_fkey(id,username,display_name,avatar_url,tier)',
       { headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY} }
     );
     if(!res.ok) throw new Error('Failed');
@@ -409,7 +409,7 @@ function renderFeed(){
   }
 
   container.innerHTML = filtered.map((p, i) => {
-    const profile   = p.profiles || {};
+    const profile   = (Array.isArray(p.profiles) ? p.profiles[0] : p.profiles) || {};
     const tier      = profile.tier || 'free';
     const name      = profile.display_name || profile.username || 'Member';
     const handle    = profile.username || '';
