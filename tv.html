@@ -601,29 +601,32 @@ nav {
         </div>
       </div>
 
-      <!-- UPLOAD CARD (admin only) -->
-      <div class="upload-card" onclick="document.getElementById('videoUpload').click()">
+      <!-- ADD LINK CARD -->
+      <div class="upload-card" onclick="document.getElementById('ytUrl').focus();document.getElementById('ytUrl').scrollIntoView({behavior:'smooth'})">
         <div class="upload-card-icon">＋</div>
-        <div class="upload-card-text">Add your channel</div>
-        <div class="upload-card-hint">Paste a YouTube link or upload</div>
+        <div class="upload-card-text">Share a video</div>
+        <div class="upload-card-hint">YouTube · Vimeo · Twitch</div>
       </div>
-      <input type="file" id="videoUpload" accept="video/*" style="display:none" onchange="handleVideoUpload(event)">
 
     </div>
   </div>
 
-  <!-- PASTE URL SECTION -->
+  <!-- ADD VIDEO LINK SECTION -->
   <div class="fu4" style="margin-top:1rem;">
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:1rem;padding:1.1rem 1.25rem;display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
-      <div style="flex:1;min-width:200px;">
-        <div style="font-size:0.82rem;font-weight:500;color:var(--text1);margin-bottom:0.3rem;">📎 Add a YouTube music channel</div>
-        <div style="font-size:0.65rem;color:var(--text3);">Paste any YouTube video URL — music channels, concerts, live sets</div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:1rem;padding:1.1rem 1.25rem;">
+      <div style="font-size:0.82rem;font-weight:500;color:var(--text1);margin-bottom:0.5rem;">📎 Share a video with the room</div>
+      <div style="font-size:0.65rem;color:var(--text3);margin-bottom:0.75rem;">Paste a YouTube, Vimeo or Twitch link</div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <input type="text" id="ytUrl" placeholder="https://youtube.com/watch?v=... or vimeo.com/..." 
+          style="flex:1;min-width:200px;background:var(--bg3);border:1px solid var(--border);border-radius:0.5rem;padding:0.5rem 0.75rem;font-size:0.78rem;color:var(--text1);outline:none;font-family:'DM Sans',sans-serif;"
+          onfocus="this.style.borderColor='var(--palace)'" onblur="this.style.borderColor='var(--border)'"
+          onkeydown="if(event.key==='Enter')addVideoLink()">
+        <button onclick="addVideoLink()" style="background:var(--palace);color:white;border:none;border-radius:0.5rem;padding:0.5rem 1rem;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;">▶ Play in room</button>
       </div>
-      <div style="display:flex;gap:0.5rem;flex:1;min-width:220px;">
-        <input type="text" id="ytUrl" placeholder="https://youtube.com/watch?v=..." 
-          style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:0.5rem;padding:0.5rem 0.75rem;font-size:0.78rem;color:var(--text1);outline:none;font-family:'DM Sans',sans-serif;"
-          onfocus="this.style.borderColor='var(--palace)'" onblur="this.style.borderColor='var(--border)'">
-        <button onclick="addYouTube()" style="background:var(--palace);color:white;border:none;border-radius:0.5rem;padding:0.5rem 1rem;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:all .15s;" onmouseover="this.style.background='#9a7ad4'" onmouseout="this.style.background='var(--palace)'">Add Channel</button>
+      <!-- Shared links list -->
+      <div id="tvSharedLinks" style="margin-top:0.75rem;display:none">
+        <div style="font-size:0.65rem;color:var(--text3);margin-bottom:0.4rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.06em">Recently shared</div>
+        <div id="tvLinksList"></div>
       </div>
     </div>
   </div>

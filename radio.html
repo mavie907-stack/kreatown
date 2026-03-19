@@ -501,6 +501,29 @@ nav {
   .ctrl-btn.play-btn { width: 46px; height: 46px; }
 }
 
+
+/* EMBED MODAL */
+.embed-modal{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem}
+.embed-modal.open{display:flex}
+.em-box{background:#1a1510;border:1px solid rgba(255,255,255,0.13);border-radius:1.25rem;padding:1.75rem;width:100%;max-width:480px}
+.em-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:rgba(255,255,255,0.92);margin-bottom:0.5rem}
+.em-sub{font-size:0.75rem;color:rgba(255,255,255,0.35);margin-bottom:1.25rem;line-height:1.6}
+.em-input{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:0.75rem;color:rgba(255,255,255,0.9);font-family:'DM Sans',sans-serif;font-size:0.85rem;padding:0.7rem 1rem;outline:none;margin-bottom:0.85rem;transition:border-color .15s}
+.em-input:focus{border-color:rgba(212,136,42,0.5)}.em-input::placeholder{color:rgba(255,255,255,0.25)}
+.em-platforms{display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap}
+.em-plat{padding:0.32rem 0.75rem;border-radius:100px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.45);font-size:0.72rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.em-plat:hover{border-color:rgba(255,255,255,0.25);color:rgba(255,255,255,0.8)}
+.em-acts{display:flex;gap:0.5rem;justify-content:flex-end}
+.em-btn{padding:0.5rem 1rem;border-radius:0.6rem;font-size:0.8rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;border:1px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6)}
+.em-btn:hover{border-color:rgba(255,255,255,0.2);color:rgba(255,255,255,0.9)}
+.em-btn.primary{background:#d4882a;border-color:#d4882a;color:white}.em-btn.primary:hover{background:#e8a040}
+.shared-link{display:flex;align-items:center;gap:0.65rem;padding:0.6rem 0;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer}
+.shared-link:last-child{border-bottom:none}
+.shared-link:hover{background:rgba(255,255,255,0.02);margin:0 -0.85rem;padding:0.6rem 0.85rem}
+.sl-ico{font-size:1.1rem;width:28px;text-align:center;flex-shrink:0}
+.sl-info{flex:1}.sl-title{font-size:0.8rem;color:rgba(255,255,255,0.85)}.sl-sub{font-size:0.65rem;color:rgba(255,255,255,0.35);font-family:'DM Mono',monospace}
+.sl-del{background:none;border:none;color:rgba(255,255,255,0.2);cursor:pointer;font-size:0.75rem;padding:0.2rem 0.4rem;border-radius:0.35rem}
+.sl-del:hover{background:rgba(224,82,82,0.12);color:#e05252}
 </style>
 </head>
 <body>
@@ -719,13 +742,23 @@ nav {
           <span class="si-tier tier-palace">🏯</span>
         </div>
 
-        <!-- Upload zone (admin only) -->
-        <div class="upload-zone" onclick="document.getElementById('fileUpload').click()">
-          <div class="upload-icon">＋</div>
-          <div class="upload-text">Add a track or playlist</div>
-          <div class="upload-hint">MP3, WAV, FLAC · or paste a stream URL</div>
+        <!-- Embed Link System -->
+        <div id="embedSection">
+          <div id="embedPlayer" style="display:none;margin:0.85rem 0;border-radius:0.75rem;overflow:hidden"></div>
+          <div class="upload-zone" id="addLinkBtn" onclick="openEmbedModal()">
+            <div class="upload-icon">＋</div>
+            <div class="upload-text">Add Spotify · SoundCloud · YouTube</div>
+            <div class="upload-hint">Paste a link to share music with members</div>
+          </div>
         </div>
-        <input type="file" id="fileUpload" accept="audio/*" style="display:none" onchange="handleUpload(event)">
+      </div>
+
+      <!-- SHARED PLAYLISTS (from Supabase) -->
+      <div class="panel-card" id="sharedLinksCard" style="display:none">
+        <div class="panel-header">
+          <div class="panel-title">🎵 Shared playlists</div>
+        </div>
+        <div id="sharedLinksList"></div>
       </div>
 
     </div><!-- /station-panel -->
@@ -981,5 +1014,25 @@ window.addEventListener('load', () => {
   animateTuner(freqToPercent('88.5 FM'));
 });
 </script>
+
+<!-- EMBED LINK MODAL -->
+<div class="embed-modal" id="embedModal" onclick="if(event.target===this)closeEmbedModal()">
+  <div class="em-box">
+    <div class="em-title">🎵 Add music link</div>
+    <div class="em-sub">Paste a Spotify, SoundCloud, YouTube or Apple Music link.<br>It will be shared with all members in the room.</div>
+    <div class="em-platforms">
+      <span class="em-plat" onclick="setEmbedExample('spotify')">🎵 Spotify</span>
+      <span class="em-plat" onclick="setEmbedExample('soundcloud')">🌊 SoundCloud</span>
+      <span class="em-plat" onclick="setEmbedExample('youtube')">▶ YouTube</span>
+      <span class="em-plat" onclick="setEmbedExample('apple')">🍎 Apple Music</span>
+    </div>
+    <input class="em-input" id="embedUrl" placeholder="https://open.spotify.com/playlist/...">
+    <div class="em-acts">
+      <button class="em-btn" onclick="closeEmbedModal()">Cancel</button>
+      <button class="em-btn primary" onclick="addEmbedLink()">Add to room ✅</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
