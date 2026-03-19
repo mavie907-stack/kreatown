@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log in — KreaTown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream:      #fffbf5;
+  --cream-dark: #f5efe3;
+  --brown:      #1a1612;
+  --brown-mid:  #4a3728;
+  --muted:      #9c8878;
+  --orange:     #f4732a;
+  --orange2:    #ff9555;
+  --orange-pale:#fff0e6;
+  --gold:       #c9952a;
+  --gold2:      #f5d58a;
+  --emerald:    #2dab80;
+  --red:        #e05252;
+  --border:     rgba(156,136,120,0.18);
+  --border2:    rgba(156,136,120,0.32);
+  --shadow:     0 8px 40px rgba(26,22,18,0.10);
+  --shadow-lg:  0 24px 80px rgba(26,22,18,0.14);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--brown);
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* ── LEFT PANEL — VISUAL ── */
+.left-panel {
+  position: relative;
+  background: var(--brown);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2.5rem;
+  min-height: 100vh;
+}
+
+/* Animated dot grid */
+.left-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(244,115,42,0.15) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+/* Warm glow blobs */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(60px);
+}
+.blob1 {
+  width: 420px; height: 420px;
+  background: radial-gradient(circle, rgba(244,115,42,0.22) 0%, transparent 70%);
+  top: -80px; right: -80px;
+  animation: blobFloat 9s ease-in-out infinite;
+}
+.blob2 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(201,149,42,0.15) 0%, transparent 70%);
+  bottom: 60px; left: -40px;
+  animation: blobFloat 12s ease-in-out infinite reverse;
+}
+@keyframes blobFloat {
+  0%,100% { transform: translate(0,0) scale(1); }
+  50%      { transform: translate(20px,-30px) scale(1.06); }
+}
+
+.left-logo {
+  position: relative; z-index: 2;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem; font-weight: 700;
+  color: white; text-decoration: none;
+  display: flex; align-items: center; gap: 0.4rem;
+}
+.left-logo span { color: var(--orange); }
+
+/* Town illustration card */
+.town-card {
+  position: relative; z-index: 2;
+  margin: auto 0;
+}
+.town-headline {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 900;
+  color: white;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.2rem;
+}
+.town-headline em {
+  font-style: italic;
+  background: linear-gradient(135deg, var(--orange), var(--gold2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.town-sub {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.5);
+  font-weight: 300;
+  line-height: 1.7;
+  max-width: 34ch;
+  margin-bottom: 2rem;
+}
+
+/* Floating member cards */
+.member-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+.member-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 0.875rem;
+  padding: 0.75rem 1rem;
+  backdrop-filter: blur(8px);
+  animation: cardIn 0.6s ease both;
+}
+.member-card:nth-child(1) { animation-delay: 0.1s; }
+.member-card:nth-child(2) { animation-delay: 0.2s; }
+.member-card:nth-child(3) { animation-delay: 0.3s; }
+@keyframes cardIn {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.mc-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; flex-shrink: 0;
+}
+.mc-info { flex: 1; min-width: 0; }
+.mc-name  { font-size: 0.82rem; font-weight: 500; color: rgba(255,255,255,0.88); }
+.mc-role  { font-size: 0.7rem; color: rgba(255,255,255,0.38); margin-top: 0.05rem; }
+.mc-tier {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem; font-weight: 500;
+  padding: 0.18rem 0.55rem; border-radius: 100px;
+}
+.tier-palace { background: rgba(124,92,191,0.2); color: #b8a0e8; border: 1px solid rgba(124,92,191,0.3); }
+.tier-gold   { background: rgba(201,149,42,0.2);  color: #f5d58a; border: 1px solid rgba(201,149,42,0.3); }
+.tier-silver { background: rgba(143,163,181,0.2); color: #8fa3b5; border: 1px solid rgba(143,163,181,0.3); }
+
+/* Bottom stat bar */
+.left-stats {
+  position: relative; z-index: 2;
+  display: flex;
+  gap: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.lstat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem; font-weight: 700;
+  color: white; display: block;
+  letter-spacing: -0.02em;
+}
+.lstat-label {
+  font-size: 0.72rem; color: rgba(255,255,255,0.38);
+  margin-top: 0.1rem;
+}
+
+/* ── RIGHT PANEL — FORM ── */
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 2rem;
+  background: var(--cream);
+  position: relative;
+}
+
+/* Subtle background pattern */
+.right-panel::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(244,115,42,0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+.form-wrap {
+  width: 100%;
+  max-width: 400px;
+  position: relative; z-index: 1;
+  animation: formIn 0.5s ease both;
+}
+@keyframes formIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.form-header { margin-bottom: 2rem; }
+.form-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: var(--orange-pale);
+  color: var(--orange);
+  border: 1px solid rgba(244,115,42,0.2);
+  font-size: 0.72rem; font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 0.3rem 0.85rem; border-radius: 100px;
+  margin-bottom: 1rem;
+}
+.form-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem; font-weight: 900;
+  letter-spacing: -0.03em; line-height: 1.1;
+  color: var(--brown);
+  margin-bottom: 0.5rem;
+}
+.form-sub {
+  font-size: 0.88rem; color: var(--muted);
+  font-weight: 300; line-height: 1.6;
+}
+.form-sub a {
+  color: var(--orange); font-weight: 500;
+  text-decoration: none;
+}
+.form-sub a:hover { text-decoration: underline; }
+
+/* Social login */
+.social-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+  margin-bottom: 1.5rem;
+}
+.social-btn {
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: 0.75rem;
+  background: white;
+  font-size: 0.82rem; font-weight: 500;
+  color: var(--brown); cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.18s; text-decoration: none;
+}
+.social-btn:hover {
+  border-color: var(--border2);
+  box-shadow: 0 4px 16px rgba(26,22,18,0.08);
+  transform: translateY(-1px);
+}
+.social-icon { font-size: 1rem; }
+
+/* Divider */
+.divider {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: var(--border);
+}
+.divider span {
+  font-size: 0.72rem; color: var(--muted);
+  font-weight: 400; white-space: nowrap;
+}
+
+/* Form fields */
+.form-group {
+  margin-bottom: 1rem;
+}
+.form-label {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 0.75rem; color: var(--muted);
+  font-weight: 400; margin-bottom: 0.4rem;
+}
+.form-label a {
+  color: var(--orange); text-decoration: none; font-weight: 500;
+  font-size: 0.72rem;
+}
+.form-label a:hover { text-decoration: underline; }
+
+.input-wrap {
+  position: relative;
+}
+.form-input {
+  width: 100%;
+  padding: 0.8rem 1rem 0.8rem 2.75rem;
+  border: 1.5px solid var(--border);
+  border-radius: 0.75rem;
+  background: white;
+  color: var(--brown);
+  font-size: 0.9rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  -webkit-appearance: none;
+}
+.form-input:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(244,115,42,0.1);
+}
+.form-input::placeholder { color: rgba(156,136,120,0.5); }
+.form-input.error {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(224,82,82,0.08);
+}
+.input-icon {
+  position: absolute; left: 0.875rem; top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem; pointer-events: none;
+  opacity: 0.5;
+}
+.toggle-pass {
+  position: absolute; right: 0.875rem; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  font-size: 0.85rem; color: var(--muted);
+  padding: 0.15rem; transition: color 0.15s;
+  font-family: 'DM Mono', monospace;
+}
+.toggle-pass:hover { color: var(--orange); }
+.form-error {
+  font-size: 0.72rem; color: var(--red);
+  margin-top: 0.3rem; display: none;
+}
+.form-error.show { display: block; }
+
+/* Remember me */
+.remember-row {
+  display: flex; align-items: center; gap: 0.6rem;
+  margin-bottom: 1.25rem;
+}
+.checkbox-wrap {
+  position: relative; width: 18px; height: 18px; flex-shrink: 0;
+}
+.checkbox-wrap input {
+  position: absolute; opacity: 0; width: 100%; height: 100%;
+  cursor: pointer; margin: 0;
+}
+.checkbox-box {
+  width: 18px; height: 18px;
+  border: 1.5px solid var(--border);
+  border-radius: 4px; background: white;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.18s; pointer-events: none;
+  font-size: 0.65rem; color: white;
+}
+.checkbox-wrap input:checked ~ .checkbox-box {
+  background: var(--orange);
+  border-color: var(--orange);
+}
+.remember-label {
+  font-size: 0.8rem; color: var(--muted);
+  font-weight: 400; cursor: pointer;
+}
+
+/* Submit button */
+.btn-submit {
+  width: 100%;
+  padding: 0.9rem 1.5rem;
+  background: var(--orange);
+  color: white;
+  border: none; border-radius: 0.875rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem; font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(244,115,42,0.35);
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  position: relative; overflow: hidden;
+  margin-bottom: 1.25rem;
+}
+.btn-submit::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 60%);
+  pointer-events: none;
+}
+.btn-submit:hover {
+  background: var(--orange2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(244,115,42,0.45);
+}
+.btn-submit:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(244,115,42,0.3);
+}
+.btn-submit.loading { pointer-events: none; opacity: 0.8; }
+.btn-arrow { transition: transform 0.2s; }
+.btn-submit:hover .btn-arrow { transform: translateX(4px); }
+
+/* Spinner for loading state */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: none;
+}
+.btn-submit.loading .spinner { display: block; }
+.btn-submit.loading .btn-text,
+.btn-submit.loading .btn-arrow { display: none; }
+
+/* Register link */
+.register-link {
+  text-align: center;
+  font-size: 0.83rem; color: var(--muted);
+}
+.register-link a {
+  color: var(--orange); font-weight: 500;
+  text-decoration: none;
+}
+.register-link a:hover { text-decoration: underline; }
+
+/* Success state */
+.success-state {
+  display: none;
+  text-align: center;
+  padding: 2rem 0;
+  animation: formIn 0.4s ease both;
+}
+.success-icon {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: rgba(45,171,128,0.12);
+  border: 2px solid rgba(45,171,128,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; margin: 0 auto 1rem;
+}
+.success-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem; font-weight: 700;
+  color: var(--brown); margin-bottom: 0.4rem;
+}
+.success-sub { font-size: 0.88rem; color: var(--muted); font-weight: 300; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  body { grid-template-columns: 1fr; }
+  .left-panel { display: none; }
+  .right-panel { padding: 2.5rem 1.5rem; min-height: 100vh; }
+  .form-wrap { max-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── LEFT VISUAL PANEL ── -->
+<div class="left-panel">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+
+  <a href="index.html" class="left-logo">Krea<span>Town</span></a>
+
+  <div class="town-card">
+    <h1 class="town-headline">Welcome<br>back to your<br><em>Town.</em></h1>
+    <p class="town-sub">Your fans are waiting. Your content is live. Log in and see what's happening in your world.</p>
+    <div class="member-cards">
+      <div class="member-card">
+        <div class="mc-avatar" style="background:linear-gradient(135deg,#7c5cbf,#f4732a)">🎨</div>
+        <div class="mc-info">
+          <div class="mc-name">Topraq Toros</div>
+          <div class="mc-role">Just posted a new video</div>
+        </div>
+        <span class="mc-tier tier-palace">🏯 Palace</span>
+      </div>
+      <div class="member-card">
+        <div class="mc-avatar" style="background:linear-gradient(135deg,#c9952a,#f5d58a)">🌸</div>
+        <div class="mc-info">
+          <div class="mc-name">Selin K. joined</div>
+          <div class="mc-role">New Gold member · 2 min ago</div>
+        </div>
+        <span class="mc-tier tier-gold">👑 Gold</span>
+      </div>
+      <div class="member-card">
+        <div class="mc-avatar" style="background:linear-gradient(135deg,#8fa3b5,#60a5fa)">🎸</div>
+        <div class="mc-info">
+          <div class="mc-name">Cem A. subscribed</div>
+          <div class="mc-role">Silver member · 5 min ago</div>
+        </div>
+        <span class="mc-tier tier-silver">⭐ Silver</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="left-stats">
+    <div>
+      <span class="lstat-num">2.4k</span>
+      <div class="lstat-label">Active members</div>
+    </div>
+    <div>
+      <span class="lstat-num">$14.2k</span>
+      <div class="lstat-label">Paid out this month</div>
+    </div>
+    <div>
+      <span class="lstat-num">98%</span>
+      <div class="lstat-label">Uptime</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── RIGHT FORM PANEL ── -->
+<div class="right-panel">
+  <div class="form-wrap">
+
+    <!-- Header -->
+    <div class="form-header">
+      <div class="form-eyebrow">🏡 Welcome back</div>
+      <h2 class="form-title">Log in to<br>your town</h2>
+      <p class="form-sub">
+        New to KreaTown? <a href="register.html">Create your account →</a>
+      </p>
+    </div>
+
+    <!-- Social login -->
+    <div class="social-btns">
+      <a href="#" class="social-btn">
+        <span class="social-icon">🔵</span> Google
+      </a>
+      <a href="#" class="social-btn">
+        <span class="social-icon">⬛</span> Apple
+      </a>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider"><span>or continue with email</span></div>
+
+    <!-- Form -->
+    <form id="loginForm" novalidate>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label class="form-label" for="email">Email address</label>
+        <div class="input-wrap">
+          <span class="input-icon">✉️</span>
+          <input
+            type="email" id="email" name="email"
+            class="form-input" placeholder="you@example.com"
+            autocomplete="email"
+          >
+        </div>
+        <div class="form-error" id="emailError">Please enter a valid email address</div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label class="form-label" for="password">
+          Password
+          <a href="forgot-password.html">Forgot password?</a>
+        </label>
+        <div class="input-wrap">
+          <span class="input-icon">🔒</span>
+          <input
+            type="password" id="password" name="password"
+            class="form-input" placeholder="Your password"
+            autocomplete="current-password"
+            style="padding-right: 3.5rem;"
+          >
+          <button type="button" class="toggle-pass" id="togglePass" aria-label="Show password">show</button>
+        </div>
+        <div class="form-error" id="passError">Please enter your password</div>
+      </div>
+
+      <!-- Remember me -->
+      <div class="remember-row">
+        <label class="checkbox-wrap">
+          <input type="checkbox" id="remember" name="remember">
+          <div class="checkbox-box">✓</div>
+        </label>
+        <label class="remember-label" for="remember">Keep me logged in</label>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn-submit" id="submitBtn">
+        <span class="btn-text">Log in to KreaTown</span>
+        <span class="btn-arrow">→</span>
+        <div class="spinner"></div>
+      </button>
+
+      <div class="register-link">
+        Don't have an account? <a href="register.html">Sign up free 🏡</a>
+      </div>
+
+    </form>
+
+    <!-- Success state (shown after submit) -->
+    <div class="success-state" id="successState">
+      <div class="success-icon">✅</div>
+      <div class="success-title">You're in!</div>
+      <p class="success-sub">Taking you to your dashboard…</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const form      = document.getElementById('loginForm');
+const emailEl   = document.getElementById('email');
+const passEl    = document.getElementById('password');
+const emailErr  = document.getElementById('emailError');
+const passErr   = document.getElementById('passError');
+const submitBtn = document.getElementById('submitBtn');
+const toggleBtn = document.getElementById('togglePass');
+const success   = document.getElementById('successState');
+
+/* Toggle password visibility */
+toggleBtn.addEventListener('click', () => {
+  const isText = passEl.type === 'text';
+  passEl.type = isText ? 'password' : 'text';
+  toggleBtn.textContent = isText ? 'show' : 'hide';
+});
+
+/* Clear errors on input */
+emailEl.addEventListener('input', () => {
+  emailEl.classList.remove('error');
+  emailErr.classList.remove('show');
+});
+passEl.addEventListener('input', () => {
+  passEl.classList.remove('error');
+  passErr.classList.remove('show');
+});
+
+/* Validate */
+function validate() {
+  let ok = true;
+  const emailVal = emailEl.value.trim();
+  const passVal  = passEl.value;
+
+  if (!emailVal || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+    emailEl.classList.add('error');
+    emailErr.classList.add('show');
+    ok = false;
+  }
+  if (!passVal || passVal.length < 6) {
+    passEl.classList.add('error');
+    passErr.classList.add('show');
+    passErr.textContent = passVal ? 'Password must be at least 6 characters' : 'Please enter your password';
+    ok = false;
+  }
+  return ok;
+}
+
+/* ── SUPABASE JS SDK ── */
+const _sUrl = 'https://pkhoyabazudqmfczkhax.supabase.co';
+const _sKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
+let _sb;
+
+async function initSupabase() {
+  const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
+  _sb = createClient(_sUrl, _sKey);
+  // Check existing session
+  const { data: { session } } = await _sb.auth.getSession();
+  if (session) window.location.href = 'dashboard.html';
+}
+initSupabase();
+
+/* Submit */
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!validate()) return;
+  submitBtn.classList.add('loading');
+
+  try {
+    const { data, error } = await _sb.auth.signInWithPassword({
+      email: emailEl.value.trim(),
+      password: passEl.value
+    });
+
+    if (error) {
+      submitBtn.classList.remove('loading');
+      emailEl.classList.add('error');
+      emailErr.textContent = error.message === 'Email not confirmed'
+        ? 'Please confirm your email first.'
+        : error.message === 'Invalid login credentials'
+        ? 'Email or password is incorrect.'
+        : error.message;
+      emailErr.classList.add('show');
+      return;
+    }
+
+    /* Success */
+    localStorage.setItem('kt_user', JSON.stringify({
+      id: data.user.id,
+      email: data.user.email
+    }));
+    submitBtn.classList.remove('loading');
+    form.style.display = 'none';
+    success.style.display = 'block';
+    setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
+
+  } catch (err) {
+    submitBtn.classList.remove('loading');
+    emailErr.textContent = 'Connection error. Please try again.';
+    emailErr.classList.add('show');
+  }
+});
+</script>
+
+</body>
+</html>
