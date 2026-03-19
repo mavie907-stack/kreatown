@@ -879,7 +879,7 @@ async function uploadAvatar(input){
   const userId=session.user_id||session.id;
   const token=session.access_token;
   const ext=file.name.split('.').pop();
-  const path='avatars/'+userId+'.'+ext;
+  const path=userId+'.'+ext;
   
   const btn=document.getElementById('uploadBtn');
   const status=document.getElementById('uploadStatus');

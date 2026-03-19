@@ -1144,7 +1144,7 @@ async function handleAvatarUpload(event) {
   const userId = session.user_id || session.id;
   const token  = session.access_token;
   const ext    = file.name.split('.').pop();
-  const path   = 'avatars/'+userId+'.'+ext;
+  const path   = userId+'.'+ext;
 
   // Preview immediately
   const reader = new FileReader();
