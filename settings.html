@@ -211,23 +211,26 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     </div>
     <div class="sc-badge">ADMIN</div>
   </div>
-  <nav class="sidebar-nav">
+    <nav class="sidebar-nav">
     <div class="nav-section-label">Overview</div>
     <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
-    <a href="earnings.html"  class="nav-item"><span class="nav-icon">💰</span> Earnings</a>
-    <a href="members.html"   class="nav-item"><span class="nav-icon">👥</span> Members<span class="nav-badge">44</span></a>
+    <a href="earnings.html" class="nav-item"><span class="nav-icon">💰</span> Earnings</a>
+    <a href="members.html" class="nav-item"><span class="nav-icon">👥</span> Members <span class="nav-badge">44</span></a>
     <div class="nav-section-label">Content</div>
-    <a href="#" class="nav-item"><span class="nav-icon">✍️</span> Posts</a>
-    <a href="#" class="nav-item"><span class="nav-icon">🔒</span> Tiers</a>
-    <a href="messages.html" class="nav-item"><span class="nav-icon">💬</span> Messages<span class="nav-badge">3</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon">✍️</span> Posts <span style="font-size:0.55rem;color:var(--text3);margin-left:auto;padding:0.1rem 0.38rem;border:1px solid var(--border);border-radius:100px">Soon</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon">🔒</span> Tiers <span style="font-size:0.55rem;color:var(--text3);margin-left:auto;padding:0.1rem 0.38rem;border:1px solid var(--border);border-radius:100px">Soon</span></a>
+    <a href="messages.html" class="nav-item"><span class="nav-icon">💬</span> Messages <span class="nav-badge">3</span></a>
     <div class="nav-section-label">My Town</div>
     <a href="topraq-hub.html" class="nav-item"><span class="nav-icon">🏯</span> My Palace</a>
-    <a href="radio.html"      class="nav-item"><span class="nav-icon">🎵</span> 3D Radio</a>
-    <a href="tv.html"         class="nav-item"><span class="nav-icon">📺</span> 3D TV</a>
-    <a href="#"               class="nav-item"><span class="nav-icon">🏆</span> Competitions</a>
+    <a href="rooms.html" class="nav-item"><span class="nav-icon">🏠</span> Rooms</a>
+    <a href="radio.html" class="nav-item"><span class="nav-icon">🎵</span> 3D Radio</a>
+    <a href="tv.html" class="nav-item"><span class="nav-icon">📺</span> 3D TV</a>
+    <a href="kreatown-town-view.html" class="nav-item"><span class="nav-icon">🗺️</span> Town Map</a>
+    <a href="#" class="nav-item"><span class="nav-icon">🏆</span> Competitions <span style="font-size:0.55rem;color:var(--text3);margin-left:auto;padding:0.1rem 0.38rem;border:1px solid var(--border);border-radius:100px">Soon</span></a>
     <div class="nav-section-label">Settings</div>
     <a href="settings.html" class="nav-item active"><span class="nav-icon">⚙️</span> Settings</a>
-    <a href="settings.html#stripe" class="nav-item" onclick="switchSection('stripe');return false;"><span class="nav-icon">💳</span> Stripe Connect</a>
+    <a href="settings.html#stripe" class="nav-item"><span class="nav-icon">💳</span> Stripe Connect</a>
+    <a href="admin.html" class="nav-item" style="color:var(--orange);border-left:2px solid rgba(244,115,42,0.3)"><span class="nav-icon">👑</span> Admin Panel</a>
   </nav>
   <div class="sidebar-bottom">
     <div class="level-mini">
@@ -283,15 +286,17 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
           <div class="s-card-body">
             <div class="avatar-section">
               <div class="avatar-wrap">
-                <div class="big-avatar">🎨</div>
-                <div class="avatar-overlay" onclick="toast('Photo upload coming with Cloudinary integration! 📸')">📷</div>
+                <div class="big-avatar" id="bigAvatar">🎨</div>
+                <div class="avatar-overlay" onclick="document.getElementById('avatarInput').click()">📷</div>
+                <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
               </div>
               <div class="avatar-info">
                 <p>JPG, PNG or GIF. Max 2MB.<br>Recommended: 400×400px, square.</p>
                 <div class="avatar-btns">
-                  <button class="btn btn-primary" onclick="toast('Photo upload coming soon! 📸')">Upload photo</button>
-                  <button class="btn" onclick="toast('Photo removed!')">Remove</button>
+                  <button class="btn btn-primary" onclick="document.getElementById('avatarInput').click()" id="uploadBtn">Upload photo</button>
+                  <button class="btn" onclick="removeAvatar()">Remove</button>
                 </div>
+                <div id="uploadStatus" style="font-size:0.72rem;margin-top:0.5rem;display:none"></div>
               </div>
             </div>
             <div class="form-group">
@@ -806,6 +811,206 @@ function toast(msg) {
 
 /* ── URL HASH ── */
 if (location.hash === '#stripe') switchSection('stripe');
+</script>
+
+<script>
+/* ── SUPABASE SETTINGS ── */
+const SB_URL='https://pkhoyabazudqmfczkhax.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
+
+function getSession(){
+  try{const s=JSON.parse(localStorage.getItem('kt_session')||'{}');return s.access_token?s:null;}
+  catch(e){return null;}
+}
+
+/* Load profile on page load */
+window.addEventListener('DOMContentLoaded', async () => {
+  const session=getSession();
+  if(!session)return;
+  const userId=session.user_id||session.id;
+  const token=session.access_token;
+  try{
+    const res=await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+userId+'&select=*',{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token}
+    });
+    const data=await res.json();
+    const p=data[0];
+    if(!p)return;
+    localStorage.setItem('kt_profile',JSON.stringify(p));
+    // Fill form fields
+    if(p.display_name){
+      const parts=p.display_name.split(' ');
+      const fn=document.getElementById('firstName');
+      const ln=document.getElementById('lastName');
+      if(fn)fn.value=parts[0]||'';
+      if(ln)ln.value=parts.slice(1).join(' ')||'';
+    }
+    const bio=document.getElementById('bio');
+    if(bio&&p.bio)bio.value=p.bio;
+    // Avatar
+    if(p.avatar_url){
+      const av=document.getElementById('bigAvatar');
+      if(av)av.innerHTML='<img src="'+p.avatar_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+      // Sidebar too
+      const sc=document.querySelector('.sc-avatar');
+      if(sc)sc.innerHTML='<img src="'+p.avatar_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+    }
+    const ig=document.getElementById('instagram');
+    const tw=document.getElementById('twitter');
+    const yt=document.getElementById('youtube');
+    const ws=document.getElementById('website');
+    if(ig&&p.instagram)ig.value=p.instagram;
+    if(tw&&p.twitter)tw.value=p.twitter;
+    if(yt&&p.youtube)yt.value=p.youtube;
+    if(ws&&p.website)ws.value=p.website;
+  }catch(e){console.error('Profile load error:',e);}
+});
+
+/* Upload avatar to Supabase Storage */
+async function uploadAvatar(input){
+  const file=input.files[0];
+  if(!file)return;
+  if(file.size>2*1024*1024){toast('Max 2MB allowed!');return;}
+  
+  const session=getSession();
+  if(!session){toast('Please log in first');return;}
+  
+  const userId=session.user_id||session.id;
+  const token=session.access_token;
+  const ext=file.name.split('.').pop();
+  const path='avatars/'+userId+'.'+ext;
+  
+  const btn=document.getElementById('uploadBtn');
+  const status=document.getElementById('uploadStatus');
+  btn.textContent='Uploading...';
+  btn.disabled=true;
+  status.style.display='block';
+  status.style.color='var(--text2)';
+  status.textContent='Uploading...';
+
+  try{
+    // Upload to Supabase Storage
+    const uploadRes=await fetch(SB_URL+'/storage/v1/object/avatars/'+path,{
+      method:'POST',
+      headers:{
+        'apikey':SB_KEY,
+        'Authorization':'Bearer '+token,
+        'Content-Type':file.type,
+        'x-upsert':'true'
+      },
+      body:file
+    });
+
+    if(!uploadRes.ok){
+      const err=await uploadRes.json();
+      throw new Error(err.message||'Upload failed');
+    }
+
+    const avatarUrl=SB_URL+'/storage/v1/object/public/avatars/'+path;
+
+    // Update profile in database
+    await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+userId,{
+      method:'PATCH',
+      headers:{
+        'apikey':SB_KEY,
+        'Authorization':'Bearer '+token,
+        'Content-Type':'application/json',
+        'Prefer':'return=minimal'
+      },
+      body:JSON.stringify({avatar_url:avatarUrl})
+    });
+
+    // Update UI
+    const av=document.getElementById('bigAvatar');
+    if(av)av.innerHTML='<img src="'+avatarUrl+'?t='+Date.now()+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+    const sc=document.querySelector('.sc-avatar');
+    if(sc)sc.innerHTML='<img src="'+avatarUrl+'?t='+Date.now()+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+
+    // Update localStorage
+    const profile=JSON.parse(localStorage.getItem('kt_profile')||'{}');
+    profile.avatar_url=avatarUrl;
+    localStorage.setItem('kt_profile',JSON.stringify(profile));
+
+    status.style.color='var(--emerald)';
+    status.textContent='✅ Photo uploaded!';
+    btn.textContent='Upload photo';
+    btn.disabled=false;
+    toast('Profile photo updated! 🎉');
+
+  }catch(err){
+    status.style.color='var(--red)';
+    status.textContent='❌ '+err.message;
+    btn.textContent='Upload photo';
+    btn.disabled=false;
+    toast('Upload failed: '+err.message);
+  }
+}
+
+async function removeAvatar(){
+  const session=getSession();
+  if(!session)return;
+  const userId=session.user_id||session.id;
+  const token=session.access_token;
+  
+  await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+userId,{
+    method:'PATCH',
+    headers:{
+      'apikey':SB_KEY,
+      'Authorization':'Bearer '+token,
+      'Content-Type':'application/json',
+      'Prefer':'return=minimal'
+    },
+    body:JSON.stringify({avatar_url:null})
+  });
+
+  const av=document.getElementById('bigAvatar');
+  if(av)av.innerHTML='🎨';
+  const sc=document.querySelector('.sc-avatar');
+  if(sc)sc.innerHTML='🎨';
+  const profile=JSON.parse(localStorage.getItem('kt_profile')||'{}');
+  profile.avatar_url=null;
+  localStorage.setItem('kt_profile',JSON.stringify(profile));
+  toast('Photo removed!');
+}
+
+/* Save profile */
+async function saveProfile(){
+  const session=getSession();
+  if(!session){toast('Please log in first');return;}
+  const userId=session.user_id||session.id;
+  const token=session.access_token;
+  
+  const fn=document.getElementById('firstName')?.value||'';
+  const ln=document.getElementById('lastName')?.value||'';
+  const bio=document.getElementById('bio')?.value||'';
+  const instagram=document.getElementById('instagram')?.value||'';
+  const twitter=document.getElementById('twitter')?.value||'';
+  const youtube=document.getElementById('youtube')?.value||'';
+  const website=document.getElementById('website')?.value||'';
+
+  try{
+    const res=await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+userId,{
+      method:'PATCH',
+      headers:{
+        'apikey':SB_KEY,
+        'Authorization':'Bearer '+token,
+        'Content-Type':'application/json',
+        'Prefer':'return=minimal'
+      },
+      body:JSON.stringify({
+        display_name:(fn+' '+ln).trim(),
+        bio,instagram,twitter,youtube,website
+      })
+    });
+    if(res.ok){
+      toast('Profile saved! ✅');
+      const sc=document.querySelector('.sc-name');
+      if(sc)sc.textContent=(fn+' '+ln).trim();
+    }else{
+      toast('Save failed. Try again.');
+    }
+  }catch(e){toast('Connection error.');}
+}
 </script>
 </body>
 </html>

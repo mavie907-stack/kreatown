@@ -149,12 +149,109 @@ let currentRoom='lobby'
 function createParticles(colors){const c=document.getElementById('particles');c.innerHTML='';for(let i=0;i<18;i++){const p=document.createElement('div');p.className='particle';const s=Math.random()*4+2;p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${Math.random()*8+6}s;animation-delay:${Math.random()*6}s;`;c.appendChild(p)}}
 function renderRooms(){document.getElementById('roomList').innerHTML=ROOMS.map(r=>{const locked=TIER_ORDER.indexOf(MY_TIER)<TIER_ORDER.indexOf(r.tier);const active=r.id===currentRoom;return`<div class="room-item${active?' active':''}${locked?' locked':''}" onclick="selectRoom('${r.id}')"><span class="room-icon">${r.icon}</span><div class="room-info"><div class="room-name">${r.name}</div><div class="room-tier">${r.tierLabel}</div></div><span class="room-count">${r.online}</span>${active&&!locked?'<div class="online-dot"></div>':''}</div>`}).join('')}
 function renderMessages(room){const c=document.getElementById('messages');c.innerHTML=room.messages.map(m=>`<div class="msg${m.me?' me':''}"><div class="msg-avatar" style="background:${m.me?'linear-gradient(135deg,#7c5cbf,#f4732a)':'rgba(255,255,255,0.08)'}">${m.avatar}</div><div class="msg-body"><div class="msg-meta"><span class="msg-name">${m.name}</span><span class="msg-badge badge-${m.badge}">${m.badge.toUpperCase()}</span><span class="msg-time">${m.time} ago</span></div><div class="msg-text">${m.text}</div></div></div>`).join('');setTimeout(()=>{c.scrollTop=c.scrollHeight},100)}
-function selectRoom(id){const room=ROOMS.find(r=>r.id===id);const locked=TIER_ORDER.indexOf(MY_TIER)<TIER_ORDER.indexOf(room.tier);if(locked){const cfg=LOCK_CONFIG[room.tier];document.getElementById('lockIcon').textContent=cfg.icon;document.getElementById('lockTitle').textContent=cfg.title;document.getElementById('lockDesc').textContent=cfg.desc;const btn=document.getElementById('lockBtn');btn.className='lock-btn '+cfg.btnClass;btn.textContent=cfg.btnText;document.getElementById('lockedOverlay').classList.add('show');return}currentRoom=id;const bg=document.getElementById('roomBg');bg.style.backgroundImage=`url('${room.bg}')`;bg.style.backgroundPosition=room.bgPos||'center center';bg.style.backgroundSize=room.bgSize||'cover';document.getElementById('roomTitle').textContent=room.icon+' '+room.name;document.getElementById('roomDesc').textContent=room.desc;document.getElementById('onlineCount').textContent=room.online+' online';document.getElementById('atmText').textContent=room.atm;document.getElementById('atmDot').style.background=room.atmColor;document.getElementById('msgInput').placeholder='Say something in '+room.name.toLowerCase()+'...';document.getElementById('lockedOverlay').classList.remove('show');renderMessages(room);renderRooms();createParticles(room.particles)}
+function selectRoom(id){const room=ROOMS.find(r=>r.id===id);const locked=TIER_ORDER.indexOf(MY_TIER)<TIER_ORDER.indexOf(room.tier);if(locked){const cfg=LOCK_CONFIG[room.tier];document.getElementById('lockIcon').textContent=cfg.icon;document.getElementById('lockTitle').textContent=cfg.title;document.getElementById('lockDesc').textContent=cfg.desc;const btn=document.getElementById('lockBtn');btn.className='lock-btn '+cfg.btnClass;btn.textContent=cfg.btnText;document.getElementById('lockedOverlay').classList.add('show');return}currentRoom=id;const bg=document.getElementById('roomBg');bg.style.backgroundImage=`url('${room.bg}')`;bg.style.backgroundPosition=room.bgPos||'center center';bg.style.backgroundSize=room.bgSize||'cover';document.getElementById('roomTitle').textContent=room.icon+' '+room.name;document.getElementById('roomDesc').textContent=room.desc;document.getElementById('onlineCount').textContent=room.online+' online';document.getElementById('atmText').textContent=room.atm;document.getElementById('atmDot').style.background=room.atmColor;document.getElementById('msgInput').placeholder='Say something in '+room.name.toLowerCase()+'...';document.getElementById('lockedOverlay').classList.remove('show');renderRooms();createParticles(room.particles);loadMessages(id);subscribeRoom(id);}
 function closeOverlay(){document.getElementById('lockedOverlay').classList.remove('show')}
 document.getElementById('sendBtn').addEventListener('click',sendMessage)
 document.getElementById('msgInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendMessage()})
-function sendMessage(){const input=document.getElementById('msgInput');const text=input.value.trim();if(!text)return;const room=ROOMS.find(r=>r.id===currentRoom);room.messages.push({avatar:'🎨',name:'You',badge:'palace',time:'just now',text,me:true});renderMessages(room);input.value=''}
-selectRoom('lobby')
+/* ── SUPABASE ── */
+const SB_URL='https://pkhoyabazudqmfczkhax.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
+let sbChannel=null;
+
+function getSession(){
+  try{
+    const s=JSON.parse(localStorage.getItem('kt_session')||'{}');
+    return s.access_token?s:null;
+  }catch(e){return null;}
+}
+function getMyProfile(){
+  try{return JSON.parse(localStorage.getItem('kt_profile')||'{}');}
+  catch(e){return {};}
+}
+
+async function loadMessages(roomId){
+  try{
+    const res=await fetch(SB_URL+'/rest/v1/room_messages?room_id=eq.'+roomId+'&select=*,profiles(username,display_name,avatar_url,tier)&order=created_at.asc&limit=50',{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+    });
+    const data=await res.json();
+    if(!Array.isArray(data))return;
+    
+    const room=ROOMS.find(r=>r.id===roomId);
+    const session=getSession();
+    const myId=session?.user_id||session?.id;
+    
+    room.messages=data.map(m=>({
+      id:m.id,
+      avatar:m.profiles?.avatar_url||'🎨',
+      name:m.profiles?.display_name||m.profiles?.username||'Member',
+      badge:m.profiles?.tier||'free',
+      time:timeAgo(m.created_at),
+      text:m.content,
+      me:m.user_id===myId,
+      user_id:m.user_id
+    }));
+    renderMessages(room);
+  }catch(e){console.log('Load messages error:',e);}
+}
+
+function timeAgo(ts){
+  const diff=Math.floor((Date.now()-new Date(ts))/1000);
+  if(diff<60)return 'just now';
+  if(diff<3600)return Math.floor(diff/60)+'m';
+  if(diff<86400)return Math.floor(diff/3600)+'h';
+  return Math.floor(diff/86400)+'d';
+}
+
+function subscribeRoom(roomId){
+  if(sbChannel){clearInterval(sbChannel);sbChannel=null;}
+  // Poll every 4 seconds for new messages
+  sbChannel=setInterval(()=>loadMessages(roomId),4000);
+}
+
+async function sendMessage(){
+  const input=document.getElementById('msgInput');
+  const text=input.value.trim();
+  if(!text)return;
+  
+  const session=getSession();
+  const profile=getMyProfile();
+  const token=session?.access_token||SB_KEY;
+  
+  // Optimistic UI update
+  const room=ROOMS.find(r=>r.id===currentRoom);
+  room.messages.push({
+    avatar:profile.avatar_url||'🎨',
+    name:profile.display_name||profile.username||'You',
+    badge:profile.tier||'free',
+    time:'just now',
+    text,
+    me:true
+  });
+  renderMessages(room);
+  input.value='';
+  
+  // Save to Supabase
+  if(session?.user_id||session?.id){
+    try{
+      await fetch(SB_URL+'/rest/v1/room_messages',{
+        method:'POST',
+        headers:{
+          'apikey':SB_KEY,
+          'Authorization':'Bearer '+token,
+          'Content-Type':'application/json',
+          'Prefer':'return=minimal'
+        },
+        body:JSON.stringify({
+          room_id:currentRoom,
+          user_id:session.user_id||session.id,
+          content:text
+        })
+      });
+    }catch(e){console.log('Send error:',e);}
+  }
+}
+selectRoom('lobby');loadMessages('lobby');subscribeRoom('lobby');
 </script>
 </body>
 </html>
