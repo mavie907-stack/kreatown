@@ -213,11 +213,7 @@ nav {
   font-size: 0.58rem; color: white; letter-spacing: 0.06em;
   text-transform: uppercase; font-weight: 500; white-space: nowrap;
 }
-.avatar-photo {
-  position: absolute; inset: 0; border-radius: 50%;
-  width: 100%; height: 100%; object-fit: cover;
-  z-index: 2; display: none;
-}
+.avatar-photo { display: none; } /* not used */
 #avatarFileInput { display: none; }
 
 .profile-info { flex: 1; padding: 1.5rem 1.5rem 0; }
@@ -670,6 +666,13 @@ nav {
 }
 .mobile-action-bar .btn-dm { border-radius: 0.875rem; padding: 0.8rem 1rem; }
 </style>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#f4732a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="KreaTown">
+  <script src="/kt-utils.js" defer></script>
 </head>
 <body>
 
@@ -732,9 +735,7 @@ nav {
   <div class="profile-header fu1">
     <div class="profile-avatar-wrap">
       <div class="avatar-level-ring"></div>
-      <div class="profile-avatar" id="profileAvatar">🎨
-        <img class="avatar-photo" id="avatarPhoto" src="" alt="Profile photo">
-      </div>
+      <div class="profile-avatar" id="profileAvatar" style="font-size:2rem">🎨</div>
       <button class="avatar-upload-btn" onclick="document.getElementById('avatarFileInput').click()" title="Upload photo">
         <div class="avatar-upload-icon">
           <span>📷</span>
@@ -1021,14 +1022,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     if(creator.avatar_url){
       const profileAv = document.getElementById('profileAvatar');
       if(profileAv){
-        const url = creator.avatar_url + '?t=' + Date.now();
-        profileAv.style.backgroundImage = 'url('+url+')';
-        profileAv.style.backgroundSize  = 'cover';
-        profileAv.style.backgroundPosition = 'center';
+        const url = creator.avatar_url + '?cb=' + Date.now();
+        profileAv.innerHTML = '<img src="'+url+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;z-index:2;display:block" crossorigin="anonymous">';
         profileAv.style.fontSize = '0';
-        // Also set the img element
-        const photo = document.getElementById('avatarPhoto');
-        if(photo){ photo.src=url; photo.style.display='block'; }
+        profileAv.style.position = 'relative';
+        profileAv.style.overflow = 'hidden';
       }
     }
     /* Update banner */

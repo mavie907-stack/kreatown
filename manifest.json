@@ -1,0 +1,19 @@
+{
+  "name": "KreaTown",
+  "short_name": "KreaTown",
+  "description": "Where Creators Belong",
+  "start_url": "/member-dashboard.html",
+  "display": "standalone",
+  "background_color": "#0e0c0a",
+  "theme_color": "#f4732a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23f4732a'/><text y='.9em' font-size='80' x='10'>🏯</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["social", "entertainment"],
+  "lang": "en"
+}

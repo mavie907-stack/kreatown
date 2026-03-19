@@ -88,6 +88,13 @@ body{font-family:'DM Sans',sans-serif;background:#0a0806;color:#e8d5b0}
 .lock-dismiss:hover{color:rgba(255,255,255,0.6)}
 @media(max-width:640px){.sidebar{display:none}}
 </style>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#f4732a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="KreaTown">
+  <script src="/kt-utils.js" defer></script>
 </head>
 <body>
 <div class="app">
@@ -95,12 +102,15 @@ body{font-family:'DM Sans',sans-serif;background:#0a0806;color:#e8d5b0}
   <div id="particles"></div>
   <aside class="sidebar">
     <div class="sidebar-logo">Krea<span>Town</span></div>
-    <div class="sidebar-back"><a href="dashboard.html" class="back-link">← Back to dashboard</a></div>
+    <div class="sidebar-back" style="display:flex;flex-direction:column;gap:0.35rem">
+      <a href="feed.html" class="back-link" style="color:var(--orange)">📰 Community Feed</a>
+      <a href="javascript:history.back()" class="back-link" id="backLink">← Back</a>
+    </div>
     <div class="rooms-label">Rooms</div>
     <div id="roomList"></div>
     <div class="sidebar-footer">
-      <div class="user-avatar">🎨</div>
-      <div><div class="user-name">Topraq Toros</div><div class="user-tier">🏯 Palace Member</div></div>
+      <div class="user-avatar" id="sidebarAv">🎨</div>
+      <div><div class="user-name" id="sidebarName">Loading…</div><div class="user-tier" id="sidebarTier">Member</div></div>
       <div class="online-dot" style="margin-left:auto"></div>
     </div>
   </aside>
@@ -273,6 +283,31 @@ async function sendMessage(){
   }
 }
 selectRoom('lobby');loadMessages('lobby');subscribeRoom('lobby');
+
+/* Load user profile for sidebar */
+(async()=>{
+  try{
+    const s=JSON.parse(localStorage.getItem('kt_session')||'{}');
+    const p=JSON.parse(localStorage.getItem('kt_profile')||'{}');
+    if(p.display_name||p.username){
+      const nm=document.getElementById('sidebarName');
+      const tr=document.getElementById('sidebarTier');
+      const av=document.getElementById('sidebarAv');
+      if(nm)nm.textContent=p.display_name||p.username;
+      if(tr){const tl={palace:'🏯 Palace',gold:'👑 Gold',silver:'⭐ Silver',free:'🌱 Free'};tr.textContent=tl[p.tier||'free'];}
+      if(av&&p.avatar_url)av.innerHTML='<img src="'+p.avatar_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+    }
+    /* Smart back link */
+    const ref=document.referrer;
+    const bl=document.getElementById('backLink');
+    if(bl){
+      if(ref.includes('dashboard.html'))bl.href='dashboard.html';
+      else if(ref.includes('member-dashboard'))bl.href='member-dashboard.html';
+      else if(ref.includes('feed.html'))bl.href='feed.html';
+      else bl.href=p.is_admin?'dashboard.html':'member-dashboard.html';
+    }
+  }catch(e){}
+})();
 </script>
 </body>
 </html>

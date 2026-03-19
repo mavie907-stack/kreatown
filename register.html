@@ -879,6 +879,10 @@ async function createAccount() {
 
     if (result.access_token) {
       setTimeout(() => { window.location.href = 'member-dashboard.html'; }, 1800);
+    /* Notify admin of new member */
+    if(typeof notifyAdminNewMember !== 'undefined'){
+      notifyAdminNewMember(firstName + ' ' + lastName, email);
+    }
     } else {
       document.querySelector('.success-title').textContent = 'Almost there! 📧';
       document.querySelector('.success-sub').textContent = 'Account created! You can now log in.';

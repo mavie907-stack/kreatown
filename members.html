@@ -237,6 +237,13 @@ body {
   .drawer { width: 100%; right: -100%; }
 }
 </style>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#f4732a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="KreaTown">
+  <script src="/kt-utils.js" defer></script>
 </head>
 <body>
 
@@ -297,6 +304,10 @@ body {
       <div class="topbar-sub">44 total · 12 online now · 3 new this week</div>
     </div>
     <div class="topbar-right">
+      <div id="langToggle" style="display:flex;align-items:center;gap:0.35rem;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:100px;padding:0.2rem 0.3rem">
+        <button onclick="setLang('en')" data-lang="en" style="padding:0.18rem 0.55rem;border-radius:100px;border:none;cursor:pointer;font-size:0.68rem;font-family:'DM Sans',sans-serif;transition:all .15s;background:transparent;color:rgba(255,255,255,0.45)">🇬🇧 EN</button>
+        <button onclick="setLang('tr')" data-lang="tr" style="padding:0.18rem 0.55rem;border-radius:100px;border:none;cursor:pointer;font-size:0.68rem;font-family:'DM Sans',sans-serif;transition:all .15s;background:transparent;color:rgba(255,255,255,0.45)">🇹🇷 TR</button>
+      </div>
       <button class="btn-invite" onclick="alert('Invite link copied! 🔗')">✉️ Invite members</button>
       <div class="topbar-notif">🔔<div class="notif-dot"></div></div>
     </div>
