@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Member Profile — KreaTown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#fffbf5;--brown:#1a1612;--muted:#9c8878;
+  --orange:#f4732a;--gold:#c9952a;--gold2:#f5d58a;
+  --palace:#8b6fd4;--palace2:#b8a0e8;
+  --emerald:#2dab80;--red:#e05252;
+  --border:rgba(156,136,120,0.15);
+  --bg2:#f5ede3;
+}
+html,body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--brown);min-height:100vh}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(255,251,245,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--brown);text-decoration:none}.nav-logo span{color:var(--orange)}
+.nav-right{display:flex;align-items:center;gap:0.75rem}
+.nav-btn{padding:0.38rem 0.9rem;border-radius:100px;font-size:0.8rem;font-weight:500;cursor:pointer;text-decoration:none;transition:all .18s;border:1.5px solid var(--border);color:var(--brown);font-family:'DM Sans',sans-serif;background:transparent}
+.nav-btn:hover{border-color:var(--orange);color:var(--orange)}
+.nav-btn.primary{background:var(--orange);border-color:var(--orange);color:white}.nav-btn.primary:hover{background:#ff9555}
+.admin-badge{background:rgba(244,115,42,0.1);border:1px solid rgba(244,115,42,0.3);color:var(--orange);font-size:0.65rem;padding:0.2rem 0.6rem;border-radius:100px;font-family:'DM Mono',monospace}
+
+/* BANNER */
+.banner{height:240px;background:linear-gradient(135deg,#1a1612,#2d1f0e);position:relative;overflow:hidden}
+.banner-img{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0.7}
+.banner-grad{position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(to top,var(--cream),transparent)}
+
+/* PROFILE */
+.profile-wrap{max-width:860px;margin:0 auto;padding:0 1.5rem}
+.profile-header{display:flex;align-items:flex-end;gap:1.25rem;margin-top:-44px;position:relative;z-index:2;padding-bottom:1.25rem;border-bottom:1px solid var(--border)}
+.profile-avatar{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--palace),var(--orange));border:3px solid var(--cream);display:flex;align-items:center;justify-content:center;font-size:2.2rem;flex-shrink:0;overflow:hidden;position:relative}
+.profile-avatar img{width:100%;height:100%;object-fit:cover}
+.profile-info{flex:1;padding-bottom:0.25rem}
+.profile-name{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--brown);line-height:1.2}
+.profile-handle{font-size:0.8rem;color:var(--muted);margin-top:0.2rem;font-family:'DM Mono',monospace}
+.profile-bio{font-size:0.82rem;color:var(--muted);margin-top:0.5rem;line-height:1.6;max-width:480px}
+.profile-tags{display:flex;gap:0.5rem;margin-top:0.6rem;flex-wrap:wrap}
+.tag{font-size:0.65rem;padding:0.2rem 0.6rem;border-radius:100px;border:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace}
+.tier-badge{font-size:0.65rem;padding:0.2rem 0.7rem;border-radius:100px;font-family:'DM Mono',monospace;font-weight:500}
+.tier-palace{background:rgba(139,111,212,0.12);color:var(--palace2);border:1px solid rgba(139,111,212,0.3)}
+.tier-gold{background:rgba(201,149,42,0.12);color:var(--gold2);border:1px solid rgba(201,149,42,0.3)}
+.tier-silver{background:rgba(143,163,181,0.12);color:#8fa3b5;border:1px solid rgba(143,163,181,0.3)}
+.tier-free{background:rgba(45,171,128,0.1);color:var(--emerald);border:1px solid rgba(45,171,128,0.3)}
+.profile-actions{display:flex;gap:0.6rem;margin-left:auto;align-items:flex-end;padding-bottom:0.25rem;flex-wrap:wrap}
+
+/* ADMIN CONTROLS */
+.admin-controls{background:rgba(244,115,42,0.06);border:1px solid rgba(244,115,42,0.2);border-radius:0.875rem;padding:0.85rem 1.25rem;margin:1rem 0;display:none}
+.admin-controls.show{display:block}
+.ac-title{font-size:0.7rem;color:var(--orange);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.65rem}
+.ac-btns{display:flex;gap:0.5rem;flex-wrap:wrap}
+.ac-btn{padding:0.32rem 0.75rem;border-radius:0.45rem;font-size:0.72rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--brown);font-family:'DM Sans',sans-serif;transition:all .15s}
+.ac-btn:hover{border-color:#aaa;background:rgba(0,0,0,0.04)}
+.ac-btn.danger{border-color:rgba(224,82,82,0.3);color:var(--red)}.ac-btn.danger:hover{background:rgba(224,82,82,0.08)}
+.ac-btn.warn{border-color:rgba(244,115,42,0.3);color:var(--orange)}.ac-btn.warn:hover{background:rgba(244,115,42,0.08)}
+.ac-btn.safe{border-color:rgba(45,171,128,0.3);color:var(--emerald)}.ac-btn.safe:hover{background:rgba(45,171,128,0.08)}
+
+/* STATS */
+.stats-row{display:flex;gap:2rem;padding:1rem 0;border-bottom:1px solid var(--border)}
+.stat{text-align:center}
+.stat-v{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--brown)}
+.stat-l{font-size:0.68rem;color:var(--muted);margin-top:0.1rem;font-family:'DM Mono',monospace}
+
+/* CONTENT */
+.content-area{padding:1.25rem 0 4rem}
+.feed-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:1.25rem}
+.feed-tab{padding:0.65rem 1.1rem;font-size:0.82rem;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .18s;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif}
+.feed-tab:hover{color:var(--brown)}
+.feed-tab.active{color:var(--orange);border-bottom-color:var(--orange);font-weight:500}
+
+/* POST CARDS */
+.posts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
+.post-card{background:white;border:1px solid var(--border);border-radius:1rem;overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:pointer}
+.post-card:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(26,22,18,0.08)}
+.post-img{height:180px;background:linear-gradient(135deg,#f5ede3,#e8d5b0);position:relative;overflow:hidden}
+.post-img img{width:100%;height:100%;object-fit:cover}
+.post-lock{position:absolute;inset:0;background:rgba(26,22,18,0.55);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.4rem}
+.post-lock-icon{font-size:1.5rem}
+.post-lock-text{font-size:0.72rem;color:rgba(255,255,255,0.8);font-family:'DM Mono',monospace}
+.post-body{padding:0.85rem}
+.post-type{font-size:0.6rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.35rem}
+.post-title{font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:700;color:var(--brown);line-height:1.3;margin-bottom:0.35rem}
+.post-excerpt{font-size:0.75rem;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.post-footer{display:flex;align-items:center;justify-content:space-between;margin-top:0.65rem;padding-top:0.65rem;border-top:1px solid var(--border)}
+.post-date{font-size:0.65rem;color:var(--muted);font-family:'DM Mono',monospace}
+.post-reactions{display:flex;gap:0.4rem}
+.reaction{font-size:0.72rem;padding:0.18rem 0.5rem;border-radius:100px;border:1px solid var(--border);cursor:pointer;transition:all .15s;background:transparent;font-family:'DM Sans',sans-serif}
+.reaction:hover{border-color:var(--orange);background:rgba(244,115,42,0.06)}
+.reaction.active{border-color:var(--orange);background:rgba(244,115,42,0.1);color:var(--orange)}
+
+/* EMPTY */
+.empty{text-align:center;padding:3rem 1rem;color:var(--muted)}
+.empty-icon{font-size:2.5rem;margin-bottom:0.75rem}
+.empty-text{font-size:0.88rem;line-height:1.6}
+
+/* LOCKED OVERLAY */
+.locked-section{background:white;border:1px solid var(--border);border-radius:1rem;padding:2rem;text-align:center;margin-top:1rem}
+.locked-icon{font-size:2rem;margin-bottom:0.75rem}
+.locked-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--brown);margin-bottom:0.4rem}
+.locked-sub{font-size:0.82rem;color:var(--muted);line-height:1.6;margin-bottom:1.25rem}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(16px);background:var(--brown);color:white;padding:0.55rem 1.3rem;border-radius:100px;font-size:0.78rem;z-index:1000;transition:all .3s;opacity:0;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast.ok{background:var(--emerald)}.toast.err{background:var(--red)}.toast.warn{background:var(--orange)}
+
+@media(max-width:600px){
+  .profile-header{flex-direction:column;align-items:flex-start;margin-top:-32px}
+  .profile-actions{margin-left:0}
+  .stats-row{gap:1rem}
+  .posts-grid{grid-template-columns:1fr}
+}
+
+/* POST CREATOR */
+.create-btn{display:none;align-items:center;gap:0.5rem;padding:0.6rem 1.25rem;background:var(--orange);color:white;border:none;border-radius:100px;font-size:0.85rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;box-shadow:0 4px 16px rgba(244,115,42,0.3)}
+.create-btn:hover{background:#ff9555;transform:translateY(-2px)}
+.create-btn.show{display:flex}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(26,22,18,0.65);backdrop-filter:blur(8px);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+@keyframes mUp{from{transform:translateY(20px) scale(0.97);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+.modal-box{background:var(--cream);border-radius:1.25rem;padding:1.75rem;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;animation:mUp .3s ease both;box-shadow:0 24px 64px rgba(26,22,18,0.2)}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--brown);margin-bottom:1.25rem}
+.modal-close{float:right;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--muted);line-height:1}
+
+/* TYPE TABS */
+.type-tabs{display:flex;gap:0.5rem;margin-bottom:1.1rem;flex-wrap:wrap}
+.type-tab{padding:0.4rem 0.9rem;border-radius:100px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:0.78rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.type-tab:hover{border-color:var(--orange);color:var(--orange)}
+.type-tab.on{border-color:var(--orange);background:rgba(244,115,42,0.08);color:var(--orange);font-weight:500}
+
+/* FORM */
+.f-label{display:block;font-size:0.7rem;color:var(--muted);margin-bottom:0.3rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.06em}
+.f-input{width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--border);border-radius:0.75rem;background:white;color:var(--brown);font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;transition:border-color .15s;margin-bottom:0.85rem}
+.f-input:focus{border-color:var(--orange)}
+.f-input::placeholder{color:rgba(156,136,120,0.5)}
+.f-ta{min-height:120px;resize:vertical}
+
+/* IMAGE UPLOAD */
+.img-upload{border:2px dashed var(--border);border-radius:0.875rem;padding:1.5rem;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:0.85rem;position:relative;overflow:hidden}
+.img-upload:hover{border-color:var(--orange);background:rgba(244,115,42,0.03)}
+.img-upload.has-img{padding:0;border-style:solid}
+.img-upload img{width:100%;max-height:220px;object-fit:cover;border-radius:0.75rem;display:block}
+.img-upload-text{font-size:0.82rem;color:var(--muted)}
+.img-upload-icon{font-size:1.5rem;margin-bottom:0.4rem}
+.img-remove{position:absolute;top:0.5rem;right:0.5rem;background:rgba(26,22,18,0.65);color:white;border:none;border-radius:100px;font-size:0.72rem;padding:0.25rem 0.6rem;cursor:pointer}
+
+/* TIER SELECT */
+.tier-select{display:flex;gap:0.4rem;margin-bottom:1rem;flex-wrap:wrap}
+.ts-btn{padding:0.35rem 0.75rem;border-radius:100px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:0.72rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.ts-btn:hover{border-color:var(--border)}
+.ts-btn.on{font-weight:500}
+.ts-btn.ts-free.on{border-color:var(--emerald);background:rgba(45,171,128,0.1);color:var(--emerald)}
+.ts-btn.ts-silver.on{border-color:#8fa3b5;background:rgba(143,163,181,0.1);color:#8fa3b5}
+.ts-btn.ts-gold.on{border-color:var(--gold);background:rgba(201,149,42,0.1);color:var(--gold)}
+.ts-btn.ts-palace.on{border-color:var(--palace);background:rgba(139,111,212,0.1);color:var(--palace2)}
+
+/* SUBMIT */
+.f-submit{width:100%;padding:0.75rem;background:var(--orange);color:white;border:none;border-radius:0.875rem;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(244,115,42,0.3)}
+.f-submit:hover{background:#ff9555;transform:translateY(-1px)}
+.f-submit:disabled{opacity:0.6;pointer-events:none}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Krea<span>Town</span></a>
+  <div class="nav-right">
+    <span class="admin-badge" id="adminBadge" style="display:none">👑 Admin</span>
+    <a href="dashboard.html" class="nav-btn">Dashboard</a>
+    <a href="rooms.html" class="nav-btn primary">Enter Rooms →</a>
+  </div>
+</nav>
+
+<!-- BANNER -->
+<div class="banner">
+  <div class="banner-img" id="bannerImg"></div>
+  <div class="banner-grad"></div>
+</div>
+
+<div class="profile-wrap">
+
+  <!-- PROFILE HEADER -->
+  <div class="profile-header">
+    <div class="profile-avatar" id="profileAvatar">🎨</div>
+    <div class="profile-info">
+      <div class="profile-name" id="profileName">Loading…</div>
+      <div class="profile-handle" id="profileHandle">@…</div>
+      <div class="profile-bio" id="profileBio"></div>
+      <div class="profile-tags" id="profileTags"></div>
+    </div>
+    <div class="profile-actions">
+      <span class="tier-badge" id="tierBadge">🌱 Free</span>
+      <button class="nav-btn" id="messageBtn" onclick="sendMessage()" style="display:none">💬 Message</button>
+      <button class="create-btn" id="createBtn" onclick="openCreateModal()">✍️ New Post</button>
+    </div>
+  </div>
+
+  <!-- ADMIN CONTROLS -->
+  <div class="admin-controls" id="adminControls">
+    <div class="ac-title">👑 Admin Controls — <span id="acName"></span></div>
+    <div class="ac-btns">
+      <button class="ac-btn warn" onclick="changeTier()">↑ Change Tier</button>
+      <button class="ac-btn warn" onclick="freezeUser()">❄️ Freeze Account</button>
+      <button class="ac-btn danger" onclick="banUser()">🚫 Ban Member</button>
+      <button class="ac-btn safe" onclick="sendAdminDM()">💬 Send DM</button>
+      <button class="ac-btn danger" onclick="deletePost()">🗑️ Delete Content</button>
+      <a href="admin.html" class="ac-btn">← Admin Panel</a>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat"><div class="stat-v" id="statPosts">0</div><div class="stat-l">Posts</div></div>
+    <div class="stat"><div class="stat-v" id="statJoined">—</div><div class="stat-l">Joined</div></div>
+    <div class="stat"><div class="stat-v" id="statTier">Free</div><div class="stat-l">Tier</div></div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content-area">
+    <div class="feed-tabs">
+      <button class="feed-tab active" onclick="switchTab(this,'posts')">📝 Posts</button>
+      <button class="feed-tab" onclick="switchTab(this,'photos')">📸 Photos</button>
+      <button class="feed-tab" onclick="switchTab(this,'podcasts')">🎙️ Podcasts</button>
+    </div>
+
+    <div id="tab-posts">
+      <div class="posts-grid" id="postsGrid">
+        <div class="empty"><div class="empty-icon">📝</div><div class="empty-text">No posts yet</div></div>
+      </div>
+    </div>
+
+    <div id="tab-photos" style="display:none">
+      <div class="posts-grid" id="photosGrid">
+        <div class="empty"><div class="empty-icon">📸</div><div class="empty-text">No photos yet</div></div>
+      </div>
+    </div>
+
+    <div id="tab-podcasts" style="display:none">
+      <div class="posts-grid" id="podcastsGrid">
+        <div class="empty"><div class="empty-icon">🎙️</div><div class="empty-text">No podcasts yet</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- CREATE POST MODAL -->
+<div class="modal-overlay" id="createModal" onclick="if(event.target===this)closeCreateModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeCreateModal()">✕</button>
+    <div class="modal-title">✍️ Create new post</div>
+
+    <div class="type-tabs">
+      <button class="type-tab on" onclick="setType(this,'post')">📝 Post</button>
+      <button class="type-tab" onclick="setType(this,'photo')">📸 Photo</button>
+      <button class="type-tab" onclick="setType(this,'podcast')">🎙️ Podcast</button>
+    </div>
+
+    <label class="f-label">Title *</label>
+    <input class="f-input" id="postTitle" placeholder="Give your post a title…">
+
+    <label class="f-label">Cover image</label>
+    <div class="img-upload" id="imgUploadArea" onclick="document.getElementById('postImgInput').click()">
+      <div class="img-upload-icon">🖼️</div>
+      <div class="img-upload-text">Click to upload cover image (JPG, PNG, max 5MB)</div>
+      <input type="file" id="postImgInput" accept="image/*" style="display:none" onchange="previewCover(this)">
+    </div>
+
+    <label class="f-label">Content *</label>
+    <textarea class="f-input f-ta" id="postContent" placeholder="Write your post content here…"></textarea>
+
+    <label class="f-label">Who can see this?</label>
+    <div class="tier-select" id="tierSelect">
+      <button class="ts-btn ts-free on" onclick="setTierReq(this,'free')">🌱 Everyone</button>
+      <button class="ts-btn ts-silver" onclick="setTierReq(this,'silver')">⭐ Silver+</button>
+      <button class="ts-btn ts-gold" onclick="setTierReq(this,'gold')">👑 Gold+</button>
+      <button class="ts-btn ts-palace" onclick="setTierReq(this,'palace')">🏯 Palace only</button>
+    </div>
+
+    <button class="f-submit" id="publishBtn" onclick="publishPost()">🚀 Publish post</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SB_URL = 'https://pkhoyabazudqmfczkhax.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
+
+const TIER_LABELS = {palace:'🏯 Palace', gold:'👑 Gold', silver:'⭐ Silver', free:'🌱 Free'};
+const TIER_ORDER  = ['free','silver','gold','palace'];
+
+let currentProfile = null;
+let myProfile      = null;
+let isAdmin        = false;
+
+function getSession(){
+  try{ const s=JSON.parse(localStorage.getItem('kt_session')||'{}'); return s.access_token?s:null; }
+  catch(e){ return null; }
+}
+
+/* Get username from URL ?user=username */
+function getTargetUsername(){
+  const params = new URLSearchParams(window.location.search);
+  return params.get('user') || null;
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  const session  = getSession();
+  const username = getTargetUsername();
+
+  /* Load my own profile */
+  if(session){
+    const myId = session.user_id || session.id;
+    const res  = await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+myId+'&select=*',{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}
+    });
+    const data = await res.json();
+    myProfile = data[0] || null;
+    isAdmin   = myProfile?.is_admin || false;
+
+    if(isAdmin) document.getElementById('adminBadge').style.display = 'inline-flex';
+  }
+
+  /* Load target profile */
+  if(username){
+    await loadProfile(username);
+  } else if(myProfile){
+    /* No user param — show own profile */
+    await loadProfile(myProfile.username);
+  } else {
+    document.getElementById('profileName').textContent = 'Profile not found';
+  }
+});
+
+async function loadProfile(username){
+  try{
+    const res  = await fetch(SB_URL+'/rest/v1/profiles?username=eq.'+username+'&select=*',{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+    });
+    const data = await res.json();
+    const p    = data[0];
+    if(!p){ document.getElementById('profileName').textContent = 'Member not found'; return; }
+
+    currentProfile = p;
+    document.title = (p.display_name||p.username) + ' — KreaTown';
+
+    /* Fill UI */
+    document.getElementById('profileName').textContent    = p.display_name || p.username || 'Member';
+    document.getElementById('profileHandle').textContent  = '@'+(p.username||'');
+    document.getElementById('profileBio').textContent     = p.bio || '';
+    document.getElementById('statJoined').textContent     = new Date(p.created_at).toLocaleDateString('en',{month:'short',year:'numeric'});
+    document.getElementById('statTier').textContent       = (p.tier||'free').charAt(0).toUpperCase()+(p.tier||'free').slice(1);
+
+    /* Tier badge */
+    const tb = document.getElementById('tierBadge');
+    tb.textContent  = TIER_LABELS[p.tier||'free'];
+    tb.className    = 'tier-badge tier-'+(p.tier||'free');
+
+    /* Avatar */
+    if(p.avatar_url){
+      const av = document.getElementById('profileAvatar');
+      av.innerHTML = '<img src="'+p.avatar_url+'?t='+Date.now()+'" alt="avatar">';
+    }
+
+    /* Banner */
+    if(p.banner_url){
+      document.getElementById('bannerImg').style.backgroundImage = 'url('+p.banner_url+')';
+    }
+
+    /* Tags */
+    const tags = ['Creator'];
+    if(p.category) tags.push(p.category);
+    if(p.is_admin) tags.push('👑 Admin');
+    document.getElementById('profileTags').innerHTML = tags.map(t=>`<span class="tag">${t}</span>`).join('');
+
+    /* Admin controls */
+    if(isAdmin && myProfile?.id !== p.id){
+      document.getElementById('adminControls').classList.add('show');
+      document.getElementById('acName').textContent = p.display_name || p.username;
+    }
+
+    /* Message button — show if logged in and not own profile */
+    if(myProfile && myProfile.id !== p.id){
+      document.getElementById('messageBtn').style.display = 'inline-block';
+    }
+
+    /* Create post button — show if own profile or admin */
+    checkOwnProfile();
+
+    /* Load posts */
+    await loadPosts(p.id, p.tier);
+
+  }catch(err){
+    console.error('Profile load error:', err);
+    document.getElementById('profileName').textContent = 'Error loading profile';
+  }
+}
+
+async function loadPosts(userId, profileTier){
+  try{
+    const session  = getSession();
+    const myTier   = myProfile?.tier || 'free';
+    const myTierN  = TIER_ORDER.indexOf(myTier);
+
+    const res = await fetch(SB_URL+'/rest/v1/posts?user_id=eq.'+userId+'&select=*&order=created_at.desc',{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+(session?.access_token||SB_KEY)}
+    });
+
+    if(!res.ok) throw new Error('No posts table yet');
+    const posts = await res.json();
+
+    document.getElementById('statPosts').textContent = posts.length;
+    renderPosts(posts, myTierN);
+
+  }catch(e){
+    /* Posts table doesn't exist yet — show empty */
+    document.getElementById('statPosts').textContent = '0';
+  }
+}
+
+function renderPosts(posts, myTierN){
+  const grid = document.getElementById('postsGrid');
+  if(!posts.length){
+    grid.innerHTML = '<div class="empty"><div class="empty-icon">📝</div><div class="empty-text">No posts yet</div></div>';
+    return;
+  }
+
+  /* Free members: only first 3 visible */
+  grid.innerHTML = posts.map((p, i) => {
+    const postTierN = TIER_ORDER.indexOf(p.tier_required || 'free');
+    const locked    = myTierN < postTierN || (myTierN === 0 && i >= 3);
+
+    return `<div class="post-card" onclick="${locked?'showUpgrade()':'openPost(\''+p.id+'\')'}">
+      <div class="post-img">
+        ${p.cover_url ? `<img src="${p.cover_url}" alt="">` : `<div style="width:100%;height:100%;background:linear-gradient(135deg,#f5ede3,#e8d5b0);display:flex;align-items:center;justify-content:center;font-size:2rem">${p.type==='podcast'?'🎙️':p.type==='photo'?'📸':'📝'}</div>`}
+        ${locked ? `<div class="post-lock"><div class="post-lock-icon">🔒</div><div class="post-lock-text">${TIER_LABELS[p.tier_required||'silver']} only</div></div>` : ''}
+      </div>
+      <div class="post-body">
+        <div class="post-type">${p.type||'post'}</div>
+        <div class="post-title">${p.title||'Untitled'}</div>
+        <div class="post-excerpt">${p.excerpt||p.content?.substring(0,100)||''}</div>
+        <div class="post-footer">
+          <div class="post-date">${new Date(p.created_at).toLocaleDateString('en',{month:'short',day:'numeric'})}</div>
+          <div class="post-reactions">
+            <button class="reaction" onclick="event.stopPropagation();react('${p.id}','❤️',this)">❤️ ${p.reactions_heart||0}</button>
+            <button class="reaction" onclick="event.stopPropagation();react('${p.id}','🔥',this)">🔥 ${p.reactions_fire||0}</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function switchTab(el, tab){
+  document.querySelectorAll('.feed-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['posts','photos','podcasts'].forEach(t=>{
+    document.getElementById('tab-'+t).style.display = t===tab?'block':'none';
+  });
+}
+
+function showUpgrade(){
+  toast('Upgrade your membership to see this content! 🔒','warn');
+}
+
+function openPost(id){
+  toast('Full post viewer coming soon! 📖');
+}
+
+async function react(postId, emoji, btn){
+  btn.classList.toggle('active');
+  toast(emoji+' Reaction added!');
+}
+
+function sendMessage(){
+  if(!currentProfile) return;
+  localStorage.setItem('dm_to', JSON.stringify(currentProfile));
+  window.location.href = 'messages.html';
+}
+
+/* ── ADMIN ACTIONS ── */
+async function changeTier(){
+  if(!currentProfile) return;
+  const tier = prompt('New tier (free/silver/gold/palace):');
+  if(!['free','silver','gold','palace'].includes(tier)) return;
+  const session = getSession();
+  await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+currentProfile.id,{
+    method:'PATCH',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:JSON.stringify({tier})
+  });
+  toast('Tier changed to '+tier+' ✅','ok');
+  location.reload();
+}
+
+async function freezeUser(){
+  if(!currentProfile||!confirm('Freeze '+currentProfile.display_name+'?')) return;
+  const session = getSession();
+  await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+currentProfile.id,{
+    method:'PATCH',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:JSON.stringify({status:'frozen'})
+  });
+  toast('Account frozen ❄️','warn');
+}
+
+async function banUser(){
+  if(!currentProfile||!confirm('Ban '+currentProfile.display_name+'? This cannot be undone easily.')) return;
+  const session = getSession();
+  await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+currentProfile.id,{
+    method:'PATCH',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:JSON.stringify({status:'banned'})
+  });
+  toast('Member banned 🚫','err');
+}
+
+function sendAdminDM(){
+  if(!currentProfile) return;
+  localStorage.setItem('dm_to', JSON.stringify(currentProfile));
+  window.location.href = 'messages.html';
+}
+
+function deletePost(){
+  toast('Select a post to delete it','warn');
+}
+
+
+/* ── POST SYSTEM ── */
+let postType = 'post';
+let tierRequired = 'free';
+let coverFile = null;
+let coverPreviewUrl = null;
+
+function openCreateModal(){
+  document.getElementById('createModal').classList.add('open');
+}
+function closeCreateModal(){
+  document.getElementById('createModal').classList.remove('open');
+  document.getElementById('postTitle').value = '';
+  document.getElementById('postContent').value = '';
+  resetCover();
+}
+function setType(btn, type){
+  document.querySelectorAll('.type-tab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  postType = type;
+}
+function setTierReq(btn, tier){
+  document.querySelectorAll('.ts-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  tierRequired = tier;
+}
+function previewCover(input){
+  const file = input.files[0];
+  if(!file) return;
+  coverFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    coverPreviewUrl = e.target.result;
+    const area = document.getElementById('imgUploadArea');
+    area.classList.add('has-img');
+    area.innerHTML = '<img src="'+e.target.result+'" alt="cover"><button class="img-remove" onclick="event.stopPropagation();resetCover()">✕ Remove</button><input type="file" id="postImgInput" accept="image/*" style="display:none" onchange="previewCover(this)">';
+  };
+  reader.readAsDataURL(file);
+}
+function resetCover(){
+  coverFile = null; coverPreviewUrl = null;
+  const area = document.getElementById('imgUploadArea');
+  if(area){
+    area.classList.remove('has-img');
+    area.innerHTML = '<div class="img-upload-icon">🖼️</div><div class="img-upload-text">Click to upload cover image (JPG, PNG, max 5MB)</div><input type="file" id="postImgInput" accept="image/*" style="display:none" onchange="previewCover(this)">';
+  }
+}
+
+async function publishPost(){
+  const title   = document.getElementById('postTitle').value.trim();
+  const content = document.getElementById('postContent').value.trim();
+  if(!title || !content){ toast('Title and content required!','warn'); return; }
+
+  const session = getSession();
+  if(!session){ toast('Please log in first','warn'); return; }
+
+  const userId = session.user_id || session.id;
+  const token  = session.access_token;
+  const btn    = document.getElementById('publishBtn');
+  btn.disabled = true;
+  btn.textContent = 'Publishing…';
+
+  let coverUrl = null;
+
+  try{
+    // Upload cover image if selected
+    if(coverFile){
+      const ext  = coverFile.name.split('.').pop();
+      const path = 'covers/'+userId+'-'+Date.now()+'.'+ext;
+      const upRes = await fetch(SB_URL+'/storage/v1/object/posts/'+path,{
+        method:'POST',
+        headers:{
+          'apikey':SB_KEY,
+          'Authorization':'Bearer '+token,
+          'Content-Type':coverFile.type,
+          'x-upsert':'true'
+        },
+        body: coverFile
+      });
+      if(upRes.ok) coverUrl = SB_URL+'/storage/v1/object/public/posts/'+path;
+    }
+
+    // Save post to database
+    const postRes = await fetch(SB_URL+'/rest/v1/posts',{
+      method:'POST',
+      headers:{
+        'apikey':SB_KEY,
+        'Authorization':'Bearer '+token,
+        'Content-Type':'application/json',
+        'Prefer':'return=representation'
+      },
+      body: JSON.stringify({
+        user_id:      userId,
+        title:        title,
+        content:      content,
+        excerpt:      content.substring(0,120),
+        cover_url:    coverUrl,
+        type:         postType,
+        tier_required: tierRequired,
+        is_published: true
+      })
+    });
+
+    if(!postRes.ok){
+      const err = await postRes.json();
+      throw new Error(err.message || 'Failed to publish');
+    }
+
+    toast('Post published! 🎉','ok');
+    closeCreateModal();
+    btn.disabled = false;
+    btn.textContent = '🚀 Publish post';
+
+    // Reload posts
+    if(currentProfile) await loadPosts(currentProfile.id, currentProfile.tier);
+
+  }catch(err){
+    console.error('Publish error:', err);
+    toast('Error: '+err.message,'err');
+    btn.disabled = false;
+    btn.textContent = '🚀 Publish post';
+  }
+}
+
+/* Show create button if viewing own profile */
+function checkOwnProfile(){
+  if(!myProfile || !currentProfile) return;
+  if(myProfile.id === currentProfile.id || isAdmin){
+    document.getElementById('createBtn').classList.add('show');
+  }
+}
+
+/* Toast */
+let tT;
+function toast(msg,type=''){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className='toast show'+(type?' '+type:'');
+  clearTimeout(tT); tT=setTimeout(()=>el.classList.remove('show'),2500);
+}
+</script>
+</body>
+</html>
