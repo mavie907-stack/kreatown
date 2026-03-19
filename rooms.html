@@ -148,7 +148,28 @@ const LOCK_CONFIG={silver:{icon:'⭐',title:'Silver Members Only',desc:'Join the
 let currentRoom='lobby'
 function createParticles(colors){const c=document.getElementById('particles');c.innerHTML='';for(let i=0;i<18;i++){const p=document.createElement('div');p.className='particle';const s=Math.random()*4+2;p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${Math.random()*8+6}s;animation-delay:${Math.random()*6}s;`;c.appendChild(p)}}
 function renderRooms(){document.getElementById('roomList').innerHTML=ROOMS.map(r=>{const locked=TIER_ORDER.indexOf(MY_TIER)<TIER_ORDER.indexOf(r.tier);const active=r.id===currentRoom;return`<div class="room-item${active?' active':''}${locked?' locked':''}" onclick="selectRoom('${r.id}')"><span class="room-icon">${r.icon}</span><div class="room-info"><div class="room-name">${r.name}</div><div class="room-tier">${r.tierLabel}</div></div><span class="room-count">${r.online}</span>${active&&!locked?'<div class="online-dot"></div>':''}</div>`}).join('')}
-function renderMessages(room){const c=document.getElementById('messages');c.innerHTML=room.messages.map(m=>`<div class="msg${m.me?' me':''}"><div class="msg-avatar" style="background:${m.me?'linear-gradient(135deg,#7c5cbf,#f4732a)':'rgba(255,255,255,0.08)'}">${m.avatar}</div><div class="msg-body"><div class="msg-meta"><span class="msg-name">${m.name}</span><span class="msg-badge badge-${m.badge}">${m.badge.toUpperCase()}</span><span class="msg-time">${m.time} ago</span></div><div class="msg-text">${m.text}</div></div></div>`).join('');setTimeout(()=>{c.scrollTop=c.scrollHeight},100)}
+function renderMessages(room){
+  const c=document.getElementById('messages');
+  c.innerHTML=room.messages.map(m=>{
+    const isUrl = m.avatar && m.avatar.startsWith('http');
+    const avatarHtml = isUrl
+      ? `<img src="${m.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+      : (m.avatar||'🎨');
+    const bg = m.me ? 'linear-gradient(135deg,#7c5cbf,#f4732a)' : 'rgba(255,255,255,0.08)';
+    return `<div class="msg${m.me?' me':''}">
+      <div class="msg-avatar" style="background:${bg}">${avatarHtml}</div>
+      <div class="msg-body">
+        <div class="msg-meta">
+          <span class="msg-name">${m.name}</span>
+          <span class="msg-badge badge-${m.badge}">${(m.badge||'free').toUpperCase()}</span>
+          <span class="msg-time">${m.time}</span>
+        </div>
+        <div class="msg-text">${m.text}</div>
+      </div>
+    </div>`;
+  }).join('');
+  setTimeout(()=>{c.scrollTop=c.scrollHeight},100);
+}
 function selectRoom(id){const room=ROOMS.find(r=>r.id===id);const locked=TIER_ORDER.indexOf(MY_TIER)<TIER_ORDER.indexOf(room.tier);if(locked){const cfg=LOCK_CONFIG[room.tier];document.getElementById('lockIcon').textContent=cfg.icon;document.getElementById('lockTitle').textContent=cfg.title;document.getElementById('lockDesc').textContent=cfg.desc;const btn=document.getElementById('lockBtn');btn.className='lock-btn '+cfg.btnClass;btn.textContent=cfg.btnText;document.getElementById('lockedOverlay').classList.add('show');return}currentRoom=id;const bg=document.getElementById('roomBg');bg.style.backgroundImage=`url('${room.bg}')`;bg.style.backgroundPosition=room.bgPos||'center center';bg.style.backgroundSize=room.bgSize||'cover';document.getElementById('roomTitle').textContent=room.icon+' '+room.name;document.getElementById('roomDesc').textContent=room.desc;document.getElementById('onlineCount').textContent=room.online+' online';document.getElementById('atmText').textContent=room.atm;document.getElementById('atmDot').style.background=room.atmColor;document.getElementById('msgInput').placeholder='Say something in '+room.name.toLowerCase()+'...';document.getElementById('lockedOverlay').classList.remove('show');renderRooms();createParticles(room.particles);loadMessages(id);subscribeRoom(id);}
 function closeOverlay(){document.getElementById('lockedOverlay').classList.remove('show')}
 document.getElementById('sendBtn').addEventListener('click',sendMessage)
@@ -221,7 +242,7 @@ async function sendMessage(){
   // Optimistic UI update
   const room=ROOMS.find(r=>r.id===currentRoom);
   room.messages.push({
-    avatar:profile.avatar_url||'🎨',
+    avatar:profile.avatar_url||'🎨', /* URL or emoji */
     name:profile.display_name||profile.username||'You',
     badge:profile.tier||'free',
     time:'just now',

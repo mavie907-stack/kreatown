@@ -628,6 +628,7 @@ async function publishPost(){
       },
       body: JSON.stringify({
         user_id:      userId,
+        creator_id:   userId,
         title:        title,
         content:      content,
         excerpt:      content.substring(0,120),
