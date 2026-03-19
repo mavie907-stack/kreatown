@@ -878,7 +878,7 @@ async function createAccount() {
     document.querySelector('.step-indicator').style.opacity = '0';
 
     if (result.access_token) {
-      setTimeout(() => { window.location.href = 'dashboard.html'; }, 1800);
+      setTimeout(() => { window.location.href = 'member-dashboard.html'; }, 1800);
     } else {
       document.querySelector('.success-title').textContent = 'Almost there! 📧';
       document.querySelector('.success-sub').textContent = 'Account created! You can now log in.';

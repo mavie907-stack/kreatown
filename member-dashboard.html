@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Town — KreaTown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0e0c0a;--bg2:#161210;--bg3:#1e1a15;--bg4:#27211a;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --orange:#f4732a;--orange2:#ff9555;
+  --gold:#c9952a;--gold2:#f5d58a;
+  --palace:#8b6fd4;--palace2:#b8a0e8;
+  --emerald:#2dab80;--red:#e05252;--silver:#8fa3b5;
+  --text1:rgba(255,255,255,0.92);--text2:rgba(255,255,255,0.55);--text3:rgba(255,255,255,0.28);
+}
+html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text1);min-height:100vh;display:flex}
+
+/* SIDEBAR */
+.sb{width:220px;background:var(--bg2);border-right:1px solid var(--border);height:100vh;position:sticky;top:0;display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+.sb-top{padding:1rem 1.1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.6rem}
+.sb-logo{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--text1);text-decoration:none}.sb-logo span{color:var(--orange)}
+.sb-profile{padding:0.85rem 1.1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.6rem;cursor:pointer;text-decoration:none;transition:background .15s}
+.sb-profile:hover{background:rgba(255,255,255,0.03)}
+.sb-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--palace),var(--orange));display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;overflow:hidden;border:1.5px solid rgba(255,255,255,0.1)}
+.sb-av img{width:100%;height:100%;object-fit:cover}
+.sb-nm{font-size:0.78rem;font-weight:500;color:var(--text1)}
+.sb-tier{font-size:0.58rem;color:var(--text3);font-family:'DM Mono',monospace;margin-top:0.06rem}
+.sb-nav{padding:0.5rem 0;flex:1;overflow-y:auto}
+.sb-nav::-webkit-scrollbar{width:2px}
+.sb-sec{font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.12em;padding:0.6rem 1.1rem 0.25rem}
+.sb-it{display:flex;align-items:center;gap:0.55rem;padding:0.5rem 1.1rem;cursor:pointer;color:var(--text2);font-size:0.78rem;transition:all .15s;text-decoration:none;border-left:2px solid transparent;font-family:'DM Sans',sans-serif}
+.sb-it:hover{color:var(--text1);background:rgba(255,255,255,0.03)}
+.sb-it.on{color:var(--orange);background:rgba(244,115,42,0.08);border-left-color:var(--orange);font-weight:500}
+.sb-ic{font-size:0.88rem;width:14px;text-align:center;flex-shrink:0}
+.sb-bd{margin-left:auto;background:var(--orange);color:white;font-size:0.5rem;padding:0.06rem 0.35rem;border-radius:100px}
+.sb-bot{padding:0.85rem 1.1rem;border-top:1px solid var(--border)}
+.sb-logout{display:flex;align-items:center;gap:0.5rem;font-size:0.72rem;color:var(--text3);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;transition:color .15s;width:100%}
+.sb-logout:hover{color:var(--red)}
+
+/* TIER PILL */
+.tier-pill{font-size:0.58rem;padding:0.1rem 0.45rem;border-radius:100px;font-family:'DM Mono',monospace}
+.tp-free{background:rgba(45,171,128,0.12);color:var(--emerald)}
+.tp-silver{background:rgba(143,163,181,0.12);color:var(--silver)}
+.tp-gold{background:rgba(201,149,42,0.12);color:var(--gold2)}
+.tp-palace{background:rgba(139,111,212,0.12);color:var(--palace2)}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(14,12,10,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0.8rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.tb-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700}
+.tb-sub{font-size:0.68rem;color:var(--text3);margin-top:0.06rem}
+.tb-right{display:flex;align-items:center;gap:0.6rem}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--emerald);animation:lp 1.8s ease-in-out infinite}
+@keyframes lp{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+
+/* CONTENT */
+.content{padding:1.25rem 1.5rem 3rem}
+
+/* KPI ROW */
+.krow{display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;margin-bottom:1.25rem}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:0.875rem;padding:0.85rem 1rem;cursor:default;transition:border-color .2s}
+.kpi:hover{border-color:var(--border2)}
+.kl{font-size:0.6rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-family:'DM Mono',monospace;margin-bottom:0.3rem}
+.kv{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;line-height:1}
+.ko .kv{color:var(--orange)}.kg .kv{color:var(--gold2)}.ke .kv{color:var(--emerald)}.kp .kv{color:var(--palace2)}
+.ks{font-size:0.62rem;color:var(--text3);margin-top:0.2rem}
+
+/* CARDS */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:1rem;overflow:hidden}
+.ch{padding:0.85rem 1.1rem 0.6rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ct{font-family:'Playfair Display',serif;font-size:0.88rem;font-weight:700}
+.cs{font-size:0.65rem;color:var(--text3);margin-top:0.08rem}
+.ca{font-size:0.72rem;color:var(--orange);text-decoration:none;cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif}
+.ca:hover{text-decoration:underline}
+.cb{padding:0.85rem 1.1rem}
+
+/* QUICK LINKS */
+.qlinks{display:flex;flex-direction:column;gap:0.4rem}
+.ql{display:flex;align-items:center;gap:0.65rem;padding:0.6rem 0.75rem;border-radius:0.625rem;border:1px solid var(--border);text-decoration:none;color:var(--text2);font-size:0.8rem;transition:all .15s}
+.ql:hover{border-color:var(--border2);color:var(--text1);background:rgba(255,255,255,0.03)}
+.ql-ic{font-size:1rem;width:20px;text-align:center}
+.ql-txt{flex:1}
+.ql-arrow{color:var(--text3);font-size:0.7rem}
+
+/* TIER UPGRADE */
+.tier-card{background:linear-gradient(135deg,rgba(139,111,212,0.12),rgba(244,115,42,0.08));border:1px solid rgba(139,111,212,0.2);border-radius:1rem;padding:1.1rem;margin-bottom:1rem}
+.tc-title{font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:700;margin-bottom:0.35rem}
+.tc-sub{font-size:0.75rem;color:var(--text2);line-height:1.6;margin-bottom:0.85rem}
+.tc-btns{display:flex;gap:0.5rem;flex-wrap:wrap}
+.tc-btn{padding:0.42rem 0.85rem;border-radius:100px;font-size:0.72rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;border:1px solid;text-decoration:none}
+.tc-silver{border-color:var(--silver);color:var(--silver);background:rgba(143,163,181,0.08)}.tc-silver:hover{background:rgba(143,163,181,0.15)}
+.tc-gold{border-color:var(--gold);color:var(--gold2);background:rgba(201,149,42,0.08)}.tc-gold:hover{background:rgba(201,149,42,0.15)}
+.tc-palace{border-color:var(--palace);color:var(--palace2);background:rgba(139,111,212,0.08)}.tc-palace:hover{background:rgba(139,111,212,0.15)}
+
+/* RECENT POSTS */
+.rp-item{display:flex;gap:0.65rem;padding:0.65rem 0;border-bottom:1px solid var(--border);cursor:pointer;text-decoration:none;transition:background .15s}
+.rp-item:last-child{border-bottom:none}
+.rp-item:hover{background:rgba(255,255,255,0.02);margin:0 -1.1rem;padding:0.65rem 1.1rem}
+.rp-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.78rem;flex-shrink:0;overflow:hidden}
+.rp-av img{width:100%;height:100%;object-fit:cover}
+.rp-body{flex:1;min-width:0}
+.rp-name{font-size:0.75rem;font-weight:500;color:var(--text1)}
+.rp-title{font-size:0.72rem;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:0.06rem}
+.rp-time{font-size:0.6rem;color:var(--text3);font-family:'DM Mono',monospace;flex-shrink:0;margin-top:3px}
+
+/* ROOMS QUICK */
+.room-quick{display:flex;align-items:center;justify-content:space-between;padding:0.55rem 0;border-bottom:1px solid var(--border)}
+.room-quick:last-child{border-bottom:none}
+.rq-left{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--text2)}
+.rq-cnt{font-size:0.62rem;color:var(--emerald);font-family:'DM Mono',monospace}
+
+/* MOBILE NAV */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:0.5rem 0;z-index:100}
+.mob-items{display:flex;justify-content:space-around}
+.mob-it{display:flex;flex-direction:column;align-items:center;gap:0.2rem;cursor:pointer;padding:0.3rem 0.75rem;border-radius:0.5rem;font-size:0.6rem;color:var(--text3);text-decoration:none;transition:color .15s}
+.mob-it.on,.mob-it:hover{color:var(--orange)}
+.mob-ico{font-size:1.2rem}
+
+/* TOAST */
+.toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%) translateY(16px);background:var(--bg3);border:1px solid var(--border2);color:var(--text1);padding:0.5rem 1.2rem;border-radius:100px;font-size:0.75rem;z-index:1000;transition:all .3s;opacity:0;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast.ok{border-color:rgba(45,171,128,0.35);color:var(--emerald)}
+.toast.warn{border-color:rgba(244,115,42,0.35);color:var(--orange)}
+
+@media(max-width:768px){
+  .sb{display:none}
+  .mob-nav{display:block}
+  .krow{grid-template-columns:repeat(2,1fr)}
+  .grid2{grid-template-columns:1fr}
+  .content{padding-bottom:5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sb">
+  <div class="sb-top">
+    <a href="index.html" class="sb-logo">Krea<span>Town</span></a>
+  </div>
+  <a href="member-hub.html" class="sb-profile">
+    <div class="sb-av" id="sbAv">🎨</div>
+    <div>
+      <div class="sb-nm" id="sbNm">Loading…</div>
+      <div class="sb-tier" id="sbTier">🌱 Free member</div>
+    </div>
+  </a>
+  <nav class="sb-nav">
+    <div class="sb-sec">My Space</div>
+    <a href="member-dashboard.html" class="sb-it on"><span class="sb-ic">🏠</span> Home</a>
+    <a href="feed.html" class="sb-it"><span class="sb-ic">📰</span> Community Feed</a>
+    <a href="member-hub.html" class="sb-it"><span class="sb-ic">🪪</span> My Profile</a>
+    <a href="messages.html" class="sb-it"><span class="sb-ic">💬</span> Messages<span class="sb-bd" id="msgBdg" style="display:none">0</span></a>
+    <div class="sb-sec">Town</div>
+    <a href="topraq-hub.html" class="sb-it"><span class="sb-ic">🏯</span> Topraq's Town</a>
+    <a href="rooms.html" class="sb-it"><span class="sb-ic">🏠</span> Rooms</a>
+    <a href="kreatown-town-view.html" class="sb-it"><span class="sb-ic">🗺️</span> Town Map</a>
+    <a href="radio.html" class="sb-it"><span class="sb-ic">📻</span> 3D Radio</a>
+    <a href="tv.html" class="sb-it"><span class="sb-ic">📺</span> 3D TV</a>
+    <div class="sb-sec">Account</div>
+    <a href="settings.html" class="sb-it"><span class="sb-ic">⚙️</span> Settings</a>
+  </nav>
+  <div class="sb-bot">
+    <button class="sb-logout" onclick="logout()">← Log out</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="tb-title" id="tbTitle">Good day! 👋</div>
+      <div class="tb-sub" id="tbSub">Welcome to KreaTown</div>
+    </div>
+    <div class="tb-right">
+      <div style="display:flex;align-items:center;gap:0.4rem;font-size:0.68rem;color:var(--emerald)">
+        <div class="live-dot"></div>
+        <span id="onlineCnt">— online</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- KPIs -->
+    <div class="krow">
+      <div class="kpi ko"><div class="kl">My tier</div><div class="kv" id="kTier">Free</div><div class="ks" id="kTierSub">Explore KreaTown</div></div>
+      <div class="kpi ke"><div class="kl">Community posts</div><div class="kv" id="kPosts">—</div><div class="ks">Today's feed</div></div>
+      <div class="kpi kg"><div class="kl">Members online</div><div class="kv" id="kOnline">—</div><div class="ks">Right now</div></div>
+      <div class="kpi kp"><div class="kl">Active rooms</div><div class="kv">7</div><div class="ks">Open for chat</div></div>
+    </div>
+
+    <!-- TIER UPGRADE (shown for free/silver members) -->
+    <div class="tier-card" id="upgradeCard">
+      <div class="tc-title">🔓 Unlock more of KreaTown</div>
+      <div class="tc-sub" id="upgradeText">Upgrade your membership to access exclusive rooms, content and direct chats.</div>
+      <div class="tc-btns">
+        <a href="topraq-hub.html" class="tc-btn tc-silver">⭐ Silver · $9/mo</a>
+        <a href="topraq-hub.html" class="tc-btn tc-gold">👑 Gold · $19/mo</a>
+        <a href="topraq-hub.html" class="tc-btn tc-palace">🏯 Palace · $49/mo</a>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <!-- QUICK LINKS -->
+      <div class="card">
+        <div class="ch"><div class="ct">Quick access</div></div>
+        <div class="cb">
+          <div class="qlinks">
+            <a href="feed.html" class="ql"><span class="ql-ic">📰</span><span class="ql-txt">Community Feed</span><span class="ql-arrow">→</span></a>
+            <a href="rooms.html" class="ql"><span class="ql-ic">💬</span><span class="ql-txt">Enter Rooms</span><span class="ql-arrow">→</span></a>
+            <a href="topraq-hub.html" class="ql"><span class="ql-ic">🏯</span><span class="ql-txt">Topraq's Town</span><span class="ql-arrow">→</span></a>
+            <a href="member-hub.html" class="ql"><span class="ql-ic">🪪</span><span class="ql-txt">My Profile & Posts</span><span class="ql-arrow">→</span></a>
+            <a href="kreatown-town-view.html" class="ql"><span class="ql-ic">🗺️</span><span class="ql-txt">Town Map</span><span class="ql-arrow">→</span></a>
+            <a href="settings.html" class="ql"><span class="ql-ic">⚙️</span><span class="ql-txt">Settings & Profile</span><span class="ql-arrow">→</span></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIVE ROOMS -->
+      <div class="card">
+        <div class="ch"><div class="ct">Active rooms</div><a href="rooms.html" class="ca">Enter →</a></div>
+        <div class="cb">
+          <div class="room-quick"><div class="rq-left">🛎️ Hotel Lobby</div><span class="rq-cnt">● 12</span></div>
+          <div class="room-quick"><div class="rq-left">🍽️ The Restaurant</div><span class="rq-cnt">● 7</span></div>
+          <div class="room-quick"><div class="rq-left">🛏️ Superior Room</div><span class="rq-cnt">● 4</span></div>
+          <div class="room-quick"><div class="rq-left">🌊 Thermal Pool</div><span class="rq-cnt">● 2</span></div>
+          <div class="room-quick"><div class="rq-left">📻 3D Radio</div><span class="rq-cnt">● 5</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT FEED -->
+    <div class="card">
+      <div class="ch">
+        <div><div class="ct">Latest from the community</div><div class="cs">Recent posts from all members</div></div>
+        <a href="feed.html" class="ca">See all →</a>
+      </div>
+      <div class="cb" id="recentPosts">
+        <div style="text-align:center;padding:1.5rem;color:var(--text3);font-size:0.8rem">Loading…</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MOBILE NAV -->
+<nav class="mob-nav">
+  <div class="mob-items">
+    <a href="member-dashboard.html" class="mob-it on"><span class="mob-ico">🏠</span>Home</a>
+    <a href="feed.html" class="mob-it"><span class="mob-ico">📰</span>Feed</a>
+    <a href="rooms.html" class="mob-it"><span class="mob-ico">💬</span>Rooms</a>
+    <a href="topraq-hub.html" class="mob-it"><span class="mob-ico">🏯</span>Town</a>
+    <a href="member-hub.html" class="mob-it"><span class="mob-ico">🪪</span>Profile</a>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SB_URL = 'https://pkhoyabazudqmfczkhax.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
+const TIER_LABELS = {free:'🌱 Free',silver:'⭐ Silver',gold:'👑 Gold',palace:'🏯 Palace'};
+const TIER_COLORS = {free:'tp-free',silver:'tp-silver',gold:'tp-gold',palace:'tp-palace'};
+
+function getSession(){
+  try{ const s=JSON.parse(localStorage.getItem('kt_session')||'{}'); return s.access_token?s:null; }
+  catch(e){ return null; }
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  const session = getSession();
+  if(!session){ window.location.href='login.html'; return; }
+
+  const uid   = session.user_id || session.id;
+  const token = session.access_token;
+
+  try{
+    const res  = await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+uid+'&select=*',{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token}
+    });
+    const data = await res.json();
+    const p    = data[0];
+    if(!p) return;
+
+    localStorage.setItem('kt_profile', JSON.stringify(p));
+
+    /* Update sidebar */
+    document.getElementById('sbNm').textContent   = p.display_name || p.username || 'Member';
+    document.getElementById('sbTier').textContent = TIER_LABELS[p.tier||'free'] + ' member';
+    if(p.avatar_url){
+      document.getElementById('sbAv').innerHTML = '<img src="'+p.avatar_url+'" alt="">';
+    }
+
+    /* Update topbar */
+    const hour = new Date().getHours();
+    const greet = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+    document.getElementById('tbTitle').textContent = greet+', '+(p.display_name||p.username||'friend')+' 👋';
+    document.getElementById('tbSub').textContent   = 'Welcome back to KreaTown';
+
+    /* KPIs */
+    const tier = p.tier || 'free';
+    document.getElementById('kTier').textContent    = TIER_LABELS[tier];
+    document.getElementById('kTierSub').textContent = tier==='palace'?'Full access 🏯':tier==='gold'?'Gold access 👑':tier==='silver'?'Silver access ⭐':'Upgrade for more';
+
+    /* Hide upgrade card for palace */
+    if(tier === 'palace'){
+      document.getElementById('upgradeCard').style.display='none';
+    } else {
+      const texts = {
+        free:'Upgrade to Silver, Gold or Palace for exclusive rooms and content.',
+        silver:'Upgrade to Gold or Palace for Superior Room, Lounge & more.',
+        gold:'One step from full access — upgrade to Palace for everything.'
+      };
+      document.getElementById('upgradeText').textContent = texts[tier]||'';
+    }
+
+    /* If admin → redirect to creator dashboard */
+    if(p.is_admin){
+      window.location.href = 'dashboard.html';
+      return;
+    }
+
+    /* Load recent posts & member count */
+    loadRecentPosts(tier);
+    loadOnlineCount();
+
+  }catch(e){ console.error(e); }
+});
+
+async function loadRecentPosts(myTier){
+  const TIER_ORDER = ['free','silver','gold','palace'];
+  const myTierN    = TIER_ORDER.indexOf(myTier);
+  try{
+    const res = await fetch(
+      SB_URL+'/rest/v1/posts?is_published=eq.true&order=created_at.desc&limit=5&select=*,profiles(username,display_name,avatar_url,tier)',
+      { headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY} }
+    );
+    if(!res.ok) throw new Error();
+    const posts = await res.json();
+    document.getElementById('kPosts').textContent = posts.length;
+
+    const TIER_E = {palace:'🏯',gold:'👑',silver:'⭐',free:'🌱'};
+    document.getElementById('recentPosts').innerHTML = posts.length
+      ? posts.map(p=>{
+          const pr = p.profiles||{};
+          const locked = myTierN < TIER_ORDER.indexOf(p.tier_required||'free');
+          return `<a href="${locked?'topraq-hub.html':'feed.html'}" class="rp-item" style="display:flex">
+            <div class="rp-av" style="background:var(--bg3)">${pr.avatar_url?`<img src="${pr.avatar_url}">`:(TIER_E[pr.tier||'free'])}</div>
+            <div class="rp-body">
+              <div class="rp-name">${pr.display_name||pr.username||'Member'}</div>
+              <div class="rp-title">${locked?'🔒 '+p.title:p.title}</div>
+            </div>
+            <div class="rp-time">${getTimeAgo(p.created_at)}</div>
+          </a>`;
+        }).join('')
+      : '<div style="color:var(--text3);font-size:0.78rem;padding:0.5rem 0">No posts yet — be the first! <a href="feed.html" style="color:var(--orange)">Go to feed →</a></div>';
+  }catch(e){
+    document.getElementById('recentPosts').innerHTML = '<div style="color:var(--text3);font-size:0.78rem">No posts yet. <a href="feed.html" style="color:var(--orange)">Go to feed →</a></div>';
+  }
+}
+
+async function loadOnlineCount(){
+  try{
+    const res = await fetch(SB_URL+'/rest/v1/profiles?select=id&limit=100',{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+    });
+    const data = await res.json();
+    const cnt  = data.length;
+    document.getElementById('kOnline').textContent = cnt;
+    document.getElementById('onlineCnt').textContent = cnt + ' members';
+  }catch(e){}
+}
+
+function getTimeAgo(ts){
+  const diff = Math.floor((Date.now()-new Date(ts))/1000);
+  if(diff<60) return 'now';
+  if(diff<3600) return Math.floor(diff/60)+'m';
+  if(diff<86400) return Math.floor(diff/3600)+'h';
+  return Math.floor(diff/86400)+'d';
+}
+
+function logout(){
+  ['kt_session','kt_user','kt_profile'].forEach(k=>localStorage.removeItem(k));
+  window.location.href='login.html';
+}
+
+let tT;
+function toast(msg,type=''){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className='toast show'+(type?' '+type:'');
+  clearTimeout(tT); tT=setTimeout(()=>el.classList.remove('show'),2500);
+}
+</script>
+</body>
+</html>

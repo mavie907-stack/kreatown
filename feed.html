@@ -165,6 +165,12 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
 .submit-btn:hover{background:var(--orange2);transform:translateY(-1px)}
 .submit-btn:disabled{opacity:0.6;pointer-events:none}
 
+
+/* ADMIN MENU */
+.am-btn{display:flex;align-items:center;width:100%;padding:0.45rem 0.65rem;background:none;border:none;color:var(--text2);font-size:0.75rem;font-family:'DM Sans',sans-serif;cursor:pointer;border-radius:0.45rem;transition:all .15s;text-align:left;gap:0.4rem}
+.am-btn:hover{background:rgba(255,255,255,0.05);color:var(--text1)}
+.am-btn.danger{color:var(--red)}.am-btn.danger:hover{background:rgba(224,82,82,0.08)}
+
 /* TOAST */
 .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(16px);background:var(--bg3);border:1px solid var(--border2);color:var(--text1);padding:0.55rem 1.3rem;border-radius:100px;font-size:0.78rem;z-index:1000;transition:all .3s cubic-bezier(.34,1.56,.64,1);opacity:0;pointer-events:none;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
@@ -428,7 +434,8 @@ function renderFeed(){
             <span class="pc-type">${p.type==='photo'?'📸':p.type==='podcast'?'🎙️':'📝'} ${p.type||'post'}</span>
           </div>
         </div>
-        ${isOwn || myProfile?.is_admin ? `<button onclick="deletePost('${p.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:0.75rem;padding:0.25rem">🗑️</button>` : ''}
+        ${isOwn ? `<button onclick="deletePost('${p.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:0.75rem;padding:0.25rem" title="Delete">🗑️</button>` : ''}
+        ${myProfile?.is_admin && !isOwn ? `<button onclick="openAdminMenu('${p.id}','${(p.profiles||{}).id||''}',this)" style="background:rgba(244,115,42,0.1);border:1px solid rgba(244,115,42,0.2);color:var(--orange);cursor:pointer;font-size:0.68rem;padding:0.2rem 0.5rem;border-radius:0.35rem;font-family:'DM Sans',sans-serif" title="Admin actions">⚡ Moderate</button>` : ''}
       </div>
 
       ${!locked ? `
@@ -574,16 +581,102 @@ async function react(postId, type, btn){
   }).catch(()=>{});
 }
 
-/* ── DELETE ── */
+/* ── ADMIN MODERATION ── */
+function openAdminMenu(postId, userId, btn){
+  // Remove existing menu
+  document.querySelectorAll('.admin-menu').forEach(m=>m.remove());
+
+  const menu = document.createElement('div');
+  menu.className = 'admin-menu';
+  menu.style.cssText = 'position:absolute;right:0;top:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:0.75rem;padding:0.4rem;z-index:100;min-width:180px;box-shadow:0 8px 32px rgba(0,0,0,0.4)';
+  menu.innerHTML = `
+    <button class="am-btn" onclick="hidePost('${postId}')">👁 Hide post</button>
+    <button class="am-btn" onclick="deletePost('${postId}')">🗑️ Delete post</button>
+    <button class="am-btn" onclick="warnUser('${userId}')">⚠️ Warn member</button>
+    <button class="am-btn danger" onclick="freezeUser('${userId}')">❄️ Freeze account</button>
+    <button class="am-btn danger" onclick="banUser('${userId}')">🚫 Ban member</button>
+    <button class="am-btn" onclick="viewProfile('${userId}')">👤 View profile</button>
+  `;
+  btn.parentElement.style.position = 'relative';
+  btn.parentElement.appendChild(menu);
+
+  // Close on outside click
+  setTimeout(() => {
+    document.addEventListener('click', function close(e){
+      if(!menu.contains(e.target)){ menu.remove(); document.removeEventListener('click',close); }
+    });
+  }, 50);
+}
+
+async function hidePost(postId){
+  const token = mySession?.access_token;
+  await fetch(SB_URL+'/rest/v1/posts?id=eq.'+postId,{
+    method:'PATCH',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:JSON.stringify({is_published:false})
+  });
+  document.getElementById('pc-'+postId)?.remove();
+  toast('Post hidden from feed 👁','warn');
+}
+
 async function deletePost(postId){
-  if(!confirm('Delete this post?')) return;
+  if(!confirm('Delete this post permanently?')) return;
   const token = mySession?.access_token;
   await fetch(SB_URL+'/rest/v1/posts?id=eq.'+postId,{
     method:'DELETE',
     headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token}
   });
   document.getElementById('pc-'+postId)?.remove();
-  toast('Post deleted','warn');
+  toast('Post deleted 🗑️','warn');
+}
+
+async function warnUser(userId){
+  const msg = prompt('Warning message to send to member:');
+  if(!msg) return;
+  const token = mySession?.access_token;
+  // Save notification to member
+  await fetch(SB_URL+'/rest/v1/notifications',{
+    method:'POST',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:JSON.stringify({
+      user_id:userId,
+      title:'⚠️ Content Warning',
+      body:msg,
+      type:'warning'
+    })
+  });
+  toast('Warning sent to member ⚠️','warn');
+}
+
+async function freezeUser(userId){
+  if(!confirm('Freeze this member? They cannot log in until unfrozen.')) return;
+  const token = mySession?.access_token;
+  await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+userId,{
+    method:'PATCH',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:JSON.stringify({status:'frozen'})
+  });
+  toast('Account frozen ❄️','warn');
+}
+
+async function banUser(userId){
+  if(!confirm('Ban this member permanently?')) return;
+  const token = mySession?.access_token;
+  await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+userId,{
+    method:'PATCH',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:JSON.stringify({status:'banned'})
+  });
+  toast('Member banned 🚫','err');
+}
+
+async function viewProfile(userId){
+  const res  = await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+userId+'&select=username',{
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+  });
+  const data = await res.json();
+  const username = data[0]?.username;
+  if(username) window.location.href = 'member-hub.html?user='+username;
 }
 
 /* ── COPY LINK ── */
