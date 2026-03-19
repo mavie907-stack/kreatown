@@ -675,10 +675,10 @@ nav {
 
 <!-- NAV -->
 <nav>
-  <a href="index.html" class="nav-logo">Krea<span>Town</span></a>
+  <a href="/" class="nav-logo">Krea<span>Town</span></a>
   <div class="nav-right">
-    <a href="index.html">Explore</a>
-    <a href="login.html">Log in</a>
+    <a href="/">Explore</a>
+    <a href="/auth/login">Log in</a>
     <a href="#join" class="btn-join-nav" onclick="openModal()">Join Topraq's Town 🏡</a>
   </div>
 </nav>
@@ -1050,6 +1050,65 @@ nav {
 </div>
 
 <script>
+/* ── SUPABASE ── */
+const SB_URL='https://pkhoyabazudqmfczkhax.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
+
+function getSession(){
+  try{const s=JSON.parse(localStorage.getItem('kt_session')||'{}');return s.access_token?s:null;}
+  catch(e){return null;}
+}
+
+/* Load profile from Supabase on page load */
+window.addEventListener('DOMContentLoaded', async () => {
+  const session = getSession();
+  if(!session) return;
+  const userId = session.user_id || session.id;
+  const token  = session.access_token;
+
+  try{
+    const res = await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+userId+'&select=*',{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token}
+    });
+    const data = await res.json();
+    const p = data[0];
+    if(!p) return;
+
+    // Update name
+    const nameEl = document.querySelector('.profile-name');
+    if(nameEl && p.display_name) nameEl.textContent = p.display_name;
+
+    // Update handle
+    const handleEl = document.querySelector('.profile-handle');
+    if(handleEl && p.username) handleEl.textContent = '@'+p.username;
+
+    // Update bio
+    const bioEl = document.querySelector('.profile-bio');
+    if(bioEl && p.bio) bioEl.textContent = p.bio;
+
+    // Update avatar — settings'ten gelen fotoğrafı göster
+    if(p.avatar_url){
+      const photo = document.getElementById('avatarPhoto');
+      if(photo){
+        photo.src = p.avatar_url+'?t='+Date.now();
+        photo.style.display = 'block';
+      }
+      const avatarEl = document.getElementById('profileAvatar');
+      if(avatarEl) avatarEl.style.fontSize = '0';
+    }
+
+    // Update banner
+    if(p.banner_url){
+      const banner = document.querySelector('.banner-img');
+      if(banner) banner.style.backgroundImage = 'url('+p.banner_url+')';
+    }
+
+    // Store
+    localStorage.setItem('kt_profile', JSON.stringify(p));
+
+  }catch(e){console.log('Profile load error:',e);}
+});
+
 function openModal() {
   document.getElementById('joinModal').classList.add('open');
 }
@@ -1060,13 +1119,10 @@ function selectTier(el) {
   document.querySelectorAll('.modal-tier').forEach(t => t.classList.remove('selected'));
   el.classList.add('selected');
   const price = el.querySelector('.modal-tier-price').textContent;
-  const name = el.querySelector('.modal-tier-name').textContent;
   const btn = document.querySelector('.btn-modal-join');
-  if (price === 'Free') {
-    btn.textContent = 'Join for free — Enter the town 🏡';
-  } else {
-    btn.textContent = `Join for ${price} — Enter the town 🏡`;
-  }
+  btn.textContent = price === 'Free'
+    ? 'Join for free — Enter the town 🏡'
+    : `Join for ${price} — Enter the town 🏡`;
 }
 
 // Tab switching
@@ -1077,21 +1133,71 @@ document.querySelectorAll('.feed-tab').forEach(tab => {
   });
 });
 
-function handleAvatarUpload(event) {
+/* Upload avatar directly from topraq-hub */
+async function handleAvatarUpload(event) {
   const file = event.target.files[0];
-  if (!file) return;
+  if(!file) return;
+
+  const session = getSession();
+  if(!session){ alert('Please log in first'); return; }
+
+  const userId = session.user_id || session.id;
+  const token  = session.access_token;
+  const ext    = file.name.split('.').pop();
+  const path   = 'avatars/'+userId+'.'+ext;
+
+  // Preview immediately
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = function(e){
     const photo = document.getElementById('avatarPhoto');
-    const avatar = document.getElementById('profileAvatar');
-    photo.src = e.target.result;
-    photo.style.display = 'block';
-    // hide the emoji once photo is set
-    avatar.childNodes.forEach(node => {
-      if (node.nodeType === 3) node.textContent = '';
-    });
+    if(photo){ photo.src = e.target.result; photo.style.display = 'block'; }
+    const avatarEl = document.getElementById('profileAvatar');
+    if(avatarEl) avatarEl.style.fontSize = '0';
   };
   reader.readAsDataURL(file);
+
+  try{
+    // Upload to Supabase Storage
+    await fetch(SB_URL+'/storage/v1/object/avatars/'+path,{
+      method:'POST',
+      headers:{
+        'apikey':SB_KEY,
+        'Authorization':'Bearer '+token,
+        'Content-Type':file.type,
+        'x-upsert':'true'
+      },
+      body:file
+    });
+
+    const avatarUrl = SB_URL+'/storage/v1/object/public/avatars/'+path;
+
+    // Save to profile
+    await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+userId,{
+      method:'PATCH',
+      headers:{
+        'apikey':SB_KEY,
+        'Authorization':'Bearer '+token,
+        'Content-Type':'application/json',
+        'Prefer':'return=minimal'
+      },
+      body:JSON.stringify({avatar_url: avatarUrl})
+    });
+
+    // Update localStorage
+    const profile = JSON.parse(localStorage.getItem('kt_profile')||'{}');
+    profile.avatar_url = avatarUrl;
+    localStorage.setItem('kt_profile', JSON.stringify(profile));
+
+    // Show success
+    const toast = document.createElement('div');
+    toast.textContent = '✅ Photo saved!';
+    toast.style.cssText = 'position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#2dab80;color:white;padding:0.6rem 1.5rem;border-radius:100px;font-size:0.85rem;z-index:9999;animation:fadeIn .3s ease';
+    document.body.appendChild(toast);
+    setTimeout(()=>toast.remove(), 2500);
+
+  }catch(err){
+    console.error('Upload error:', err);
+  }
 }
 </script>
 

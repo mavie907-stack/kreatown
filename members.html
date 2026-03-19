@@ -273,6 +273,7 @@ body {
     <div class="nav-section-label">Settings</div>
     <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
     <a href="settings.html#stripe" class="nav-item"><span class="nav-icon">💳</span> Stripe Connect</a>
+    <a href="member-hub.html" class="nav-item" style="color:var(--emerald);border-left:2px solid rgba(45,171,128,0.3)"><span class="nav-icon">🪪</span> My Profile</a>
     <a href="admin.html" class="nav-item" style="color:var(--orange);border-left:2px solid rgba(244,115,42,0.3)"><span class="nav-icon">👑</span> Admin Panel</a>
   </nav>
   <div class="sidebar-bottom">
@@ -479,10 +480,12 @@ function renderMembers() {
   grid.innerHTML = filtered.map(m => {
     const cfg = TIER_CFG[m.tier];
     return `
-    <div class="member-card ${cfg.cardClass}" onclick="openDrawer(${m.id})">
+    <div class="member-card ${cfg.cardClass}" onclick="window.location.href='member-hub.html?user='+m.handle">
       <div class="mc-top">
         <div class="mc-avatar-wrap">
-          <div class="mc-av">${m.emoji}</div>
+          <div class="mc-av" style="background:${m.bg||'rgba(255,255,255,0.08)'}">
+            ${m.avatar ? '<img src="'+m.avatar+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">' : m.emoji}
+          </div>
           <div class="mc-online-dot ${m.online ? '' : 'offline'}"></div>
         </div>
         <span class="mc-tier-badge ${cfg.badge}">${cfg.label}</span>
@@ -491,12 +494,12 @@ function renderMembers() {
       <div class="mc-handle">@${m.handle}</div>
       <div class="mc-stats">
         <div><span class="mc-stat-val">${m.revenue}</span><div class="mc-stat-label">Revenue</div></div>
-        <div><span class="mc-stat-val">${m.posts}</span><div class="mc-stat-label">Posts read</div></div>
+        <div><span class="mc-stat-val">${m.posts}</span><div class="mc-stat-label">Posts</div></div>
         <div><span class="mc-stat-val">${m.msgs}</span><div class="mc-stat-label">Messages</div></div>
       </div>
       <div class="mc-actions">
-        <button class="mc-btn primary" onclick="event.stopPropagation();alert('Opening DM with ${m.name}…')">💬 Message</button>
-        <button class="mc-btn" onclick="event.stopPropagation();openDrawer(${m.id})">View profile</button>
+        <button class="mc-btn primary" onclick="event.stopPropagation();dmMember('${m.handle}')">💬 Message</button>
+        <button class="mc-btn" onclick="event.stopPropagation();window.location.href='member-hub.html?user=${m.handle}'">View profile</button>
       </div>
     </div>`;
   }).join('');
@@ -583,6 +586,11 @@ setTimeout(() => {
 
 // Load real members from Supabase
 loadMembers();
+
+function dmMember(handle) {
+  localStorage.setItem('dm_to_handle', handle);
+  window.location.href = 'messages.html';
+}
 </script>
 </body>
 </html>
