@@ -709,7 +709,13 @@ form.addEventListener('submit', async (e) => {
     }
 
     /* Save session */
-    localStorage.setItem('kt_session', JSON.stringify(result));
+    localStorage.setItem('kt_session', JSON.stringify({
+      access_token: result.access_token,
+      refresh_token: result.refresh_token,
+      user_id: result.user?.id || result.user,
+      email: result.user?.email || emailEl.value.trim(),
+      expires_at: result.expires_at || (Date.now()/1000 + 3600)
+    }));
 
     /* Success */
     submitBtn.classList.remove('loading');

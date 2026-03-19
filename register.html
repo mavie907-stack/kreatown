@@ -861,9 +861,15 @@ async function createAccount() {
       return;
     }
 
-    /* Success */
+    /* Success — save session */
     if (result.access_token) {
-      localStorage.setItem('kt_session', JSON.stringify(result));
+      localStorage.setItem('kt_session', JSON.stringify({
+        access_token: result.access_token,
+        refresh_token: result.refresh_token,
+        user_id: result.user?.id || result.id,
+        email: result.user?.email || email,
+        expires_at: result.expires_at || (Date.now()/1000 + 3600)
+      }));
     }
 
     btn.classList.remove('loading');
