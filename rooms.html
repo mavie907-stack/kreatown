@@ -217,13 +217,17 @@ function rdesc(r){return getLang()==='tr'&&r.desc_tr?r.desc_tr:r.desc;}
 function renderRooms(){document.getElementById('roomList').innerHTML=ROOMS.map(r=>{const locked=TIER_ORDER.indexOf(MY_TIER)<TIER_ORDER.indexOf(r.tier);const active=r.id===currentRoom;return`<div class="room-item${active?' active':''}${locked?' locked':''}" onclick="selectRoom('${r.id}')"><span class="room-icon">${r.icon}</span><div class="room-info"><div class="room-name">${rn(r)}</div><div class="room-tier">${rtl(r)}</div></div><span class="room-count">${r.online}</span>${active&&!locked?'<div class="online-dot"></div>':''}</div>`}).join('')}
 function renderMessages(room, isNew=false){
   if(isNew) {
-    /* Play sound for new messages */
-    if(typeof playSound !== 'undefined') playSound('message');
+    /* Play sound - only if AudioContext is ready (user has interacted) */
+    if(typeof playSound !== 'undefined' && typeof _actxReady !== 'undefined' && _actxReady) {
+      playSound('message');
+    }
     /* Browser notification if tab hidden */
     if(document.hidden && Notification.permission === 'granted') {
-      new Notification('KreaTown — New message 💬', {
-        body: room.messages[room.messages.length-1]?.text || '',
-        icon: '/manifest.json'
+      const lastMsg = room.messages[room.messages.length-1];
+      new Notification('KreaTown 💬 ' + (lastMsg?.name||'Member'), {
+        body: lastMsg?.text || '',
+        icon: '/manifest.json',
+        silent: false
       });
     }
   }
@@ -288,35 +292,54 @@ function getMyProfile(){
 
 async function loadMessages(roomId){
   try{
-    /* Filter messages by creator if specified */
-    let query = SB_URL+'/rest/v1/room_messages?room_id=eq.'+roomId+'&select=*,profiles(username,display_name,avatar_url,tier)&order=created_at.asc&limit=50';
-    /* Remove creator_id filter - causes cross-room message mixing */
-    // if(window.CREATOR_ID) query += '&creator_id=eq.'+window.CREATOR_ID;
-    const res=await fetch(query,{
-      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+    /* Step 1: Get messages for this room */
+    const res = await fetch(
+      SB_URL+'/rest/v1/room_messages?room_id=eq.'+roomId+'&order=created_at.asc&limit=100&select=*',
+      { headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY} }
+    );
+    const data = await res.json();
+    if(!Array.isArray(data) || !data.length){
+      const room = ROOMS.find(r=>r.id===roomId);
+      if(room){ room.messages=[]; renderMessages(room, false); }
+      return;
+    }
+
+    /* Step 2: Get profiles for message senders */
+    const userIds = [...new Set(data.map(m=>m.user_id).filter(Boolean))];
+    let profileMap = {};
+    if(userIds.length){
+      const pRes = await fetch(
+        SB_URL+'/rest/v1/profiles?id=in.('+userIds.join(',')+')&select=id,username,display_name,avatar_url,tier',
+        { headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY} }
+      );
+      const profiles = await pRes.json().catch(()=>[]);
+      if(Array.isArray(profiles)) profiles.forEach(p => profileMap[p.id] = p);
+    }
+
+    const room    = ROOMS.find(r=>r.id===roomId);
+    const session = getSession();
+    const myId    = session?.user_id || session?.id;
+
+    room.messages = data.map(m => {
+      const prof = profileMap[m.user_id] || {};
+      return {
+        id:     m.id,
+        avatar: prof.avatar_url || '🎨',
+        name:   prof.display_name || prof.username || 'Member',
+        badge:  prof.tier || 'free',
+        time:   timeAgo(m.created_at),
+        text:   m.content,
+        me:     m.user_id === myId,
+        user_id:m.user_id
+      };
     });
-    const data=await res.json();
-    if(!Array.isArray(data))return;
-    
-    const room=ROOMS.find(r=>r.id===roomId);
-    const session=getSession();
-    const myId=session?.user_id||session?.id;
-    
-    room.messages=data.map(m=>({
-      id:m.id,
-      avatar:m.profiles?.avatar_url||'🎨',
-      name:m.profiles?.display_name||m.profiles?.username||'Member',
-      badge:m.profiles?.tier||'free',
-      time:timeAgo(m.created_at),
-      text:m.content,
-      me:m.user_id===myId,
-      user_id:m.user_id
-    }));
+
     const prevCount = room._msgCount || 0;
     const newCount  = room.messages.length;
     renderMessages(room, newCount > prevCount);
     room._msgCount = newCount;
-  }catch(e){console.log('Load messages error:',e);}
+
+  }catch(e){ console.log('Load messages error:', e); }
 }
 
 function timeAgo(ts){
@@ -354,11 +377,13 @@ async function sendMessage(){
   });
   renderMessages(room);
   input.value='';
+  /* Small click sound on send */
+  if(typeof playSound !== 'undefined') setTimeout(()=>playSound('success'),50);
   
   // Save to Supabase
   if(session?.user_id||session?.id){
     try{
-      await fetch(SB_URL+'/rest/v1/room_messages',{
+      const saveRes = await fetch(SB_URL+'/rest/v1/room_messages',{
         method:'POST',
         headers:{
           'apikey':SB_KEY,
@@ -372,6 +397,24 @@ async function sendMessage(){
           content:text
         })
       });
+      if(!saveRes.ok){
+        const err = await saveRes.json().catch(()=>({}));
+        console.error('Save failed:', saveRes.status, err);
+        /* If 401 - token expired */
+        if(saveRes.status===401){
+          if(typeof refreshSession!=='undefined'){
+            const fresh = await refreshSession();
+            if(fresh){
+              /* Retry with new token */
+              await fetch(SB_URL+'/rest/v1/room_messages',{
+                method:'POST',
+                headers:{'apikey':SB_KEY,'Authorization':'Bearer '+fresh.access_token,'Content-Type':'application/json','Prefer':'return=minimal'},
+                body:JSON.stringify({room_id:currentRoom,user_id:fresh.user_id||fresh.id,content:text})
+              });
+            }
+          }
+        }
+      }
     }catch(e){console.log('Send error:',e);}
   }
 }
