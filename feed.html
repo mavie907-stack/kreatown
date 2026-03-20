@@ -182,6 +182,54 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
   .layout{grid-template-columns:1fr;gap:0;padding-bottom:70px}
   .left-sb,.right-sb{display:none}
 }
+
+/* ── COMMENTS ── */
+.comments-section{border-top:1px solid var(--border);padding:0.75rem 1rem;display:none}
+.comments-section.open{display:block}
+.comment-list{display:flex;flex-direction:column;gap:0.6rem;margin-bottom:0.75rem;max-height:280px;overflow-y:auto}
+.comment-list::-webkit-scrollbar{width:2px}
+.comment-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.comment-item{display:flex;gap:0.55rem;align-items:flex-start}
+.cm-av{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:0.7rem;flex-shrink:0;overflow:hidden}
+.cm-av img{width:100%;height:100%;object-fit:cover}
+.cm-body{flex:1;background:var(--bg3);border-radius:0 0.75rem 0.75rem 0.75rem;padding:0.45rem 0.7rem}
+.cm-name{font-size:0.68rem;font-weight:500;color:var(--text1);margin-bottom:0.15rem}
+.cm-text{font-size:0.75rem;color:var(--text2);line-height:1.5}
+.cm-time{font-size:0.58rem;color:var(--text3);font-family:'DM Mono',monospace;margin-top:0.2rem}
+.cm-empty{text-align:center;color:var(--text3);font-size:0.75rem;padding:0.75rem 0}
+.comment-input-row{display:flex;gap:0.5rem;align-items:center}
+.cm-inp-av{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--palace),var(--orange));display:flex;align-items:center;justify-content:center;font-size:0.7rem;flex-shrink:0;overflow:hidden}
+.cm-inp-av img{width:100%;height:100%;object-fit:cover}
+.cm-input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:100px;padding:0.4rem 0.85rem;color:var(--text1);font-size:0.78rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .15s}
+.cm-input:focus{border-color:var(--border2)}
+.cm-input::placeholder{color:var(--text3)}
+.cm-send{width:30px;height:30px;border-radius:50%;background:var(--orange);border:none;color:white;cursor:pointer;font-size:0.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.cm-send:hover{background:var(--orange2);transform:scale(1.08)}
+
+/* ── RIGHT SIDEBAR PRODUCTS ── */
+.promo-card{background:var(--bg2);border:1px solid var(--border);border-radius:1rem;overflow:hidden;margin-bottom:0.85rem}
+.promo-header{padding:0.75rem 1rem 0.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.promo-title{font-family:'Playfair Display',serif;font-size:0.82rem;font-weight:700;color:var(--text1)}
+.promo-badge{font-size:0.52rem;background:rgba(244,115,42,0.12);color:var(--orange);border:1px solid rgba(244,115,42,0.25);padding:0.08rem 0.45rem;border-radius:100px;font-family:'DM Mono',monospace}
+.promo-item{display:flex;align-items:center;gap:0.65rem;padding:0.6rem 1rem;cursor:pointer;text-decoration:none;transition:background .15s;border-bottom:1px solid rgba(255,255,255,0.04)}
+.promo-item:last-child{border-bottom:none}
+.promo-item:hover{background:rgba(255,255,255,0.03)}
+.promo-ico{width:36px;height:36px;border-radius:0.5rem;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.promo-info{flex:1;min-width:0}
+.promo-name{font-size:0.75rem;font-weight:500;color:var(--text1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.promo-sub{font-size:0.62rem;color:var(--text3);margin-top:0.08rem}
+.promo-price{font-size:0.72rem;font-weight:600;color:var(--orange);font-family:'DM Mono',monospace;flex-shrink:0}
+.promo-free{font-size:0.72rem;font-weight:600;color:var(--emerald);font-family:'DM Mono',monospace;flex-shrink:0}
+
+/* Sponsor slot */
+.sponsor-card{background:linear-gradient(135deg,rgba(244,115,42,0.08),rgba(139,111,212,0.06));border:1px solid rgba(244,115,42,0.2);border-radius:1rem;padding:1rem;margin-bottom:0.85rem;text-align:center;cursor:pointer;transition:all .2s}
+.sponsor-card:hover{border-color:rgba(244,115,42,0.4);transform:translateY(-1px)}
+.sponsor-ico{font-size:2rem;margin-bottom:0.4rem}
+.sponsor-title{font-size:0.8rem;font-weight:600;color:var(--text1);margin-bottom:0.25rem}
+.sponsor-sub{font-size:0.65rem;color:var(--text2);line-height:1.5;margin-bottom:0.65rem}
+.sponsor-btn{display:inline-block;padding:0.35rem 0.85rem;background:var(--orange);color:white;border-radius:100px;font-size:0.68rem;font-weight:500;text-decoration:none;transition:all .15s}
+.sponsor-btn:hover{background:var(--orange2)}
+
 </style>
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#f4732a">
@@ -268,10 +316,57 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
 
   <!-- RIGHT SIDEBAR -->
   <aside class="right-sb">
+
+    <!-- FEATURED PRODUCTS -->
+    <div class="promo-card">
+      <div class="promo-header">
+        <div class="promo-title">🛍️ From the Town</div>
+        <span class="promo-badge">FEATURED</span>
+      </div>
+      <div id="featuredProducts">
+        <!-- Loaded dynamically -->
+        <a href="milestones.html" class="promo-item">
+          <div class="promo-ico" style="background:rgba(244,115,42,0.12)">🏆</div>
+          <div class="promo-info">
+            <div class="promo-name">Creator Milestones</div>
+            <div class="promo-sub">Track your rewards</div>
+          </div>
+          <span class="promo-free">Free</span>
+        </a>
+        <a href="topraq-hub.html" class="promo-item">
+          <div class="promo-ico" style="background:rgba(139,111,212,0.12)">🏯</div>
+          <div class="promo-info">
+            <div class="promo-name">Topraq's Town</div>
+            <div class="promo-sub">Exclusive content</div>
+          </div>
+          <span class="promo-free">Visit</span>
+        </a>
+        <a href="rooms.html" class="promo-item">
+          <div class="promo-ico" style="background:rgba(45,171,128,0.12)">💬</div>
+          <div class="promo-info">
+            <div class="promo-name">Join the Rooms</div>
+            <div class="promo-sub">7 active rooms</div>
+          </div>
+          <span class="promo-free">Enter</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- SPONSOR SLOT -->
+    <div class="sponsor-card" onclick="window.location.href='topraq-hub.html'">
+      <div class="sponsor-ico">☕</div>
+      <div class="sponsor-title">Coffee with Topraq</div>
+      <div class="sponsor-sub">Reach 100 members and join us for a real coffee meetup!</div>
+      <a href="milestones.html" class="sponsor-btn">See milestones →</a>
+    </div>
+
+    <!-- ONLINE NOW -->
     <div class="rs-card">
       <div class="rs-title">🟢 Online now</div>
       <div id="onlineMembers"></div>
     </div>
+
+    <!-- ROOMS -->
     <div class="rs-card">
       <div class="rs-title">🏯 Rooms</div>
       <a href="rooms.html" class="sb-item"><span class="sb-ico">🛎️</span> Hotel Lobby</a>
@@ -442,6 +537,8 @@ async function loadFeed(){
     }));
 
     document.getElementById('feedSub').textContent = allPosts.length + ' posts from the community';
+    /* Load comment counts */
+    setTimeout(()=>loadCommentCounts(allPosts.map(p=>p.id)),300);
     renderFeed();
   }catch(e){
     document.getElementById('feedPosts').innerHTML =
@@ -514,7 +611,19 @@ function renderFeed(){
       <div class="pc-footer">
         <button class="pc-react ${p._myHeart?'active':''}" onclick="react('${p.id}','heart',this)">❤️ <span>${p.reactions_heart||0}</span></button>
         <button class="pc-react ${p._myFire?'active':''}" onclick="react('${p.id}','fire',this)">🔥 <span>${p.reactions_fire||0}</span></button>
+        <button class="pc-react" onclick="toggleComments('${p.id}',this)" id="cm-btn-${p.id}">💬 <span id="cm-count-${p.id}">0</span></button>
         <button class="pc-share" onclick="copyLink('${p.id}')">🔗 Share</button>
+      </div>
+      <!-- COMMENTS -->
+      <div class="comments-section" id="comments-${p.id}">
+        <div class="comment-list" id="cm-list-${p.id}">
+          <div class="cm-empty">Be the first to comment 💬</div>
+        </div>
+        <div class="comment-input-row">
+          <div class="cm-inp-av" id="cm-av-${p.id}">🎨</div>
+          <input class="cm-input" id="cm-inp-${p.id}" placeholder="Write a comment…" onkeydown="if(event.key==='Enter')submitComment('${p.id}')">
+          <button class="cm-send" onclick="submitComment('${p.id}')">➤</button>
+        </div>
       </div>
     </div>`;
   }).join('');
@@ -774,6 +883,146 @@ document.addEventListener('DOMContentLoaded', ()=>{
     });
   }, 300);
 });
+
+
+/* ── COMMENT SYSTEM ── */
+const _cmCache = {}; /* postId → comments array */
+
+async function toggleComments(postId, btn){
+  const section = document.getElementById('comments-'+postId);
+  if(!section) return;
+  const isOpen = section.classList.contains('open');
+  section.classList.toggle('open', !isOpen);
+  btn.classList.toggle('active', !isOpen);
+  if(!isOpen && !_cmCache[postId]){
+    await loadComments(postId);
+  }
+  /* Update my avatar in input */
+  if(!isOpen && myProfile?.avatar_url){
+    const av = document.getElementById('cm-av-'+postId);
+    if(av) av.innerHTML = '<img src="'+myProfile.avatar_url+'" alt="">';
+  }
+}
+
+async function loadComments(postId){
+  try{
+    const res  = await fetch(
+      SB_URL+'/rest/v1/post_comments?post_id=eq.'+postId+'&order=created_at.asc&select=*',
+      { headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY} }
+    );
+    const data = await res.json();
+    if(!Array.isArray(data)) return;
+
+    /* Get profiles */
+    const uids = [...new Set(data.map(d=>d.user_id).filter(Boolean))];
+    let pMap   = {};
+    if(uids.length){
+      const pRes = await fetch(
+        SB_URL+'/rest/v1/profiles?id=in.('+uids.join(',')+')&select=id,username,display_name,avatar_url',
+        { headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY} }
+      );
+      const profs = await pRes.json().catch(()=>[]);
+      if(Array.isArray(profs)) profs.forEach(p=>pMap[p.id]=p);
+    }
+
+    _cmCache[postId] = data.map(d=>({...d, _profile: pMap[d.user_id]||{}}));
+
+    /* Update count */
+    const cnt = document.getElementById('cm-count-'+postId);
+    if(cnt) cnt.textContent = data.length;
+
+    renderComments(postId);
+  }catch(e){ console.log('Comments error:', e); }
+}
+
+function renderComments(postId){
+  const list = document.getElementById('cm-list-'+postId);
+  if(!list) return;
+  const comments = _cmCache[postId] || [];
+
+  if(!comments.length){
+    list.innerHTML = '<div class="cm-empty">Be the first to comment 💬</div>';
+    return;
+  }
+
+  list.innerHTML = comments.map(cm=>{
+    const p    = cm._profile || {};
+    const name = p.display_name || p.username || 'Member';
+    const av   = p.avatar_url
+      ? `<img src="${p.avatar_url}" alt="">`
+      : '🎨';
+    const time = getTimeAgo(cm.created_at);
+    return `<div class="comment-item">
+      <div class="cm-av">${av}</div>
+      <div class="cm-body">
+        <div class="cm-name">${name}</div>
+        <div class="cm-text">${cm.content}</div>
+        <div class="cm-time">${time}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  /* Scroll to bottom */
+  list.scrollTop = list.scrollHeight;
+}
+
+async function submitComment(postId){
+  if(!mySession){ toast('Please log in to comment','warn'); return; }
+  const inp   = document.getElementById('cm-inp-'+postId);
+  const text  = inp?.value?.trim();
+  if(!text) return;
+
+  const uid   = mySession.user_id || mySession.id;
+  const token = mySession.access_token;
+
+  /* Optimistic render */
+  if(!_cmCache[postId]) _cmCache[postId] = [];
+  _cmCache[postId].push({
+    id: 'tmp-'+Date.now(),
+    post_id: postId,
+    user_id: uid,
+    content: text,
+    created_at: new Date().toISOString(),
+    _profile: myProfile || {}
+  });
+  renderComments(postId);
+  inp.value = '';
+
+  /* Update count */
+  const cnt = document.getElementById('cm-count-'+postId);
+  if(cnt) cnt.textContent = _cmCache[postId].length;
+
+  /* Save to Supabase */
+  try{
+    await fetch(SB_URL+'/rest/v1/post_comments',{
+      method:'POST',
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify({ post_id:postId, user_id:uid, content:text })
+    });
+    /* Reload for real data */
+    setTimeout(()=>loadComments(postId), 500);
+  }catch(e){ console.log('Comment save error:', e); }
+}
+
+/* Load comment counts for all posts */
+async function loadCommentCounts(postIds){
+  if(!postIds.length) return;
+  try{
+    const res  = await fetch(
+      SB_URL+'/rest/v1/post_comments?post_id=in.('+postIds.join(',')+')&select=post_id',
+      { headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY} }
+    );
+    const data = await res.json();
+    if(!Array.isArray(data)) return;
+    /* Count per post */
+    const counts = {};
+    data.forEach(d=>{ counts[d.post_id] = (counts[d.post_id]||0)+1; });
+    Object.entries(counts).forEach(([pid,n])=>{
+      const el = document.getElementById('cm-count-'+pid);
+      if(el) el.textContent = n;
+    });
+  }catch(e){}
+}
 
 /* Auto refresh every 30s */
 setInterval(loadFeed, 30000);
