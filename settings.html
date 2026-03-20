@@ -320,7 +320,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 
         <div class="s-card">
           <div class="s-card-header">
-            <div><div class="s-card-title">Public info</div><div class="s-card-sub">Displayed on your creator Hub page</div></div>
+            <div><div class="s-card-title">Public info</div><div class="s-card-sub">Displayed on your profile — your real name is <strong style="color:var(--emerald)">never shown</strong> unless you add it here</div></div>
           </div>
           <div class="s-card-body">
             <div class="form-row">
@@ -784,11 +784,60 @@ function switchSection(id) {
 }
 
 /* ── SAVE SECTION ── */
-function saveSection(successId) {
-  const el = document.getElementById(successId);
-  el.style.display = 'block';
-  toast('Changes saved! ✅');
-  setTimeout(() => { el.style.display = 'none'; }, 3000);
+async function saveSection(successId) {
+  const session = getSession();
+  if(!session){ toast('Please log in first'); return; }
+
+  const userId = session.user_id || session.id;
+  const token  = session.access_token;
+
+  /* Collect all form values */
+  const fn          = document.getElementById('firstName')?.value?.trim() || '';
+  const ln          = document.getElementById('lastName')?.value?.trim()  || '';
+  const displayName = document.getElementById('displayName')?.value?.trim() || (fn+' '+ln).trim();
+  const bio         = document.getElementById('bio')?.value?.trim()       || '';
+  const instagram   = document.getElementById('instagram')?.value?.trim() || '';
+  const twitter     = document.getElementById('twitter')?.value?.trim()   || '';
+  const youtube     = document.getElementById('youtube')?.value?.trim()   || '';
+  const website     = document.getElementById('website')?.value?.trim()   || '';
+
+  try {
+    const res = await fetch(SB_URL + '/rest/v1/profiles?id=eq.' + userId, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SB_KEY,
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        display_name: displayName,
+        bio, instagram, twitter, youtube, website
+      })
+    });
+
+    if(res.ok || res.status === 204){
+      /* Update cache */
+      try{
+        const p = JSON.parse(localStorage.getItem('kt_profile')||'{}');
+        Object.assign(p, {display_name:displayName, bio, instagram, twitter, youtube, website});
+        localStorage.setItem('kt_profile', JSON.stringify(p));
+      }catch(e){}
+
+      /* Update sidebar */
+      document.querySelectorAll('.sc-name').forEach(el => el.textContent = displayName);
+
+      const el = document.getElementById(successId);
+      if(el){ el.style.display='block'; setTimeout(()=>el.style.display='none', 3000); }
+      toast('Profile saved! ✅');
+
+    } else {
+      const err = await res.json().catch(()=>({}));
+      toast('Error: ' + (err.message || res.status), 'error');
+    }
+  } catch(e) {
+    toast('Save failed: ' + e.message);
+  }
 }
 
 /* ── CHAR COUNT ── */
@@ -863,11 +912,18 @@ window.addEventListener('DOMContentLoaded', async () => {
       const parts=p.display_name.split(' ');
       const fn=document.getElementById('firstName');
       const ln=document.getElementById('lastName');
+      const dn=document.getElementById('displayName');
       if(fn)fn.value=parts[0]||'';
       if(ln)ln.value=parts.slice(1).join(' ')||'';
+      if(dn)dn.value=p.display_name||'';
     }
+    const unEl=document.getElementById('username');
+    if(unEl&&p.username)unEl.value=p.username;
     const bio=document.getElementById('bio');
     if(bio&&p.bio)bio.value=p.bio;
+    /* Update sidebar name */
+    const scName=document.querySelector('.sc-name');
+    if(scName)scName.textContent=p.display_name||p.username||'';
     // Avatar
     if(p.avatar_url){
       const av=document.getElementById('bigAvatar');
@@ -1028,14 +1084,22 @@ async function saveProfile(){
         'Prefer':'return=minimal'
       },
       body:JSON.stringify({
-        display_name:(fn+' '+ln).trim(),
-        bio,instagram,twitter,youtube,website
+        display_name: document.getElementById('displayName')?.value?.trim() || (fn+' '+ln).trim(),
+        bio, instagram, twitter, youtube, website
       })
     });
     if(res.ok){
       toast('Profile saved! ✅');
-      const sc=document.querySelector('.sc-name');
-      if(sc)sc.textContent=(fn+' '+ln).trim();
+      /* Update display everywhere */
+      const newName = document.getElementById('displayName')?.value?.trim() || (fn+' '+ln).trim();
+      document.querySelectorAll('.sc-name').forEach(el=>el.textContent=newName);
+      /* Update cached profile */
+      try{
+        const cached=JSON.parse(localStorage.getItem('kt_profile')||'{}');
+        cached.display_name=newName;
+        if(bio)cached.bio=bio;
+        localStorage.setItem('kt_profile',JSON.stringify(cached));
+      }catch(e){}
     }else{
       toast('Save failed. Try again.');
     }
