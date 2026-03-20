@@ -275,7 +275,70 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="KreaTown">
-  <script src="/kt-utils.js" defer></script>
+  <script src="/kt-utils.js" defer>
+/* ── NEW DM ── */
+async function openNewDM(){
+  document.getElementById('newDmModal').style.display='flex';
+  /* Load members for datalist */
+  try{
+    const res = await fetch(SB_URL+'/rest/v1/profiles?select=id,username,display_name&order=display_name.asc',{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+    });
+    const data = await res.json();
+    const dl = document.getElementById('dmMemberList');
+    if(dl) dl.innerHTML = data.map(m=>`<option value="@${m.username}">${m.display_name||m.username}</option>`).join('');
+  }catch(e){}
+}
+
+async function sendNewDM(){
+  const to  = document.getElementById('dmToInput').value.trim().replace('@','');
+  const msg = document.getElementById('dmMsgInput').value.trim();
+  if(!to || !msg){ showToast('Fill in recipient and message!'); return; }
+
+  const s = JSON.parse(localStorage.getItem('kt_session')||'{}');
+  if(!s.access_token){ showToast('Please log in'); return; }
+
+  /* Find recipient */
+  const res  = await fetch(SB_URL+'/rest/v1/profiles?username=eq.'+to+'&select=id,display_name',{
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+  });
+  const data = await res.json();
+  const recipient = data[0];
+
+  if(!recipient){
+    showToast('Member @'+to+' not found!');
+    return;
+  }
+
+  /* Send notification */
+  await fetch(SB_URL+'/rest/v1/notifications',{
+    method:'POST',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+s.access_token,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:JSON.stringify([{
+      user_id: recipient.id,
+      title:   '💬 Message from '+(myProfile?.display_name||'Someone'),
+      body:    msg,
+      type:    'dm'
+    }])
+  });
+
+  document.getElementById('newDmModal').style.display='none';
+  document.getElementById('dmToInput').value='';
+  document.getElementById('dmMsgInput').value='';
+  showToast('Message sent to '+recipient.display_name+'! ✅');
+}
+
+function searchMessages(){
+  const q = prompt('Search messages:');
+  if(!q) return;
+  /* Filter convItems */
+  document.querySelectorAll('#convItems > div').forEach(el=>{
+    const txt = el.textContent.toLowerCase();
+    el.style.display = txt.includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+
+</script>
 </head>
 <body>
 
@@ -331,7 +394,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     <div class="conv-header">
       <div class="conv-header-top">
         <div class="conv-title">Messages</div>
-        <button class="new-dm-btn" title="New DM" onclick="alert('New DM coming soon!')">✏️</button>
+        <button class="new-dm-btn" title="New DM" onclick="openNewDM()">✏️</button>
       </div>
       <div class="conv-tabs">
         <button class="conv-tab active" id="tabDMs"   onclick="switchTab('dms')">💬 DMs</button>
@@ -367,7 +430,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
           </div>
         </div>
         <div class="ch-right">
-          <button class="ch-btn" title="Search" onclick="alert('Search in chat coming soon!')">🔎</button>
+          <button class="ch-btn" title="Search" onclick="searchMessages()">🔎</button>
           <a class="ch-btn ch-open-btn" id="openRoomBtn" href="#" style="display:none">Open room →</a>
         </div>
       </div>
@@ -421,7 +484,19 @@ const ROOMS=[
   {id:'tv',icon:'📺',name:'Cinema TV'}
 ];
 
-function getSession(){try{const s=JSON.parse(localStorage.getItem('kt_session')||'{}');return s.access_token?s:null;}catch(e){return null;}}
+function getSession(){
+  try{
+    const s=JSON.parse(localStorage.getItem('kt_session')||'{}');
+    if(!s.access_token) return null;
+    /* Check expiry */
+    const now = Math.floor(Date.now()/1000);
+    if(s.expires_at && s.expires_at < now){
+      /* Expired - try to use anyway (refresh runs in background via kt-utils) */
+      console.log('Session expired, refresh pending...');
+    }
+    return s;
+  }catch(e){return null;}
+}
 function hdr(t){return{'apikey':SB_KEY,'Authorization':'Bearer '+(t||SB_KEY),'Content-Type':'application/json'};}
 function timeAgo(ts){const d=Math.floor((Date.now()-new Date(ts))/1000);if(d<60)return'just now';if(d<3600)return Math.floor(d/60)+'m ago';if(d<86400)return Math.floor(d/3600)+'h ago';return Math.floor(d/86400)+'d ago';}
 
