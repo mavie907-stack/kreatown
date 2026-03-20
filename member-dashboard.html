@@ -335,13 +335,9 @@ window.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('upgradeText').textContent = texts[tier]||'';
     }
 
-    /* Redirect based on role */
+    /* Redirect admin to their dashboard */
     if(p.is_admin){
       window.location.href = 'dashboard.html';
-      return;
-    }
-    if(p.role === 'creator'){
-      window.location.href = 'creator-dashboard.html';
       return;
     }
 

@@ -200,7 +200,7 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
     <a href="feed.html" class="nav-link active">🏠 Feed</a>
     <a href="rooms.html" class="nav-link">💬 Rooms</a>
     <a href="topraq-hub.html" class="nav-link">🏯 Town</a>
-    <a href="dashboard.html" class="nav-link" id="dashLink" style="display:none">📊 Dashboard</a>
+    <a href="#" class="nav-link" id="dashLink" style="display:none">← Dashboard</a>
   </div>
   <div class="nav-right">
       <div id="langToggle" style="display:flex;align-items:center;gap:0.25rem;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:100px;padding:0.18rem 0.28rem">
@@ -376,12 +376,27 @@ window.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('createPostBtn').style.display = 'inline-block';
 
       // Show admin/dashboard links
-      if(myProfile.is_admin){
-        ['dashLink','sbDash','sbAdmin','sbMembers'].forEach(id=>{
-          const el = document.getElementById(id);
-          if(el) el.style.display = 'flex';
-        });
-        document.getElementById('dashLink').style.display = 'block';
+      /* Set correct dashboard link */
+      const dashLink = document.getElementById('dashLink');
+      const sbDash   = document.getElementById('sbDash');
+      const sbAdmin  = document.getElementById('sbAdmin');
+      if(dashLink){
+        if(myProfile.is_admin){
+          dashLink.href = 'dashboard.html';
+          dashLink.style.display = 'block';
+          dashLink.textContent = '← Admin Dashboard';
+          if(sbDash)  sbDash.style.display='flex';
+          if(sbAdmin) sbAdmin.style.display='flex';
+          document.getElementById('sbMembers')?.style.setProperty('display','flex');
+        } else if(myProfile.role === 'creator'){
+          dashLink.href = 'creator-dashboard.html';
+          dashLink.style.display = 'block';
+          dashLink.textContent = '← My Dashboard';
+        } else {
+          dashLink.href = 'member-dashboard.html';
+          dashLink.style.display = 'block';
+          dashLink.textContent = '← My Dashboard';
+        }
       }
     }
   }
