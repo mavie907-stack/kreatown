@@ -87,139 +87,136 @@ body{font-family:'DM Sans',sans-serif;background:#0a0806;color:#e8d5b0}
 .lock-dismiss{margin-top:0.75rem;font-size:0.78rem;color:rgba(255,255,255,0.3);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;display:block;width:100%;text-align:center}
 .lock-dismiss:hover{color:rgba(255,255,255,0.6)}
 /* ── TABLET (iPad) ── */
-@media(max-width:900px){
+@media(max-width:900px) and (min-width:641px){
   .sidebar{width:180px}
+  .room-header{padding:0.85rem 1.25rem}
   .messages{padding:1rem 1.25rem}
-  .input-area{padding:0.75rem 1.25rem 1rem}
+  .input-area{padding:0.75rem 1.25rem}
 }
 
-/* ── MOBILE (iPhone & Android) ── */
+/* ── MOBILE ── */
 @media(max-width:640px){
-  /* App container */
-  .app{
-    flex-direction:column;
-    height:100dvh; /* dynamic viewport height - iOS safe */
-    height:100vh;
-    overflow:hidden;
-  }
 
-  /* Sidebar → horizontal room picker at top */
+  /* Odalar üstte yatay bar */
   .sidebar{
-    position:relative;
+    position:fixed!important;
+    top:0;left:0;right:0;bottom:auto!important;
     width:100%!important;
-    height:auto!important;
+    height:56px!important;
     flex-direction:row;
-    flex-shrink:0;
-    z-index:20;
+    z-index:50;
     border-right:none;
-    border-bottom:1px solid rgba(255,255,255,0.1);
-    padding:0.35rem 0;
+    border-bottom:1px solid rgba(255,255,255,0.12);
+    padding:0.3rem 0;
     overflow:hidden;
+    background:rgba(0,0,0,0.75)!important;
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
   }
   .sidebar-back,.sidebar-footer,.sidebar-logo,.rooms-label{display:none!important}
+  
   #roomList{
     display:flex!important;
     flex-direction:row;
     overflow-x:auto;
-    gap:0.35rem;
-    padding:0 0.6rem;
+    gap:0.3rem;
+    padding:0.2rem 0.75rem;
     flex:1;
+    align-items:center;
     scrollbar-width:none;
-    -ms-overflow-style:none;
     -webkit-overflow-scrolling:touch;
   }
   #roomList::-webkit-scrollbar{display:none}
+  
   .room-item{
     flex-shrink:0;
     flex-direction:column;
-    min-width:64px;
-    max-width:72px;
-    padding:0.35rem 0.4rem;
+    min-width:60px;
+    padding:0.25rem 0.4rem;
     text-align:center;
     border-bottom:none!important;
     border-right:none!important;
     border-radius:0.5rem;
-    gap:0.15rem;
     align-items:center;
+    gap:0.1rem;
   }
-  .room-icon{font-size:1.25rem!important;line-height:1}
+  .room-icon{font-size:1.15rem!important;line-height:1}
   .room-info{display:flex;flex-direction:column;align-items:center}
-  .room-name{font-size:0.55rem!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:64px;line-height:1.2}
-  .room-tier,.room-count,.online-dot{display:none!important}
+  .room-name{font-size:0.52rem!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:58px}
+  .room-tier,.room-count{display:none!important}
 
-  /* Main area fills remaining space */
+  /* Main — offset top for sidebar bar */
   .main{
-    flex:1;
+    position:fixed!important;
+    top:56px;
+    left:0;right:0;
+    bottom:0;
     display:flex;
     flex-direction:column;
-    height:0; /* important: let flex handle it */
-    min-height:0;
+    z-index:10;
     overflow:hidden;
   }
 
-  /* Room header compact */
+  /* Room header */
   .room-header{
-    padding:0.65rem 1rem;
+    padding:0.55rem 0.85rem;
     flex-shrink:0;
+    background:rgba(0,0,0,0.4);
   }
-  .room-title{font-size:0.95rem!important}
-  .room-desc{font-size:0.65rem!important}
+  .room-title{font-size:0.88rem!important}
+  .room-desc{font-size:0.6rem!important;display:none}
+  .online-badge{font-size:0.62rem}
 
-  /* Messages fill available space */
+  /* Messages scroll area */
   .messages{
     flex:1;
-    min-height:0;
     overflow-y:auto;
-    padding:0.85rem 1rem;
-    gap:0.75rem;
     -webkit-overflow-scrolling:touch;
+    padding:0.75rem 0.85rem;
+    gap:0.6rem;
+    /* leave space for input */
+    padding-bottom:0.5rem;
   }
 
-  /* Atmosphere bar compact */
+  /* Atmosphere bar */
   .atm-bar{
-    padding:0.35rem 1rem;
-    font-size:0.62rem;
     flex-shrink:0;
+    padding:0.25rem 0.85rem;
+    font-size:0.6rem;
   }
 
-  /* Input area — always visible above keyboard */
+  /* Input — fixed at bottom */
   .input-area{
-    position:relative;
-    padding:0.6rem 0.85rem;
-    padding-bottom:calc(0.6rem + env(safe-area-inset-bottom));
-    background:rgba(0,0,0,0.6);
+    flex-shrink:0;
+    padding:0.55rem 0.75rem;
+    padding-bottom:calc(0.55rem + env(safe-area-inset-bottom, 0px));
+    background:rgba(0,0,0,0.65);
     backdrop-filter:blur(20px);
     -webkit-backdrop-filter:blur(20px);
     border-top:1px solid rgba(255,255,255,0.1);
-    flex-shrink:0;
-    z-index:10;
+    z-index:20;
   }
   .input-wrap{
     border-radius:1.5rem;
-    padding:0.4rem 0.4rem 0.4rem 1rem;
+    padding:0.35rem 0.35rem 0.35rem 0.9rem;
+    display:flex;
+    align-items:center;
+    gap:0.5rem;
   }
   .msg-input{
-    font-size:16px!important; /* prevents iOS zoom */
-    min-height:36px;
+    font-size:16px!important;
   }
   .send-btn{
-    width:36px;
-    height:36px;
+    width:34px!important;
+    height:34px!important;
     flex-shrink:0;
   }
 
   /* Lock overlay */
-  .locked-overlay{padding:2rem 1.25rem}
-
-  /* Particles off on mobile */
+  .locked-overlay{padding:1.5rem 1rem}
+  
+  /* Hide particles */
   #particles{display:none}
-}
-
-/* ── iOS specific fixes ── */
-@supports(-webkit-touch-callout:none){
-  /* iOS keyboard pushes viewport - use dvh */
-  .app{height:100dvh}
-  .main{height:0}
 }
 </style>
   <link rel="manifest" href="/manifest.json">
@@ -579,23 +576,25 @@ if('Notification' in window && Notification.permission === 'default'){
   }catch(e){}
 })();
 
-/* ── iOS KEYBOARD FIX ── */
+/* ── iOS/MOBILE KEYBOARD FIX ── */
 (function(){
-  const inp = document.getElementById('msgInput');
+  const inp  = document.getElementById('msgInput');
+  const msgs = document.getElementById('messages');
   if(!inp) return;
 
-  /* iOS: when keyboard opens, scroll to bottom */
+  /* Scroll messages to bottom when input focused */
   inp.addEventListener('focus', ()=>{
     setTimeout(()=>{
-      const msgs = document.getElementById('messages');
       if(msgs) msgs.scrollTop = msgs.scrollHeight;
-      /* Scroll input into view */
-      inp.scrollIntoView({behavior:'smooth', block:'nearest'});
-    }, 400);
+    }, 300);
   });
 
-  /* Prevent page scroll when typing */
-  inp.addEventListener('touchstart', e => e.stopPropagation(), {passive:true});
+  /* Visual Viewport API — handles keyboard resize on iOS */
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', ()=>{
+      if(msgs) msgs.scrollTop = msgs.scrollHeight;
+    });
+  }
 })();
 
 </script>
