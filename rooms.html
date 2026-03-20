@@ -178,11 +178,11 @@ body{font-family:'DM Sans',sans-serif;background:#0a0806;color:#e8d5b0}
 </div>
 <script>
 const ROOMS=[
-  {id:'lobby',icon:'🛎️',name:'Hotel Lobby',name_tr:'Otel Lobisi',tier:'free',tierLabel:'🌱 Free',tierLabel_tr:'🌱 Ücretsiz',bg:'rooms/lobby.jpg',bgPos:'center center',bgSize:'cover',atm:'Warm candlelight · Soft piano · Crystal chandeliers',atm_tr:'Sıcak mum ışığı · Hafif piyano · Kristal avizeler',atmColor:'#f5d58a',online:12,desc:'Where every story begins — open to all guests',desc_tr:'Her hikayenin başladığı yer — herkese açık',particles:['#f5d58a','#c9952a','#f4732a'],messages:[{avatar:'🌸',name:'Selin K',badge:'free',time:'2m',text:'This lobby is gorgeous, love the vibe here!'},{avatar:'🎸',name:'Cem A',badge:'free',time:'5m',text:'Just joined the town, excited to explore!'},{avatar:'🌿',name:'Elif Y',badge:'silver',time:'8m',text:'Welcome Cem! The restaurant is amazing btw 🍽️'},{avatar:'🔥',name:'Berk D',badge:'gold',time:'12m',text:'Gold Suite is where the real magic happens 👑'}]},
-  {id:'restaurant',icon:'🍽️',name:'The Restaurant',name_tr:'Restoran',tier:'silver',tierLabel:'⭐ Silver',tierLabel_tr:'⭐ Gümüş',bg:'rooms/restaurant.jpg',bgPos:'center 40%',bgSize:'cover',atm:'Golden mood lighting · Jazz quartet · Dark marble tables',atm_tr:'Altın ışık · Caz dörtlüsü · Koyu mermer masalar',atmColor:'#c9952a',online:7,desc:'Intimate conversations over fine cuisine',desc_tr:'Güzel yemekler eşliğinde samimi sohbetler',particles:['#c9952a','#8b4d00','#f5d58a'],messages:[{avatar:'🌿',name:'Elif Y',badge:'silver',time:'3m',text:'The content dropped last week was fire 🔥'},{avatar:'🎨',name:'Mia T',badge:'silver',time:'6m',text:'Agreed! The strategy breakdown was so detailed.'},{avatar:'⭐',name:'Kerem S',badge:'gold',time:'10m',text:"Wait till you see what's coming in the Gold Suite..."}]},
-  {id:'superior',icon:'🛏️',name:'Superior Room',name_tr:'Superior Oda',tier:'gold',tierLabel:'👑 Gold',tierLabel_tr:'👑 Altın',bg:'rooms/superior.jpg',bgPos:'center center',bgSize:'contain',atm:'Ring chandelier glow · Mountain view · Warm leather',atm_tr:'Halka avize ışığı · Dağ manzarası · Sıcak deri',atmColor:'#e8d5b0',online:4,desc:'Exclusive access for Gold members',desc_tr:'Altın üyelere özel erişim',particles:['#e8d5b0','#c9952a','#ffffff'],messages:[{avatar:'🔥',name:'Berk D',badge:'gold',time:'1m',text:'The Q&A doc shared today — absolute gold 📋'},{avatar:'💡',name:'Ayşe M',badge:'gold',time:'4m',text:'That part about content batching changed my workflow!'},{avatar:'🎯',name:'Deniz K',badge:'palace',time:'7m',text:'Live session from the pool tonight 🌊'}]},
-  {id:'resting',icon:'🛋️',name:'Resting Lounge',name_tr:'Dinlenme Salonu',tier:'gold',tierLabel:'👑 Gold',tierLabel_tr:'👑 Altın',bg:'rooms/resting.jpg',bgPos:'center center',bgSize:'contain',atm:'Brushed brass · Walnut wood · Sputnik chandelier glow',atm_tr:'Fırçalanmış pirinç · Ceviz ahşap · Sputnik avize',atmColor:'#c9952a',online:3,desc:'Quiet conversations in a luxury setting',desc_tr:'Lüks ortamda sessiz sohbetler',particles:['#c9952a','#f5d58a','#e8c87a'],messages:[{avatar:'💎',name:'Lara S',badge:'gold',time:'5m',text:'Love having a quieter corner to chat in 🌙'},{avatar:'🌙',name:'Tarık B',badge:'gold',time:'9m',text:'This is my favorite room, the vibe is perfect.'}]},
-  {id:'pool',icon:'🌊',name:'Thermal Pool',name_tr:'Termal Havuz',tier:'palace',tierLabel:'🏯 Palace',tierLabel_tr:'🏯 Saray',bg:'rooms/pool.jpg',bgPos:'center 25%',bgSize:'cover',atm:'Marble columns · Golden underwater glow · Steam rising',atm_tr:'Mermer sütunlar · Altın su ışığı · Yükselen buhar',atmColor:'#4ecdc4',online:2,desc:'Palace members only — the most exclusive space',desc_tr:'Yalnızca Saray üyeleri — en özel alan',particles:['#4ecdc4','#7c5cbf','#a8edea'],messages:[{avatar:'🏯',name:'Kaan Ö',badge:'palace',time:'2m',text:'Just dropped the strategy session recording 🎯'},{avatar:'👑',name:'Naz A',badge:'palace',time:'4m',text:'Already watched it twice. Life changing content.'},{avatar:'🌟',name:'Creator',badge:'palace',time:'6m',text:'Welcome to the pool everyone 🌊 next session is Tuesday'}]}
+  {id:'lobby',icon:'🛎️',name:'Hotel Lobby',name_tr:'Otel Lobisi',tier:'free',tierLabel:'🌱 Free',tierLabel_tr:'🌱 Ücretsiz',bg:'rooms/lobby.jpg',bgPos:'center center',bgSize:'cover',atm:'Warm candlelight · Soft piano · Crystal chandeliers',atm_tr:'Sıcak mum ışığı · Hafif piyano · Kristal avizeler',atmColor:'#f5d58a',online:12,desc:'Where every story begins — open to all guests',desc_tr:'Her hikayenin başladığı yer — herkese açık',particles:['#f5d58a','#c9952a','#f4732a'],messages:[]},
+  {id:'restaurant',icon:'🍽️',name:'The Restaurant',name_tr:'Restoran',tier:'silver',tierLabel:'⭐ Silver',tierLabel_tr:'⭐ Gümüş',bg:'rooms/restaurant.jpg',bgPos:'center 40%',bgSize:'cover',atm:'Golden mood lighting · Jazz quartet · Dark marble tables',atm_tr:'Altın ışık · Caz dörtlüsü · Koyu mermer masalar',atmColor:'#c9952a',online:7,desc:'Intimate conversations over fine cuisine',desc_tr:'Güzel yemekler eşliğinde samimi sohbetler',particles:['#c9952a','#8b4d00','#f5d58a'],messages:[]},
+  {id:'superior',icon:'🛏️',name:'Superior Room',name_tr:'Superior Oda',tier:'gold',tierLabel:'👑 Gold',tierLabel_tr:'👑 Altın',bg:'rooms/superior.jpg',bgPos:'center center',bgSize:'contain',atm:'Ring chandelier glow · Mountain view · Warm leather',atm_tr:'Halka avize ışığı · Dağ manzarası · Sıcak deri',atmColor:'#e8d5b0',online:4,desc:'Exclusive access for Gold members',desc_tr:'Altın üyelere özel erişim',particles:['#e8d5b0','#c9952a','#ffffff'],messages:[]},
+  {id:'resting',icon:'🛋️',name:'Resting Lounge',name_tr:'Dinlenme Salonu',tier:'gold',tierLabel:'👑 Gold',tierLabel_tr:'👑 Altın',bg:'rooms/resting.jpg',bgPos:'center center',bgSize:'contain',atm:'Brushed brass · Walnut wood · Sputnik chandelier glow',atm_tr:'Fırçalanmış pirinç · Ceviz ahşap · Sputnik avize',atmColor:'#c9952a',online:3,desc:'Quiet conversations in a luxury setting',desc_tr:'Lüks ortamda sessiz sohbetler',particles:['#c9952a','#f5d58a','#e8c87a'],messages:[]},
+  {id:'pool',icon:'🌊',name:'Thermal Pool',name_tr:'Termal Havuz',tier:'palace',tierLabel:'🏯 Palace',tierLabel_tr:'🏯 Saray',bg:'rooms/pool.jpg',bgPos:'center 25%',bgSize:'cover',atm:'Marble columns · Golden underwater glow · Steam rising',atm_tr:'Mermer sütunlar · Altın su ışığı · Yükselen buhar',atmColor:'#4ecdc4',online:2,desc:'Palace members only — the most exclusive space',desc_tr:'Yalnızca Saray üyeleri — en özel alan',particles:['#4ecdc4','#7c5cbf','#a8edea'],messages:[]}
 ]
 const TIER_ORDER=['free','silver','gold','palace']
 const MY_TIER='palace'
@@ -257,7 +257,16 @@ function selectRoom(id){const room=ROOMS.find(r=>r.id===id);const locked=TIER_OR
     btn.textContent=lang==='tr'&&cfg.btnText_tr?cfg.btnText_tr:cfg.btnText;document.getElementById('lockedOverlay').classList.add('show');return}currentRoom=id;const bg=document.getElementById('roomBg');bg.style.backgroundImage=`url('${room.bg}')`;bg.style.backgroundPosition=room.bgPos||'center center';bg.style.backgroundSize=room.bgSize||'cover';document.getElementById('roomTitle').textContent=room.icon+' '+rn(room);
     document.getElementById('roomDesc').textContent=rdesc(room);
     document.getElementById('onlineCount').textContent=room.online+' '+(getLang()==='tr'?'çevrimiçi':'online');
-    document.getElementById('atmText').textContent=ratm(room);document.getElementById('atmDot').style.background=room.atmColor;document.getElementById('msgInput').placeholder=getLang()==='tr'?rn(room).toLowerCase()+' odasında bir şey yaz…':'Say something in '+room.name.toLowerCase()+'...';document.getElementById('lockedOverlay').classList.remove('show');renderRooms();createParticles(room.particles);loadMessages(id);subscribeRoom(id);}
+    document.getElementById('atmText').textContent=ratm(room);document.getElementById('atmDot').style.background=room.atmColor;document.getElementById('msgInput').placeholder=getLang()==='tr'?rn(room).toLowerCase()+' odasında bir şey yaz…':'Say something in '+room.name.toLowerCase()+'...';
+  document.getElementById('lockedOverlay').classList.remove('show');
+  renderRooms();
+  createParticles(room.particles);
+  /* Show loading state */
+  const msgEl=document.getElementById('messages');
+  if(msgEl)msgEl.innerHTML='<div style="padding:2rem;text-align:center;color:rgba(255,255,255,0.25);font-size:0.8rem">Loading messages…</div>';
+  loadMessages(id);
+  subscribeRoom(id);
+}
 function closeOverlay(){document.getElementById('lockedOverlay').classList.remove('show')}
 document.getElementById('sendBtn').addEventListener('click',sendMessage)
 document.getElementById('msgInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendMessage()})
@@ -281,7 +290,8 @@ async function loadMessages(roomId){
   try{
     /* Filter messages by creator if specified */
     let query = SB_URL+'/rest/v1/room_messages?room_id=eq.'+roomId+'&select=*,profiles(username,display_name,avatar_url,tier)&order=created_at.asc&limit=50';
-    if(window.CREATOR_ID) query += '&creator_id=eq.'+window.CREATOR_ID;
+    /* Remove creator_id filter - causes cross-room message mixing */
+    // if(window.CREATOR_ID) query += '&creator_id=eq.'+window.CREATOR_ID;
     const res=await fetch(query,{
       headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
     });
@@ -359,7 +369,6 @@ async function sendMessage(){
         body:JSON.stringify({
           room_id:currentRoom,
           user_id:session.user_id||session.id,
-          creator_id:window.CREATOR_ID||null,
           content:text
         })
       });
