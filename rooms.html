@@ -162,7 +162,18 @@ const LOCK_CONFIG={silver:{icon:'⭐',title:'Silver Members Only',desc:'Join the
 let currentRoom='lobby'
 function createParticles(colors){const c=document.getElementById('particles');c.innerHTML='';for(let i=0;i<18;i++){const p=document.createElement('div');p.className='particle';const s=Math.random()*4+2;p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${Math.random()*8+6}s;animation-delay:${Math.random()*6}s;`;c.appendChild(p)}}
 function renderRooms(){document.getElementById('roomList').innerHTML=ROOMS.map(r=>{const locked=TIER_ORDER.indexOf(MY_TIER)<TIER_ORDER.indexOf(r.tier);const active=r.id===currentRoom;return`<div class="room-item${active?' active':''}${locked?' locked':''}" onclick="selectRoom('${r.id}')"><span class="room-icon">${r.icon}</span><div class="room-info"><div class="room-name">${r.name}</div><div class="room-tier">${r.tierLabel}</div></div><span class="room-count">${r.online}</span>${active&&!locked?'<div class="online-dot"></div>':''}</div>`}).join('')}
-function renderMessages(room){
+function renderMessages(room, isNew=false){
+  if(isNew) {
+    /* Play sound for new messages */
+    if(typeof playSound !== 'undefined') playSound('message');
+    /* Browser notification if tab hidden */
+    if(document.hidden && Notification.permission === 'granted') {
+      new Notification('KreaTown — New message 💬', {
+        body: room.messages[room.messages.length-1]?.text || '',
+        icon: '/manifest.json'
+      });
+    }
+  }
   const c=document.getElementById('messages');
   c.innerHTML=room.messages.map(m=>{
     const isUrl = m.avatar && m.avatar.startsWith('http');
@@ -226,7 +237,10 @@ async function loadMessages(roomId){
       me:m.user_id===myId,
       user_id:m.user_id
     }));
-    renderMessages(room);
+    const prevCount = room._msgCount || 0;
+    const newCount  = room.messages.length;
+    renderMessages(room, newCount > prevCount);
+    room._msgCount = newCount;
   }catch(e){console.log('Load messages error:',e);}
 }
 
@@ -287,6 +301,10 @@ async function sendMessage(){
   }
 }
 selectRoom('lobby');loadMessages('lobby');subscribeRoom('lobby');
+/* Request notification permission */
+if('Notification' in window && Notification.permission === 'default'){
+  setTimeout(()=>Notification.requestPermission(), 3000);
+}
 
 /* Load user profile for sidebar */
 (async()=>{
