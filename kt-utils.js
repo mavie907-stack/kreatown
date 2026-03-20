@@ -173,23 +173,97 @@ function setLang(lang) {
   applyLang();
 }
 
+/* Smart translation map - matches text content */
+const TR_MAP = {
+  /* Nav */
+  'Community Feed':   {tr:'Topluluk Akışı'},
+  'My Profile':       {tr:'Profilim'},
+  'My Dashboard':     {tr:'Panelim'},
+  'Dashboard':        {tr:'Panel'},
+  'Settings':         {tr:'Ayarlar'},
+  'Log out':          {tr:'Çıkış yap'},
+  'All Members':      {tr:'Tüm Üyeler'},
+  'Earnings':         {tr:'Kazanç'},
+  'Messages':         {tr:'Mesajlar'},
+  'Members':          {tr:'Üyeler'},
+  'Rooms':            {tr:'Odalar'},
+  'Town Map':         {tr:'Kasaba Haritası'},
+  'Admin Panel':      {tr:'Yönetim Paneli'},
+  /* Feed */
+  '✍️ Post':          {tr:'✍️ Paylaş'},
+  'Share with community': {tr:'Toplulukla paylaş'},
+  'Latest from the community': {tr:'Topluluktan son paylaşımlar'},
+  'Quick access':     {tr:'Hızlı erişim'},
+  'Active rooms':     {tr:'Aktif odalar'},
+  /* Buttons */
+  'Save changes':     {tr:'Değişiklikleri kaydet'},
+  'Upload photo':     {tr:'Fotoğraf yükle'},
+  'Remove':           {tr:'Kaldır'},
+  'Cancel':           {tr:'İptal'},
+  'Send':             {tr:'Gönder'},
+  'See all':          {tr:'Tümünü gör'},
+  /* Tiers */
+  '🌱 Free':          {tr:'🌱 Ücretsiz'},
+  '⭐ Silver':        {tr:'⭐ Gümüş'},
+  '👑 Gold':          {tr:'👑 Altın'},
+  '🏯 Palace':        {tr:'🏯 Saray'},
+  /* Room */
+  'Hotel Lobby':      {tr:'Otel Lobisi'},
+  'The Restaurant':   {tr:'Restoran'},
+  'Superior Room':    {tr:'Superior Oda'},
+  'Resting Lounge':   {tr:'Dinlenme Salonu'},
+  'Thermal Pool':     {tr:'Termal Havuz'},
+  /* Placeholders */
+  'Say something in': {tr:'Bir şeyler yaz…'},
+  'Write your post…': {tr:'Yazını buraya yaz…'},
+  'Give your post a title…': {tr:'Gönderi başlığı…'},
+};
+
 function applyLang() {
-  // Apply translations to elements with data-i18n attribute
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-      el.placeholder = t(key);
-    } else {
-      el.textContent = t(key);
-    }
-  });
-  // Update html lang
   document.documentElement.lang = currentLang;
-  // Update language toggle buttons
+
+  /* Update toggle buttons */
   document.querySelectorAll('[data-lang]').forEach(btn => {
     const isActive = btn.getAttribute('data-lang') === currentLang;
     btn.style.background = isActive ? 'rgba(244,115,42,0.25)' : 'transparent';
-    btn.style.color = isActive ? '#f4732a' : '';
+    btn.style.color      = isActive ? '#f4732a' : '';
+    btn.style.fontWeight = isActive ? '500' : '400';
+  });
+
+  if (currentLang === 'en') {
+    /* Restore original - reload page content */
+    document.querySelectorAll('[data-orig]').forEach(el => {
+      el.textContent = el.getAttribute('data-orig');
+    });
+    return;
+  }
+
+  /* Apply Turkish translations */
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  const nodes  = [];
+  let node;
+  while (node = walker.nextNode()) nodes.push(node);
+
+  nodes.forEach(textNode => {
+    const txt   = textNode.textContent.trim();
+    const trans = TR_MAP[txt];
+    if (trans && trans[currentLang]) {
+      const parent = textNode.parentElement;
+      if (!parent.hasAttribute('data-orig')) {
+        parent.setAttribute('data-orig', txt);
+      }
+      textNode.textContent = trans[currentLang];
+    }
+  });
+
+  /* Translate placeholders */
+  document.querySelectorAll('input[placeholder], textarea[placeholder]').forEach(el => {
+    Object.entries(TR_MAP).forEach(([en, trans]) => {
+      if (el.placeholder.includes(en) && trans[currentLang]) {
+        if (!el.hasAttribute('data-orig-ph')) el.setAttribute('data-orig-ph', el.placeholder);
+        el.placeholder = trans[currentLang];
+      }
+    });
   });
 }
 
@@ -291,4 +365,34 @@ window.addEventListener('appinstalled', () => {
   const btn = document.getElementById('pwaInstallBtn');
   if (btn) btn.style.display = 'none';
   playSound('success');
+});
+
+/* ── TV/RADIO BACKGROUND STOP ── */
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    /* Stop all audio/video when tab is hidden */
+    document.querySelectorAll('audio, video').forEach(el => {
+      if (!el.paused) {
+        el._wasPlaying = true;
+        el.pause();
+      }
+    });
+    /* Stop iframe embeds (YouTube etc) */
+    document.querySelectorAll('iframe').forEach(iframe => {
+      try {
+        const src = iframe.src;
+        if (src && (src.includes('youtube') || src.includes('spotify') || src.includes('soundcloud'))) {
+          iframe._origSrc = src;
+          iframe.src = '';
+        }
+      } catch(e) {}
+    });
+  }
+});
+
+window.addEventListener('pagehide', () => {
+  document.querySelectorAll('audio, video').forEach(el => el.pause());
+  document.querySelectorAll('iframe[src*="youtube"], iframe[src*="spotify"]').forEach(el => {
+    el.src = '';
+  });
 });
