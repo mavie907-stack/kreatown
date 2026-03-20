@@ -777,11 +777,11 @@ nav {
   <!-- FEED -->
   <div class="feed fu2">
     <div class="feed-tabs">
-      <button class="feed-tab active" onclick="filterPosts(this,'all')">All Posts</button>
-      <button class="feed-tab" onclick="filterPosts(this,'free')">🌱 Free</button>
-      <button class="feed-tab" onclick="filterPosts(this,'silver')">⭐ Silver</button>
-      <button class="feed-tab" onclick="filterPosts(this,'gold')">👑 Gold</button>
-      <button class="feed-tab" onclick="filterPosts(this,'palace')">🏯 Palace</button>
+      <button class="feed-tab active" onclick="filterPosts(this,'all')" data-i18n-en="All Posts" data-i18n-tr="Tüm Yazılar">All Posts</button>
+      <button class="feed-tab" onclick="filterPosts(this,'free')" data-i18n-en="🌱 Free" data-i18n-tr="🌱 Ücretsiz">🌱 Free</button>
+      <button class="feed-tab" onclick="filterPosts(this,'silver')" data-i18n-en="⭐ Silver" data-i18n-tr="⭐ Gümüş">⭐ Silver</button>
+      <button class="feed-tab" onclick="filterPosts(this,'gold')" data-i18n-en="👑 Gold" data-i18n-tr="👑 Altın">👑 Gold</button>
+      <button class="feed-tab" onclick="filterPosts(this,'palace')" data-i18n-en="🏯 Palace" data-i18n-tr="🏯 Saray">🏯 Palace</button>
     </div>
     <div id="postsContainer">
       <div style="padding:2rem;text-align:center;color:var(--muted);font-size:0.85rem">Loading posts…</div>
@@ -981,6 +981,8 @@ function getSession(){
 
 /* Load creator profile & posts on page load */
 window.addEventListener('DOMContentLoaded', async () => {
+  /* Apply language on load */
+  if(typeof applyLang !== 'undefined') setTimeout(applyLang, 100);
   const session = getSession();
 
   /* Update nav based on session */
