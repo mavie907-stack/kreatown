@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Refreshing session…</title>
+<script>
+/* Clear expired session and redirect to login */
+localStorage.removeItem('kt_session');
+localStorage.removeItem('kt_profile');
+localStorage.removeItem('kt_user');
+window.location.href = 'login.html?reason=expired';
+</script>
+</head>
+<body style="background:#0e0c0a;color:rgba(255,255,255,0.6);font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:1rem">
+  <div style="font-size:1.5rem">🔄</div>
+  <div>Refreshing your session…</div>
+</body>
+</html>

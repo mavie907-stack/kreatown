@@ -831,8 +831,17 @@ const SB_URL='https://pkhoyabazudqmfczkhax.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
 
 function getSession(){
-  try{const s=JSON.parse(localStorage.getItem('kt_session')||'{}');return s.access_token?s:null;}
-  catch(e){return null;}
+  try{
+    const s=JSON.parse(localStorage.getItem('kt_session')||'{}');
+    if(!s.access_token) return null;
+    /* Check expiry */
+    const now = Math.floor(Date.now()/1000);
+    if(s.expires_at && s.expires_at < now){
+      /* Expired - try to use anyway (refresh runs in background via kt-utils) */
+      console.log('Session expired, refresh pending...');
+    }
+    return s;
+  }catch(e){return null;}
 }
 
 /* Load profile on page load */
@@ -884,8 +893,17 @@ async function uploadAvatar(input){
   if(!file)return;
   if(file.size>2*1024*1024){toast('Max 2MB allowed!');return;}
   
-  const session=getSession();
+  let session=getSession();
   if(!session){toast('Please log in first');return;}
+
+  /* Try refresh if expired */
+  if(session.expires_at && Math.floor(Date.now()/1000) > session.expires_at){
+    if(typeof refreshSession !== 'undefined'){
+      const fresh = await refreshSession();
+      if(fresh) session = fresh;
+      else { toast('Session expired — please log in again'); window.location.href='login.html'; return; }
+    }
+  }
   
   const userId=session.user_id||session.id;
   const token=session.access_token;

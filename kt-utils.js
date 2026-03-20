@@ -1,3 +1,88 @@
+/* ── SESSION REFRESH ── */
+const _SB_URL = 'https://pkhoyabazudqmfczkhax.supabase.co';
+const _SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
+
+async function refreshSession() {
+  try {
+    const s = JSON.parse(localStorage.getItem('kt_session') || '{}');
+    if (!s.refresh_token) return null;
+
+    /* Check if expired (5 min buffer) */
+    const expiresAt = s.expires_at || 0;
+    const now = Math.floor(Date.now() / 1000);
+    if (expiresAt > now + 300) return s; /* Still valid */
+
+    /* Refresh */
+    const res = await fetch(_SB_URL + '/auth/v1/token?grant_type=refresh_token', {
+      method: 'POST',
+      headers: { 'apikey': _SB_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: s.refresh_token })
+    });
+
+    if (!res.ok) {
+      /* Refresh failed — clear session, redirect to login */
+      localStorage.removeItem('kt_session');
+      localStorage.removeItem('kt_profile');
+      if (!window.location.pathname.includes('login') && 
+          !window.location.pathname.includes('register') &&
+          !window.location.pathname.includes('index') &&
+          !window.location.pathname.includes('topraq-hub')) {
+        window.location.href = 'login.html';
+      }
+      return null;
+    }
+
+    const data = await res.json();
+    const newSession = {
+      access_token:  data.access_token,
+      refresh_token: data.refresh_token,
+      user_id:       data.user?.id || s.user_id,
+      email:         data.user?.email || s.email,
+      expires_at:    Math.floor(Date.now() / 1000) + (data.expires_in || 3600)
+    };
+    localStorage.setItem('kt_session', JSON.stringify(newSession));
+    return newSession;
+
+  } catch(e) {
+    console.log('Session refresh error:', e);
+    return null;
+  }
+}
+
+
+/* ── AUTO LOGOUT ON AUTH ERROR ── */
+const _origFetch = window.fetch;
+window.fetch = async function(...args) {
+  const response = await _origFetch(...args);
+  /* If we get 401 on Supabase API calls */
+  if(response.status === 401 && args[0]?.toString?.().includes('supabase')) {
+    const clone = response.clone();
+    try {
+      const body = await clone.json();
+      if(body?.message?.includes('exp') || body?.error?.includes('invalid_token') || body?.message?.includes('JWT expired')) {
+        console.log('Token expired, refreshing...');
+        const fresh = await refreshSession();
+        if(!fresh) {
+          /* Can't refresh - need re-login */
+          const isPublic = ['index','login','register','topraq-hub','forgot'].some(p => window.location.pathname.includes(p));
+          if(!isPublic) {
+            alert('Your session has expired. Please log in again.');
+            localStorage.removeItem('kt_session');
+            window.location.href = 'login.html';
+          }
+        }
+      }
+    } catch(e) {}
+  }
+  return response;
+};
+
+/* Auto-refresh session every 10 minutes */
+setInterval(refreshSession, 10 * 60 * 1000);
+
+/* Refresh on page load */
+document.addEventListener('DOMContentLoaded', refreshSession);
+
 /* ============================================================
    KreaTown — Shared Utilities
    Tüm sayfalara ekle: <script src="kt-utils.js"></script>
