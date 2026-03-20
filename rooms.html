@@ -86,7 +86,35 @@ body{font-family:'DM Sans',sans-serif;background:#0a0806;color:#e8d5b0}
 .lock-btn-palace{background:linear-gradient(135deg,#7c5cbf,#a98cdf);color:white}
 .lock-dismiss{margin-top:0.75rem;font-size:0.78rem;color:rgba(255,255,255,0.3);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;display:block;width:100%;text-align:center}
 .lock-dismiss:hover{color:rgba(255,255,255,0.6)}
-@media(max-width:640px){.sidebar{display:none}}
+@media(max-width:640px){
+  .sidebar{
+    position:fixed;bottom:0;left:0;right:0;
+    width:100%!important;height:auto!important;
+    flex-direction:row;z-index:200;
+    border-right:none;border-top:1px solid rgba(255,255,255,0.1);
+    padding:0.4rem 0;
+  }
+  .sidebar-back,.sidebar-footer,.sidebar-logo{display:none!important}
+  #roomList{
+    display:flex;flex-direction:row;overflow-x:auto;
+    gap:0.4rem;padding:0 0.75rem;flex:1;
+    scrollbar-width:none;-ms-overflow-style:none;
+  }
+  #roomList::-webkit-scrollbar{display:none}
+  .room-item{
+    flex-shrink:0;flex-direction:column;
+    min-width:72px;padding:0.4rem 0.5rem;
+    text-align:center;border-bottom:none!important;
+    border-radius:0.5rem;gap:0.2rem;
+  }
+  .room-icon{font-size:1.2rem!important}
+  .room-info{display:flex;flex-direction:column;align-items:center}
+  .room-name{font-size:0.58rem!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:68px}
+  .room-tier,.room-count{display:none}
+  .online-dot{display:none}
+  .page{padding-bottom:90px!important}
+  .chat-area{height:calc(100vh - 160px)!important}
+}
 </style>
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#f4732a">
@@ -251,7 +279,10 @@ function getMyProfile(){
 
 async function loadMessages(roomId){
   try{
-    const res=await fetch(SB_URL+'/rest/v1/room_messages?room_id=eq.'+roomId+'&select=*,profiles(username,display_name,avatar_url,tier)&order=created_at.asc&limit=50',{
+    /* Filter messages by creator if specified */
+    let query = SB_URL+'/rest/v1/room_messages?room_id=eq.'+roomId+'&select=*,profiles(username,display_name,avatar_url,tier)&order=created_at.asc&limit=50';
+    if(window.CREATOR_ID) query += '&creator_id=eq.'+window.CREATOR_ID;
+    const res=await fetch(query,{
       headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
     });
     const data=await res.json();
@@ -328,12 +359,37 @@ async function sendMessage(){
         body:JSON.stringify({
           room_id:currentRoom,
           user_id:session.user_id||session.id,
+          creator_id:window.CREATOR_ID||null,
           content:text
         })
       });
     }catch(e){console.log('Send error:',e);}
   }
 }
+/* Load creator context from URL param */
+(async()=>{
+  const params = new URLSearchParams(window.location.search);
+  const creatorSlug = params.get('creator') || 'topraq';
+  
+  /* Store for message sending */
+  window.CURRENT_CREATOR = creatorSlug;
+
+  /* Load creator profile to get their id */
+  try{
+    const res = await fetch(SB_URL+'/rest/v1/profiles?username=eq.'+creatorSlug+'&select=id,username,display_name,avatar_url',{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+    });
+    const data = await res.json();
+    if(data[0]){
+      window.CREATOR_ID = data[0].id;
+      window.CREATOR_NAME = data[0].display_name || data[0].username;
+      /* Update room logo */
+      const logo = document.querySelector('.sidebar-logo');
+      if(logo && creatorSlug !== 'topraq') logo.textContent = window.CREATOR_NAME + "'s Rooms";
+    }
+  }catch(e){}
+})();
+
 selectRoom('lobby');loadMessages('lobby');subscribeRoom('lobby');
 /* Request notification permission */
 if('Notification' in window && Notification.permission === 'default'){

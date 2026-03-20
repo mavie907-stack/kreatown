@@ -1071,6 +1071,7 @@ async function quickReact(postId, emoji, btn) {
 // Load feed on init
 window.addEventListener('DOMContentLoaded', () => {
   loadGlobalFeed();
+  loadRecentMembers();
   // Refresh every 30 seconds
   setInterval(loadGlobalFeed, 30000);
 });
@@ -1212,6 +1213,52 @@ function setMobileTab(el, icon) {
   document.querySelectorAll('.mnb-item').forEach(i => i.classList.remove('active'));
   el.classList.add('active');
 }
+
+/* ── LOAD REAL MEMBERS ── */
+async function loadRecentMembers() {
+  try {
+    const res = await fetch(
+      SUPABASE_URL + '/rest/v1/profiles?select=id,username,display_name,avatar_url,tier,created_at&order=created_at.desc&limit=5',
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
+    );
+    if(!res.ok) return;
+    const members = await res.json();
+    if(!members.length) return;
+
+    const TIER_COLORS = {palace:'rgba(139,111,212,0.2)',gold:'rgba(201,149,42,0.15)',silver:'rgba(150,170,190,0.15)',free:'rgba(45,171,128,0.12)'};
+    const TIER_PILLS  = {palace:'tp-palace',gold:'tp-gold',silver:'tp-silver',free:'tp-free'};
+    const TIER_LABELS = {palace:'🏯 Palace',gold:'👑 Gold',silver:'⭐ Silver',free:'🌱 Free'};
+    const TIER_EMOJIS = {palace:'🏯',gold:'👑',silver:'⭐',free:'🌱'};
+
+    const tbody = document.querySelector('.members-table tbody');
+    if(!tbody) return;
+
+    tbody.innerHTML = members.map(m => {
+      const name   = m.display_name || m.username || 'Member';
+      const handle = m.username || '';
+      const tier   = m.tier || 'free';
+      const joined = new Date(m.created_at).toLocaleDateString('en',{month:'short',day:'numeric'});
+      const avatar = m.avatar_url
+        ? `<img src="${m.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+        : TIER_EMOJIS[tier];
+
+      return `<tr onclick="window.location.href='member-hub.html?user=${handle}'" style="cursor:pointer">
+        <td><div class="member-cell">
+          <div class="mem-avatar" style="background:${TIER_COLORS[tier]}">${avatar}</div>
+          <div><div class="mem-name">${name}</div><div class="mem-handle">@${handle}</div></div>
+        </div></td>
+        <td><span class="tier-pill ${TIER_PILLS[tier]}">${TIER_LABELS[tier]}</span></td>
+        <td class="mem-revenue" style="${tier==='free'?'color:var(--text3)':''}">$0</td>
+        <td class="mem-joined" style="color:var(--text3)">${joined}</td>
+      </tr>`;
+    }).join('');
+
+    /* Update "See all" count */
+    const seeAll = document.querySelector('.members-card .card-action');
+    if(seeAll) seeAll.textContent = 'See all ' + members.length + '+ →';
+  } catch(e) { console.log('Members load error:', e); }
+}
+
 </script>
 </body>
 </html>

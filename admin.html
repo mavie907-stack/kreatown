@@ -155,6 +155,124 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text1);di
   <script src="/kt-utils.js" defer></script>
 </head>
 <body>
+
+<!-- ADMIN PIN LOCK -->
+<div id="pinLock" style="position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem">
+  <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--text1)">Krea<span style="color:var(--orange)">Town</span> Admin</div>
+  <div style="font-size:0.78rem;color:var(--text3);margin-bottom:0.5rem">Enter your admin PIN to continue</div>
+  <div style="display:flex;gap:0.5rem" id="pinDots">
+    <div style="width:12px;height:12px;border-radius:50%;border:2px solid var(--border2);background:transparent" id="d0"></div>
+    <div style="width:12px;height:12px;border-radius:50%;border:2px solid var(--border2);background:transparent" id="d1"></div>
+    <div style="width:12px;height:12px;border-radius:50%;border:2px solid var(--border2);background:transparent" id="d2"></div>
+    <div style="width:12px;height:12px;border-radius:50%;border:2px solid var(--border2);background:transparent" id="d3"></div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;margin-top:0.5rem">
+    <button class="pin-btn" onclick="enterPin('1')">1</button>
+    <button class="pin-btn" onclick="enterPin('2')">2</button>
+    <button class="pin-btn" onclick="enterPin('3')">3</button>
+    <button class="pin-btn" onclick="enterPin('4')">4</button>
+    <button class="pin-btn" onclick="enterPin('5')">5</button>
+    <button class="pin-btn" onclick="enterPin('6')">6</button>
+    <button class="pin-btn" onclick="enterPin('7')">7</button>
+    <button class="pin-btn" onclick="enterPin('8')">8</button>
+    <button class="pin-btn" onclick="enterPin('9')">9</button>
+    <button class="pin-btn" onclick="enterPin('0')" style="grid-column:2">0</button>
+    <button class="pin-btn" onclick="clearPin()" style="background:rgba(224,82,82,0.1);border-color:rgba(224,82,82,0.3);color:var(--red)">⌫</button>
+  </div>
+  <div id="pinError" style="font-size:0.72rem;color:var(--red);display:none;margin-top:0.25rem">Incorrect PIN</div>
+  <div style="font-size:0.65rem;color:var(--text3);margin-top:1rem">Or enter with password:</div>
+  <div style="display:flex;gap:0.5rem">
+    <input type="password" id="pinPassword" placeholder="Admin password…" style="background:var(--bg3);border:1px solid var(--border);border-radius:0.5rem;color:var(--text1);padding:0.5rem 0.85rem;font-size:0.82rem;outline:none;font-family:'DM Sans',sans-serif;width:180px" onkeydown="if(event.key==='Enter')checkPassword()">
+    <button onclick="checkPassword()" style="padding:0.5rem 1rem;background:var(--orange);border:none;border-radius:0.5rem;color:white;cursor:pointer;font-size:0.82rem;font-family:'DM Sans',sans-serif">Enter</button>
+  </div>
+  <a href="dashboard.html" style="font-size:0.72rem;color:var(--text3);margin-top:0.5rem;text-decoration:none">← Back to dashboard</a>
+</div>
+<style>
+.pin-btn{width:64px;height:64px;border-radius:50%;background:var(--bg2);border:1px solid var(--border2);color:var(--text1);font-size:1.1rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.pin-btn:hover{background:var(--bg3);border-color:var(--orange);color:var(--orange)}
+.pin-btn:active{transform:scale(0.93)}
+</style>
+<script>
+/* ── ADMIN PIN LOCK ── */
+const ADMIN_PIN = '1881'; /* Change this! */
+const SESSION_KEY = 'kt_admin_pin_ok';
+let currentPin = '';
+
+/* Check if already authenticated this session */
+if(sessionStorage.getItem(SESSION_KEY) === 'true'){
+  document.getElementById('pinLock').style.display = 'none';
+}
+
+function enterPin(digit){
+  if(currentPin.length >= 4) return;
+  currentPin += digit;
+  updateDots();
+  if(currentPin.length === 4) setTimeout(checkPin, 150);
+}
+
+function updateDots(){
+  for(let i=0;i<4;i++){
+    const d = document.getElementById('d'+i);
+    if(d) d.style.background = i < currentPin.length ? 'var(--orange)' : 'transparent';
+  }
+}
+
+function clearPin(){
+  currentPin = currentPin.slice(0,-1);
+  updateDots();
+  document.getElementById('pinError').style.display='none';
+}
+
+function checkPin(){
+  if(currentPin === ADMIN_PIN){
+    sessionStorage.setItem(SESSION_KEY,'true');
+    const lock = document.getElementById('pinLock');
+    lock.style.opacity='0';
+    lock.style.transition='opacity .3s';
+    setTimeout(()=>lock.style.display='none',300);
+  } else {
+    document.getElementById('pinError').style.display='block';
+    /* Shake animation */
+    document.getElementById('pinDots').style.animation='shake .3s ease';
+    setTimeout(()=>{
+      currentPin='';
+      updateDots();
+      document.getElementById('pinDots').style.animation='';
+    },400);
+  }
+}
+
+function checkPassword(){
+  const pw = document.getElementById('pinPassword').value;
+  /* Accept admin PIN as password too, or set a separate password */
+  const ADMIN_PASSWORDS = [ADMIN_PIN, 'kreatown2026', 'admin2026'];
+  if(ADMIN_PASSWORDS.includes(pw)){
+    sessionStorage.setItem(SESSION_KEY,'true');
+    const lock = document.getElementById('pinLock');
+    lock.style.opacity='0';
+    lock.style.transition='opacity .3s';
+    setTimeout(()=>lock.style.display='none',300);
+  } else {
+    document.getElementById('pinPassword').style.borderColor='var(--red)';
+    document.getElementById('pinError').style.display='block';
+    setTimeout(()=>document.getElementById('pinPassword').style.borderColor='',1500);
+  }
+}
+
+/* Keyboard support */
+document.addEventListener('keydown', e=>{
+  if(document.getElementById('pinLock').style.display==='none') return;
+  if(document.getElementById('pinPassword') === document.activeElement) return;
+  if(e.key>='0'&&e.key<='9') enterPin(e.key);
+  if(e.key==='Backspace') clearPin();
+});
+
+/* Shake keyframe */
+const style=document.createElement('style');
+style.textContent='@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}';
+document.head.appendChild(style);
+</script>
+
 <aside class="sb">
   <div class="sb-top"><div class="sb-logo">Krea<span>Town</span></div><div class="adm">ADMIN</div></div>
   <div class="sb-own"><div class="sb-av">🎨</div><div><div class="sb-nm">Topraq Toros</div><div class="sb-rl">👑 Platform Owner</div></div></div>
@@ -169,6 +287,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text1);di
     <button class="sb-it" onclick="go('gift')"><span class="sb-ic">🎁</span> Gift Membership</button>
     <div class="sb-sc">Rooms</div>
     <button class="sb-it" onclick="go('rooms')"><span class="sb-ic">🏠</span> Room Control</button>
+    <button class="sb-it" onclick="go('creatorrooms')"><span class="sb-ic">🏯</span> Creator Rooms</button>
     <button class="sb-it" onclick="go('ww')"><span class="sb-ic">👁</span> Who's Where</button>
     <div class="sb-sc">Broadcast</div>
     <button class="sb-it" onclick="go('notify')"><span class="sb-ic">📢</span> Notification</button>
@@ -386,6 +505,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text1);di
     </div>
   </div>
 
+  <!-- CREATOR ROOMS -->
+  <div class="sec" id="sec-creatorrooms">
+    <div class="card">
+      <div class="ch">
+        <div><div class="ct">🏯 Creator Rooms — Admin Access</div><div class="cs">Enter any creator's rooms as admin</div></div>
+      </div>
+      <div class="cb">
+        <div id="creatorRoomsList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.85rem"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- LOGS -->
   <div class="sec" id="sec-logs">
     <div class="card">
@@ -419,7 +550,7 @@ const RMS=[
 ];
 const TL={palace:'🏯 Palace',gold:'👑 Gold',silver:'⭐ Silver',free:'🌱 Free'};
 const TB={palace:'tp',gold:'tg',silver:'ts',free:'tf'};
-const TTITLES={overview:'Platform Overview',live:'Live Activity',members:'All Members',banned:'Banned Members',frozen:'Frozen Accounts',gift:'Gift Membership',rooms:'Room Control',ww:"Who's Where",notify:'Broadcast',dm:'DM Member',platform:'Platform Control',logs:'Audit Log'};
+const TTITLES={overview:'Platform Overview',live:'Live Activity',members:'All Members',banned:'Banned Members',frozen:'Frozen Accounts',gift:'Gift Membership',rooms:'Room Control',creatorrooms:'Creator Rooms',ww:"Who's Where",notify:'Broadcast',dm:'DM Member',platform:'Platform Control',logs:'Audit Log'};
 let mF='all',gT='gold';
 let AL=[];
 
@@ -688,6 +819,66 @@ function oMo(t,s,b,acts){document.getElementById('moT').innerHTML=t;document.get
 function cMo(){document.getElementById('mo').classList.remove('open');}
 
 /* ── TOAST ── */
+/* ── CREATOR ROOMS ── */
+async function loadCreatorRooms(){
+  try{
+    const session=getSession();
+    const token=session?.access_token||SK;
+    /* Load all creators */
+    const res=await fetch(SB+'/rest/v1/profiles?role=eq.creator&select=id,username,display_name,avatar_url&order=created_at.desc',{
+      headers:{'apikey':SK,'Authorization':'Bearer '+token}
+    });
+    const creators=await res.json();
+    const el=document.getElementById('creatorRoomsList');
+    if(!el)return;
+
+    /* Also add admin/topraq */
+    const adminRes=await fetch(SB+'/rest/v1/profiles?is_admin=eq.true&select=id,username,display_name,avatar_url',{
+      headers:{'apikey':SK,'Authorization':'Bearer '+token}
+    });
+    const admins=await adminRes.json();
+    const allCreators=[...admins,...creators.filter(c=>!admins.find(a=>a.id===c.id))];
+
+    if(!allCreators.length){
+      el.innerHTML='<div style="color:var(--text3);font-size:0.82rem;padding:1rem">No creators yet</div>';
+      return;
+    }
+
+    const ROOM_LIST=[
+      {id:'lobby',icon:'🛎️',name:'Hotel Lobby'},
+      {id:'restaurant',icon:'🍽️',name:'Restaurant'},
+      {id:'superior',icon:'🛏️',name:'Superior Room'},
+      {id:'resting',icon:'🛋️',name:'Resting Lounge'},
+      {id:'pool',icon:'🌊',name:'Thermal Pool'},
+      {id:'radio',icon:'📻',name:'3D Radio'},
+      {id:'tv',icon:'📺',name:'Cinema TV'},
+    ];
+
+    el.innerHTML=allCreators.map(c=>`
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:0.875rem;padding:1rem">
+        <div style="display:flex;align-items:center;gap:0.65rem;margin-bottom:0.85rem">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--palace),var(--orange));display:flex;align-items:center;justify-content:center;font-size:0.85rem;overflow:hidden;flex-shrink:0">
+            ${c.avatar_url?`<img src="${c.avatar_url}" style="width:100%;height:100%;object-fit:cover">`:'🎨'}
+          </div>
+          <div>
+            <div style="font-size:0.82rem;font-weight:500;color:var(--text1)">${c.display_name||c.username}</div>
+            <div style="font-size:0.62rem;color:var(--text3);font-family:'DM Mono',monospace">@${c.username||''}</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.3rem">
+          ${ROOM_LIST.map(r=>`
+            <a href="rooms.html?creator=${c.username||''}" 
+               style="display:flex;align-items:center;gap:0.5rem;padding:0.38rem 0.6rem;border-radius:0.45rem;border:1px solid var(--border);text-decoration:none;color:var(--text2);font-size:0.75rem;transition:all .15s"
+               onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange)'"
+               onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">
+              ${r.icon} ${r.name}
+              <span style="margin-left:auto;font-size:0.6rem;color:var(--text3);font-family:'DM Mono',monospace">Enter →</span>
+            </a>`).join('')}
+        </div>
+      </div>`).join('');
+  }catch(e){console.error('Creator rooms error:',e);}
+}
+
 let tT;
 function toast(msg,type=''){const el=document.getElementById('toast');el.textContent=msg;el.className='toast show'+(type?' '+type:'');clearTimeout(tT);tT=setTimeout(()=>el.classList.remove('show'),2800);}
 

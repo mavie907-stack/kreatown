@@ -408,297 +408,178 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 </div>
 
 <script>
-/* ════════════════════════════════════
-   SHARED DATA — synced with rooms.html
-   ════════════════════════════════════ */
-const ROOMS = [
-  { id:'lobby',      icon:'🛎️', name:'Hotel Lobby',    tier:'free',   tierLabel:'🌱 Free',   atm:'Warm candlelight · Soft piano · Crystal chandeliers', atmColor:'#f5d58a', online:12, desc:'Where every story begins — open to all guests',       bg:'rooms/lobby.jpg',
-    messages:[
-      { avatar:'🌸', name:'Selin K',  badge:'free',   time:'2m',  text:'This lobby is gorgeous, love the vibe here!' },
-      { avatar:'🎸', name:'Cem A',    badge:'free',   time:'5m',  text:'Just joined the town, excited to explore!' },
-      { avatar:'🌿', name:'Elif Y',   badge:'silver', time:'8m',  text:'Welcome Cem! The restaurant is amazing btw 🍽️' },
-      { avatar:'🔥', name:'Berk D',   badge:'gold',   time:'12m', text:'Gold Suite is where the real magic happens 👑' },
-    ]
-  },
-  { id:'restaurant', icon:'🍽️', name:'The Restaurant',  tier:'silver', tierLabel:'⭐ Silver', atm:'Golden mood lighting · Jazz quartet · Dark marble tables', atmColor:'#c9952a', online:7, desc:'Intimate conversations over fine cuisine',             bg:'rooms/restaurant.jpg',
-    messages:[
-      { avatar:'🌿', name:'Elif Y',   badge:'silver', time:'3m',  text:'The content dropped last week was fire 🔥' },
-      { avatar:'🎨', name:'Mia T',    badge:'silver', time:'6m',  text:'Agreed! The strategy breakdown was so detailed.' },
-      { avatar:'⭐', name:'Kerem S',  badge:'gold',   time:'10m', text:"Wait till you see what's coming in the Gold Suite..." },
-    ]
-  },
-  { id:'superior',   icon:'🛏️', name:'Superior Room',   tier:'gold',   tierLabel:'👑 Gold',   atm:'Ring chandelier glow · Mountain view · Warm leather', atmColor:'#e8d5b0', online:4, desc:'Exclusive access for Gold members',                   bg:'rooms/superior.jpg',
-    messages:[
-      { avatar:'🔥', name:'Berk D',   badge:'gold',   time:'1m',  text:'The Q&A doc shared today — absolute gold 📋' },
-      { avatar:'💡', name:'Ayşe M',   badge:'gold',   time:'4m',  text:'That part about content batching changed my workflow!' },
-      { avatar:'🎯', name:'Deniz K',  badge:'palace', time:'7m',  text:'Live session from the pool tonight 🌊' },
-    ]
-  },
-  { id:'resting',    icon:'🛋️', name:'Resting Lounge',  tier:'gold',   tierLabel:'👑 Gold',   atm:'Brushed brass · Walnut wood · Sputnik chandelier glow', atmColor:'#c9952a', online:3, desc:'Quiet conversations in a luxury setting',             bg:'rooms/resting.jpg',
-    messages:[
-      { avatar:'💎', name:'Lara S',   badge:'gold',   time:'5m',  text:'Love having a quieter corner to chat in 🌙' },
-      { avatar:'🌙', name:'Tarık B',  badge:'gold',   time:'9m',  text:'This is my favorite room, the vibe is perfect.' },
-    ]
-  },
-  { id:'pool',       icon:'🌊', name:'Thermal Pool',    tier:'palace', tierLabel:'🏯 Palace', atm:'Marble columns · Golden underwater glow · Steam rising', atmColor:'#4ecdc4', online:2, desc:'Palace members only — the most exclusive space',     bg:'rooms/pool.jpg',
-    messages:[
-      { avatar:'🏯', name:'Kaan Ö',   badge:'palace', time:'2m',  text:'Just dropped the strategy session recording 🎯' },
-      { avatar:'👑', name:'Naz A',    badge:'palace', time:'4m',  text:'Already watched it twice. Life changing content.' },
-      { avatar:'🌟', name:'Creator',  badge:'palace', time:'6m',  text:'Welcome to the pool everyone 🌊 next session is Tuesday', me:true },
-    ]
-  },
+const SB_URL = 'https://pkhoyabazudqmfczkhax.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
+
+const ROOMS=[
+  {id:'lobby',icon:'🛎️',name:'Hotel Lobby'},
+  {id:'restaurant',icon:'🍽️',name:'The Restaurant'},
+  {id:'superior',icon:'🛏️',name:'Superior Room'},
+  {id:'resting',icon:'🛋️',name:'Resting Lounge'},
+  {id:'pool',icon:'🌊',name:'Thermal Pool'},
+  {id:'radio',icon:'📻',name:'3D Radio'},
+  {id:'tv',icon:'📺',name:'Cinema TV'}
 ];
 
-const DMS = [
-  { id:'dm-kaan',   name:'Kaan Öztürk',  handle:'@kaan',       emoji:'🎨', tier:'palace', online:true,  unread:2, lastMsg:'Just dropped the strategy session 🎯', time:'2m',
-    messages:[
-      { avatar:'🎨', name:'Kaan Öztürk', badge:'palace', time:'10m', text:'Hey! Loved the last session so much.' },
-      { avatar:'🎨', name:'Kaan Öztürk', badge:'palace', time:'8m',  text:'When is the next one? I want to invite my team.' },
-      { avatar:'🎨', name:'You',         badge:'palace', time:'5m',  text:'Next Tuesday at 8pm! I\'ll post it in the pool room first 🌊', me:true },
-      { avatar:'🎨', name:'Kaan Öztürk', badge:'palace', time:'2m',  text:'Just dropped the strategy session recording 🎯' },
-    ]
-  },
-  { id:'dm-selin',  name:'Selin Kaya',   handle:'@selinkaya',  emoji:'🌸', tier:'palace', online:true,  unread:1, lastMsg:'This lobby is gorgeous!', time:'5m',
-    messages:[
-      { avatar:'🌸', name:'Selin Kaya',  badge:'palace', time:'15m', text:'Your town is literally the most beautiful thing I\'ve seen 😍' },
-      { avatar:'🌸', name:'You',         badge:'palace', time:'10m', text:'Thank you Selin! That means everything 🙏', me:true },
-      { avatar:'🌸', name:'Selin Kaya',  badge:'palace', time:'5m',  text:'This lobby is gorgeous!' },
-    ]
-  },
-  { id:'dm-berk',   name:'Berk Doğan',   handle:'@berkd',      emoji:'🔥', tier:'palace', online:false, unread:0, lastMsg:'Gold Suite is where the magic is 👑', time:'12m',
-    messages:[
-      { avatar:'🔥', name:'Berk Doğan',  badge:'palace', time:'20m', text:'The Q&A doc was insane. So much value.' },
-      { avatar:'🔥', name:'You',         badge:'palace', time:'15m', text:'Glad it helped! More coming this week 💪', me:true },
-      { avatar:'🔥', name:'Berk Doğan',  badge:'palace', time:'12m', text:'Gold Suite is where the magic is 👑' },
-    ]
-  },
-  { id:'dm-elif',   name:'Elif Yıldız',  handle:'@elif',       emoji:'🌿', tier:'gold',   online:false, unread:0, lastMsg:'Welcome Cem! The restaurant is amazing', time:'1h',
-    messages:[
-      { avatar:'🌿', name:'Elif Yıldız', badge:'gold',   time:'2h',  text:'Hey! Quick question about the content tiers.' },
-      { avatar:'🌿', name:'You',         badge:'palace', time:'1h',  text:'Of course, what do you want to know?', me:true },
-      { avatar:'🌿', name:'Elif Yıldız', badge:'gold',   time:'1h',  text:'Welcome Cem! The restaurant is amazing' },
-    ]
-  },
-  { id:'dm-cem',    name:'Cem Arslan',   handle:'@cemarslan',  emoji:'🎸', tier:'silver', online:true,  unread:0, lastMsg:'Just joined, excited to explore!', time:'2h',
-    messages:[
-      { avatar:'🎸', name:'Cem Arslan',  badge:'silver', time:'2h',  text:'Just joined the town, excited to explore!' },
-      { avatar:'🎸', name:'You',         badge:'palace', time:'2h',  text:'Welcome Cem! Start with the Hotel Lobby 🛎️', me:true },
-    ]
-  },
-];
+function getSession(){try{const s=JSON.parse(localStorage.getItem('kt_session')||'{}');return s.access_token?s:null;}catch(e){return null;}}
+function hdr(t){return{'apikey':SB_KEY,'Authorization':'Bearer '+(t||SB_KEY),'Content-Type':'application/json'};}
+function timeAgo(ts){const d=Math.floor((Date.now()-new Date(ts))/1000);if(d<60)return'just now';if(d<3600)return Math.floor(d/60)+'m ago';if(d<86400)return Math.floor(d/3600)+'h ago';return Math.floor(d/86400)+'d ago';}
 
-const TIER_ORDER = ['free','silver','gold','palace'];
-const MY_TIER    = 'palace';
-const LOCK_CFG   = {
-  silver: { icon:'⭐', title:'Silver Members Only',  desc:'Upgrade to Silver to access the Restaurant.',     btnCls:'lb-silver', btnTxt:'⭐ Upgrade to Silver · $9/mo'  },
-  gold:   { icon:'👑', title:'Gold Suite Access',     desc:'Gold tier unlocks the Superior Room & Lounge.',   btnCls:'lb-gold',   btnTxt:'👑 Upgrade to Gold · $29/mo'   },
-  palace: { icon:'🏯', title:'Palace Access Only',    desc:'The Thermal Pool is reserved for Palace members.',btnCls:'lb-palace', btnTxt:'🏯 Enter the Palace · $49/mo'  },
-};
+let myProfile=null, activeNotif=null;
 
-const ROOM_MEMBERS = {
-  lobby:      [{ emoji:'🌸',bg:'linear-gradient(135deg,#c9952a,#f5d58a)',  name:'Selin K',  online:true  },{ emoji:'🎸',bg:'rgba(255,255,255,0.1)',name:'Cem A',online:true  },{ emoji:'🌿',bg:'linear-gradient(135deg,#2dab80,#60a5fa)',name:'Elif Y', online:false },{ emoji:'🔥',bg:'linear-gradient(135deg,#f4732a,#fbbf24)',name:'Berk D',online:true  }],
-  restaurant: [{ emoji:'🌿',bg:'linear-gradient(135deg,#2dab80,#60a5fa)',  name:'Elif Y',   online:false },{ emoji:'🎨',bg:'linear-gradient(135deg,#7c5cbf,#f4732a)', name:'Mia T',   online:true  },{ emoji:'⭐',bg:'linear-gradient(135deg,#c9952a,#f5d58a)',  name:'Kerem S', online:true  }],
-  superior:   [{ emoji:'🔥',bg:'linear-gradient(135deg,#f4732a,#fbbf24)',  name:'Berk D',   online:true  },{ emoji:'💡',bg:'rgba(255,255,255,0.1)',name:'Ayşe M', online:false },{ emoji:'🎯',bg:'linear-gradient(135deg,#8b6fd4,#b8a0e8)', name:'Deniz K', online:true  }],
-  resting:    [{ emoji:'💎',bg:'linear-gradient(135deg,#c9952a,#f5d58a)',  name:'Lara S',   online:true  },{ emoji:'🌙',bg:'rgba(255,255,255,0.1)',name:'Tarık B', online:false }],
-  pool:       [{ emoji:'🏯',bg:'linear-gradient(135deg,#7c5cbf,#b8a0e8)',  name:'Kaan Ö',   online:true  },{ emoji:'👑',bg:'linear-gradient(135deg,#c9952a,#f5d58a)',  name:'Naz A',   online:true  }],
-};
+window.addEventListener('DOMContentLoaded', async()=>{
+  const session=getSession();
+  if(!session){window.location.href='login.html';return;}
+  const uid=session.user_id||session.id;
+  const token=session.access_token;
 
-/* ════════ STATE ════════ */
-let activeTab  = 'dms';
-let activeConv = null;
+  try{
+    const res=await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+uid+'&select=*',{headers:hdr(token)});
+    const data=await res.json();
+    myProfile=data[0];
+    if(!myProfile)return;
 
-/* ════════ RENDER CONV LIST ════════ */
-function renderConvList() {
-  const q   = document.getElementById('convSearch').value.toLowerCase();
-  const el  = document.getElementById('convItems');
+    /* Update sidebar avatar */
+    const av=document.querySelector('.sc-avatar');
+    if(av&&myProfile.avatar_url)av.innerHTML='<img src="'+myProfile.avatar_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
 
-  if (activeTab === 'dms') {
-    const filtered = DMS.filter(d => !q || d.name.toLowerCase().includes(q) || d.handle.includes(q));
-    el.innerHTML = filtered.map(d => {
-      const tierCls = { palace:'tb-palace', gold:'tb-gold', silver:'tb-silver', free:'tb-free' }[d.tier];
-      return `
-      <div class="conv-item ${activeConv===d.id?'active':''}" onclick="openConv('dm','${d.id}')">
-        <div class="ci-av" style="background:linear-gradient(135deg,#7c5cbf,#f4732a)">
-          ${d.emoji}
-          <div class="ci-online ${d.online?'':'off'}"></div>
-        </div>
-        <div class="ci-info">
-          <div class="ci-name">${d.name} <span class="tier-badge ${tierCls}" style="margin-left:0.3rem">${d.tier==='palace'?'🏯':d.tier==='gold'?'👑':d.tier==='silver'?'⭐':'🌱'}</span></div>
-          <div class="ci-preview">${d.lastMsg}</div>
-        </div>
-        <div class="ci-meta">
-          <div class="ci-time">${d.time}</div>
-          ${d.unread ? `<div class="ci-unread">${d.unread}</div>` : ''}
-        </div>
-      </div>`;
-    }).join('') || '<div style="padding:2rem;text-align:center;font-size:0.8rem;color:var(--text3)">No DMs found</div>';
+    await loadNotifications(uid,token);
+  }catch(e){console.error(e);}
+});
 
-  } else {
-    const filtered = ROOMS.filter(r => !q || r.name.toLowerCase().includes(q));
-    el.innerHTML = filtered.map(r => {
-      const locked = TIER_ORDER.indexOf(MY_TIER) < TIER_ORDER.indexOf(r.tier);
-      return `
-      <div class="room-conv-item ${activeConv===r.id?'active':''} ${locked?'locked':''}" onclick="openConv('room','${r.id}')">
-        <div class="rci-icon">${r.icon}</div>
-        <div class="rci-info">
-          <div class="rci-name">${r.name}</div>
-          <div class="rci-sub">${r.tierLabel} ${locked?'🔒':''}</div>
-        </div>
-        <div class="rci-online">${r.online}</div>
-      </div>`;
-    }).join('');
-  }
-}
+async function loadNotifications(uid,token){
+  try{
+    const res=await fetch(SB_URL+'/rest/v1/notifications?user_id=eq.'+uid+'&order=created_at.desc&limit=50',{headers:hdr(token)});
+    const notifs=await res.json();
 
-/* ════════ OPEN CONVERSATION ════════ */
-function openConv(type, id) {
-  activeConv = id;
-  renderConvList();
+    const unread=notifs.filter(n=>!n.is_read).length;
 
-  const emptyChat      = document.getElementById('emptyChat');
-  const activeChatWrap = document.getElementById('activeChatWrap');
-  const lockOverlay    = document.getElementById('lockOverlay');
-  const membersPanel   = document.getElementById('membersPanel');
-  const atmBar         = document.getElementById('atmBar');
-  const openRoomBtn    = document.getElementById('openRoomBtn');
+    /* Render into convItems */
+    const convEl=document.getElementById('convItems');
+    if(!convEl)return;
 
-  emptyChat.style.display      = 'none';
-  activeChatWrap.style.display = 'flex';
-  lockOverlay.classList.remove('show');
-  membersPanel.classList.add('hidden');
-  atmBar.style.display = 'none';
-  openRoomBtn.style.display = 'none';
+    const typeIcons={new_member:'🎉',dm:'💬',warning:'⚠️',announcement:'📢',room_broadcast:'🏠',gift:'🎁'};
 
-  if (type === 'dm') {
-    const dm = DMS.find(d => d.id === id);
-    document.getElementById('chatBg').style.backgroundImage = '';
-    document.getElementById('chatHeaderAv').innerHTML    = dm.emoji;
-    document.getElementById('chatHeaderAv').className    = 'ch-av';
-    document.getElementById('chatHeaderName').textContent = dm.name;
-    document.getElementById('chatHeaderSub').textContent  = dm.online ? '🟢 Online now' : 'Last seen recently';
-    document.getElementById('chatInput').placeholder      = `Message ${dm.name}…`;
-    renderMessages(dm.messages);
-    dm.unread = 0;
-    renderConvList();
-
-  } else {
-    const room   = ROOMS.find(r => r.id === id);
-    const locked = TIER_ORDER.indexOf(MY_TIER) < TIER_ORDER.indexOf(room.tier);
-
-    if (locked) {
-      const cfg = LOCK_CFG[room.tier];
-      document.getElementById('lockIcon').textContent  = cfg.icon;
-      document.getElementById('lockTitle').textContent = cfg.title;
-      document.getElementById('lockDesc').textContent  = cfg.desc;
-      const btn = document.getElementById('lockBtn');
-      btn.className = 'lock-btn ' + cfg.btnCls;
-      btn.textContent = cfg.btnTxt;
-      lockOverlay.classList.add('show');
-      document.getElementById('chatHeaderAv').innerHTML    = room.icon;
-      document.getElementById('chatHeaderAv').className    = 'ch-av room-av';
-      document.getElementById('chatHeaderName').textContent = room.name;
-      document.getElementById('chatHeaderSub').textContent  = room.desc;
-      return;
+    if(!notifs.length){
+      convEl.innerHTML='<div style="padding:2rem 1rem;text-align:center;color:rgba(255,255,255,0.3);font-size:0.82rem">No messages yet 📭</div>';
+    } else {
+      convEl.innerHTML=notifs.map(n=>`
+        <div onclick="openNotif(this,'${n.id}','${encodeURIComponent(JSON.stringify(n))}')"
+          style="padding:0.75rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:background .15s;${!n.is_read?'background:rgba(244,115,42,0.05);border-left:3px solid #f4732a':''}">
+          <div style="display:flex;align-items:center;gap:0.65rem">
+            <div style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">${typeIcons[n.type]||'🔔'}</div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;justify-content:space-between">
+                <span style="font-size:0.78rem;font-weight:${!n.is_read?600:400};color:rgba(255,255,255,0.9)">${n.title||'Notification'}</span>
+                <span style="font-size:0.6rem;color:rgba(255,255,255,0.3);font-family:'DM Mono',monospace">${timeAgo(n.created_at)}</span>
+              </div>
+              <div style="font-size:0.7rem;color:rgba(255,255,255,0.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${n.body||''}</div>
+            </div>
+            ${!n.is_read?'<div style="width:7px;height:7px;border-radius:50%;background:#f4732a;flex-shrink:0"></div>':''}
+          </div>
+        </div>`).join('');
     }
 
-    /* Set room atmosphere background */
-    document.getElementById('chatBg').style.backgroundImage  = room.bg ? `url('${room.bg}')` : '';
-    document.getElementById('chatHeaderAv').innerHTML        = room.icon;
-    document.getElementById('chatHeaderAv').className        = 'ch-av room-av';
-    document.getElementById('chatHeaderName').textContent    = room.name;
-    document.getElementById('chatHeaderSub').textContent     = `${room.online} online · ${room.desc}`;
-    document.getElementById('chatInput').placeholder         = `Say something in ${room.name}…`;
+    /* Update unread badge in nav */
+    document.querySelectorAll('.notif-count,.unread-badge,[id*="Badge"]').forEach(el=>{
+      el.textContent=unread;
+      el.style.display=unread>0?'flex':'none';
+    });
 
-    /* Atmosphere bar */
-    atmBar.style.display = 'flex';
-    document.getElementById('atmDot').style.background = room.atmColor;
-    document.getElementById('atmText').textContent     = room.atm;
-
-    /* Open room link */
-    openRoomBtn.style.display = 'flex';
-    openRoomBtn.href = `rooms.html`;
-
-    renderMessages(room.messages);
-
-    /* Members panel */
-    const members = ROOM_MEMBERS[room.id] || [];
-    membersPanel.classList.remove('hidden');
-    document.getElementById('mpTitle').textContent = `${room.online} online`;
-    document.getElementById('mpList').innerHTML = members.map(m => `
-      <div class="mp-member">
-        <div class="mp-av" style="background:${m.bg}">${m.emoji}<div class="mp-dot ${m.online?'':'off'}"></div></div>
-        <div class="mp-name">${m.name}</div>
-      </div>`).join('');
-  }
+    /* Show first notif */
+    if(notifs.length&&!activeNotif){
+      const el=convEl.querySelector('[onclick]');
+      if(el) el.click();
+    }
+  }catch(e){console.error('notifs error',e);}
 }
 
-/* ════════ RENDER MESSAGES ════════ */
-function renderMessages(msgs) {
-  const el = document.getElementById('chatMessages');
-  el.innerHTML = `<div class="date-divider"><span>Today</span></div>` +
-    msgs.map(m => `
-    <div class="msg ${m.me ? 'me' : ''}">
-      <div class="msg-av" style="background:${m.me ? 'linear-gradient(135deg,#7c5cbf,#f4732a)' : 'rgba(255,255,255,0.08)'}">${m.avatar}</div>
-      <div class="msg-body">
-        <div class="msg-meta">
-          <span class="msg-name">${m.name}</span>
-          <span class="msg-bdg bdg-${m.badge}">${m.badge.toUpperCase()}</span>
-          <span class="msg-time">${m.time} ago</span>
+function openNotif(el, id, encoded){
+  const n=JSON.parse(decodeURIComponent(encoded));
+  activeNotif=n;
+
+  /* Mark active */
+  document.querySelectorAll('#convItems > div').forEach(d=>d.style.background='');
+  el.style.background='rgba(244,115,42,0.08)';
+  el.style.borderLeft='3px solid #f4732a';
+
+  /* Mark read */
+  markRead(id);
+  el.querySelector('div[style*="border-radius:50%"]');
+
+  /* Show in chat area */
+  const chatEl=document.getElementById('chatMessages');
+  const emptyEl=document.getElementById('emptyChat');
+  const activeWrap=document.getElementById('activeChatWrap');
+  const typeIcons={new_member:'🎉',dm:'💬',warning:'⚠️',announcement:'📢',room_broadcast:'🏠',gift:'🎁'};
+
+  if(emptyEl) emptyEl.style.display='none';
+  if(activeWrap) activeWrap.style.display='flex';
+
+  /* Update chat header */
+  const hName=document.getElementById('chatHeaderName');
+  const hSub =document.getElementById('chatHeaderSub');
+  const hAv  =document.getElementById('chatHeaderAv');
+  if(hName) hName.textContent=n.title||'Notification';
+  if(hSub)  hSub.textContent=new Date(n.created_at).toLocaleString();
+  if(hAv)   hAv.textContent=typeIcons[n.type]||'🔔';
+
+  /* Show message */
+  if(chatEl){
+    chatEl.innerHTML=`
+      <div style="display:flex;gap:0.75rem;padding:0.5rem 0;max-width:85%">
+        <div style="width:34px;height:34px;border-radius:50%;background:rgba(244,115,42,0.15);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0">${typeIcons[n.type]||'🔔'}</div>
+        <div>
+          <div style="background:rgba(255,255,255,0.07);border-radius:0 0.875rem 0.875rem 0.875rem;padding:0.75rem 1rem;font-size:0.83rem;color:rgba(255,255,255,0.85);line-height:1.6">
+            ${n.body||'(no message content)'}
+          </div>
+          <div style="font-size:0.6rem;color:rgba(255,255,255,0.3);margin-top:0.3rem;font-family:'DM Mono',monospace">${timeAgo(n.created_at)}</div>
         </div>
-        <div class="msg-bubble">${m.text}</div>
       </div>
-    </div>`).join('');
-  setTimeout(() => { el.scrollTop = el.scrollHeight; }, 80);
-}
+      ${n.type==='new_member'?'<div style="margin:0.5rem 0;padding:0.65rem 1rem;background:rgba(45,171,128,0.08);border:1px solid rgba(45,171,128,0.2);border-radius:0.75rem;font-size:0.78rem;color:#2dab80">🎉 New member joined! <a href="members.html" style="color:#f4732a">View members →</a></div>':''}`;
+    chatEl.scrollTop=chatEl.scrollHeight;
+  }
 
-/* ════════ SEND MESSAGE ════════ */
-function sendMessage() {
-  const input = document.getElementById('chatInput');
-  const text  = input.value.trim();
-  if (!text || !activeConv) return;
-
-  const conv = DMS.find(d => d.id === activeConv) || ROOMS.find(r => r.id === activeConv);
-  if (!conv) return;
-
-  conv.messages.push({ avatar:'🎨', name:'You', badge:'palace', time:'just now', text, me:true });
-  conv.lastMsg = text;
-  renderMessages(conv.messages);
-  renderConvList();
-  input.value = '';
-
-  /* Simulate a reply for DMs */
-  if (DMS.find(d => d.id === activeConv)) {
-    const dm = DMS.find(d => d.id === activeConv);
-    document.getElementById('typingIndicator').textContent = `${dm.name} is typing…`;
-    setTimeout(() => {
-      document.getElementById('typingIndicator').textContent = '';
-      const replies = ['That\'s great! 🙌','Thanks for letting me know!','Love it! 💛','Can\'t wait!','See you there! 🏡'];
-      const reply   = replies[Math.floor(Math.random() * replies.length)];
-      dm.messages.push({ avatar: dm.emoji, name: dm.name, badge: dm.tier, time: 'just now', text: reply });
-      dm.lastMsg = reply;
-      if (activeConv === dm.id) renderMessages(dm.messages);
-      renderConvList();
-    }, 1400);
+  /* Enable send for DMs */
+  const sendBtn=document.getElementById('sendBtn');
+  const chatInput=document.getElementById('chatInput');
+  if(sendBtn&&n.type==='dm'){
+    sendBtn.onclick=()=>sendReply(n.id);
+    if(chatInput) chatInput.placeholder='Type your reply…';
   }
 }
 
-/* ════════ TAB SWITCH ════════ */
-function switchTab(tab) {
-  activeTab = tab;
-  document.getElementById('tabDMs').classList.toggle('active',   tab === 'dms');
-  document.getElementById('tabRooms').classList.toggle('active', tab === 'rooms');
-  renderConvList();
+async function markRead(id){
+  const s=getSession();if(!s)return;
+  await fetch(SB_URL+'/rest/v1/notifications?id=eq.'+id,{
+    method:'PATCH',headers:hdr(s.access_token),body:JSON.stringify({is_read:true})
+  });
 }
 
-function filterConvs() { renderConvList(); }
+async function sendReply(notifId){
+  const s=getSession();if(!s)return;
+  const msg=document.getElementById('chatInput')?.value?.trim();
+  if(!msg)return;
+  /* Send to admin */
+  const aRes=await fetch(SB_URL+'/rest/v1/profiles?is_admin=eq.true&select=id',{headers:hdr(SB_KEY)});
+  const admins=await aRes.json();
+  if(admins[0]){
+    await fetch(SB_URL+'/rest/v1/notifications',{
+      method:'POST',headers:hdr(s.access_token),
+      body:JSON.stringify([{user_id:admins[0].id,title:'💬 Reply from '+myProfile?.display_name,body:msg,type:'dm'}])
+    });
+    document.getElementById('chatInput').value='';
+    /* Show sent message */
+    const chatEl=document.getElementById('chatMessages');
+    if(chatEl){
+      chatEl.innerHTML+=`<div style="display:flex;justify-content:flex-end;margin:0.5rem 0">
+        <div style="background:#f4732a;border-radius:0.875rem 0 0.875rem 0.875rem;padding:0.65rem 1rem;font-size:0.83rem;color:white;max-width:75%">${msg}</div>
+      </div>`;
+      chatEl.scrollTop=chatEl.scrollHeight;
+    }
+  }
+}
 
-/* ════════ KEYBOARD ════════ */
-document.getElementById('chatInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
-document.getElementById('sendBtn').addEventListener('click', sendMessage);
-
-/* ════════ INIT ════════ */
-setTimeout(() => { document.getElementById('lvlFill').style.width = '62%'; }, 300);
-renderConvList();
+/* Refresh every 30s */
+setInterval(async()=>{const s=getSession();if(!s)return;await loadNotifications(s.user_id||s.id,s.access_token);},30000);
 </script>
-</body>
-</html>
