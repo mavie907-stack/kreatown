@@ -279,7 +279,10 @@ function getMyProfile(){
 
 async function loadMessages(roomId){
   try{
-    const res=await fetch(SB_URL+'/rest/v1/room_messages?room_id=eq.'+roomId+'&select=*,profiles(username,display_name,avatar_url,tier)&order=created_at.asc&limit=50',{
+    /* Filter messages by creator if specified */
+    let query = SB_URL+'/rest/v1/room_messages?room_id=eq.'+roomId+'&select=*,profiles(username,display_name,avatar_url,tier)&order=created_at.asc&limit=50';
+    if(window.CREATOR_ID) query += '&creator_id=eq.'+window.CREATOR_ID;
+    const res=await fetch(query,{
       headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
     });
     const data=await res.json();
@@ -356,12 +359,37 @@ async function sendMessage(){
         body:JSON.stringify({
           room_id:currentRoom,
           user_id:session.user_id||session.id,
+          creator_id:window.CREATOR_ID||null,
           content:text
         })
       });
     }catch(e){console.log('Send error:',e);}
   }
 }
+/* Load creator context from URL param */
+(async()=>{
+  const params = new URLSearchParams(window.location.search);
+  const creatorSlug = params.get('creator') || 'topraq';
+  
+  /* Store for message sending */
+  window.CURRENT_CREATOR = creatorSlug;
+
+  /* Load creator profile to get their id */
+  try{
+    const res = await fetch(SB_URL+'/rest/v1/profiles?username=eq.'+creatorSlug+'&select=id,username,display_name,avatar_url',{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+    });
+    const data = await res.json();
+    if(data[0]){
+      window.CREATOR_ID = data[0].id;
+      window.CREATOR_NAME = data[0].display_name || data[0].username;
+      /* Update room logo */
+      const logo = document.querySelector('.sidebar-logo');
+      if(logo && creatorSlug !== 'topraq') logo.textContent = window.CREATOR_NAME + "'s Rooms";
+    }
+  }catch(e){}
+})();
+
 selectRoom('lobby');loadMessages('lobby');subscribeRoom('lobby');
 /* Request notification permission */
 if('Notification' in window && Notification.permission === 'default'){

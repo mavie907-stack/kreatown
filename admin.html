@@ -169,6 +169,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text1);di
     <button class="sb-it" onclick="go('gift')"><span class="sb-ic">🎁</span> Gift Membership</button>
     <div class="sb-sc">Rooms</div>
     <button class="sb-it" onclick="go('rooms')"><span class="sb-ic">🏠</span> Room Control</button>
+    <button class="sb-it" onclick="go('creatorrooms')"><span class="sb-ic">🏯</span> Creator Rooms</button>
     <button class="sb-it" onclick="go('ww')"><span class="sb-ic">👁</span> Who's Where</button>
     <div class="sb-sc">Broadcast</div>
     <button class="sb-it" onclick="go('notify')"><span class="sb-ic">📢</span> Notification</button>
@@ -386,6 +387,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text1);di
     </div>
   </div>
 
+  <!-- CREATOR ROOMS -->
+  <div class="sec" id="sec-creatorrooms">
+    <div class="card">
+      <div class="ch">
+        <div><div class="ct">🏯 Creator Rooms — Admin Access</div><div class="cs">Enter any creator's rooms as admin</div></div>
+      </div>
+      <div class="cb">
+        <div id="creatorRoomsList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.85rem"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- LOGS -->
   <div class="sec" id="sec-logs">
     <div class="card">
@@ -419,7 +432,7 @@ const RMS=[
 ];
 const TL={palace:'🏯 Palace',gold:'👑 Gold',silver:'⭐ Silver',free:'🌱 Free'};
 const TB={palace:'tp',gold:'tg',silver:'ts',free:'tf'};
-const TTITLES={overview:'Platform Overview',live:'Live Activity',members:'All Members',banned:'Banned Members',frozen:'Frozen Accounts',gift:'Gift Membership',rooms:'Room Control',ww:"Who's Where",notify:'Broadcast',dm:'DM Member',platform:'Platform Control',logs:'Audit Log'};
+const TTITLES={overview:'Platform Overview',live:'Live Activity',members:'All Members',banned:'Banned Members',frozen:'Frozen Accounts',gift:'Gift Membership',rooms:'Room Control',creatorrooms:'Creator Rooms',ww:"Who's Where",notify:'Broadcast',dm:'DM Member',platform:'Platform Control',logs:'Audit Log'};
 let mF='all',gT='gold';
 let AL=[];
 
@@ -688,6 +701,66 @@ function oMo(t,s,b,acts){document.getElementById('moT').innerHTML=t;document.get
 function cMo(){document.getElementById('mo').classList.remove('open');}
 
 /* ── TOAST ── */
+/* ── CREATOR ROOMS ── */
+async function loadCreatorRooms(){
+  try{
+    const session=getSession();
+    const token=session?.access_token||SK;
+    /* Load all creators */
+    const res=await fetch(SB+'/rest/v1/profiles?role=eq.creator&select=id,username,display_name,avatar_url&order=created_at.desc',{
+      headers:{'apikey':SK,'Authorization':'Bearer '+token}
+    });
+    const creators=await res.json();
+    const el=document.getElementById('creatorRoomsList');
+    if(!el)return;
+
+    /* Also add admin/topraq */
+    const adminRes=await fetch(SB+'/rest/v1/profiles?is_admin=eq.true&select=id,username,display_name,avatar_url',{
+      headers:{'apikey':SK,'Authorization':'Bearer '+token}
+    });
+    const admins=await adminRes.json();
+    const allCreators=[...admins,...creators.filter(c=>!admins.find(a=>a.id===c.id))];
+
+    if(!allCreators.length){
+      el.innerHTML='<div style="color:var(--text3);font-size:0.82rem;padding:1rem">No creators yet</div>';
+      return;
+    }
+
+    const ROOM_LIST=[
+      {id:'lobby',icon:'🛎️',name:'Hotel Lobby'},
+      {id:'restaurant',icon:'🍽️',name:'Restaurant'},
+      {id:'superior',icon:'🛏️',name:'Superior Room'},
+      {id:'resting',icon:'🛋️',name:'Resting Lounge'},
+      {id:'pool',icon:'🌊',name:'Thermal Pool'},
+      {id:'radio',icon:'📻',name:'3D Radio'},
+      {id:'tv',icon:'📺',name:'Cinema TV'},
+    ];
+
+    el.innerHTML=allCreators.map(c=>`
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:0.875rem;padding:1rem">
+        <div style="display:flex;align-items:center;gap:0.65rem;margin-bottom:0.85rem">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--palace),var(--orange));display:flex;align-items:center;justify-content:center;font-size:0.85rem;overflow:hidden;flex-shrink:0">
+            ${c.avatar_url?`<img src="${c.avatar_url}" style="width:100%;height:100%;object-fit:cover">`:'🎨'}
+          </div>
+          <div>
+            <div style="font-size:0.82rem;font-weight:500;color:var(--text1)">${c.display_name||c.username}</div>
+            <div style="font-size:0.62rem;color:var(--text3);font-family:'DM Mono',monospace">@${c.username||''}</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.3rem">
+          ${ROOM_LIST.map(r=>`
+            <a href="rooms.html?creator=${c.username||''}" 
+               style="display:flex;align-items:center;gap:0.5rem;padding:0.38rem 0.6rem;border-radius:0.45rem;border:1px solid var(--border);text-decoration:none;color:var(--text2);font-size:0.75rem;transition:all .15s"
+               onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange)'"
+               onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">
+              ${r.icon} ${r.name}
+              <span style="margin-left:auto;font-size:0.6rem;color:var(--text3);font-family:'DM Mono',monospace">Enter →</span>
+            </a>`).join('')}
+        </div>
+      </div>`).join('');
+  }catch(e){console.error('Creator rooms error:',e);}
+}
+
 let tT;
 function toast(msg,type=''){const el=document.getElementById('toast');el.textContent=msg;el.className='toast show'+(type?' '+type:'');clearTimeout(tT);tT=setTimeout(()=>el.classList.remove('show'),2800);}
 

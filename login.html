@@ -721,15 +721,16 @@ form.addEventListener('submit', async (e) => {
     submitBtn.classList.remove('loading');
     form.style.display = 'none';
     success.style.display = 'block';
-    /* Check if admin → creator dashboard, else → member dashboard */
-    const profRes = await fetch(SB_URL + '/rest/v1/profiles?id=eq.' + (result.user?.id||'') + '&select=is_admin',{
+    /* Check role → redirect accordingly */
+    const profRes = await fetch(SB_URL + '/rest/v1/profiles?id=eq.' + (result.user?.id||'') + '&select=is_admin,role',{
       headers:{'apikey':SB_KEY,'Authorization':'Bearer '+result.access_token}
     });
     const profData = await profRes.json().catch(()=>[]);
-    const isAdmin  = profData[0]?.is_admin || false;
-    setTimeout(() => { 
-      window.location.href = isAdmin ? 'dashboard.html' : 'member-dashboard.html'; 
-    }, 1200);
+    const prof     = profData[0] || {};
+    let redirect   = 'member-dashboard.html';
+    if(prof.is_admin)        redirect = 'dashboard.html';
+    else if(prof.role === 'creator') redirect = 'creator-dashboard.html';
+    setTimeout(() => { window.location.href = redirect; }, 1200);
 
   } catch (err) {
     submitBtn.classList.remove('loading');

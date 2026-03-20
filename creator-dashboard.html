@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creator Dashboard — KreaTown</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#f4732a">
+<script src="/kt-utils.js" defer></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0e0c0a;--bg2:#161210;--bg3:#1e1a15;--bg4:#27211a;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --orange:#f4732a;--gold:#c9952a;--gold2:#f5d58a;
+  --palace:#8b6fd4;--palace2:#b8a0e8;
+  --emerald:#2dab80;--red:#e05252;--silver:#8fa3b5;
+  --text1:rgba(255,255,255,0.92);--text2:rgba(255,255,255,0.55);--text3:rgba(255,255,255,0.28);
+}
+html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text1);min-height:100vh;display:flex}
+
+/* SIDEBAR */
+.sb{width:220px;background:var(--bg2);border-right:1px solid var(--border);height:100vh;position:sticky;top:0;display:flex;flex-direction:column;flex-shrink:0}
+.sb-top{padding:1rem 1.1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.5rem}
+.sb-logo{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--text1);text-decoration:none}.sb-logo span{color:var(--orange)}
+.sb-creator-badge{font-size:0.52rem;background:rgba(244,115,42,0.15);color:var(--orange);border:1px solid rgba(244,115,42,0.3);padding:0.1rem 0.42rem;border-radius:100px;font-family:'DM Mono',monospace;text-transform:uppercase}
+.sb-profile{padding:0.85rem 1.1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.6rem;cursor:pointer;text-decoration:none;transition:background .15s}
+.sb-profile:hover{background:rgba(255,255,255,0.03)}
+.sb-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--palace),var(--orange));display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;overflow:hidden;border:1.5px solid rgba(255,255,255,0.1)}
+.sb-av img{width:100%;height:100%;object-fit:cover}
+.sb-nm{font-size:0.78rem;font-weight:500;color:var(--text1)}
+.sb-tier{font-size:0.58rem;color:var(--orange);font-family:'DM Mono',monospace;margin-top:0.06rem}
+.sb-nav{padding:0.5rem 0;flex:1;overflow-y:auto}
+.sb-sec{font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.12em;padding:0.6rem 1.1rem 0.25rem}
+.sb-it{display:flex;align-items:center;gap:0.55rem;padding:0.5rem 1.1rem;cursor:pointer;color:var(--text2);font-size:0.78rem;transition:all .15s;text-decoration:none;border-left:2px solid transparent;font-family:'DM Sans',sans-serif}
+.sb-it:hover{color:var(--text1);background:rgba(255,255,255,0.03)}
+.sb-it.on{color:var(--orange);background:rgba(244,115,42,0.08);border-left-color:var(--orange);font-weight:500}
+.sb-ic{font-size:0.88rem;width:14px;text-align:center;flex-shrink:0}
+.sb-bd{margin-left:auto;background:var(--orange);color:white;font-size:0.5rem;padding:0.06rem 0.35rem;border-radius:100px}
+.sb-bot{padding:0.85rem 1.1rem;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:0.4rem}
+.sb-logout{display:flex;align-items:center;gap:0.5rem;font-size:0.72rem;color:var(--text3);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;transition:color .15s;width:100%}
+.sb-logout:hover{color:var(--red)}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(14,12,10,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0.8rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.tb-t{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700}
+.tb-s{font-size:0.68rem;color:var(--text3);margin-top:0.06rem}
+.tb-r{display:flex;align-items:center;gap:0.6rem}
+
+/* CONTENT */
+.content{padding:1.25rem 1.5rem 3rem}
+
+/* KPI */
+.krow{display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;margin-bottom:1.25rem}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:0.875rem;padding:0.85rem 1rem;transition:border-color .2s}
+.kpi:hover{border-color:var(--border2)}
+.kl{font-size:0.6rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-family:'DM Mono',monospace;margin-bottom:0.3rem}
+.kv{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;line-height:1}
+.ko .kv{color:var(--orange)}.kg .kv{color:var(--gold2)}.ke .kv{color:var(--emerald)}.kp .kv{color:var(--palace2)}
+.ks{font-size:0.62rem;color:var(--text3);margin-top:0.2rem}
+
+/* CARD */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:1rem;overflow:hidden;margin-bottom:1rem}
+.ch{padding:0.85rem 1.1rem 0.6rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
+.ct{font-family:'Playfair Display',serif;font-size:0.88rem;font-weight:700}
+.cs{font-size:0.65rem;color:var(--text3);margin-top:0.08rem}
+.ca{font-size:0.72rem;color:var(--orange);text-decoration:none;cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif}
+.cb{padding:0.85rem 1.1rem}
+
+/* MEMBERS TABLE */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:0.58rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;padding:0.5rem 0.85rem;text-align:left;font-family:'DM Mono',monospace;font-weight:400;border-bottom:1px solid var(--border)}
+.tbl td{padding:0.6rem 0.85rem;font-size:0.76rem;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--text2)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(255,255,255,0.02);cursor:pointer}
+.mu{display:flex;align-items:center;gap:0.6rem}
+.mav{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:0.78rem;flex-shrink:0;overflow:hidden}
+.mav img{width:100%;height:100%;object-fit:cover}
+.mn{font-size:0.78rem;color:var(--text1)}.mh{font-size:0.62rem;color:var(--text3);font-family:'DM Mono',monospace}
+.tbdg{font-size:0.56rem;font-weight:500;padding:0.1rem 0.42rem;border-radius:100px;font-family:'DM Mono',monospace}
+.tp{background:rgba(139,111,212,0.15);color:var(--palace2)}.tg{background:rgba(201,149,42,0.15);color:var(--gold2)}.ts{background:rgba(143,163,181,0.15);color:var(--silver)}.tf{background:rgba(45,171,128,0.12);color:var(--emerald)}
+
+/* NOTIFICATIONS */
+.notif-item{display:flex;align-items:flex-start;gap:0.75rem;padding:0.65rem 1.1rem;border-bottom:1px solid rgba(255,255,255,0.04);transition:background .15s}
+.notif-item:last-child{border-bottom:none}
+.notif-item:hover{background:rgba(255,255,255,0.02)}
+.notif-item.unread{background:rgba(244,115,42,0.04);border-left:2px solid var(--orange)}
+.ni-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.ni-dot.new_member{background:var(--emerald)}
+.ni-dot.dm{background:var(--orange)}
+.ni-dot.announcement{background:var(--palace2)}
+.ni-dot.warning{background:var(--red)}
+.ni-dot.room_broadcast{background:var(--gold2)}
+.ni-body{flex:1}
+.ni-title{font-size:0.78rem;color:var(--text1);font-weight:500}
+.ni-msg{font-size:0.72rem;color:var(--text2);margin-top:0.15rem;line-height:1.5}
+.ni-time{font-size:0.6rem;color:var(--text3);font-family:'DM Mono',monospace;flex-shrink:0;margin-top:2px}
+
+/* GRID */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+
+/* ACTION BUTTONS */
+.ab{padding:0.22rem 0.52rem;border-radius:0.38rem;font-size:0.65rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;transition:all .15s}
+.ab:hover{border-color:var(--border2);color:var(--text1);background:rgba(255,255,255,0.04)}
+.ab.msg{border-color:rgba(244,115,42,0.3);color:var(--orange)}.ab.msg:hover{background:rgba(244,115,42,0.08)}
+.ab.view{border-color:rgba(139,111,212,0.3);color:var(--palace2)}.ab.view:hover{background:rgba(139,111,212,0.08)}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(16px);background:var(--bg3);border:1px solid var(--border2);color:var(--text1);padding:0.55rem 1.3rem;border-radius:100px;font-size:0.78rem;z-index:1000;transition:all .3s;opacity:0;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast.ok{border-color:rgba(45,171,128,0.35);color:var(--emerald)}
+
+@media(max-width:768px){.sb{display:none}.krow{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<aside class="sb">
+  <div class="sb-top">
+    <a href="index.html" class="sb-logo">Krea<span>Town</span></a>
+    <span class="sb-creator-badge">CREATOR</span>
+  </div>
+  <a href="member-hub.html" class="sb-profile">
+    <div class="sb-av" id="sbAv">🎨</div>
+    <div>
+      <div class="sb-nm" id="sbNm">Loading…</div>
+      <div class="sb-tier" id="sbTier">✍️ Creator</div>
+    </div>
+  </a>
+  <nav class="sb-nav">
+    <div class="sb-sec">Overview</div>
+    <a href="creator-dashboard.html" class="sb-it on"><span class="sb-ic">📊</span> Dashboard</a>
+    <a href="#" onclick="showSection('members')" class="sb-it"><span class="sb-ic">👥</span> My Members<span class="sb-bd" id="memberBdg">0</span></a>
+    <a href="#" onclick="showSection('notifications')" class="sb-it"><span class="sb-ic">🔔</span> Messages<span class="sb-bd" id="notifBdg" style="display:none">0</span></a>
+    <div class="sb-sec">Content</div>
+    <a href="feed.html" class="sb-it"><span class="sb-ic">📰</span> Community Feed</a>
+    <a href="member-hub.html" class="sb-it"><span class="sb-ic">🪪</span> My Profile & Posts</a>
+    <div class="sb-sec">My Town</div>
+    <a href="topraq-hub.html" class="sb-it"><span class="sb-ic">🏯</span> My Palace</a>
+    <a href="rooms.html" class="sb-it"><span class="sb-ic">🏠</span> Rooms</a>
+    <a href="radio.html" class="sb-it"><span class="sb-ic">📻</span> 3D Radio</a>
+    <a href="tv.html" class="sb-it"><span class="sb-ic">📺</span> 3D TV</a>
+    <div class="sb-sec">Account</div>
+    <a href="settings.html" class="sb-it"><span class="sb-ic">⚙️</span> Settings</a>
+  </nav>
+  <div class="sb-bot">
+    <button class="sb-logout" onclick="logout()">← Log out</button>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="tb-t" id="tbTitle">Creator Dashboard</div>
+      <div class="tb-s" id="tbSub">Your town is running</div>
+    </div>
+    <div class="tb-r">
+      <div id="langToggle" style="display:flex;align-items:center;gap:0.25rem;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:100px;padding:0.18rem 0.28rem">
+        <button onclick="setLang('en')" data-lang="en" style="padding:0.18rem 0.55rem;border-radius:100px;border:none;cursor:pointer;font-size:0.68rem;font-family:'DM Sans',sans-serif;background:transparent;color:rgba(255,255,255,0.45)">🇬🇧 EN</button>
+        <button onclick="setLang('tr')" data-lang="tr" style="padding:0.18rem 0.55rem;border-radius:100px;border:none;cursor:pointer;font-size:0.68rem;font-family:'DM Sans',sans-serif;background:transparent;color:rgba(255,255,255,0.45)">🇹🇷 TR</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- KPIs -->
+    <div class="krow">
+      <div class="kpi ko"><div class="kl">Total Members</div><div class="kv" id="kTotal">—</div><div class="ks" id="kTotalSub">Loading…</div></div>
+      <div class="kpi ke"><div class="kl">New this week</div><div class="kv" id="kNew">—</div><div class="ks">Recent joins</div></div>
+      <div class="kpi kg"><div class="kl">Palace members</div><div class="kv" id="kPalace">—</div><div class="ks">Top tier</div></div>
+      <div class="kpi kp"><div class="kl">Unread messages</div><div class="kv" id="kNotif">—</div><div class="ks" id="kNotifSub">Notifications</div></div>
+    </div>
+
+    <!-- OVERVIEW SECTION -->
+    <div id="sec-overview">
+      <div class="grid2">
+        <!-- Quick Actions -->
+        <div class="card">
+          <div class="ch"><div class="ct">Quick Actions</div></div>
+          <div class="cb" style="display:flex;flex-direction:column;gap:0.5rem">
+            <a href="member-hub.html" class="sb-it" style="border:1px solid var(--border);border-radius:0.625rem;padding:0.6rem 0.85rem;text-decoration:none;display:flex;align-items:center;gap:0.6rem;font-size:0.8rem;color:var(--text2)">✍️ Create new post</a>
+            <a href="feed.html" class="sb-it" style="border:1px solid var(--border);border-radius:0.625rem;padding:0.6rem 0.85rem;text-decoration:none;display:flex;align-items:center;gap:0.6rem;font-size:0.8rem;color:var(--text2)">📰 View community feed</a>
+            <a href="rooms.html" class="sb-it" style="border:1px solid var(--border);border-radius:0.625rem;padding:0.6rem 0.85rem;text-decoration:none;display:flex;align-items:center;gap:0.6rem;font-size:0.8rem;color:var(--text2)">💬 Enter your rooms</a>
+            <a href="topraq-hub.html" class="sb-it" style="border:1px solid var(--border);border-radius:0.625rem;padding:0.6rem 0.85rem;text-decoration:none;display:flex;align-items:center;gap:0.6rem;font-size:0.8rem;color:var(--text2)">🏯 View your town</a>
+            <button onclick="showSection('members')" class="sb-it" style="border:1px solid rgba(244,115,42,0.3);border-radius:0.625rem;padding:0.6rem 0.85rem;display:flex;align-items:center;gap:0.6rem;font-size:0.8rem;color:var(--orange);background:rgba(244,115,42,0.06);cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;text-align:left">👥 See all my members</button>
+          </div>
+        </div>
+        <!-- Recent notifications -->
+        <div class="card">
+          <div class="ch">
+            <div><div class="ct">Recent Messages</div><div class="cs">From your members & platform</div></div>
+            <button class="ca" onclick="showSection('notifications')">All →</button>
+          </div>
+          <div id="recentNotifs">
+            <div style="padding:1.5rem;text-align:center;color:var(--text3);font-size:0.8rem">Loading…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- My Members preview -->
+      <div class="card">
+        <div class="ch">
+          <div><div class="ct">My Members</div><div class="cs" id="memberCountLabel">Loading…</div></div>
+          <button class="ca" onclick="showSection('members')">See all →</button>
+        </div>
+        <table class="tbl">
+          <thead><tr><th>Member</th><th>Tier</th><th>Joined</th><th>Actions</th></tr></thead>
+          <tbody id="recentMembers">
+            <tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--text3)">Loading members…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ALL MEMBERS SECTION -->
+    <div id="sec-members" style="display:none">
+      <div class="card">
+        <div class="ch">
+          <div><div class="ct">👥 My Members</div><div class="cs" id="allMemberCount">All members subscribed to you</div></div>
+          <input id="memberSearch" placeholder="🔍 Search…" oninput="filterMembers()" style="background:var(--bg3);border:1px solid var(--border);border-radius:0.5rem;color:var(--text1);padding:0.38rem 0.7rem;font-size:0.75rem;outline:none;font-family:'DM Sans',sans-serif;width:180px">
+        </div>
+        <!-- Tier filter pills -->
+        <div style="padding:0.6rem 1.1rem;display:flex;gap:0.35rem;flex-wrap:wrap;border-bottom:1px solid var(--border)">
+          <button class="pill on" onclick="setTierFilter(this,'all')">All</button>
+          <button class="pill" onclick="setTierFilter(this,'palace')">🏯 Palace</button>
+          <button class="pill" onclick="setTierFilter(this,'gold')">👑 Gold</button>
+          <button class="pill" onclick="setTierFilter(this,'silver')">⭐ Silver</button>
+          <button class="pill" onclick="setTierFilter(this,'free')">🌱 Free</button>
+        </div>
+        <table class="tbl">
+          <thead><tr><th>Member</th><th>Tier</th><th>Joined</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="allMembersBody">
+            <tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text3)">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS SECTION -->
+    <div id="sec-notifications" style="display:none">
+      <div class="card">
+        <div class="ch">
+          <div><div class="ct">🔔 Messages & Notifications</div><div class="cs">From your members and the platform</div></div>
+          <button class="ca" onclick="markAllRead()">Mark all read</button>
+        </div>
+        <div id="allNotifs">
+          <div style="padding:2rem;text-align:center;color:var(--text3)">Loading…</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<style>
+.pill{padding:0.28rem 0.65rem;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:0.68rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.pill:hover{border-color:var(--border2);color:var(--text1)}
+.pill.on{border-color:var(--orange);background:rgba(244,115,42,0.1);color:var(--orange)}
+</style>
+
+<script>
+const SB = 'https://pkhoyabazudqmfczkhax.supabase.co';
+const SK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
+
+const TIER_LABELS = {palace:'🏯 Palace',gold:'👑 Gold',silver:'⭐ Silver',free:'🌱 Free'};
+const TIER_BADGE  = {palace:'tp',gold:'tg',silver:'ts',free:'tf'};
+
+let myProfile = null;
+let allMembers = [];
+let tierFilter = 'all';
+
+function getSession(){
+  try{const s=JSON.parse(localStorage.getItem('kt_session')||'{}');return s.access_token?s:null;}
+  catch(e){return null;}
+}
+function hdr(token){
+  return{'apikey':SK,'Authorization':'Bearer '+(token||SK),'Content-Type':'application/json'};
+}
+function timeAgo(ts){
+  const d=Math.floor((Date.now()-new Date(ts))/1000);
+  if(d<60)return'just now';if(d<3600)return Math.floor(d/60)+'m ago';
+  if(d<86400)return Math.floor(d/3600)+'h ago';return Math.floor(d/86400)+'d ago';
+}
+
+window.addEventListener('DOMContentLoaded', async ()=>{
+  const session = getSession();
+  if(!session){ window.location.href='login.html'; return; }
+
+  const uid   = session.user_id||session.id;
+  const token = session.access_token;
+
+  try{
+    const res  = await fetch(SB+'/rest/v1/profiles?id=eq.'+uid+'&select=*',{headers:hdr(token)});
+    const data = await res.json();
+    myProfile  = data[0];
+
+    if(!myProfile){ window.location.href='login.html'; return; }
+
+    /* Security: only creator or admin can access */
+    if(myProfile.role !== 'creator' && !myProfile.is_admin){
+      window.location.href = 'member-dashboard.html';
+      return;
+    }
+
+    localStorage.setItem('kt_profile', JSON.stringify(myProfile));
+
+    /* Update sidebar */
+    document.getElementById('sbNm').textContent = myProfile.display_name||myProfile.username||'Creator';
+    if(myProfile.avatar_url){
+      document.getElementById('sbAv').innerHTML = '<img src="'+myProfile.avatar_url+'" alt="">';
+    }
+
+    /* Update topbar */
+    const hour = new Date().getHours();
+    const greet = hour<12?'Good morning':hour<18?'Good afternoon':'Good evening';
+    document.getElementById('tbTitle').textContent = greet+', '+(myProfile.display_name||myProfile.username)+' ✍️';
+    document.getElementById('tbSub').textContent   = 'Your creator dashboard';
+
+    /* Load all data */
+    await Promise.all([loadMembers(uid, token), loadNotifications(uid, token)]);
+
+  }catch(e){ console.error(e); }
+});
+
+async function loadMembers(uid, token){
+  try{
+    /* Load all profiles (in production, filter by creator_members table) */
+    const res  = await fetch(SB+'/rest/v1/profiles?select=*&order=created_at.desc',{headers:hdr(token)});
+    const data = await res.json();
+
+    /* Filter out self and admins */
+    allMembers = data.filter(p => p.id !== uid && !p.is_admin);
+
+    const total  = allMembers.length;
+    const palace = allMembers.filter(m=>m.tier==='palace').length;
+    const week   = allMembers.filter(m=>{
+      const d = new Date(m.created_at);
+      return (Date.now()-d.getTime()) < 7*24*60*60*1000;
+    }).length;
+
+    document.getElementById('kTotal').textContent    = total;
+    document.getElementById('kTotalSub').textContent = total+' total subscribers';
+    document.getElementById('kNew').textContent      = week;
+    document.getElementById('kPalace').textContent   = palace;
+    document.getElementById('memberBdg').textContent = total;
+    document.getElementById('memberCountLabel').textContent = total+' members subscribed to you';
+    document.getElementById('allMemberCount').textContent   = total+' total members';
+
+    renderMembersTable(allMembers.slice(0,5), 'recentMembers');
+    renderMembersTable(allMembers, 'allMembersBody');
+
+  }catch(e){ console.error('Members error:',e); }
+}
+
+function renderMembersTable(members, tbodyId){
+  const el = document.getElementById(tbodyId);
+  if(!members.length){
+    el.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text3)">No members yet 🏡</td></tr>';
+    return;
+  }
+  el.innerHTML = members.map(m=>`
+    <tr onclick="window.location.href='member-hub.html?user=${m.username||m.id}'" style="cursor:pointer">
+      <td><div class="mu">
+        <div class="mav">${m.avatar_url?`<img src="${m.avatar_url}" alt="">`:TIER_LABELS[m.tier||'free']?.charAt(0)||'🎨'}</div>
+        <div><div class="mn">${m.display_name||m.username||'Member'}</div><div class="mh">@${m.username||''}</div></div>
+      </div></td>
+      <td><span class="tbdg ${TIER_BADGE[m.tier||'free']}">${TIER_LABELS[m.tier||'free']}</span></td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--text3)">${new Date(m.created_at).toLocaleDateString('en',{month:'short',day:'numeric',year:'numeric'})}</td>
+      <td><span style="font-size:0.65rem;color:${m.status==='active'?'var(--emerald)':'var(--red)'}">${m.status||'active'}</span></td>
+      <td style="display:flex;gap:0.3rem;flex-wrap:wrap">
+        <button class="ab msg" onclick="event.stopPropagation();sendMessage('${m.id}','${m.display_name||m.username||'Member'}')">💬 DM</button>
+        <a class="ab view" href="member-hub.html?user=${m.username||m.id}" onclick="event.stopPropagation()">👤 Profile</a>
+      </td>
+    </tr>`).join('');
+}
+
+function filterMembers(){
+  const q = document.getElementById('memberSearch').value.toLowerCase();
+  let filtered = allMembers;
+  if(tierFilter !== 'all') filtered = filtered.filter(m=>m.tier===tierFilter);
+  if(q) filtered = filtered.filter(m=>(m.display_name||'').toLowerCase().includes(q)||(m.username||'').includes(q));
+  renderMembersTable(filtered, 'allMembersBody');
+  document.getElementById('allMemberCount').textContent = filtered.length+' members';
+}
+
+function setTierFilter(btn, tier){
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  tierFilter = tier;
+  filterMembers();
+}
+
+async function loadNotifications(uid, token){
+  try{
+    const res  = await fetch(SB+'/rest/v1/notifications?user_id=eq.'+uid+'&order=created_at.desc&limit=50',{headers:hdr(token)});
+    const data = await res.json();
+
+    const unread = data.filter(n=>!n.is_read).length;
+    document.getElementById('kNotif').textContent    = unread;
+    document.getElementById('kNotifSub').textContent = unread > 0 ? unread+' unread' : 'All caught up!';
+    if(unread > 0){
+      document.getElementById('notifBdg').textContent = unread;
+      document.getElementById('notifBdg').style.display = 'inline';
+    }
+
+    /* Recent notifs */
+    renderNotifications(data.slice(0,5), 'recentNotifs');
+    renderNotifications(data, 'allNotifs');
+
+  }catch(e){ console.error('Notifs error:',e); }
+}
+
+function renderNotifications(notifs, containerId){
+  const el = document.getElementById(containerId);
+  if(!notifs.length){
+    el.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text3);font-size:0.8rem">No messages yet 📭</div>';
+    return;
+  }
+  el.innerHTML = notifs.map(n=>`
+    <div class="notif-item ${n.is_read?'':'unread'}" onclick="markRead('${n.id}',this)">
+      <div class="ni-dot ${n.type||'announcement'}"></div>
+      <div class="ni-body">
+        <div class="ni-title">${n.title||'Notification'}</div>
+        ${n.body?`<div class="ni-msg">${n.body}</div>`:''}
+      </div>
+      <div class="ni-time">${timeAgo(n.created_at)}</div>
+    </div>`).join('');
+}
+
+async function markRead(id, el){
+  el.classList.remove('unread');
+  const session = getSession();
+  await fetch(SB+'/rest/v1/notifications?id=eq.'+id,{
+    method:'PATCH',
+    headers:hdr(session?.access_token),
+    body:JSON.stringify({is_read:true})
+  });
+}
+
+async function markAllRead(){
+  const session = getSession();
+  const uid = session?.user_id||session?.id;
+  await fetch(SB+'/rest/v1/notifications?user_id=eq.'+uid+'&is_read=eq.false',{
+    method:'PATCH',
+    headers:hdr(session?.access_token),
+    body:JSON.stringify({is_read:true})
+  });
+  document.querySelectorAll('.notif-item.unread').forEach(el=>el.classList.remove('unread'));
+  document.getElementById('kNotif').textContent = '0';
+  document.getElementById('notifBdg').style.display = 'none';
+  toast('All marked as read ✅','ok');
+}
+
+async function sendMessage(userId, name){
+  const msg = prompt('Send a message to '+name+':');
+  if(!msg) return;
+  const session = getSession();
+  await fetch(SB+'/rest/v1/notifications',{
+    method:'POST',
+    headers:hdr(session?.access_token),
+    body:JSON.stringify([{user_id:userId,title:'💬 Message from your creator',body:msg,type:'dm'}])
+  });
+  toast('Message sent to '+name+' ✅','ok');
+}
+
+function showSection(name){
+  ['overview','members','notifications'].forEach(s=>{
+    document.getElementById('sec-'+s).style.display = s===name?'block':'none';
+  });
+  /* Update sidebar active */
+  document.querySelectorAll('.sb-it').forEach(b=>b.classList.remove('on'));
+  document.querySelector('[href="creator-dashboard.html"]')?.classList.add('on');
+}
+
+function logout(){
+  ['kt_session','kt_user','kt_profile'].forEach(k=>localStorage.removeItem(k));
+  window.location.href='login.html';
+}
+
+let tT;
+function toast(msg,type=''){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className='toast show'+(type?' '+type:'');
+  clearTimeout(tT);tT=setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+/* Refresh every 60s */
+setInterval(async()=>{
+  const s=getSession();if(!s)return;
+  const uid=s.user_id||s.id;
+  await loadNotifications(uid,s.access_token);
+},60000);
+</script>
+</body>
+</html>
