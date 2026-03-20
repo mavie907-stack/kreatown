@@ -750,8 +750,8 @@ nav {
       <input type="file" id="avatarFileInput" accept="image/*" onchange="handleAvatarUpload(event)">
     </div>
     <div class="profile-info">
-      <div class="profile-name">
-        Topraq Toros
+      <div class="profile-name" id="creatorDisplayName">
+        <span id="creatorNameText">KreaTown Creator</span>
         <span class="verified-badge">✦ VERIFIED</span>
       </div>
       <div class="profile-handle">@topraq · Creator, Storyteller & Community Builder</div>
@@ -1016,36 +1016,58 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  /* Load creator profile (Topraq) */
-  const creatorRes = await fetch(SB_URL+'/rest/v1/profiles?username=eq.topraq&select=*',{
-    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
-  });
-  const creatorData = await creatorRes.json();
-  const creator = creatorData[0];
+  /* Load creator profile — try admin first, fallback to username */
+  let creator = null;
+  try{
+    /* Try by is_admin */
+    const r1 = await fetch(SB_URL+'/rest/v1/profiles?is_admin=eq.true&select=*&limit=1',{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+    });
+    const d1 = await r1.json();
+    creator = d1[0] || null;
+
+    /* Fallback: try username=topraq */
+    if(!creator){
+      const r2 = await fetch(SB_URL+'/rest/v1/profiles?username=eq.topraq&select=*',{
+        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+      });
+      const d2 = await r2.json();
+      creator = d2[0] || null;
+    }
+  }catch(e){}
 
   if(creator){
     /* Update avatar */
     if(creator.avatar_url){
+      const url = creator.avatar_url + '?cb=' + Date.now();
       const profileAv = document.getElementById('profileAvatar');
       if(profileAv){
-        const url = creator.avatar_url + '?cb=' + Date.now();
-        /* Use background-image — most reliable cross-browser */
         profileAv.style.backgroundImage    = 'url("'+url+'")';
         profileAv.style.backgroundSize     = 'cover';
         profileAv.style.backgroundPosition = 'center';
         profileAv.style.backgroundRepeat   = 'no-repeat';
         profileAv.style.fontSize           = '0';
-        profileAv.textContent              = '';
-        /* Also show in upload button area */
-        const uploadBtn = document.querySelector('.avatar-upload-btn');
-        if(uploadBtn) uploadBtn.style.display = 'flex';
+        profileAv.style.color              = 'transparent';
+        Array.from(profileAv.childNodes).forEach(n=>{if(n.nodeType===3)n.textContent='';});
       }
+      const sc = document.querySelector('.sc-avatar');
+      if(sc) sc.innerHTML='<img src="'+url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
     }
     /* Update banner */
     if(creator.banner_url){
       const banner = document.querySelector('.banner-img');
       if(banner) banner.style.backgroundImage='url('+creator.banner_url+')';
     }
+    /* Update display name */
+    const displayName = creator.display_name || creator.username || 'Creator';
+    window.CREATOR_NAME   = displayName;
+    window.CREATOR_AVATAR = creator.avatar_url || null;
+
+    /* Update name in HTML */
+    const nameText = document.getElementById('creatorNameText');
+    if(nameText) nameText.textContent = displayName;
+    document.querySelectorAll('.profile-name-text, .creator-name').forEach(el=>el.textContent=displayName);
+    document.title = displayName + "'s Town — KreaTown";
     /* Update bio */
     if(creator.bio){
       const bioEl = document.querySelector('.profile-bio');
@@ -1095,9 +1117,9 @@ function renderPosts(myTier){
 
     return `<div class="post-card">
       <div class="post-header">
-        <div class="post-avatar">🎨</div>
+        <div class="post-avatar" style="${window.CREATOR_AVATAR?'background-image:url('+window.CREATOR_AVATAR+');background-size:cover;background-position:center;font-size:0':''}">🎨</div>
         <div class="post-meta">
-          <div class="post-author">Topraq Toros</div>
+          <div class="post-author">${window.CREATOR_NAME||'Creator'}</div>
           <div class="post-date">${date}</div>
         </div>
         <span class="post-tier-badge ${TIER_BADGE_CLASS[p.tier_required||'free']}">${TIER_LABELS[p.tier_required||'free']}</span>

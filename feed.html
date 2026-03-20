@@ -338,8 +338,17 @@ let tierReq    = 'free';
 let coverFile  = null;
 
 function getSession(){
-  try{ const s=JSON.parse(localStorage.getItem('kt_session')||'{}'); return s.access_token?s:null; }
-  catch(e){ return null; }
+  try{
+    const s=JSON.parse(localStorage.getItem('kt_session')||'{}');
+    if(!s.access_token) return null;
+    /* Check expiry */
+    const now = Math.floor(Date.now()/1000);
+    if(s.expires_at && s.expires_at < now){
+      /* Expired - try to use anyway (refresh runs in background via kt-utils) */
+      console.log('Session expired, refresh pending...');
+    }
+    return s;
+  }catch(e){return null;}
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -405,7 +414,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 async function loadFeed(){
   try{
     const res = await fetch(
-      SB_URL+'/rest/v1/posts?is_published=eq.true&order=created_at.desc&limit=50&select=id,title,content,excerpt,cover_url,type,tier_required,reactions_heart,reactions_fire,created_at,user_id,profiles!posts_user_id_fkey(id,username,display_name,avatar_url,tier)',
+      SB_URL+'/rest/v1/posts?is_published=eq.true&order=created_at.desc&limit=50&select=*,profiles(id,username,display_name,avatar_url,tier)',
       { headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY} }
     );
     if(!res.ok) throw new Error('Failed');
