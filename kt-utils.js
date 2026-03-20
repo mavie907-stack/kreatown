@@ -1,389 +1,173 @@
-/* ── SESSION REFRESH ── */
-const _SB_URL = 'https://pkhoyabazudqmfczkhax.supabase.co';
-const _SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
-
-async function refreshSession() {
-  try {
-    const s = JSON.parse(localStorage.getItem('kt_session') || '{}');
-    if (!s.refresh_token) return null;
-
-    /* Check if expired (5 min buffer) */
-    const expiresAt = s.expires_at || 0;
-    const now = Math.floor(Date.now() / 1000);
-    if (expiresAt > now + 300) return s; /* Still valid */
-
-    /* Refresh */
-    const res = await fetch(_SB_URL + '/auth/v1/token?grant_type=refresh_token', {
-      method: 'POST',
-      headers: { 'apikey': _SB_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refresh_token: s.refresh_token })
-    });
-
-    if (!res.ok) {
-      /* Refresh failed — clear session, redirect to login */
-      localStorage.removeItem('kt_session');
-      localStorage.removeItem('kt_profile');
-      if (!window.location.pathname.includes('login') && 
-          !window.location.pathname.includes('register') &&
-          !window.location.pathname.includes('index') &&
-          !window.location.pathname.includes('topraq-hub')) {
-        window.location.href = 'login.html';
-      }
-      return null;
-    }
-
-    const data = await res.json();
-    const newSession = {
-      access_token:  data.access_token,
-      refresh_token: data.refresh_token,
-      user_id:       data.user?.id || s.user_id,
-      email:         data.user?.email || s.email,
-      expires_at:    Math.floor(Date.now() / 1000) + (data.expires_in || 3600)
-    };
-    localStorage.setItem('kt_session', JSON.stringify(newSession));
-    return newSession;
-
-  } catch(e) {
-    console.log('Session refresh error:', e);
-    return null;
-  }
-}
-
-
-/* ── AUTO LOGOUT ON AUTH ERROR ── */
-const _origFetch = window.fetch;
-window.fetch = async function(...args) {
-  const response = await _origFetch(...args);
-  /* If we get 401 on Supabase API calls */
-  if(response.status === 401 && args[0]?.toString?.().includes('supabase')) {
-    const clone = response.clone();
-    try {
-      const body = await clone.json();
-      if(body?.message?.includes('exp') || body?.error?.includes('invalid_token') || body?.message?.includes('JWT expired')) {
-        console.log('Token expired, refreshing...');
-        const fresh = await refreshSession();
-        if(!fresh) {
-          /* Can't refresh - need re-login */
-          const isPublic = ['index','login','register','topraq-hub','forgot'].some(p => window.location.pathname.includes(p));
-          if(!isPublic) {
-            alert('Your session has expired. Please log in again.');
-            localStorage.removeItem('kt_session');
-            window.location.href = 'login.html';
-          }
-        }
-      }
-    } catch(e) {}
-  }
-  return response;
-};
-
-/* Auto-refresh session every 10 minutes */
-setInterval(refreshSession, 10 * 60 * 1000);
-
-/* Refresh on page load */
-document.addEventListener('DOMContentLoaded', refreshSession);
-
 /* ============================================================
-   KreaTown — Shared Utilities
-   Tüm sayfalara ekle: <script src="kt-utils.js"></script>
+   KreaTown — Shared Utilities v2 (clean)
    ============================================================ */
 
-/* ── 1. PWA INSTALL ── */
-let deferredPrompt = null;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  // Show install button if exists
-  const btn = document.getElementById('pwaInstallBtn');
-  if (btn) btn.style.display = 'flex';
-});
-
-function installPWA() {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
-}
-
-// Register service worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
-  });
-}
-
-/* ── 2. SOUND NOTIFICATIONS ── */
-const KT_SOUNDS = {
-  message:      { freq: 880, duration: 0.12, type: 'sine',    vol: 0.3  },
-  notification: { freq: 660, duration: 0.18, type: 'sine',    vol: 0.4  },
-  join:         { freq: 520, duration: 0.25, type: 'triangle',vol: 0.35 },
-  error:        { freq: 220, duration: 0.3,  type: 'sawtooth',vol: 0.2  },
-  success:      { freq: 760, duration: 0.2,  type: 'sine',    vol: 0.35 },
+/* ── 1. LANGUAGE SYSTEM ── */
+const KT_TR = {
+  'Community Feed':'Topluluk Akışı','My Profile':'Profilim',
+  'My Profile & Posts':'Profilim & Yazılarım','Dashboard':'Panel',
+  'Settings':'Ayarlar','Settings & Profile':'Ayarlar & Profil',
+  'Log out':'Çıkış yap','All Members':'Tüm Üyeler','Earnings':'Kazanç',
+  'Messages':'Mesajlar','Admin Panel':'Yönetim Paneli','Town Map':'Kasaba Haritası',
+  'Enter Rooms':'Odalara Gir',"Topraq's Town":"Topraq'ın Kasabası",
+  '← Back to dashboard':'← Panele Dön','← My Dashboard':'← Panelim','← Dashboard':'← Panel',
+  'Back to dashboard':'Panele Dön',
+  'Hotel Lobby':'Otel Lobisi','The Restaurant':'Restoran',
+  'Superior Room':'Superior Oda','Resting Lounge':'Dinlenme Salonu',
+  'Thermal Pool':'Termal Havuz','3D Radio Room':'3D Radyo Odası',
+  'Cinema TV Room':'Sinema TV Odası','Rooms':'Odalar','ROOMS':'ODALAR',
+  'Silver Members Only':'Yalnızca Gümüş Üyeler',
+  'Gold Suite Access':'Altın Süit Erişimi','Palace Access Only':'Yalnızca Saray Erişimi',
+  '✨ All':'✨ Tümü','📝 Posts':'📝 Yazılar','📸 Photos':'📸 Fotoğraflar',
+  '🎙️ Podcasts':'🎙️ Podcastler','All Posts':'Tüm Yazılar','Free':'Ücretsiz',
+  '🌱 Everyone':'🌱 Herkes','⭐ Silver+':'⭐ Gümüş+','👑 Gold+':'👑 Altın+',
+  '🏯 Palace only':'🏯 Yalnızca Saray','✍️ Post':'✍️ Paylaş',
+  '🚀 Share with community':'🚀 Toplulukla paylaş',
+  'Share with community':'Toplulukla paylaş','Who can see this?':'Kimler görebilir?',
+  'Latest from the community':'Topluluktan son yazılar',
+  '🌱 Free':'🌱 Ücretsiz','⭐ Silver':'⭐ Gümüş','👑 Gold':'👑 Altın','🏯 Palace':'🏯 Saray',
+  'Silver':'Gümüş','Gold':'Altın','Palace':'Saray',
+  'My tier':'Üyeliğim','Community posts':'Topluluk yazıları',
+  'Members online':'Çevrimiçi üye','Active rooms':'Aktif odalar',
+  'Quick access':'Hızlı erişim','Welcome back to KreaTown':"KreaTown'a hoş geldin",
+  '🔓 Unlock more of KreaTown':"🔓 KreaTown'da daha fazlasını aç",
+  'Save changes':'Değişiklikleri kaydet','Upload photo':'Fotoğraf yükle',
+  'Remove':'Kaldır','Cancel':'İptal','Send':'Gönder','See all':'Tümünü gör',
+  'View profile':'Profili gör','online':'çevrimiçi','just now':'şimdi',
+  'Platform Overview':'Platform Genel Bakış','Live Activity':'Canlı Aktivite',
+  'Banned Members':'Yasaklı Üyeler','Frozen Accounts':'Dondurulmuş Hesaplar',
+  'Gift Membership':'Hediye Üyelik','Room Control':'Oda Kontrolü',
+  'Broadcast':'Yayın','Platform Control':'Platform Kontrolü','Audit Log':'Denetim Kaydı',
 };
 
-let audioCtx = null;
-let soundEnabled = localStorage.getItem('kt_sound') !== 'false';
+function getLang(){ return localStorage.getItem('kt_lang')||'en'; }
+function t(k){ return getLang()==='tr'?(KT_TR[k]||k):k; }
 
-function playSound(type = 'message') {
-  if (!soundEnabled) return;
-  try {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const s = KT_SOUNDS[type] || KT_SOUNDS.message;
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.connect(g);
-    g.connect(audioCtx.destination);
-    o.type      = s.type;
-    o.frequency.value = s.freq;
-    g.gain.setValueAtTime(s.vol, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + s.duration);
-    o.start(audioCtx.currentTime);
-    o.stop(audioCtx.currentTime + s.duration);
-  } catch (e) {}
-}
-
-function toggleSound() {
-  soundEnabled = !soundEnabled;
-  localStorage.setItem('kt_sound', soundEnabled ? 'true' : 'false');
-  playSound(soundEnabled ? 'success' : 'error');
-  return soundEnabled;
-}
-
-/* ── 3. LANGUAGE SYSTEM ── */
-const KT_TRANSLATIONS = {
-  tr: {
-    /* Navigation */
-    'Community Feed': 'Topluluk Akışı',
-    'My Profile': 'Profilim',
-    'Dashboard': 'Panel',
-    'Settings': 'Ayarlar',
-    'Log out': 'Çıkış yap',
-    'All Members': 'Tüm Üyeler',
-    'Earnings': 'Kazanç',
-    'Messages': 'Mesajlar',
-    'Members': 'Üyeler',
-    'Admin Panel': 'Yönetim Paneli',
-    'Town Map': 'Kasaba Haritası',
-    /* Rooms */
-    'Hotel Lobby': 'Otel Lobisi',
-    'The Restaurant': 'Restoran',
-    'Superior Room': 'Superior Oda',
-    'Resting Lounge': 'Dinlenme Salonu',
-    'Thermal Pool': 'Termal Havuz',
-    '3D Radio Room': '3D Radyo Odası',
-    'Cinema TV Room': 'Sinema TV Odası',
-    'Back': 'Geri',
-    '← Back': '← Geri',
-    'online': 'çevrimiçi',
-    'Silver Members Only': 'Yalnızca Gümüş Üyeler',
-    'Gold Suite Access': 'Altın Süit Erişimi',
-    'Palace Access Only': 'Yalnızca Saray Erişimi',
-    /* Feed */
-    '✨ All': '✨ Tümü',
-    '📝 Posts': '📝 Yazılar',
-    '📸 Photos': '📸 Fotoğraflar',
-    '🎙️ Podcasts': '🎙️ Podcastler',
-    'All Posts': 'Tüm Yazılar',
-    '🌱 Everyone': '🌱 Herkes',
-    '⭐ Silver+': '⭐ Gümüş+',
-    '👑 Gold+': '👑 Altın+',
-    '🏯 Palace only': '🏯 Yalnızca Saray',
-    '🚀 Share with community': '🚀 Toplulukla paylaş',
-    'Share with community': 'Toplulukla paylaş',
-    '✍️ Post': '✍️ Paylaş',
-    'Latest from the community': 'Topluluktan son yazılar',
-    'Quick access': 'Hızlı erişim',
-    'Active rooms': 'Aktif odalar',
-    /* Tiers */
-    '🌱 Free': '🌱 Ücretsiz',
-    '⭐ Silver': '⭐ Gümüş',
-    '👑 Gold': '👑 Altın',
-    '🏯 Palace': '🏯 Saray',
-    'Free': 'Ücretsiz',
-    'Silver': 'Gümüş',
-    'Gold': 'Altın',
-    'Palace': 'Saray',
-    /* Member dash */
-    'My tier': 'Üyeliğim',
-    'Community posts': 'Topluluk yazıları',
-    'Members online': 'Çevrimiçi üye',
-    'Welcome back to KreaTown': 'KreaTown'a hoş geldin',
-    'Enter Rooms': 'Odalara gir',
-    "Topraq's Town": 'Topraq'ın Kasabası',
-    'My Profile & Posts': 'Profilim & Yazılarım',
-    'Settings & Profile': 'Ayarlar & Profil',
-    '🔓 Unlock more of KreaTown': '🔓 KreaTown'da daha fazlasını aç',
-    /* Buttons */
-    'Save changes': 'Değişiklikleri kaydet',
-    'Upload photo': 'Fotoğraf yükle',
-    'Cancel': 'İptal',
-    'Send': 'Gönder',
-    'See all': 'Tümünü gör',
-    'No posts yet': 'Henüz gönderi yok',
-    'Platform Overview': 'Platform Genel Bakış',
-  }
-};
-
-function getLang() {
-  return localStorage.getItem('kt_lang') || 'en';
-}
-
-function t(key) {
-  const lang = getLang();
-  if (lang === 'en') return key;
-  return KT_TRANSLATIONS.tr[key] || key;
-}
-
-function setLang(lang) {
-  localStorage.setItem('kt_lang', lang);
-  /* Update toggle button styles */
-  document.querySelectorAll('[data-lang]').forEach(btn => {
-    const active = btn.getAttribute('data-lang') === lang;
-    btn.style.background = active ? 'rgba(244,115,42,0.3)' : 'transparent';
-    btn.style.color      = active ? '#f4732a' : '';
-    btn.style.fontWeight = active ? '600' : '400';
+function applyLang(){
+  const lang=getLang();
+  /* Style toggle buttons */
+  document.querySelectorAll('[data-lang]').forEach(btn=>{
+    const on=btn.getAttribute('data-lang')===lang;
+    btn.style.background=on?'rgba(244,115,42,0.3)':'transparent';
+    btn.style.color=on?'#f4732a':'';
+    btn.style.fontWeight=on?'600':'400';
   });
-  /* Apply translations */
-  applyTranslations(lang);
-  /* Re-render dynamic content */
-  if (typeof renderRooms  !== 'undefined') renderRooms();
-  if (typeof renderFeed   !== 'undefined') setTimeout(renderFeed, 50);
-  if (typeof renderM      !== 'undefined') renderM();
-}
-
-function applyTranslations(lang) {
-  if (!lang) lang = getLang();
-  /* Update html lang only - safe translation */
-  document.documentElement.lang = lang;
-  /* Only translate elements with explicit data-i18n-tr attribute */
-  document.querySelectorAll('[data-i18n-tr]').forEach(el => {
-    el.textContent = lang === 'tr'
-      ? el.getAttribute('data-i18n-tr')
-      : (el.getAttribute('data-i18n-en') || el.getAttribute('data-i18n-tr'));
+  /* Explicit elements */
+  document.querySelectorAll('[data-i18n-tr]').forEach(el=>{
+    el.textContent=lang==='tr'?el.getAttribute('data-i18n-tr'):(el.getAttribute('data-i18n-en')||el.textContent);
   });
-}
-
-/* Apply on every page load */
-function initLang(){
-  const lang = getLang();
-  document.querySelectorAll('[data-lang]').forEach(btn => {
-    const active = btn.getAttribute('data-lang') === lang;
-    btn.style.background = active ? 'rgba(244,115,42,0.3)' : 'transparent';
-    btn.style.color      = active ? '#f4732a' : '';
-    btn.style.fontWeight = active ? '600' : '400';
-  });
-  if(lang === 'tr') applyTranslations('tr');
-}
-document.addEventListener('DOMContentLoaded', ()=>{ setTimeout(initLang, 100); });
-/* Also run after any dynamic render */
-window.addEventListener('load', ()=>{ setTimeout(initLang, 300); });
-
-/* ── 4. LANGUAGE TOGGLE WIDGET ── */
-/* ── 5. ADMIN NOTIFICATION — new member joined ── */
-const SB_URL_U = 'https://pkhoyabazudqmfczkhax.supabase.co';
-const SB_KEY_U = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
-
-async function notifyAdminNewMember(memberName, memberEmail) {
-  try {
-    // Find admin profile
-    const res = await fetch(SB_URL_U + '/rest/v1/profiles?is_admin=eq.true&select=id', {
-      headers: { 'apikey': SB_KEY_U, 'Authorization': 'Bearer ' + SB_KEY_U }
-    });
-    const admins = await res.json();
-    if (!admins.length) return;
-
-    // Send notification to each admin
-    const notifs = admins.map(admin => ({
-      user_id: admin.id,
-      title:   '🎉 New member joined!',
-      body:    memberName + ' (' + memberEmail + ') just joined KreaTown',
-      type:    'new_member'
-    }));
-
-    await fetch(SB_URL_U + '/rest/v1/notifications', {
-      method:  'POST',
-      headers: {
-        'apikey':       SB_KEY_U,
-        'Authorization':'Bearer ' + SB_KEY_U,
-        'Content-Type': 'application/json',
-        'Prefer':       'return=minimal'
-      },
-      body: JSON.stringify(notifs)
-    });
-  } catch(e) {}
-}
-
-/* ── 6. NOTIFICATION BADGE ── */
-async function loadNotificationCount() {
-  const session = JSON.parse(localStorage.getItem('kt_session') || '{}');
-  if (!session.access_token) return;
-  const uid = session.user_id || session.id;
-
-  try {
-    const res = await fetch(
-      SB_URL_U + '/rest/v1/notifications?user_id=eq.' + uid + '&is_read=eq.false&select=id',
-      { headers: { 'apikey': SB_KEY_U, 'Authorization': 'Bearer ' + session.access_token } }
-    );
-    const data = await res.json();
-    const count = data.length;
-
-    // Update all notification badges
-    document.querySelectorAll('.notif-badge, #notifBadge, .nav-notif-count').forEach(el => {
-      el.textContent = count;
-      el.style.display = count > 0 ? 'flex' : 'none';
-    });
-
-    // Play sound for new notifications
-    if (count > 0) {
-      const prev = parseInt(sessionStorage.getItem('kt_notif_count') || '0');
-      if (count > prev) playSound('notification');
-      sessionStorage.setItem('kt_notif_count', count);
-    }
-  } catch(e) {}
-}
-
-/* ── 7. MESSAGE SOUND ── */
-// Call this when a new message arrives in rooms
-function onNewMessage(isOwn = false) {
-  if (!isOwn) playSound('message');
-}
-
-// Check notifications every 30s
-setInterval(loadNotificationCount, 30000);
-document.addEventListener('DOMContentLoaded', loadNotificationCount);
-
-/* ── 8. PWA INSTALL PROMPT ── */
-window.addEventListener('appinstalled', () => {
-  const btn = document.getElementById('pwaInstallBtn');
-  if (btn) btn.style.display = 'none';
-  playSound('success');
-});
-
-/* ── TV/RADIO BACKGROUND STOP ── */
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) {
-    /* Stop all audio/video when tab is hidden */
-    document.querySelectorAll('audio, video').forEach(el => {
-      if (!el.paused) {
-        el._wasPlaying = true;
-        el.pause();
+  /* Safe leaf-node translation */
+  if(lang==='tr'){
+    const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{
+      acceptNode(n){
+        const p=n.parentElement;
+        if(!p)return NodeFilter.FILTER_REJECT;
+        if(['SCRIPT','STYLE','INPUT','TEXTAREA','SELECT'].includes(p.tagName))return NodeFilter.FILTER_REJECT;
+        if(p.isContentEditable||p.hasAttribute('data-no-translate'))return NodeFilter.FILTER_REJECT;
+        if(p.children.length>0)return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
       }
     });
-    /* Stop iframe embeds (YouTube etc) */
-    document.querySelectorAll('iframe').forEach(iframe => {
-      try {
-        const src = iframe.src;
-        if (src && (src.includes('youtube') || src.includes('spotify') || src.includes('soundcloud'))) {
-          iframe._origSrc = src;
-          iframe.src = '';
-        }
-      } catch(e) {}
+    const nodes=[];let n;
+    while((n=walker.nextNode()))nodes.push(n);
+    nodes.forEach(node=>{
+      const txt=node.textContent.trim();
+      if(txt.length<2)return;
+      const tr=KT_TR[txt];
+      if(!tr)return;
+      if(!node.parentElement.hasAttribute('data-orig'))node.parentElement.setAttribute('data-orig',txt);
+      node.textContent=tr;
+    });
+  } else {
+    document.querySelectorAll('[data-orig]').forEach(el=>{
+      if(el.children.length===0)el.textContent=el.getAttribute('data-orig');
     });
   }
+  document.documentElement.lang=lang;
+}
+
+function setLang(lang){
+  localStorage.setItem('kt_lang',lang);
+  applyLang();
+  if(typeof renderRooms!=='undefined')renderRooms();
+  if(typeof renderFeed!=='undefined')setTimeout(renderFeed,50);
+}
+
+document.addEventListener('DOMContentLoaded',()=>setTimeout(applyLang,200));
+
+/* ── 2. SOUNDS ── */
+let _actx=null;
+let soundEnabled=localStorage.getItem('kt_sound')!=='false';
+function playSound(type){
+  if(!soundEnabled)return;
+  try{
+    if(!_actx)_actx=new(window.AudioContext||window.webkitAudioContext)();
+    const S={message:{f:880,d:0.12,w:'sine',v:0.3},notification:{f:660,d:0.18,w:'sine',v:0.4},success:{f:760,d:0.2,w:'sine',v:0.35},error:{f:220,d:0.3,w:'sawtooth',v:0.2}};
+    const s=S[type]||S.message;
+    const o=_actx.createOscillator(),g=_actx.createGain();
+    o.connect(g);g.connect(_actx.destination);
+    o.type=s.w;o.frequency.value=s.f;
+    g.gain.setValueAtTime(s.v,_actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,_actx.currentTime+s.d);
+    o.start();o.stop(_actx.currentTime+s.d);
+  }catch(e){}
+}
+function toggleSound(){soundEnabled=!soundEnabled;localStorage.setItem('kt_sound',soundEnabled);playSound(soundEnabled?'success':'error');return soundEnabled;}
+
+/* ── 3. SESSION REFRESH ── */
+const _KT_SB='https://pkhoyabazudqmfczkhax.supabase.co';
+const _KT_AK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
+async function refreshSession(){
+  try{
+    const s=JSON.parse(localStorage.getItem('kt_session')||'{}');
+    if(!s.refresh_token)return null;
+    const now=Math.floor(Date.now()/1000);
+    if(s.expires_at&&s.expires_at>now+300)return s;
+    const res=await fetch(_KT_SB+'/auth/v1/token?grant_type=refresh_token',{
+      method:'POST',headers:{'apikey':_KT_AK,'Content-Type':'application/json'},
+      body:JSON.stringify({refresh_token:s.refresh_token})
+    });
+    if(!res.ok){
+      const pub=['login','register','index','topraq-hub','forgot'].some(p=>window.location.pathname.includes(p));
+      if(!pub){localStorage.removeItem('kt_session');localStorage.removeItem('kt_profile');window.location.href='login.html?reason=expired';}
+      return null;
+    }
+    const d=await res.json();
+    const fresh={access_token:d.access_token,refresh_token:d.refresh_token,user_id:d.user?.id||s.user_id,email:d.user?.email||s.email,expires_at:Math.floor(Date.now()/1000)+(d.expires_in||3600)};
+    localStorage.setItem('kt_session',JSON.stringify(fresh));
+    return fresh;
+  }catch(e){return null;}
+}
+setInterval(refreshSession,10*60*1000);
+document.addEventListener('DOMContentLoaded',refreshSession);
+
+/* ── 4. TV/RADIO — stop when hidden ── */
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden)return;
+  document.querySelectorAll('audio,video').forEach(e=>e.pause());
+  document.querySelectorAll('iframe[src*="youtube"],iframe[src*="spotify"],iframe[src*="soundcloud"]').forEach(e=>{e._src=e.src;e.src='';});
 });
 
-window.addEventListener('pagehide', () => {
-  document.querySelectorAll('audio, video').forEach(el => el.pause());
-  document.querySelectorAll('iframe[src*="youtube"], iframe[src*="spotify"]').forEach(el => {
-    el.src = '';
-  });
-});
+/* ── 5. PWA ── */
+let _dp=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();_dp=e;const b=document.getElementById('pwaInstallBtn');if(b)b.style.display='flex';});
+function installPWA(){if(!_dp)return;_dp.prompt();_dp.userChoice.then(()=>_dp=null);}
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
+
+/* ── 6. NOTIFICATION COUNT ── */
+async function loadNotificationCount(){
+  try{
+    const s=JSON.parse(localStorage.getItem('kt_session')||'{}');
+    if(!s.access_token)return;
+    const res=await fetch(_KT_SB+'/rest/v1/notifications?user_id=eq.'+(s.user_id||s.id)+'&is_read=eq.false&select=id',{headers:{'apikey':_KT_AK,'Authorization':'Bearer '+s.access_token}});
+    if(!res.ok)return;
+    const data=await res.json();
+    const count=data.length;
+    document.querySelectorAll('.notif-badge,#notifBadge').forEach(el=>{el.textContent=count;el.style.display=count>0?'flex':'none';});
+    const prev=parseInt(sessionStorage.getItem('kt_nc')||'0');
+    if(count>prev)playSound('notification');
+    sessionStorage.setItem('kt_nc',count);
+  }catch(e){}
+}
+setInterval(loadNotificationCount,30000);
+document.addEventListener('DOMContentLoaded',loadNotificationCount);
