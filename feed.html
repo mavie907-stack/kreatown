@@ -722,25 +722,14 @@ function toast(msg,type=''){
 }
 
 
-/* Language hook for dynamic elements */
-const _feedOrigSetLang = window.setLang;
-window.setLang = function(lang){
-  if(_feedOrigSetLang) _feedOrigSetLang(lang);
-  document.querySelectorAll('[data-i18n-tr]').forEach(el=>{
-    el.textContent = lang==='tr' ? el.getAttribute('data-i18n-tr') : el.getAttribute('data-i18n-en');
-  });
-  /* Re-render feed */
-  if(typeof renderFeed !== 'undefined') renderFeed();
-};
-
-/* Apply on load */
+/* Language applied via kt-utils.js */
 document.addEventListener('DOMContentLoaded', ()=>{
   setTimeout(()=>{
     const lang = localStorage.getItem('kt_lang')||'en';
     if(lang==='tr') document.querySelectorAll('[data-i18n-tr]').forEach(el=>{
       el.textContent = el.getAttribute('data-i18n-tr');
     });
-  }, 200);
+  }, 300);
 });
 
 /* Auto refresh every 30s */

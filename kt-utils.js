@@ -171,6 +171,16 @@ function setLang(lang) {
   currentLang = lang;
   localStorage.setItem('kt_lang', lang);
   applyLang();
+  /* Apply data-i18n-tr elements on all pages */
+  document.querySelectorAll('[data-i18n-tr]').forEach(el=>{
+    el.textContent = lang==='tr' ? el.getAttribute('data-i18n-tr') : el.getAttribute('data-i18n-en');
+  });
+  /* Dispatch event for page-specific re-renders */
+  document.dispatchEvent(new CustomEvent('kt_lang_changed', {detail:{lang}}));
+  /* Re-render rooms if on rooms page */
+  if(typeof renderRooms !== 'undefined') renderRooms();
+  /* Re-render feed if on feed page */
+  if(typeof renderFeed !== 'undefined') setTimeout(renderFeed, 50);
 }
 
 /* Smart translation map - matches text content */
