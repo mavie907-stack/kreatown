@@ -167,44 +167,14 @@ function setLang(lang) {
 
 function applyTranslations(lang) {
   if (!lang) lang = getLang();
-  const map = KT_TRANSLATIONS.tr;
-
-  document.querySelectorAll('*:not(script):not(style)').forEach(el => {
-    /* Skip elements with children (only translate leaf text nodes) */
-    if (el.children.length > 0) return;
-    const txt = el.textContent?.trim();
-    if (!txt || txt.length < 2) return;
-
-    if (lang === 'tr' && map[txt]) {
-      if (!el.hasAttribute('data-en')) el.setAttribute('data-en', txt);
-      el.textContent = map[txt];
-    } else if (lang === 'en' && el.hasAttribute('data-en')) {
-      el.textContent = el.getAttribute('data-en');
-    }
-  });
-
-  /* Placeholders */
-  const phMap = {
-    'Say something': 'Bir şeyler yaz',
-    'Write your post': 'Yazını yaz',
-    'Give your post a title': 'Başlık ekle',
-    'Search': 'Ara',
-  };
-  document.querySelectorAll('[placeholder]').forEach(el => {
-    if (lang === 'tr') {
-      Object.entries(phMap).forEach(([en, tr]) => {
-        if (el.placeholder.includes(en)) {
-          if (!el.hasAttribute('data-ph-en')) el.setAttribute('data-ph-en', el.placeholder);
-          el.placeholder = el.placeholder.replace(en, tr);
-        }
-      });
-    } else if (lang === 'en' && el.hasAttribute('data-ph-en')) {
-      el.placeholder = el.getAttribute('data-ph-en');
-    }
-  });
-
-  /* Update html lang */
+  /* Update html lang only - safe translation */
   document.documentElement.lang = lang;
+  /* Only translate elements with explicit data-i18n-tr attribute */
+  document.querySelectorAll('[data-i18n-tr]').forEach(el => {
+    el.textContent = lang === 'tr'
+      ? el.getAttribute('data-i18n-tr')
+      : (el.getAttribute('data-i18n-en') || el.getAttribute('data-i18n-tr'));
+  });
 }
 
 /* Apply on every page load */

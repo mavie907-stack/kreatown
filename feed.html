@@ -382,20 +382,16 @@ window.addEventListener('DOMContentLoaded', async () => {
       const sbAdmin  = document.getElementById('sbAdmin');
       if(dashLink){
         if(myProfile.is_admin){
-          dashLink.href = 'dashboard.html';
+          dashLink.href    = 'dashboard.html';
+          dashLink.textContent = '← Dashboard';
           dashLink.style.display = 'block';
-          dashLink.textContent = '← Admin Dashboard';
           if(sbDash)  sbDash.style.display='flex';
           if(sbAdmin) sbAdmin.style.display='flex';
           document.getElementById('sbMembers')?.style.setProperty('display','flex');
-        } else if(myProfile.role === 'creator'){
-          dashLink.href = 'creator-dashboard.html';
-          dashLink.style.display = 'block';
-          dashLink.textContent = '← My Dashboard';
         } else {
-          dashLink.href = 'member-dashboard.html';
-          dashLink.style.display = 'block';
+          dashLink.href    = 'member-dashboard.html';
           dashLink.textContent = '← My Dashboard';
+          dashLink.style.display = 'block';
         }
       }
     }
