@@ -94,129 +94,138 @@ body{font-family:'DM Sans',sans-serif;background:#0a0806;color:#e8d5b0}
   .input-area{padding:0.75rem 1.25rem}
 }
 
-/* ── MOBILE ── */
+/* ── MOBILE (iPhone & Android) ── */
 @media(max-width:640px){
 
-  /* Odalar üstte yatay bar */
-  .sidebar{
-    position:fixed!important;
-    top:0;left:0;right:0;bottom:auto!important;
-    width:100%!important;
-    height:56px!important;
-    flex-direction:row;
-    z-index:50;
-    border-right:none;
-    border-bottom:1px solid rgba(255,255,255,0.12);
-    padding:0.3rem 0;
-    overflow:hidden;
-    background:rgba(0,0,0,0.75)!important;
-    backdrop-filter:blur(16px);
-    -webkit-backdrop-filter:blur(16px);
-  }
-  .sidebar-back,.sidebar-footer,.sidebar-logo,.rooms-label{display:none!important}
+  /* Full screen app */
+  html, body { height:100%; overflow:hidden; }
   
-  #roomList{
-    display:flex!important;
-    flex-direction:row;
-    overflow-x:auto;
-    gap:0.3rem;
-    padding:0.2rem 0.75rem;
-    flex:1;
-    align-items:center;
-    scrollbar-width:none;
-    -webkit-overflow-scrolling:touch;
-  }
-  #roomList::-webkit-scrollbar{display:none}
-  
-  .room-item{
-    flex-shrink:0;
-    flex-direction:column;
-    min-width:60px;
-    padding:0.25rem 0.4rem;
-    text-align:center;
-    border-bottom:none!important;
-    border-right:none!important;
-    border-radius:0.5rem;
-    align-items:center;
-    gap:0.1rem;
-  }
-  .room-icon{font-size:1.15rem!important;line-height:1}
-  .room-info{display:flex;flex-direction:column;align-items:center}
-  .room-name{font-size:0.52rem!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:58px}
-  .room-tier,.room-count{display:none!important}
-
-  /* Main — offset top for sidebar bar */
-  .main{
-    position:fixed!important;
-    top:56px;
-    left:0;right:0;
-    bottom:0;
+  .app{
     display:flex;
     flex-direction:column;
-    z-index:10;
+    width:100%;
+    height:100%;
+    height:100svh;
     overflow:hidden;
+    position:fixed;
+    top:0; left:0; right:0; bottom:0;
+  }
+
+  /* Sidebar → horizontal room tabs at TOP */
+  .sidebar{
+    width:100%!important;
+    height:52px!important;
+    min-height:52px!important;
+    max-height:52px!important;
+    flex-shrink:0!important;
+    flex-direction:row!important;
+    border-right:none!important;
+    border-bottom:1px solid rgba(255,255,255,0.1)!important;
+    padding:0.2rem 0!important;
+    overflow:hidden!important;
+    position:static!important;
+    z-index:10;
+  }
+  .sidebar-back,.sidebar-footer,
+  .sidebar-logo,.rooms-label{display:none!important}
+
+  #roomList{
+    display:flex!important;
+    flex-direction:row!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    gap:0.3rem!important;
+    padding:0.1rem 0.5rem!important;
+    flex:1!important;
+    align-items:center!important;
+    scrollbar-width:none!important;
+    -webkit-overflow-scrolling:touch!important;
+    height:100%!important;
+  }
+  #roomList::-webkit-scrollbar{display:none!important}
+
+  .room-item{
+    flex-shrink:0!important;
+    flex-direction:column!important;
+    min-width:58px!important;
+    padding:0.2rem 0.35rem!important;
+    text-align:center!important;
+    border:none!important;
+    border-radius:0.45rem!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:0.1rem!important;
+    height:auto!important;
+  }
+  .room-icon{font-size:1.1rem!important;line-height:1.2!important}
+  .room-info{display:flex!important;flex-direction:column!important;align-items:center!important}
+  .room-name{font-size:0.5rem!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;max-width:56px!important}
+  .room-tier,.room-count,.online-dot{display:none!important}
+
+  /* Main content — takes remaining height */
+  .main{
+    flex:1!important;
+    display:flex!important;
+    flex-direction:column!important;
+    min-height:0!important;
+    overflow:hidden!important;
+    position:static!important;
+    height:auto!important;
   }
 
   /* Room header */
   .room-header{
-    padding:0.55rem 0.85rem;
-    flex-shrink:0;
-    background:rgba(0,0,0,0.4);
+    flex-shrink:0!important;
+    padding:0.5rem 0.85rem!important;
   }
-  .room-title{font-size:0.88rem!important}
-  .room-desc{font-size:0.6rem!important;display:none}
-  .online-badge{font-size:0.62rem}
+  .room-title{font-size:0.85rem!important}
+  .room-desc{display:none!important}
 
-  /* Messages scroll area */
+  /* Messages */
   .messages{
-    flex:1;
-    overflow-y:auto;
-    -webkit-overflow-scrolling:touch;
-    padding:0.75rem 0.85rem;
-    gap:0.6rem;
-    /* leave space for input */
-    padding-bottom:0.5rem;
+    flex:1!important;
+    min-height:0!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    padding:0.75rem 0.85rem!important;
   }
 
-  /* Atmosphere bar */
+  /* Atm bar */
   .atm-bar{
-    flex-shrink:0;
-    padding:0.25rem 0.85rem;
-    font-size:0.6rem;
+    flex-shrink:0!important;
+    padding:0.2rem 0.85rem!important;
+    font-size:0.58rem!important;
   }
 
-  /* Input — fixed at bottom */
+  /* Input area — must be visible! */
   .input-area{
-    flex-shrink:0;
-    padding:0.55rem 0.75rem;
-    padding-bottom:calc(0.55rem + env(safe-area-inset-bottom, 0px));
-    background:rgba(0,0,0,0.65);
-    backdrop-filter:blur(20px);
-    -webkit-backdrop-filter:blur(20px);
-    border-top:1px solid rgba(255,255,255,0.1);
-    z-index:20;
+    flex-shrink:0!important;
+    padding:0.5rem 0.65rem!important;
+    padding-bottom:max(0.5rem, env(safe-area-inset-bottom))!important;
+    background:rgba(0,0,0,0.7)!important;
+    backdrop-filter:blur(12px)!important;
+    -webkit-backdrop-filter:blur(12px)!important;
+    border-top:1px solid rgba(255,255,255,0.12)!important;
+    position:static!important;
+    z-index:5!important;
   }
   .input-wrap{
-    border-radius:1.5rem;
-    padding:0.35rem 0.35rem 0.35rem 0.9rem;
-    display:flex;
-    align-items:center;
-    gap:0.5rem;
+    border-radius:2rem!important;
+    padding:0.3rem 0.3rem 0.3rem 0.85rem!important;
   }
   .msg-input{
     font-size:16px!important;
+    min-height:32px!important;
+    padding:0.2rem 0!important;
   }
   .send-btn{
-    width:34px!important;
-    height:34px!important;
-    flex-shrink:0;
+    width:32px!important;
+    height:32px!important;
+    flex-shrink:0!important;
   }
 
-  /* Lock overlay */
-  .locked-overlay{padding:1.5rem 1rem}
-  
-  /* Hide particles */
-  #particles{display:none}
+  .locked-overlay{padding:1.5rem 1rem!important}
+  #particles{display:none!important}
 }
 </style>
   <link rel="manifest" href="/manifest.json">
