@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Milestones — KreaTown</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#f4732a">
+<script src="/kt-utils.js" defer></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0e0c0a;--bg2:#161210;--bg3:#1e1a15;--bg4:#27211a;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --orange:#f4732a;--orange2:#ff9555;
+  --gold:#c9952a;--gold2:#f5d58a;
+  --palace:#8b6fd4;--palace2:#b8a0e8;
+  --emerald:#2dab80;--red:#e05252;--silver:#8fa3b5;
+  --text1:rgba(255,255,255,0.92);--text2:rgba(255,255,255,0.55);--text3:rgba(255,255,255,0.28);
+}
+html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text1);min-height:100vh}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:rgba(14,12,10,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 1.5rem;height:54px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--text1);text-decoration:none}.nav-logo span{color:var(--orange)}
+.nav-back{font-size:0.78rem;color:var(--text2);text-decoration:none;transition:color .15s}.nav-back:hover{color:var(--orange)}
+
+/* HERO */
+.hero{text-align:center;padding:3rem 1.5rem 2rem;max-width:700px;margin:0 auto}
+.hero-badge{display:inline-block;font-size:0.65rem;background:rgba(244,115,42,0.12);color:var(--orange);border:1px solid rgba(244,115,42,0.25);padding:0.25rem 0.85rem;border-radius:100px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem}
+.hero-title{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;line-height:1.15;margin-bottom:0.85rem}
+.hero-title span{color:var(--orange)}
+.hero-sub{font-size:0.88rem;color:var(--text2);line-height:1.7;max-width:500px;margin:0 auto}
+
+/* PROGRESS CARD */
+.progress-card{max-width:700px;margin:0 auto 2rem;padding:0 1.5rem}
+.pc{background:var(--bg2);border:1px solid var(--border2);border-radius:1.25rem;padding:1.5rem;position:relative;overflow:hidden}
+.pc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--orange),var(--gold),var(--palace))}
+.pc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem}
+.pc-left{display:flex;align-items:center;gap:0.85rem}
+.pc-av{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--palace),var(--orange));display:flex;align-items:center;justify-content:center;font-size:1.2rem;overflow:hidden;border:2px solid rgba(255,255,255,0.1)}
+.pc-av img{width:100%;height:100%;object-fit:cover}
+.pc-name{font-size:0.95rem;font-weight:600;color:var(--text1)}
+.pc-handle{font-size:0.65rem;color:var(--text3);font-family:'DM Mono',monospace}
+.pc-count{text-align:right}
+.pc-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--orange);line-height:1}
+.pc-label{font-size:0.62rem;color:var(--text3);margin-top:0.1rem}
+.progress-track{background:rgba(255,255,255,0.06);border-radius:100px;height:8px;overflow:hidden;margin-bottom:0.6rem}
+.progress-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--orange),var(--gold));transition:width 1s cubic-bezier(.34,1.56,.64,1)}
+.progress-labels{display:flex;justify-content:space-between;font-size:0.6rem;color:var(--text3);font-family:'DM Mono',monospace}
+.next-milestone{font-size:0.75rem;color:var(--text2);margin-top:0.75rem;padding:0.55rem 0.85rem;background:rgba(244,115,42,0.06);border:1px solid rgba(244,115,42,0.15);border-radius:0.625rem}
+
+/* MILESTONES GRID */
+.section{max-width:700px;margin:0 auto 3rem;padding:0 1.5rem}
+.section-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin-bottom:1rem}
+.milestones{display:flex;flex-direction:column;gap:0.75rem}
+
+/* MILESTONE CARD */
+.ms{background:var(--bg2);border:1px solid var(--border);border-radius:1rem;padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;transition:all .2s;position:relative;overflow:hidden}
+.ms.achieved{border-color:rgba(244,115,42,0.35);background:linear-gradient(135deg,rgba(244,115,42,0.06),rgba(201,149,42,0.04))}
+.ms.achieved::after{content:'✓';position:absolute;right:1.1rem;top:50%;transform:translateY(-50%);font-size:1.1rem;color:var(--emerald)}
+.ms.next{border-color:rgba(244,115,42,0.2);box-shadow:0 0 0 1px rgba(244,115,42,0.1)}
+.ms.locked{opacity:0.45}
+.ms-icon{font-size:1.8rem;flex-shrink:0;width:48px;text-align:center}
+.ms-info{flex:1;min-width:0}
+.ms-count{font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.2rem}
+.ms-title{font-size:0.88rem;font-weight:500;color:var(--text1)}
+.ms-desc{font-size:0.72rem;color:var(--text2);margin-top:0.2rem;line-height:1.5}
+.ms-badge{font-size:0.55rem;padding:0.1rem 0.5rem;border-radius:100px;font-family:'DM Mono',monospace;border:1px solid}
+.ms-badge.done{background:rgba(45,171,128,0.12);border-color:rgba(45,171,128,0.3);color:var(--emerald)}
+.ms-badge.next-badge{background:rgba(244,115,42,0.12);border-color:rgba(244,115,42,0.3);color:var(--orange)}
+.ms-badge.locked-badge{background:rgba(255,255,255,0.04);border-color:var(--border);color:var(--text3)}
+.ms-claim{padding:0.38rem 0.85rem;background:var(--orange);border:none;border-radius:100px;color:white;font-size:0.72rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.ms-claim:hover{background:var(--orange2);transform:scale(1.04)}
+
+/* HALL OF FAME */
+.hof{background:linear-gradient(135deg,rgba(139,111,212,0.1),rgba(201,149,42,0.08));border:1px solid rgba(139,111,212,0.2);border-radius:1rem;padding:1.5rem;text-align:center;margin-bottom:1rem}
+.hof-icon{font-size:2.5rem;margin-bottom:0.65rem}
+.hof-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--palace2);margin-bottom:0.35rem}
+.hof-desc{font-size:0.78rem;color:var(--text2);line-height:1.6}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(16px);background:var(--bg3);border:1px solid var(--border2);color:var(--text1);padding:0.55rem 1.3rem;border-radius:100px;font-size:0.78rem;z-index:1000;transition:all .3s cubic-bezier(.34,1.56,.64,1);opacity:0;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast.ok{border-color:rgba(45,171,128,0.4);color:var(--emerald)}
+.toast.warn{border-color:rgba(244,115,42,0.4);color:var(--orange)}
+
+@media(max-width:600px){
+  .hero-title{font-size:1.6rem}
+  .pc-num{font-size:1.6rem}
+  .ms{padding:0.85rem 1rem;gap:0.75rem}
+  .ms-icon{font-size:1.5rem;width:36px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">Krea<span>Town</span></a>
+  <a href="dashboard.html" class="nav-back" id="backLink">← Dashboard</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">🏆 Creator Milestones</div>
+  <h1 class="hero-title">Grow your town,<br><span>earn real rewards</span></h1>
+  <p class="hero-sub">Every member you gain brings you closer to exclusive KreaTown experiences — from coffee meetups to dinner with your top fans.</p>
+</div>
+
+<!-- PROGRESS CARD -->
+<div class="progress-card">
+  <div class="pc">
+    <div class="pc-top">
+      <div class="pc-left">
+        <div class="pc-av" id="creatorAv">🎨</div>
+        <div>
+          <div class="pc-name" id="creatorName">Loading…</div>
+          <div class="pc-handle" id="creatorHandle">@…</div>
+        </div>
+      </div>
+      <div class="pc-count">
+        <div class="pc-num" id="memberCount">—</div>
+        <div class="pc-label">total members</div>
+      </div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <div class="progress-labels">
+      <span id="progressFrom">0</span>
+      <span id="progressTo">100</span>
+    </div>
+    <div class="next-milestone" id="nextMilestoneText">Loading your progress…</div>
+  </div>
+</div>
+
+<!-- MILESTONES -->
+<div class="section">
+  <div class="section-title">🗺️ Your journey</div>
+  <div class="milestones" id="milestonesList"></div>
+</div>
+
+<!-- HALL OF FAME -->
+<div class="section">
+  <div class="hof">
+    <div class="hof-icon">🏆</div>
+    <div class="hof-title">KreaTown Hall of Fame</div>
+    <div class="hof-desc">Reach 5,000 members and earn a permanent place in KreaTown history.<br>Your name, your story, your legacy — on the wall forever.</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SB  = 'https://pkhoyabazudqmfczkhax.supabase.co';
+const SK  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
+function getSession(){try{return JSON.parse(localStorage.getItem('kt_session')||'{}')}catch(e){return {}}}
+function hdr(t){return{'apikey':SK,'Authorization':'Bearer '+(t||SK),'Content-Type':'application/json'}}
+
+/* ── MILESTONES CONFIG ── */
+const MILESTONES = [
+  {
+    count: 10,
+    icon: '🎉',
+    title: 'First 10 Members',
+    desc: 'Your journey begins! Welcome pack with KreaTown stickers & digital goodies.',
+    reward: 'Digital welcome pack',
+    type: 'digital'
+  },
+  {
+    count: 50,
+    icon: '☕',
+    title: '50 Members Milestone',
+    desc: 'KreaTown coffee card — enjoy a warm cup on us at any partnered café.',
+    reward: '☕ KreaTown coffee card',
+    type: 'physical'
+  },
+  {
+    count: 100,
+    icon: '🤝',
+    title: '100 Members — Coffee Meetup',
+    desc: 'Meet the KreaTown team! We come to your city for a coffee & creator chat.',
+    reward: '🤝 Coffee meetup with KreaTown team',
+    type: 'experience'
+  },
+  {
+    count: 250,
+    icon: '🎁',
+    title: '250 Members — Creator Kit',
+    desc: 'Exclusive KreaTown creator kit — branded merch, notebook, and surprise gifts.',
+    reward: '🎁 KreaTown creator kit',
+    type: 'physical'
+  },
+  {
+    count: 500,
+    icon: '⭐',
+    title: '500 Members — Featured Creator',
+    desc: "Your profile gets featured on KreaTown's homepage for a full month.",
+    reward: '⭐ Homepage feature for 1 month',
+    type: 'digital'
+  },
+  {
+    count: 1000,
+    icon: '🍽️',
+    title: '1,000 Members — Dinner Night',
+    desc: 'Invite 4 of your top members for an exclusive dinner — fully covered by KreaTown.',
+    reward: '🍽️ Dinner for 5 (you + 4 members)',
+    type: 'experience'
+  },
+  {
+    count: 2500,
+    icon: '✈️',
+    title: '2,500 Members — Creator Retreat',
+    desc: 'Join the annual KreaTown Creator Retreat — 2 days, 1 night, all expenses paid.',
+    reward: '✈️ Annual creator retreat invite',
+    type: 'experience'
+  },
+  {
+    count: 5000,
+    icon: '🏆',
+    title: '5,000 Members — Hall of Fame',
+    desc: 'Permanent place in KreaTown Hall of Fame. Your legacy lives here forever.',
+    reward: '🏆 Hall of Fame + lifetime badge',
+    type: 'legacy'
+  },
+];
+
+let myProfile = null;
+let memberCount = 0;
+let claimedMilestones = [];
+
+window.addEventListener('DOMContentLoaded', async () => {
+  const session = getSession();
+  if(!session.access_token){ window.location.href='login.html'; return; }
+  const uid   = session.user_id || session.id;
+  const token = session.access_token;
+
+  /* Load profile */
+  try{
+    const res  = await fetch(SB+'/rest/v1/profiles?id=eq.'+uid+'&select=*',{headers:hdr(token)});
+    const data = await res.json();
+    myProfile  = data[0];
+    if(!myProfile) return;
+
+    /* Update back link */
+    const bl = document.getElementById('backLink');
+    if(bl) bl.href = myProfile.is_admin ? 'dashboard.html' : 'member-dashboard.html';
+
+    /* Update creator card */
+    document.getElementById('creatorName').textContent   = myProfile.display_name || myProfile.username || 'Creator';
+    document.getElementById('creatorHandle').textContent = '@'+(myProfile.username||'');
+    if(myProfile.avatar_url){
+      document.getElementById('creatorAv').innerHTML = '<img src="'+myProfile.avatar_url+'" alt="">';
+    }
+
+    /* Load member count */
+    const mRes  = await fetch(SB+'/rest/v1/profiles?select=id&is_admin=eq.false&order=created_at.desc',{headers:hdr(token)});
+    const mData = await mRes.json();
+    memberCount = Array.isArray(mData) ? mData.length : 0;
+    document.getElementById('memberCount').textContent = memberCount;
+
+    /* Load claimed milestones */
+    await loadClaimedMilestones(uid, token);
+
+    /* Render */
+    renderProgress();
+    renderMilestones();
+
+  }catch(e){ console.error(e); }
+});
+
+async function loadClaimedMilestones(uid, token){
+  try{
+    const res  = await fetch(SB+'/rest/v1/milestone_claims?creator_id=eq.'+uid+'&select=milestone_count',{headers:hdr(token)});
+    const data = await res.json();
+    if(Array.isArray(data)) claimedMilestones = data.map(d=>d.milestone_count);
+  }catch(e){
+    /* Table might not exist yet - ok */
+    claimedMilestones = [];
+  }
+}
+
+function renderProgress(){
+  /* Find next milestone */
+  const next = MILESTONES.find(m => m.count > memberCount);
+  const prev = [...MILESTONES].reverse().find(m => m.count <= memberCount);
+
+  const from  = prev?.count || 0;
+  const to    = next?.count || MILESTONES[MILESTONES.length-1].count;
+  const pct   = Math.min(100, Math.round(((memberCount - from) / (to - from)) * 100));
+
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressFrom').textContent = from.toLocaleString();
+  document.getElementById('progressTo').textContent   = to.toLocaleString();
+
+  if(next){
+    const need = next.count - memberCount;
+    document.getElementById('nextMilestoneText').innerHTML =
+      `<strong style="color:var(--orange)">${need} more member${need>1?'s':''}</strong> until your next reward: ${next.icon} ${next.title}`;
+  } else {
+    document.getElementById('nextMilestoneText').innerHTML =
+      '<strong style="color:var(--gold2)">🏆 You\'ve reached all milestones! Hall of Fame awaits.</strong>';
+  }
+}
+
+function renderMilestones(){
+  const el = document.getElementById('milestonesList');
+  const nextIdx = MILESTONES.findIndex(m => m.count > memberCount);
+
+  el.innerHTML = MILESTONES.map((m, i) => {
+    const achieved = memberCount >= m.count;
+    const isNext   = i === nextIdx;
+    const claimed  = claimedMilestones.includes(m.count);
+    const cls      = achieved ? 'achieved' : isNext ? 'next' : 'locked';
+
+    return `<div class="ms ${cls}">
+      <div class="ms-icon">${m.icon}</div>
+      <div class="ms-info">
+        <div class="ms-count">${m.count.toLocaleString()} members</div>
+        <div class="ms-title">${m.title}</div>
+        <div class="ms-desc">${m.desc}</div>
+        <div style="margin-top:0.45rem;display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap">
+          <span class="ms-badge ${achieved?'done':isNext?'next-badge':'locked-badge'}">
+            ${achieved?'✅ Achieved':isNext?'🎯 Next reward':'🔒 Locked'}
+          </span>
+          <span style="font-size:0.65rem;color:var(--text3)">${m.reward}</span>
+        </div>
+      </div>
+      ${achieved && !claimed ? `<button class="ms-claim" onclick="claimReward(${m.count},'${m.title}')">Claim 🎁</button>` : ''}
+      ${achieved && claimed  ? `<span style="font-size:0.72rem;color:var(--emerald);flex-shrink:0">Claimed ✓</span>` : ''}
+    </div>`;
+  }).join('');
+}
+
+async function claimReward(count, title){
+  const session = getSession();
+  const uid     = session.user_id || session.id;
+  const token   = session.access_token;
+
+  try{
+    /* Save claim to Supabase */
+    await fetch(SB+'/rest/v1/milestone_claims',{
+      method:'POST',
+      headers:hdr(token),
+      body:JSON.stringify({
+        creator_id:    uid,
+        milestone_count: count,
+        claimed_at:    new Date().toISOString()
+      })
+    });
+
+    /* Notify admin */
+    const adminRes = await fetch(SB+'/rest/v1/profiles?is_admin=eq.true&select=id',{headers:hdr(SK)});
+    const admins   = await adminRes.json();
+    if(admins[0]){
+      await fetch(SB+'/rest/v1/notifications',{
+        method:'POST',
+        headers:hdr(token),
+        body:JSON.stringify([{
+          user_id: admins[0].id,
+          title:   '🎁 Milestone reward claimed!',
+          body:    (myProfile?.display_name||'Creator')+' reached '+count.toLocaleString()+' members and claimed: '+title,
+          type:    'milestone'
+        }])
+      });
+    }
+
+    claimedMilestones.push(count);
+    renderMilestones();
+    toast('🎉 Reward claimed! We\'ll be in touch soon.', 'ok');
+
+  }catch(e){
+    toast('Error claiming reward. Try again!');
+  }
+}
+
+let tT;
+function toast(msg, type=''){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className='toast show'+(type?' '+type:'');
+  clearTimeout(tT); tT=setTimeout(()=>el.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>

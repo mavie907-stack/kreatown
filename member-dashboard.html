@@ -211,6 +211,18 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
     </div>
 
     <!-- TIER UPGRADE (shown for free/silver members) -->
+    <!-- MILESTONE PREVIEW -->
+    <div id="milestoneWidget" style="display:none;background:linear-gradient(135deg,rgba(244,115,42,0.08),rgba(201,149,42,0.05));border:1px solid rgba(244,115,42,0.2);border-radius:1rem;padding:1rem 1.25rem;margin-bottom:1rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.65rem">
+        <div style="font-family:'Playfair Display',serif;font-size:0.88rem;font-weight:700">🏆 Creator Milestones</div>
+        <a href="milestones.html" style="font-size:0.72rem;color:var(--orange);text-decoration:none">View all →</a>
+      </div>
+      <div id="msProgressTrack" style="background:rgba(255,255,255,0.06);border-radius:100px;height:6px;overflow:hidden;margin-bottom:0.45rem">
+        <div id="msProgressFill" style="height:100%;border-radius:100px;background:linear-gradient(90deg,var(--orange),var(--gold));width:0%;transition:width 1s ease"></div>
+      </div>
+      <div id="msProgressText" style="font-size:0.72rem;color:var(--text2)">Loading milestones…</div>
+    </div>
+
     <div class="tier-card" id="upgradeCard">
       <div class="tc-title">🔓 Unlock more of KreaTown</div>
       <div class="tc-sub" id="upgradeText">Upgrade your membership to access exclusive rooms, content and direct chats.</div>
@@ -284,8 +296,17 @@ const TIER_LABELS = {free:'🌱 Free',silver:'⭐ Silver',gold:'👑 Gold',palac
 const TIER_COLORS = {free:'tp-free',silver:'tp-silver',gold:'tp-gold',palace:'tp-palace'};
 
 function getSession(){
-  try{ const s=JSON.parse(localStorage.getItem('kt_session')||'{}'); return s.access_token?s:null; }
-  catch(e){ return null; }
+  try{
+    const s=JSON.parse(localStorage.getItem('kt_session')||'{}');
+    if(!s.access_token) return null;
+    /* Check expiry */
+    const now = Math.floor(Date.now()/1000);
+    if(s.expires_at && s.expires_at < now){
+      /* Expired - try to use anyway (refresh runs in background via kt-utils) */
+      console.log('Session expired, refresh pending...');
+    }
+    return s;
+  }catch(e){return null;}
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
