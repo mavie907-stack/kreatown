@@ -680,10 +680,6 @@ nav {
 <nav>
   <a href="/" class="nav-logo">Krea<span>Town</span></a>
   <div class="nav-right" id="navRight">
-    <div id="langToggle" style="display:flex;align-items:center;gap:0.25rem;background:rgba(26,22,18,0.06);border:1px solid rgba(156,136,120,0.2);border-radius:100px;padding:0.18rem 0.28rem">
-      <button onclick="setLang('en')" data-lang="en" style="padding:0.18rem 0.55rem;border-radius:100px;border:none;cursor:pointer;font-size:0.68rem;font-family:'DM Sans',sans-serif;transition:all .15s;background:transparent;color:#9c8878">🇬🇧 EN</button>
-      <button onclick="setLang('tr')" data-lang="tr" style="padding:0.18rem 0.55rem;border-radius:100px;border:none;cursor:pointer;font-size:0.68rem;font-family:'DM Sans',sans-serif;transition:all .15s;background:transparent;color:#9c8878">🇹🇷 TR</button>
-    </div>
     <a href="feed.html" id="navFeed" style="display:none">📰 Feed</a>
     <a href="rooms.html">🏠 Rooms</a>
     <a href="member-dashboard.html" id="navMemberDash" style="display:none">← My Dashboard</a>
@@ -777,11 +773,11 @@ nav {
   <!-- FEED -->
   <div class="feed fu2">
     <div class="feed-tabs">
-      <button class="feed-tab active" onclick="filterPosts(this,'all')" data-i18n-en="All Posts" data-i18n-tr="Tüm Yazılar">All Posts</button>
-      <button class="feed-tab" onclick="filterPosts(this,'free')" data-i18n-en="🌱 Free" data-i18n-tr="🌱 Ücretsiz">🌱 Free</button>
-      <button class="feed-tab" onclick="filterPosts(this,'silver')" data-i18n-en="⭐ Silver" data-i18n-tr="⭐ Gümüş">⭐ Silver</button>
-      <button class="feed-tab" onclick="filterPosts(this,'gold')" data-i18n-en="👑 Gold" data-i18n-tr="👑 Altın">👑 Gold</button>
-      <button class="feed-tab" onclick="filterPosts(this,'palace')" data-i18n-en="🏯 Palace" data-i18n-tr="🏯 Saray">🏯 Palace</button>
+      <button class="feed-tab active" onclick="filterPosts(this,'all')">All Posts</button>
+      <button class="feed-tab" onclick="filterPosts(this,'free')">🌱 Free</button>
+      <button class="feed-tab" onclick="filterPosts(this,'silver')">⭐ Silver</button>
+      <button class="feed-tab" onclick="filterPosts(this,'gold')">👑 Gold</button>
+      <button class="feed-tab" onclick="filterPosts(this,'palace')">🏯 Palace</button>
     </div>
     <div id="postsContainer">
       <div style="padding:2rem;text-align:center;color:var(--muted);font-size:0.85rem">Loading posts…</div>
@@ -981,8 +977,6 @@ function getSession(){
 
 /* Load creator profile & posts on page load */
 window.addEventListener('DOMContentLoaded', async () => {
-  /* Apply language on load */
-  if(typeof applyLang !== 'undefined') setTimeout(applyLang, 100);
   const session = getSession();
 
   /* Update nav based on session */
@@ -1029,16 +1023,10 @@ window.addEventListener('DOMContentLoaded', async () => {
       const profileAv = document.getElementById('profileAvatar');
       if(profileAv){
         const url = creator.avatar_url + '?cb=' + Date.now();
-        /* Use background-image — most reliable cross-browser */
-        profileAv.style.backgroundImage    = 'url("'+url+'")';
-        profileAv.style.backgroundSize     = 'cover';
-        profileAv.style.backgroundPosition = 'center';
-        profileAv.style.backgroundRepeat   = 'no-repeat';
-        profileAv.style.fontSize           = '0';
-        profileAv.textContent              = '';
-        /* Also show in upload button area */
-        const uploadBtn = document.querySelector('.avatar-upload-btn');
-        if(uploadBtn) uploadBtn.style.display = 'flex';
+        profileAv.innerHTML = '<img src="'+url+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;z-index:2;display:block" crossorigin="anonymous">';
+        profileAv.style.fontSize = '0';
+        profileAv.style.position = 'relative';
+        profileAv.style.overflow = 'hidden';
       }
     }
     /* Update banner */

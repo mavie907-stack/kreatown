@@ -179,7 +179,7 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
 .toast.warn{border-color:rgba(244,115,42,0.35);color:var(--orange)}
 
 @media(max-width:900px){
-  .layout{grid-template-columns:1fr;gap:0;padding-bottom:70px}
+  .layout{grid-template-columns:1fr;gap:0}
   .left-sb,.right-sb{display:none}
 }
 </style>
@@ -200,13 +200,9 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
     <a href="feed.html" class="nav-link active">🏠 Feed</a>
     <a href="rooms.html" class="nav-link">💬 Rooms</a>
     <a href="topraq-hub.html" class="nav-link">🏯 Town</a>
-    <a href="#" class="nav-link" id="dashLink" style="display:none">← Dashboard</a>
+    <a href="dashboard.html" class="nav-link" id="dashLink" style="display:none">📊 Dashboard</a>
   </div>
   <div class="nav-right">
-      <div id="langToggle" style="display:flex;align-items:center;gap:0.25rem;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:100px;padding:0.18rem 0.28rem">
-        <button onclick="setLang('en')" data-lang="en" style="padding:0.18rem 0.55rem;border-radius:100px;border:none;cursor:pointer;font-size:0.68rem;font-family:'DM Sans',sans-serif;background:transparent;color:rgba(255,255,255,0.45);transition:all .15s">🇬🇧 EN</button>
-        <button onclick="setLang('tr')" data-lang="tr" style="padding:0.18rem 0.55rem;border-radius:100px;border:none;cursor:pointer;font-size:0.68rem;font-family:'DM Sans',sans-serif;background:transparent;color:rgba(255,255,255,0.45);transition:all .15s">🇹🇷 TR</button>
-      </div>
     <a href="member-hub.html" class="nav-av" id="navAvatar">🎨</a>
   </div>
 </nav>
@@ -253,10 +249,10 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
 
     <!-- FILTER TABS -->
     <div class="filter-row">
-      <button class="ftab on" onclick="setFilter(this,'all')" data-i18n-en="✨ All" data-i18n-tr="✨ Tümü">✨ All</button>
-      <button class="ftab" onclick="setFilter(this,'post')" data-i18n-en="📝 Posts" data-i18n-tr="📝 Yazılar">📝 Posts</button>
-      <button class="ftab" onclick="setFilter(this,'photo')" data-i18n-en="📸 Photos" data-i18n-tr="📸 Fotoğraflar">📸 Photos</button>
-      <button class="ftab" onclick="setFilter(this,'podcast')" data-i18n-en="🎙️ Podcasts" data-i18n-tr="🎙️ Podcastler">🎙️ Podcasts</button>
+      <button class="ftab on" onclick="setFilter(this,'all')">✨ All</button>
+      <button class="ftab" onclick="setFilter(this,'post')">📝 Posts</button>
+      <button class="ftab" onclick="setFilter(this,'photo')">📸 Photos</button>
+      <button class="ftab" onclick="setFilter(this,'podcast')">🎙️ Podcasts</button>
     </div>
 
     <!-- FEED POSTS -->
@@ -290,9 +286,9 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
     <div class="mo-title">✍️ Share with the community</div>
 
     <div class="type-tabs">
-      <button class="ttype on" onclick="setPostType(this,'post')" data-i18n-en="📝 Post" data-i18n-tr="📝 Yazı">📝 Post</button>
-      <button class="ttype" onclick="setPostType(this,'photo')" data-i18n-en="📸 Photo" data-i18n-tr="📸 Fotoğraf">📸 Photo</button>
-      <button class="ttype" onclick="setPostType(this,'podcast')" data-i18n-en="🎙️ Podcast" data-i18n-tr="🎙️ Podcast">🎙️ Podcast</button>
+      <button class="ttype on" onclick="setPostType(this,'post')">📝 Post</button>
+      <button class="ttype" onclick="setPostType(this,'photo')">📸 Photo</button>
+      <button class="ttype" onclick="setPostType(this,'podcast')">🎙️ Podcast</button>
     </div>
 
     <label class="fl">Title *</label>
@@ -309,10 +305,10 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
 
     <label class="fl">Who can see this?</label>
     <div class="tier-row">
-      <button class="tr-btn on-free" onclick="setTier(this,'free')" data-i18n-en="🌱 Everyone" data-i18n-tr="🌱 Herkes">🌱 Everyone</button>
-      <button class="tr-btn" onclick="setTier(this,'silver')" data-i18n-en="⭐ Silver+" data-i18n-tr="⭐ Gümüş+">⭐ Silver+</button>
-      <button class="tr-btn" onclick="setTier(this,'gold')" data-i18n-en="👑 Gold+" data-i18n-tr="👑 Altın+">👑 Gold+</button>
-      <button class="tr-btn" onclick="setTier(this,'palace')" data-i18n-en="🏯 Palace only" data-i18n-tr="🏯 Yalnızca Saray">🏯 Palace only</button>
+      <button class="tr-btn on-free" onclick="setTier(this,'free')">🌱 Everyone</button>
+      <button class="tr-btn" onclick="setTier(this,'silver')">⭐ Silver+</button>
+      <button class="tr-btn" onclick="setTier(this,'gold')">👑 Gold+</button>
+      <button class="tr-btn" onclick="setTier(this,'palace')">🏯 Palace only</button>
     </div>
 
     <button class="submit-btn" id="publishBtn" onclick="publishPost()">🚀 Share with community</button>
@@ -376,23 +372,12 @@ window.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('createPostBtn').style.display = 'inline-block';
 
       // Show admin/dashboard links
-      /* Set correct dashboard link */
-      const dashLink = document.getElementById('dashLink');
-      const sbDash   = document.getElementById('sbDash');
-      const sbAdmin  = document.getElementById('sbAdmin');
-      if(dashLink){
-        if(myProfile.is_admin){
-          dashLink.href    = 'dashboard.html';
-          dashLink.textContent = '← Dashboard';
-          dashLink.style.display = 'block';
-          if(sbDash)  sbDash.style.display='flex';
-          if(sbAdmin) sbAdmin.style.display='flex';
-          document.getElementById('sbMembers')?.style.setProperty('display','flex');
-        } else {
-          dashLink.href    = 'member-dashboard.html';
-          dashLink.textContent = '← My Dashboard';
-          dashLink.style.display = 'block';
-        }
+      if(myProfile.is_admin){
+        ['dashLink','sbDash','sbAdmin','sbMembers'].forEach(id=>{
+          const el = document.getElementById(id);
+          if(el) el.style.display = 'flex';
+        });
+        document.getElementById('dashLink').style.display = 'block';
       }
     }
   }
@@ -731,17 +716,6 @@ function toast(msg,type=''){
   el.textContent=msg; el.className='toast show'+(type?' '+type:'');
   clearTimeout(tT); tT=setTimeout(()=>el.classList.remove('show'),2800);
 }
-
-
-/* Language applied via kt-utils.js */
-document.addEventListener('DOMContentLoaded', ()=>{
-  setTimeout(()=>{
-    const lang = localStorage.getItem('kt_lang')||'en';
-    if(lang==='tr') document.querySelectorAll('[data-i18n-tr]').forEach(el=>{
-      el.textContent = el.getAttribute('data-i18n-tr');
-    });
-  }, 300);
-});
 
 /* Auto refresh every 30s */
 setInterval(loadFeed, 30000);

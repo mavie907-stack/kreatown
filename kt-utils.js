@@ -63,136 +63,154 @@ function toggleSound() {
   return soundEnabled;
 }
 
-/* ── 3. LANGUAGE SYSTEM ── */
-const KT_TRANSLATIONS = {
+/* ── 3. TURKISH / ENGLISH i18n ── */
+const KT_LANG = {
+  en: {
+    /* NAV */
+    'nav.feed':        'Community Feed',
+    'nav.rooms':       'Rooms',
+    'nav.town':        "Topraq's Town",
+    'nav.dashboard':   'Dashboard',
+    'nav.profile':     'My Profile',
+    'nav.settings':    'Settings',
+    'nav.logout':      'Log out',
+    /* FEED */
+    'feed.title':      'Community Feed',
+    'feed.post':       '✍️ Post',
+    'feed.share':      'Share with community',
+    'feed.title_ph':   'Give your post a title…',
+    'feed.content_ph': 'Write your post…',
+    'feed.publish':    '🚀 Share with community',
+    'feed.everyone':   '🌱 Everyone',
+    'feed.loading':    'Loading…',
+    'feed.empty':      'No posts yet — be the first!',
+    /* ROOMS */
+    'rooms.back':      '← Back',
+    'rooms.online':    'online',
+    'rooms.send':      'Send',
+    'rooms.msg_ph':    'Say something…',
+    'rooms.locked':    'This room requires',
+    'rooms.upgrade':   'Upgrade to unlock',
+    /* MEMBER DASH */
+    'dash.welcome':    'Welcome back',
+    'dash.my_tier':    'My tier',
+    'dash.online':     'Members online',
+    'dash.rooms':      'Active rooms',
+    'dash.posts':      'Community posts',
+    'dash.quick':      'Quick access',
+    'dash.upgrade':    '🔓 Unlock more of KreaTown',
+    /* SETTINGS */
+    'settings.save':   'Save changes',
+    'settings.photo':  'Upload photo',
+    'settings.remove': 'Remove',
+    /* GENERAL */
+    'btn.join':        'Join',
+    'btn.cancel':      'Cancel',
+    'btn.close':       'Close',
+    'tier.free':       '🌱 Free',
+    'tier.silver':     '⭐ Silver',
+    'tier.gold':       '👑 Gold',
+    'tier.palace':     '🏯 Palace',
+  },
   tr: {
-    /* Navigation */
-    'Community Feed': 'Topluluk Akışı',
-    'My Profile': 'Profilim',
-    'Dashboard': 'Panel',
-    'Settings': 'Ayarlar',
-    'Log out': 'Çıkış yap',
-    'All Members': 'Tüm Üyeler',
-    'Earnings': 'Kazanç',
-    'Messages': 'Mesajlar',
-    'Members': 'Üyeler',
-    'Admin Panel': 'Yönetim Paneli',
-    'Town Map': 'Kasaba Haritası',
-    /* Rooms */
-    'Hotel Lobby': 'Otel Lobisi',
-    'The Restaurant': 'Restoran',
-    'Superior Room': 'Superior Oda',
-    'Resting Lounge': 'Dinlenme Salonu',
-    'Thermal Pool': 'Termal Havuz',
-    '3D Radio Room': '3D Radyo Odası',
-    'Cinema TV Room': 'Sinema TV Odası',
-    'Back': 'Geri',
-    '← Back': '← Geri',
-    'online': 'çevrimiçi',
-    'Silver Members Only': 'Yalnızca Gümüş Üyeler',
-    'Gold Suite Access': 'Altın Süit Erişimi',
-    'Palace Access Only': 'Yalnızca Saray Erişimi',
-    /* Feed */
-    '✨ All': '✨ Tümü',
-    '📝 Posts': '📝 Yazılar',
-    '📸 Photos': '📸 Fotoğraflar',
-    '🎙️ Podcasts': '🎙️ Podcastler',
-    'All Posts': 'Tüm Yazılar',
-    '🌱 Everyone': '🌱 Herkes',
-    '⭐ Silver+': '⭐ Gümüş+',
-    '👑 Gold+': '👑 Altın+',
-    '🏯 Palace only': '🏯 Yalnızca Saray',
-    '🚀 Share with community': '🚀 Toplulukla paylaş',
-    'Share with community': 'Toplulukla paylaş',
-    '✍️ Post': '✍️ Paylaş',
-    'Latest from the community': 'Topluluktan son yazılar',
-    'Quick access': 'Hızlı erişim',
-    'Active rooms': 'Aktif odalar',
-    /* Tiers */
-    '🌱 Free': '🌱 Ücretsiz',
-    '⭐ Silver': '⭐ Gümüş',
-    '👑 Gold': '👑 Altın',
-    '🏯 Palace': '🏯 Saray',
-    'Free': 'Ücretsiz',
-    'Silver': 'Gümüş',
-    'Gold': 'Altın',
-    'Palace': 'Saray',
-    /* Member dash */
-    'My tier': 'Üyeliğim',
-    'Community posts': 'Topluluk yazıları',
-    'Members online': 'Çevrimiçi üye',
-    'Welcome back to KreaTown': 'KreaTown'a hoş geldin',
-    'Enter Rooms': 'Odalara gir',
-    "Topraq's Town": 'Topraq'ın Kasabası',
-    'My Profile & Posts': 'Profilim & Yazılarım',
-    'Settings & Profile': 'Ayarlar & Profil',
-    '🔓 Unlock more of KreaTown': '🔓 KreaTown'da daha fazlasını aç',
-    /* Buttons */
-    'Save changes': 'Değişiklikleri kaydet',
-    'Upload photo': 'Fotoğraf yükle',
-    'Cancel': 'İptal',
-    'Send': 'Gönder',
-    'See all': 'Tümünü gör',
-    'No posts yet': 'Henüz gönderi yok',
-    'Platform Overview': 'Platform Genel Bakış',
+    /* NAV */
+    'nav.feed':        'Topluluk Akışı',
+    'nav.rooms':       'Odalar',
+    'nav.town':        "Topraq'ın Kasabası",
+    'nav.dashboard':   'Panel',
+    'nav.profile':     'Profilim',
+    'nav.settings':    'Ayarlar',
+    'nav.logout':      'Çıkış yap',
+    /* FEED */
+    'feed.title':      'Topluluk Akışı',
+    'feed.post':       '✍️ Paylaş',
+    'feed.share':      'Toplulukla paylaş',
+    'feed.title_ph':   'Gönderi başlığı…',
+    'feed.content_ph': 'Yazını buraya yaz…',
+    'feed.publish':    '🚀 Toplulukla paylaş',
+    'feed.everyone':   '🌱 Herkes',
+    'feed.loading':    'Yükleniyor…',
+    'feed.empty':      'Henüz gönderi yok — ilk sen ol!',
+    /* ROOMS */
+    'rooms.back':      '← Geri',
+    'rooms.online':    'çevrimiçi',
+    'rooms.send':      'Gönder',
+    'rooms.msg_ph':    'Bir şeyler yaz…',
+    'rooms.locked':    'Bu oda şunu gerektiriyor:',
+    'rooms.upgrade':   'Yükselt ve aç',
+    /* MEMBER DASH */
+    'dash.welcome':    'Hoş geldin',
+    'dash.my_tier':    'Üyeliğim',
+    'dash.online':     'Çevrimiçi üye',
+    'dash.rooms':      'Aktif odalar',
+    'dash.posts':      'Topluluk gönderileri',
+    'dash.quick':      'Hızlı erişim',
+    'dash.upgrade':    '🔓 KreaTown\'da daha fazlasını aç',
+    /* SETTINGS */
+    'settings.save':   'Değişiklikleri kaydet',
+    'settings.photo':  'Fotoğraf yükle',
+    'settings.remove': 'Kaldır',
+    /* GENERAL */
+    'btn.join':        'Katıl',
+    'btn.cancel':      'İptal',
+    'btn.close':       'Kapat',
+    'tier.free':       '🌱 Ücretsiz',
+    'tier.silver':     '⭐ Gümüş',
+    'tier.gold':       '👑 Altın',
+    'tier.palace':     '🏯 Saray',
   }
 };
 
-function getLang() {
-  return localStorage.getItem('kt_lang') || 'en';
-}
+let currentLang = localStorage.getItem('kt_lang') || 'en';
 
 function t(key) {
-  const lang = getLang();
-  if (lang === 'en') return key;
-  return KT_TRANSLATIONS.tr[key] || key;
+  return KT_LANG[currentLang]?.[key] || KT_LANG['en']?.[key] || key;
 }
 
 function setLang(lang) {
+  currentLang = lang;
   localStorage.setItem('kt_lang', lang);
-  /* Update toggle button styles */
+  applyLang();
+}
+
+function applyLang() {
+  // Apply translations to elements with data-i18n attribute
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+      el.placeholder = t(key);
+    } else {
+      el.textContent = t(key);
+    }
+  });
+  // Update html lang
+  document.documentElement.lang = currentLang;
+  // Update language toggle buttons
   document.querySelectorAll('[data-lang]').forEach(btn => {
-    const active = btn.getAttribute('data-lang') === lang;
-    btn.style.background = active ? 'rgba(244,115,42,0.3)' : 'transparent';
-    btn.style.color      = active ? '#f4732a' : '';
-    btn.style.fontWeight = active ? '600' : '400';
-  });
-  /* Apply translations */
-  applyTranslations(lang);
-  /* Re-render dynamic content */
-  if (typeof renderRooms  !== 'undefined') renderRooms();
-  if (typeof renderFeed   !== 'undefined') setTimeout(renderFeed, 50);
-  if (typeof renderM      !== 'undefined') renderM();
-}
-
-function applyTranslations(lang) {
-  if (!lang) lang = getLang();
-  /* Update html lang only - safe translation */
-  document.documentElement.lang = lang;
-  /* Only translate elements with explicit data-i18n-tr attribute */
-  document.querySelectorAll('[data-i18n-tr]').forEach(el => {
-    el.textContent = lang === 'tr'
-      ? el.getAttribute('data-i18n-tr')
-      : (el.getAttribute('data-i18n-en') || el.getAttribute('data-i18n-tr'));
+    btn.classList.toggle('active', btn.getAttribute('data-lang') === currentLang);
   });
 }
 
-/* Apply on every page load */
-document.addEventListener('DOMContentLoaded', () => {
-  const lang = getLang();
-  /* Style buttons immediately */
-  setTimeout(() => {
-    document.querySelectorAll('[data-lang]').forEach(btn => {
-      const active = btn.getAttribute('data-lang') === lang;
-      btn.style.background = active ? 'rgba(244,115,42,0.3)' : 'transparent';
-      btn.style.color      = active ? '#f4732a' : '';
-      btn.style.fontWeight = active ? '600' : '400';
-    });
-    if (lang === 'tr') applyTranslations('tr');
-  }, 150);
-});
+// Apply on load
+document.addEventListener('DOMContentLoaded', applyLang);
 
 /* ── 4. LANGUAGE TOGGLE WIDGET ── */
+function createLangToggle(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = `
+    <div style="display:flex;align-items:center;gap:0.35rem;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:0.2rem 0.3rem">
+      <button data-lang="en" onclick="setLang('en')" style="padding:0.2rem 0.6rem;border-radius:100px;border:none;background:transparent;color:rgba(255,255,255,0.6);font-size:0.72rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s" class="${currentLang==='en'?'active':''}">🇬🇧 EN</button>
+      <button data-lang="tr" onclick="setLang('tr')" style="padding:0.2rem 0.6rem;border-radius:100px;border:none;background:transparent;color:rgba(255,255,255,0.6);font-size:0.72rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s" class="${currentLang==='tr'?'active':''}">🇹🇷 TR</button>
+    </div>
+  `;
+  // Style active button
+  container.querySelectorAll('button').forEach(btn => {
+    btn.style.background = btn.getAttribute('data-lang') === currentLang ? 'rgba(244,115,42,0.25)' : 'transparent';
+    btn.style.color = btn.getAttribute('data-lang') === currentLang ? '#f4732a' : 'rgba(255,255,255,0.5)';
+  });
+}
+
 /* ── 5. ADMIN NOTIFICATION — new member joined ── */
 const SB_URL_U = 'https://pkhoyabazudqmfczkhax.supabase.co';
 const SB_KEY_U = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
@@ -271,34 +289,4 @@ window.addEventListener('appinstalled', () => {
   const btn = document.getElementById('pwaInstallBtn');
   if (btn) btn.style.display = 'none';
   playSound('success');
-});
-
-/* ── TV/RADIO BACKGROUND STOP ── */
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) {
-    /* Stop all audio/video when tab is hidden */
-    document.querySelectorAll('audio, video').forEach(el => {
-      if (!el.paused) {
-        el._wasPlaying = true;
-        el.pause();
-      }
-    });
-    /* Stop iframe embeds (YouTube etc) */
-    document.querySelectorAll('iframe').forEach(iframe => {
-      try {
-        const src = iframe.src;
-        if (src && (src.includes('youtube') || src.includes('spotify') || src.includes('soundcloud'))) {
-          iframe._origSrc = src;
-          iframe.src = '';
-        }
-      } catch(e) {}
-    });
-  }
-});
-
-window.addEventListener('pagehide', () => {
-  document.querySelectorAll('audio, video').forEach(el => el.pause());
-  document.querySelectorAll('iframe[src*="youtube"], iframe[src*="spotify"]').forEach(el => {
-    el.src = '';
-  });
 });

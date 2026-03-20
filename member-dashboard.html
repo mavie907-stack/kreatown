@@ -116,12 +116,10 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
 .rq-cnt{font-size:0.62rem;color:var(--emerald);font-family:'DM Mono',monospace}
 
 /* MOBILE NAV */
-.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:0.4rem 0 calc(0.4rem + env(safe-area-inset-bottom));z-index:9999;backdrop-filter:blur(16px)}
-.mob-items{display:flex;justify-content:space-around;align-items:center}
-.mob-it{display:flex;flex-direction:column;align-items:center;gap:0.15rem;cursor:pointer;padding:0.4rem 0.85rem;border-radius:0.5rem;font-size:0.58rem;color:var(--text3);text-decoration:none;transition:all .15s;-webkit-tap-highlight-color:transparent;min-width:44px;min-height:44px;justify-content:center}
-.mob-it.on{color:var(--orange)}
-.mob-it:active{background:rgba(244,115,42,0.1);transform:scale(0.95)}
-.mob-ico{font-size:1.25rem;line-height:1}
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:0.5rem 0;z-index:100}
+.mob-items{display:flex;justify-content:space-around}
+.mob-it{display:flex;flex-direction:column;align-items:center;gap:0.2rem;cursor:pointer;padding:0.3rem 0.75rem;border-radius:0.5rem;font-size:0.6rem;color:var(--text3);text-decoration:none;transition:color .15s}
+.mob-it.on,.mob-it:hover{color:var(--orange)}
 .mob-ico{font-size:1.2rem}
 
 /* TOAST */
@@ -132,8 +130,7 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
 
 @media(max-width:768px){
   .sb{display:none}
-  .mob-nav{display:block!important}
-  .main{padding-bottom:70px}
+  .mob-nav{display:block}
   .krow{grid-template-columns:repeat(2,1fr)}
   .grid2{grid-template-columns:1fr}
   .content{padding-bottom:5rem}
@@ -335,7 +332,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('upgradeText').textContent = texts[tier]||'';
     }
 
-    /* Redirect admin to their dashboard */
+    /* If admin → redirect to creator dashboard */
     if(p.is_admin){
       window.location.href = 'dashboard.html';
       return;

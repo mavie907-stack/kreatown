@@ -86,35 +86,7 @@ body{font-family:'DM Sans',sans-serif;background:#0a0806;color:#e8d5b0}
 .lock-btn-palace{background:linear-gradient(135deg,#7c5cbf,#a98cdf);color:white}
 .lock-dismiss{margin-top:0.75rem;font-size:0.78rem;color:rgba(255,255,255,0.3);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;display:block;width:100%;text-align:center}
 .lock-dismiss:hover{color:rgba(255,255,255,0.6)}
-@media(max-width:640px){
-  .sidebar{
-    position:fixed;bottom:0;left:0;right:0;
-    width:100%!important;height:auto!important;
-    flex-direction:row;z-index:200;
-    border-right:none;border-top:1px solid rgba(255,255,255,0.1);
-    padding:0.4rem 0;
-  }
-  .sidebar-back,.sidebar-footer,.sidebar-logo{display:none!important}
-  #roomList{
-    display:flex;flex-direction:row;overflow-x:auto;
-    gap:0.4rem;padding:0 0.75rem;flex:1;
-    scrollbar-width:none;-ms-overflow-style:none;
-  }
-  #roomList::-webkit-scrollbar{display:none}
-  .room-item{
-    flex-shrink:0;flex-direction:column;
-    min-width:72px;padding:0.4rem 0.5rem;
-    text-align:center;border-bottom:none!important;
-    border-radius:0.5rem;gap:0.2rem;
-  }
-  .room-icon{font-size:1.2rem!important}
-  .room-info{display:flex;flex-direction:column;align-items:center}
-  .room-name{font-size:0.58rem!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:68px}
-  .room-tier,.room-count{display:none}
-  .online-dot{display:none}
-  .page{padding-bottom:90px!important}
-  .chat-area{height:calc(100vh - 160px)!important}
-}
+@media(max-width:640px){.sidebar{display:none}}
 </style>
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#f4732a">
@@ -130,12 +102,8 @@ body{font-family:'DM Sans',sans-serif;background:#0a0806;color:#e8d5b0}
   <div id="particles"></div>
   <aside class="sidebar">
     <div class="sidebar-logo">Krea<span>Town</span></div>
-    <div id="langToggle" style="display:flex;align-items:center;gap:0.25rem;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:100px;padding:0.18rem 0.28rem">
-      <button onclick="setLang('en')" data-lang="en" style="padding:0.18rem 0.55rem;border-radius:100px;border:none;cursor:pointer;font-size:0.68rem;font-family:'DM Sans',sans-serif;background:transparent;color:rgba(255,255,255,0.45)">🇬🇧</button>
-      <button onclick="setLang('tr')" data-lang="tr" style="padding:0.18rem 0.55rem;border-radius:100px;border:none;cursor:pointer;font-size:0.68rem;font-family:'DM Sans',sans-serif;background:transparent;color:rgba(255,255,255,0.45)">🇹🇷</button>
-    </div>
     <div class="sidebar-back" style="display:flex;flex-direction:column;gap:0.35rem">
-      <a href="feed.html" class="back-link" style="color:var(--orange)" id="feedBackLink">📰 Community Feed</a>
+      <a href="feed.html" class="back-link" style="color:var(--orange)">📰 Community Feed</a>
       <a href="javascript:history.back()" class="back-link" id="backLink">← Back</a>
     </div>
     <div class="rooms-label">Rooms</div>
@@ -178,55 +146,19 @@ body{font-family:'DM Sans',sans-serif;background:#0a0806;color:#e8d5b0}
 </div>
 <script>
 const ROOMS=[
-  {id:'lobby',icon:'🛎️',name:'Hotel Lobby',name_tr:'Otel Lobisi',tier:'free',tierLabel:'🌱 Free',tierLabel_tr:'🌱 Ücretsiz',bg:'rooms/lobby.jpg',bgPos:'center center',bgSize:'cover',atm:'Warm candlelight · Soft piano · Crystal chandeliers',atm_tr:'Sıcak mum ışığı · Hafif piyano · Kristal avizeler',atmColor:'#f5d58a',online:12,desc:'Where every story begins — open to all guests',desc_tr:'Her hikayenin başladığı yer — herkese açık',particles:['#f5d58a','#c9952a','#f4732a'],messages:[{avatar:'🌸',name:'Selin K',badge:'free',time:'2m',text:'This lobby is gorgeous, love the vibe here!'},{avatar:'🎸',name:'Cem A',badge:'free',time:'5m',text:'Just joined the town, excited to explore!'},{avatar:'🌿',name:'Elif Y',badge:'silver',time:'8m',text:'Welcome Cem! The restaurant is amazing btw 🍽️'},{avatar:'🔥',name:'Berk D',badge:'gold',time:'12m',text:'Gold Suite is where the real magic happens 👑'}]},
-  {id:'restaurant',icon:'🍽️',name:'The Restaurant',name_tr:'Restoran',tier:'silver',tierLabel:'⭐ Silver',tierLabel_tr:'⭐ Gümüş',bg:'rooms/restaurant.jpg',bgPos:'center 40%',bgSize:'cover',atm:'Golden mood lighting · Jazz quartet · Dark marble tables',atm_tr:'Altın ışık · Caz dörtlüsü · Koyu mermer masalar',atmColor:'#c9952a',online:7,desc:'Intimate conversations over fine cuisine',desc_tr:'Güzel yemekler eşliğinde samimi sohbetler',particles:['#c9952a','#8b4d00','#f5d58a'],messages:[{avatar:'🌿',name:'Elif Y',badge:'silver',time:'3m',text:'The content dropped last week was fire 🔥'},{avatar:'🎨',name:'Mia T',badge:'silver',time:'6m',text:'Agreed! The strategy breakdown was so detailed.'},{avatar:'⭐',name:'Kerem S',badge:'gold',time:'10m',text:"Wait till you see what's coming in the Gold Suite..."}]},
-  {id:'superior',icon:'🛏️',name:'Superior Room',name_tr:'Superior Oda',tier:'gold',tierLabel:'👑 Gold',tierLabel_tr:'👑 Altın',bg:'rooms/superior.jpg',bgPos:'center center',bgSize:'contain',atm:'Ring chandelier glow · Mountain view · Warm leather',atm_tr:'Halka avize ışığı · Dağ manzarası · Sıcak deri',atmColor:'#e8d5b0',online:4,desc:'Exclusive access for Gold members',desc_tr:'Altın üyelere özel erişim',particles:['#e8d5b0','#c9952a','#ffffff'],messages:[{avatar:'🔥',name:'Berk D',badge:'gold',time:'1m',text:'The Q&A doc shared today — absolute gold 📋'},{avatar:'💡',name:'Ayşe M',badge:'gold',time:'4m',text:'That part about content batching changed my workflow!'},{avatar:'🎯',name:'Deniz K',badge:'palace',time:'7m',text:'Live session from the pool tonight 🌊'}]},
-  {id:'resting',icon:'🛋️',name:'Resting Lounge',name_tr:'Dinlenme Salonu',tier:'gold',tierLabel:'👑 Gold',tierLabel_tr:'👑 Altın',bg:'rooms/resting.jpg',bgPos:'center center',bgSize:'contain',atm:'Brushed brass · Walnut wood · Sputnik chandelier glow',atm_tr:'Fırçalanmış pirinç · Ceviz ahşap · Sputnik avize',atmColor:'#c9952a',online:3,desc:'Quiet conversations in a luxury setting',desc_tr:'Lüks ortamda sessiz sohbetler',particles:['#c9952a','#f5d58a','#e8c87a'],messages:[{avatar:'💎',name:'Lara S',badge:'gold',time:'5m',text:'Love having a quieter corner to chat in 🌙'},{avatar:'🌙',name:'Tarık B',badge:'gold',time:'9m',text:'This is my favorite room, the vibe is perfect.'}]},
-  {id:'pool',icon:'🌊',name:'Thermal Pool',name_tr:'Termal Havuz',tier:'palace',tierLabel:'🏯 Palace',tierLabel_tr:'🏯 Saray',bg:'rooms/pool.jpg',bgPos:'center 25%',bgSize:'cover',atm:'Marble columns · Golden underwater glow · Steam rising',atm_tr:'Mermer sütunlar · Altın su ışığı · Yükselen buhar',atmColor:'#4ecdc4',online:2,desc:'Palace members only — the most exclusive space',desc_tr:'Yalnızca Saray üyeleri — en özel alan',particles:['#4ecdc4','#7c5cbf','#a8edea'],messages:[{avatar:'🏯',name:'Kaan Ö',badge:'palace',time:'2m',text:'Just dropped the strategy session recording 🎯'},{avatar:'👑',name:'Naz A',badge:'palace',time:'4m',text:'Already watched it twice. Life changing content.'},{avatar:'🌟',name:'Creator',badge:'palace',time:'6m',text:'Welcome to the pool everyone 🌊 next session is Tuesday'}]}
+  {id:'lobby',icon:'🛎️',name:'Hotel Lobby',tier:'free',tierLabel:'🌱 Free',bg:'rooms/lobby.jpg',bgPos:'center center',bgSize:'cover',atm:'Warm candlelight · Soft piano · Crystal chandeliers',atmColor:'#f5d58a',online:12,desc:'Where every story begins — open to all guests',particles:['#f5d58a','#c9952a','#f4732a'],messages:[{avatar:'🌸',name:'Selin K',badge:'free',time:'2m',text:'This lobby is gorgeous, love the vibe here!'},{avatar:'🎸',name:'Cem A',badge:'free',time:'5m',text:'Just joined the town, excited to explore!'},{avatar:'🌿',name:'Elif Y',badge:'silver',time:'8m',text:'Welcome Cem! The restaurant is amazing btw 🍽️'},{avatar:'🔥',name:'Berk D',badge:'gold',time:'12m',text:'Gold Suite is where the real magic happens 👑'}]},
+  {id:'restaurant',icon:'🍽️',name:'The Restaurant',tier:'silver',tierLabel:'⭐ Silver',bg:'rooms/restaurant.jpg',bgPos:'center 40%',bgSize:'cover',atm:'Golden mood lighting · Jazz quartet · Dark marble tables',atmColor:'#c9952a',online:7,desc:'Intimate conversations over fine cuisine',particles:['#c9952a','#8b4d00','#f5d58a'],messages:[{avatar:'🌿',name:'Elif Y',badge:'silver',time:'3m',text:'The content dropped last week was fire 🔥'},{avatar:'🎨',name:'Mia T',badge:'silver',time:'6m',text:'Agreed! The strategy breakdown was so detailed.'},{avatar:'⭐',name:'Kerem S',badge:'gold',time:'10m',text:"Wait till you see what's coming in the Gold Suite..."}]},
+  {id:'superior',icon:'🛏️',name:'Superior Room',tier:'gold',tierLabel:'👑 Gold',bg:'rooms/superior.jpg',bgPos:'center center',bgSize:'contain',atm:'Ring chandelier glow · Mountain view · Warm leather',atmColor:'#e8d5b0',online:4,desc:'Exclusive access for Gold members',particles:['#e8d5b0','#c9952a','#ffffff'],messages:[{avatar:'🔥',name:'Berk D',badge:'gold',time:'1m',text:'The Q&A doc shared today — absolute gold 📋'},{avatar:'💡',name:'Ayşe M',badge:'gold',time:'4m',text:'That part about content batching changed my workflow!'},{avatar:'🎯',name:'Deniz K',badge:'palace',time:'7m',text:'Live session from the pool tonight 🌊'}]},
+  {id:'resting',icon:'🛋️',name:'Resting Lounge',tier:'gold',tierLabel:'👑 Gold',bg:'rooms/resting.jpg',bgPos:'center center',bgSize:'contain',atm:'Brushed brass · Walnut wood · Sputnik chandelier glow',atmColor:'#c9952a',online:3,desc:'Quiet conversations in a luxury setting',particles:['#c9952a','#f5d58a','#e8c87a'],messages:[{avatar:'💎',name:'Lara S',badge:'gold',time:'5m',text:'Love having a quieter corner to chat in 🌙'},{avatar:'🌙',name:'Tarık B',badge:'gold',time:'9m',text:'This is my favorite room, the vibe is perfect.'}]},
+  {id:'pool',icon:'🌊',name:'Thermal Pool',tier:'palace',tierLabel:'🏯 Palace',bg:'rooms/pool.jpg',bgPos:'center 25%',bgSize:'cover',atm:'Marble columns · Golden underwater glow · Steam rising',atmColor:'#4ecdc4',online:2,desc:'Palace members only — the most exclusive space',particles:['#4ecdc4','#7c5cbf','#a8edea'],messages:[{avatar:'🏯',name:'Kaan Ö',badge:'palace',time:'2m',text:'Just dropped the strategy session recording 🎯'},{avatar:'👑',name:'Naz A',badge:'palace',time:'4m',text:'Already watched it twice. Life changing content.'},{avatar:'🌟',name:'Creator',badge:'palace',time:'6m',text:'Welcome to the pool everyone 🌊 next session is Tuesday'}]}
 ]
 const TIER_ORDER=['free','silver','gold','palace']
 const MY_TIER='palace'
-const LOCK_CONFIG={
-  silver:{icon:'⭐',
-    title:'Silver Members Only', title_tr:'Yalnızca Gümüş Üyeler',
-    desc:'Join the Inside the House tier to access the Restaurant.',
-    desc_tr:'Restorana erişmek için Gümüş üyeliğe geç.',
-    btnClass:'lock-btn-silver',
-    btnText:'⭐ Upgrade to Silver · $9/mo', btnText_tr:'⭐ Gümüşe Yükselt · $9/ay'},
-  gold:{icon:'👑',
-    title:'Gold Suite Access', title_tr:'Altın Süit Erişimi',
-    desc:'The Superior Room and Resting Lounge are reserved for Gold members.',
-    desc_tr:'Superior Oda ve Dinlenme Salonu Altın üyelere ayrılmıştır.',
-    btnClass:'lock-btn-gold',
-    btnText:'👑 Upgrade to Gold · $19/mo', btnText_tr:'👑 Altına Yükselt · $19/ay'},
-  palace:{icon:'🏯',
-    title:'Palace Access Only', title_tr:'Yalnızca Saray Erişimi',
-    desc:'The Thermal Pool is the most exclusive space in the town.',
-    desc_tr:'Termal Havuz, kasabadaki en özel alandır.',
-    btnClass:'lock-btn-palace',
-    btnText:'🏯 Enter the Palace · $49/mo', btnText_tr:'🏯 Saraya Gir · $49/ay'}
-}
+const LOCK_CONFIG={silver:{icon:'⭐',title:'Silver Members Only',desc:'Join the Inside the House tier to access the Restaurant.',btnClass:'lock-btn-silver',btnText:'⭐ Upgrade to Silver · $9/mo'},gold:{icon:'👑',title:'Gold Suite Access',desc:'The Superior Room and Resting Lounge are reserved for Gold members.',btnClass:'lock-btn-gold',btnText:'👑 Upgrade to Gold · $19/mo'},palace:{icon:'🏯',title:'Palace Access Only',desc:'The Thermal Pool is the most exclusive space in the town.',btnClass:'lock-btn-palace',btnText:'🏯 Enter the Palace · $49/mo'}}
 let currentRoom='lobby'
 function createParticles(colors){const c=document.getElementById('particles');c.innerHTML='';for(let i=0;i<18;i++){const p=document.createElement('div');p.className='particle';const s=Math.random()*4+2;p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${Math.random()*8+6}s;animation-delay:${Math.random()*6}s;`;c.appendChild(p)}}
-function getLang(){return localStorage.getItem('kt_lang')||'en';}
-function rn(r){return getLang()==='tr'&&r.name_tr?r.name_tr:r.name;}
-function rtl(r){return getLang()==='tr'&&r.tierLabel_tr?r.tierLabel_tr:r.tierLabel;}
-function ratm(r){return getLang()==='tr'&&r.atm_tr?r.atm_tr:r.atm;}
-function rdesc(r){return getLang()==='tr'&&r.desc_tr?r.desc_tr:r.desc;}
-
-function renderRooms(){document.getElementById('roomList').innerHTML=ROOMS.map(r=>{const locked=TIER_ORDER.indexOf(MY_TIER)<TIER_ORDER.indexOf(r.tier);const active=r.id===currentRoom;return`<div class="room-item${active?' active':''}${locked?' locked':''}" onclick="selectRoom('${r.id}')"><span class="room-icon">${r.icon}</span><div class="room-info"><div class="room-name">${rn(r)}</div><div class="room-tier">${rtl(r)}</div></div><span class="room-count">${r.online}</span>${active&&!locked?'<div class="online-dot"></div>':''}</div>`}).join('')}
-function renderMessages(room, isNew=false){
-  if(isNew) {
-    /* Play sound for new messages */
-    if(typeof playSound !== 'undefined') playSound('message');
-    /* Browser notification if tab hidden */
-    if(document.hidden && Notification.permission === 'granted') {
-      new Notification('KreaTown — New message 💬', {
-        body: room.messages[room.messages.length-1]?.text || '',
-        icon: '/manifest.json'
-      });
-    }
-  }
+function renderRooms(){document.getElementById('roomList').innerHTML=ROOMS.map(r=>{const locked=TIER_ORDER.indexOf(MY_TIER)<TIER_ORDER.indexOf(r.tier);const active=r.id===currentRoom;return`<div class="room-item${active?' active':''}${locked?' locked':''}" onclick="selectRoom('${r.id}')"><span class="room-icon">${r.icon}</span><div class="room-info"><div class="room-name">${r.name}</div><div class="room-tier">${r.tierLabel}</div></div><span class="room-count">${r.online}</span>${active&&!locked?'<div class="online-dot"></div>':''}</div>`}).join('')}
+function renderMessages(room){
   const c=document.getElementById('messages');
   c.innerHTML=room.messages.map(m=>{
     const isUrl = m.avatar && m.avatar.startsWith('http');
@@ -248,16 +180,7 @@ function renderMessages(room, isNew=false){
   }).join('');
   setTimeout(()=>{c.scrollTop=c.scrollHeight},100);
 }
-function selectRoom(id){const room=ROOMS.find(r=>r.id===id);const locked=TIER_ORDER.indexOf(MY_TIER)<TIER_ORDER.indexOf(room.tier);if(locked){const cfg=LOCK_CONFIG[room.tier];const lang=getLang();
-    document.getElementById('lockIcon').textContent=cfg.icon;
-    document.getElementById('lockTitle').textContent=lang==='tr'&&cfg.title_tr?cfg.title_tr:cfg.title;
-    document.getElementById('lockDesc').textContent=lang==='tr'&&cfg.desc_tr?cfg.desc_tr:cfg.desc;
-    const btn=document.getElementById('lockBtn');
-    btn.className='lock-btn '+cfg.btnClass;
-    btn.textContent=lang==='tr'&&cfg.btnText_tr?cfg.btnText_tr:cfg.btnText;document.getElementById('lockedOverlay').classList.add('show');return}currentRoom=id;const bg=document.getElementById('roomBg');bg.style.backgroundImage=`url('${room.bg}')`;bg.style.backgroundPosition=room.bgPos||'center center';bg.style.backgroundSize=room.bgSize||'cover';document.getElementById('roomTitle').textContent=room.icon+' '+rn(room);
-    document.getElementById('roomDesc').textContent=rdesc(room);
-    document.getElementById('onlineCount').textContent=room.online+' '+(getLang()==='tr'?'çevrimiçi':'online');
-    document.getElementById('atmText').textContent=ratm(room);document.getElementById('atmDot').style.background=room.atmColor;document.getElementById('msgInput').placeholder=getLang()==='tr'?rn(room).toLowerCase()+' odasında bir şey yaz…':'Say something in '+room.name.toLowerCase()+'...';document.getElementById('lockedOverlay').classList.remove('show');renderRooms();createParticles(room.particles);loadMessages(id);subscribeRoom(id);}
+function selectRoom(id){const room=ROOMS.find(r=>r.id===id);const locked=TIER_ORDER.indexOf(MY_TIER)<TIER_ORDER.indexOf(room.tier);if(locked){const cfg=LOCK_CONFIG[room.tier];document.getElementById('lockIcon').textContent=cfg.icon;document.getElementById('lockTitle').textContent=cfg.title;document.getElementById('lockDesc').textContent=cfg.desc;const btn=document.getElementById('lockBtn');btn.className='lock-btn '+cfg.btnClass;btn.textContent=cfg.btnText;document.getElementById('lockedOverlay').classList.add('show');return}currentRoom=id;const bg=document.getElementById('roomBg');bg.style.backgroundImage=`url('${room.bg}')`;bg.style.backgroundPosition=room.bgPos||'center center';bg.style.backgroundSize=room.bgSize||'cover';document.getElementById('roomTitle').textContent=room.icon+' '+room.name;document.getElementById('roomDesc').textContent=room.desc;document.getElementById('onlineCount').textContent=room.online+' online';document.getElementById('atmText').textContent=room.atm;document.getElementById('atmDot').style.background=room.atmColor;document.getElementById('msgInput').placeholder='Say something in '+room.name.toLowerCase()+'...';document.getElementById('lockedOverlay').classList.remove('show');renderRooms();createParticles(room.particles);loadMessages(id);subscribeRoom(id);}
 function closeOverlay(){document.getElementById('lockedOverlay').classList.remove('show')}
 document.getElementById('sendBtn').addEventListener('click',sendMessage)
 document.getElementById('msgInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendMessage()})
@@ -279,10 +202,7 @@ function getMyProfile(){
 
 async function loadMessages(roomId){
   try{
-    /* Filter messages by creator if specified */
-    let query = SB_URL+'/rest/v1/room_messages?room_id=eq.'+roomId+'&select=*,profiles(username,display_name,avatar_url,tier)&order=created_at.asc&limit=50';
-    if(window.CREATOR_ID) query += '&creator_id=eq.'+window.CREATOR_ID;
-    const res=await fetch(query,{
+    const res=await fetch(SB_URL+'/rest/v1/room_messages?room_id=eq.'+roomId+'&select=*,profiles(username,display_name,avatar_url,tier)&order=created_at.asc&limit=50',{
       headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
     });
     const data=await res.json();
@@ -302,10 +222,7 @@ async function loadMessages(roomId){
       me:m.user_id===myId,
       user_id:m.user_id
     }));
-    const prevCount = room._msgCount || 0;
-    const newCount  = room.messages.length;
-    renderMessages(room, newCount > prevCount);
-    room._msgCount = newCount;
+    renderMessages(room);
   }catch(e){console.log('Load messages error:',e);}
 }
 
@@ -359,42 +276,13 @@ async function sendMessage(){
         body:JSON.stringify({
           room_id:currentRoom,
           user_id:session.user_id||session.id,
-          creator_id:window.CREATOR_ID||null,
           content:text
         })
       });
     }catch(e){console.log('Send error:',e);}
   }
 }
-/* Load creator context from URL param */
-(async()=>{
-  const params = new URLSearchParams(window.location.search);
-  const creatorSlug = params.get('creator') || 'topraq';
-  
-  /* Store for message sending */
-  window.CURRENT_CREATOR = creatorSlug;
-
-  /* Load creator profile to get their id */
-  try{
-    const res = await fetch(SB_URL+'/rest/v1/profiles?username=eq.'+creatorSlug+'&select=id,username,display_name,avatar_url',{
-      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
-    });
-    const data = await res.json();
-    if(data[0]){
-      window.CREATOR_ID = data[0].id;
-      window.CREATOR_NAME = data[0].display_name || data[0].username;
-      /* Update room logo */
-      const logo = document.querySelector('.sidebar-logo');
-      if(logo && creatorSlug !== 'topraq') logo.textContent = window.CREATOR_NAME + "'s Rooms";
-    }
-  }catch(e){}
-})();
-
 selectRoom('lobby');loadMessages('lobby');subscribeRoom('lobby');
-/* Request notification permission */
-if('Notification' in window && Notification.permission === 'default'){
-  setTimeout(()=>Notification.requestPermission(), 3000);
-}
 
 /* Load user profile for sidebar */
 (async()=>{
