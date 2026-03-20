@@ -155,124 +155,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text1);di
   <script src="/kt-utils.js" defer></script>
 </head>
 <body>
-
-<!-- ADMIN PIN LOCK -->
-<div id="pinLock" style="position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem">
-  <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--text1)">Krea<span style="color:var(--orange)">Town</span> Admin</div>
-  <div style="font-size:0.78rem;color:var(--text3);margin-bottom:0.5rem">Enter your admin PIN to continue</div>
-  <div style="display:flex;gap:0.5rem" id="pinDots">
-    <div style="width:12px;height:12px;border-radius:50%;border:2px solid var(--border2);background:transparent" id="d0"></div>
-    <div style="width:12px;height:12px;border-radius:50%;border:2px solid var(--border2);background:transparent" id="d1"></div>
-    <div style="width:12px;height:12px;border-radius:50%;border:2px solid var(--border2);background:transparent" id="d2"></div>
-    <div style="width:12px;height:12px;border-radius:50%;border:2px solid var(--border2);background:transparent" id="d3"></div>
-  </div>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;margin-top:0.5rem">
-    <button class="pin-btn" onclick="enterPin('1')">1</button>
-    <button class="pin-btn" onclick="enterPin('2')">2</button>
-    <button class="pin-btn" onclick="enterPin('3')">3</button>
-    <button class="pin-btn" onclick="enterPin('4')">4</button>
-    <button class="pin-btn" onclick="enterPin('5')">5</button>
-    <button class="pin-btn" onclick="enterPin('6')">6</button>
-    <button class="pin-btn" onclick="enterPin('7')">7</button>
-    <button class="pin-btn" onclick="enterPin('8')">8</button>
-    <button class="pin-btn" onclick="enterPin('9')">9</button>
-    <button class="pin-btn" onclick="enterPin('0')" style="grid-column:2">0</button>
-    <button class="pin-btn" onclick="clearPin()" style="background:rgba(224,82,82,0.1);border-color:rgba(224,82,82,0.3);color:var(--red)">⌫</button>
-  </div>
-  <div id="pinError" style="font-size:0.72rem;color:var(--red);display:none;margin-top:0.25rem">Incorrect PIN</div>
-  <div style="font-size:0.65rem;color:var(--text3);margin-top:1rem">Or enter with password:</div>
-  <div style="display:flex;gap:0.5rem">
-    <input type="password" id="pinPassword" placeholder="Admin password…" style="background:var(--bg3);border:1px solid var(--border);border-radius:0.5rem;color:var(--text1);padding:0.5rem 0.85rem;font-size:0.82rem;outline:none;font-family:'DM Sans',sans-serif;width:180px" onkeydown="if(event.key==='Enter')checkPassword()">
-    <button onclick="checkPassword()" style="padding:0.5rem 1rem;background:var(--orange);border:none;border-radius:0.5rem;color:white;cursor:pointer;font-size:0.82rem;font-family:'DM Sans',sans-serif">Enter</button>
-  </div>
-  <a href="dashboard.html" style="font-size:0.72rem;color:var(--text3);margin-top:0.5rem;text-decoration:none">← Back to dashboard</a>
-</div>
-<style>
-.pin-btn{width:64px;height:64px;border-radius:50%;background:var(--bg2);border:1px solid var(--border2);color:var(--text1);font-size:1.1rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
-.pin-btn:hover{background:var(--bg3);border-color:var(--orange);color:var(--orange)}
-.pin-btn:active{transform:scale(0.93)}
-</style>
-<script>
-/* ── ADMIN PIN LOCK ── */
-const ADMIN_PIN = '1881'; /* Change this! */
-const SESSION_KEY = 'kt_admin_pin_ok';
-let currentPin = '';
-
-/* Check if already authenticated this session */
-if(sessionStorage.getItem(SESSION_KEY) === 'true'){
-  document.getElementById('pinLock').style.display = 'none';
-}
-
-function enterPin(digit){
-  if(currentPin.length >= 4) return;
-  currentPin += digit;
-  updateDots();
-  if(currentPin.length === 4) setTimeout(checkPin, 150);
-}
-
-function updateDots(){
-  for(let i=0;i<4;i++){
-    const d = document.getElementById('d'+i);
-    if(d) d.style.background = i < currentPin.length ? 'var(--orange)' : 'transparent';
-  }
-}
-
-function clearPin(){
-  currentPin = currentPin.slice(0,-1);
-  updateDots();
-  document.getElementById('pinError').style.display='none';
-}
-
-function checkPin(){
-  if(currentPin === ADMIN_PIN){
-    sessionStorage.setItem(SESSION_KEY,'true');
-    const lock = document.getElementById('pinLock');
-    lock.style.opacity='0';
-    lock.style.transition='opacity .3s';
-    setTimeout(()=>lock.style.display='none',300);
-  } else {
-    document.getElementById('pinError').style.display='block';
-    /* Shake animation */
-    document.getElementById('pinDots').style.animation='shake .3s ease';
-    setTimeout(()=>{
-      currentPin='';
-      updateDots();
-      document.getElementById('pinDots').style.animation='';
-    },400);
-  }
-}
-
-function checkPassword(){
-  const pw = document.getElementById('pinPassword').value;
-  /* Accept admin PIN as password too, or set a separate password */
-  const ADMIN_PASSWORDS = [ADMIN_PIN, 'kreatown2026', 'admin2026'];
-  if(ADMIN_PASSWORDS.includes(pw)){
-    sessionStorage.setItem(SESSION_KEY,'true');
-    const lock = document.getElementById('pinLock');
-    lock.style.opacity='0';
-    lock.style.transition='opacity .3s';
-    setTimeout(()=>lock.style.display='none',300);
-  } else {
-    document.getElementById('pinPassword').style.borderColor='var(--red)';
-    document.getElementById('pinError').style.display='block';
-    setTimeout(()=>document.getElementById('pinPassword').style.borderColor='',1500);
-  }
-}
-
-/* Keyboard support */
-document.addEventListener('keydown', e=>{
-  if(document.getElementById('pinLock').style.display==='none') return;
-  if(document.getElementById('pinPassword') === document.activeElement) return;
-  if(e.key>='0'&&e.key<='9') enterPin(e.key);
-  if(e.key==='Backspace') clearPin();
-});
-
-/* Shake keyframe */
-const style=document.createElement('style');
-style.textContent='@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}';
-document.head.appendChild(style);
-</script>
-
 <aside class="sb">
   <div class="sb-top"><div class="sb-logo">Krea<span>Town</span></div><div class="adm">ADMIN</div></div>
   <div class="sb-own"><div class="sb-av">🎨</div><div><div class="sb-nm">Topraq Toros</div><div class="sb-rl">👑 Platform Owner</div></div></div>
@@ -287,7 +169,6 @@ document.head.appendChild(style);
     <button class="sb-it" onclick="go('gift')"><span class="sb-ic">🎁</span> Gift Membership</button>
     <div class="sb-sc">Rooms</div>
     <button class="sb-it" onclick="go('rooms')"><span class="sb-ic">🏠</span> Room Control</button>
-    <button class="sb-it" onclick="go('creatorrooms')"><span class="sb-ic">🏯</span> Creator Rooms</button>
     <button class="sb-it" onclick="go('ww')"><span class="sb-ic">👁</span> Who's Where</button>
     <div class="sb-sc">Broadcast</div>
     <button class="sb-it" onclick="go('notify')"><span class="sb-ic">📢</span> Notification</button>
@@ -505,18 +386,6 @@ document.head.appendChild(style);
     </div>
   </div>
 
-  <!-- CREATOR ROOMS -->
-  <div class="sec" id="sec-creatorrooms">
-    <div class="card">
-      <div class="ch">
-        <div><div class="ct">🏯 Creator Rooms — Admin Access</div><div class="cs">Enter any creator's rooms as admin</div></div>
-      </div>
-      <div class="cb">
-        <div id="creatorRoomsList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.85rem"></div>
-      </div>
-    </div>
-  </div>
-
   <!-- LOGS -->
   <div class="sec" id="sec-logs">
     <div class="card">
@@ -530,374 +399,99 @@ document.head.appendChild(style);
 <div class="mo" id="mo" onclick="if(event.target===this)cMo()"><div class="mo-bx"><div class="mo-t" id="moT"></div><div class="mo-s" id="moS"></div><div id="moB"></div><div class="mo-a" id="moA"></div></div></div>
 <div class="toast" id="toast"></div>
 <script>
-/* ── SUPABASE ── */
-const SB='https://pkhoyabazudqmfczkhax.supabase.co';
-const SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
-
-function getSession(){try{const s=JSON.parse(localStorage.getItem('kt_session')||'{}');return s.access_token?s:null;}catch(e){return null;}}
-function hdr(token){return{'apikey':SK,'Authorization':'Bearer '+(token||SK),'Content-Type':'application/json','Prefer':'return=minimal'};}
-
-/* ── DATA ── */
-let MB=[], allPosts=[];
+const MB=[
+  {id:1,name:'Kaan Öztürk',h:'kaan',e:'🎨',tier:'palace',status:'active',rev:'$588',joined:'Jan 2026',bg:'linear-gradient(135deg,#7c5cbf,#f4732a)',online:true,rooms:['lobby','pool','tv']},
+  {id:2,name:'Selin Kaya',h:'selinkaya',e:'🌸',tier:'palace',status:'active',rev:'$522',joined:'Nov 2025',bg:'linear-gradient(135deg,#c9952a,#f5d58a)',online:true,rooms:['lobby','restaurant']},
+  {id:3,name:'Berk Doğan',h:'berkd',e:'🔥',tier:'palace',status:'active',rev:'$490',joined:'Oct 2025',bg:'linear-gradient(135deg,#f4732a,#fbbf24)',online:false,rooms:['pool']},
+  {id:4,name:'Naz Aydın',h:'naz',e:'💫',tier:'palace',status:'active',rev:'$441',joined:'Dec 2025',bg:'rgba(255,255,255,0.1)',online:true,rooms:['radio','tv']},
+  {id:5,name:'Tarık Bal',h:'tarikbal',e:'🌙',tier:'palace',status:'frozen',rev:'$392',joined:'Feb 2026',bg:'rgba(255,255,255,0.1)',online:false,rooms:[]},
+  {id:6,name:'Lara Şimşek',h:'lara',e:'💎',tier:'gold',status:'active',rev:'$294',joined:'Mar 2026',bg:'linear-gradient(135deg,#c9952a,#f5d58a)',online:true,rooms:['lobby','superior']},
+  {id:7,name:'Cem Arslan',h:'cemarslan',e:'🎸',tier:'silver',status:'active',rev:'$189',joined:'Oct 2025',bg:'rgba(255,255,255,0.1)',online:true,rooms:['lobby','restaurant']},
+  {id:8,name:'Elif Yıldız',h:'elif',e:'🌿',tier:'gold',status:'active',rev:'$319',joined:'Nov 2025',bg:'linear-gradient(135deg,#2dab80,#60a5fa)',online:false,rooms:['restaurant']},
+  {id:9,name:'Mert Kılıç',h:'mertkk',e:'⚡',tier:'free',status:'banned',rev:'$0',joined:'Jan 2026',bg:'rgba(255,255,255,0.1)',online:false,rooms:[]},
+  {id:10,name:'Yusuf Aktaş',h:'yusuf',e:'🎯',tier:'gold',status:'banned',rev:'$87',joined:'Dec 2025',bg:'rgba(255,255,255,0.1)',online:false,rooms:[]},
+  {id:11,name:'Deniz Kurt',h:'denizkurt',e:'🌊',tier:'gold',status:'active',rev:'$261',joined:'Dec 2025',bg:'rgba(255,255,255,0.1)',online:true,rooms:['pool','resting']},
+  {id:12,name:'Ayşe Mercan',h:'ayse',e:'💡',tier:'silver',status:'active',rev:'$145',joined:'Jan 2026',bg:'rgba(255,255,255,0.1)',online:false,rooms:['restaurant']},
+];
 const RMS=[
-  {id:'lobby',icon:'🛎️',name:'Hotel Lobby',tier:'free',col:'rgba(255,201,57,0.12)',locked:false,link:'rooms.html',members:[],online:0},
-  {id:'restaurant',icon:'🍽️',name:'The Restaurant',tier:'silver',col:'rgba(201,149,42,0.1)',locked:false,link:'rooms.html',members:[],online:0},
-  {id:'superior',icon:'🛏️',name:'Superior Room',tier:'gold',col:'rgba(245,213,138,0.08)',locked:false,link:'rooms.html',members:[],online:0},
-  {id:'resting',icon:'🛋️',name:'Resting Lounge',tier:'gold',col:'rgba(201,149,42,0.08)',locked:false,link:'rooms.html',members:[],online:0},
-  {id:'pool',icon:'🌊',name:'Thermal Pool',tier:'palace',col:'rgba(78,205,196,0.08)',locked:false,link:'rooms.html',members:[],online:0},
-  {id:'radio',icon:'📻',name:'3D Radio Room',tier:'gold',col:'rgba(212,136,42,0.1)',locked:false,link:'radio.html',members:[],online:0},
-  {id:'tv',icon:'📺',name:'Cinema TV Room',tier:'palace',col:'rgba(139,111,212,0.1)',locked:false,link:'tv.html',members:[],online:0},
+  {id:'lobby',icon:'🛎️',name:'Hotel Lobby',tier:'free',col:'rgba(255,201,57,0.12)',locked:false,link:'rooms.html',members:['🌸','🎸','🌿','🔥','💎'],online:12},
+  {id:'restaurant',icon:'🍽️',name:'The Restaurant',tier:'silver',col:'rgba(201,149,42,0.1)',locked:false,link:'rooms.html',members:['🌿','🎨','⭐'],online:7},
+  {id:'superior',icon:'🛏️',name:'Superior Room',tier:'gold',col:'rgba(245,213,138,0.08)',locked:false,link:'rooms.html',members:['🔥','💡','🎯'],online:4},
+  {id:'resting',icon:'🛋️',name:'Resting Lounge',tier:'gold',col:'rgba(201,149,42,0.08)',locked:false,link:'rooms.html',members:['💎','🌙'],online:3},
+  {id:'pool',icon:'🌊',name:'Thermal Pool',tier:'palace',col:'rgba(78,205,196,0.08)',locked:false,link:'rooms.html',members:['🏯','👑','🌟','🌊'],online:2},
+  {id:'radio',icon:'📻',name:'3D Radio Room',tier:'gold',col:'rgba(212,136,42,0.1)',locked:false,link:'radio.html',members:['🎸','🌸','💫'],online:5},
+  {id:'tv',icon:'📺',name:'Cinema TV Room',tier:'palace',col:'rgba(139,111,212,0.1)',locked:false,link:'tv.html',members:['🏯','💫','🎨'],online:3},
 ];
 const TL={palace:'🏯 Palace',gold:'👑 Gold',silver:'⭐ Silver',free:'🌱 Free'};
 const TB={palace:'tp',gold:'tg',silver:'ts',free:'tf'};
-const TTITLES={overview:'Platform Overview',live:'Live Activity',members:'All Members',banned:'Banned Members',frozen:'Frozen Accounts',gift:'Gift Membership',rooms:'Room Control',creatorrooms:'Creator Rooms',ww:"Who's Where",notify:'Broadcast',dm:'DM Member',platform:'Platform Control',logs:'Audit Log'};
-let mF='all',gT='gold';
-let AL=[];
-
-/* ── LOAD FROM SUPABASE ── */
-async function loadAllData(){
-  const session=getSession();
-  const token=session?.access_token||SK;
-  try{
-    /* Members */
-    const res=await fetch(SB+'/rest/v1/profiles?select=*&order=created_at.desc',{headers:hdr(token)});
-    const data=await res.json();
-    MB=data.map(p=>({
-      id:p.id, name:p.display_name||p.username||'Member',
-      h:p.username||'', e:'🎨', tier:p.tier||'free',
-      status:p.status||'active', rev:'$0', avatar:p.avatar_url||null,
-      joined:new Date(p.created_at).toLocaleDateString('en',{month:'short',year:'numeric'}),
-      bg:'rgba(255,255,255,0.08)', online:false, rooms:[], is_admin:p.is_admin||false
-    }));
-
-    /* KPI updates */
-    const total  = MB.length;
-    const banned = MB.filter(m=>m.status==='banned').length;
-    const frozen = MB.filter(m=>m.status==='frozen').length;
-    document.getElementById('kT').textContent  = total;
-    document.getElementById('kR').textContent  = banned+frozen;
-    document.getElementById('bBan').textContent = banned;
-    document.getElementById('bFrz').textContent = frozen;
-
-    /* Posts count */
-    const pres=await fetch(SB+'/rest/v1/posts?select=id&is_published=eq.true',{headers:hdr(token)});
-    const posts=await pres.json();
-    allPosts=posts;
-
-    /* Activity log from notifications */
-    const nres=await fetch(SB+'/rest/v1/notifications?select=*,profiles(display_name,username)&order=created_at.desc&limit=20',{headers:hdr(token)});
-    const notifs=await nres.json();
-    if(Array.isArray(notifs)&&notifs.length){
-      AL=notifs.map(n=>({
-        t: n.type==='new_member'?'join':n.type==='warning'?'ban':'notif',
-        tx: '<strong>'+(n.profiles?.display_name||'Member')+'</strong> — '+n.title,
-        tm: getTimeAgo(n.created_at)
-      }));
-      rAct();
-    }
-
-    /* Online count (approx = recent sessions) */
-    document.getElementById('kO').textContent = Math.min(total, Math.floor(Math.random()*total*0.3)+1);
-
-  }catch(e){console.error('Load error:',e);}
-
-  renderM();
-  rBan();
-  rFrz();
-  rRooms();
-  rWW();
-  if(!AL.length) rAct();
-  updateMemberCountBadge();
-}
-
-function getTimeAgo(ts){
-  const d=Math.floor((Date.now()-new Date(ts))/1000);
-  if(d<60)return'just now';
-  if(d<3600)return Math.floor(d/60)+'m ago';
-  if(d<86400)return Math.floor(d/3600)+'h ago';
-  return Math.floor(d/86400)+'d ago';
-}
-
-function updateMemberCountBadge(){
-  const active=MB.filter(m=>m.status==='active').length;
-  document.getElementById('mCnt').textContent=active+' active members';
-  const cntEl=document.getElementById('kT');
-  if(cntEl)cntEl.textContent=MB.length;
-}
-
-/* ── SECTION SWITCH ── */
-function go(id){
-  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
-  document.querySelectorAll('.sb-it').forEach(b=>b.classList.remove('on'));
-  document.getElementById('sec-'+id).classList.add('on');
-  document.querySelectorAll('.sb-it').forEach(b=>{if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+id+"'"))b.classList.add('on');});
-  document.getElementById('tbT').textContent=TTITLES[id]||id;
-}
-
-/* ── RENDER MEMBERS ── */
+const TTITLES={overview:'Platform Overview',live:'Live Activity',members:'All Members',banned:'Banned Members',frozen:'Frozen Accounts',gift:'Gift Membership',rooms:'Room Control',ww:"Who's Where",notify:'Broadcast',dm:'DM Member',platform:'Platform Control',logs:'Audit Log'};
+let mF='all', gT='gold';
+const AL=[
+  {t:'enter',tx:'<strong>Kaan Öztürk</strong> entered 🌊 Thermal Pool',tm:'just now'},
+  {t:'msg',tx:'<strong>Selin Kaya</strong> sent a message in 🛎️ Hotel Lobby',tm:'1m'},
+  {t:'join',tx:'<strong>Lara Şimşek</strong> joined as 👑 Gold member',tm:'3m'},
+  {t:'enter',tx:'<strong>Cem Arslan</strong> entered 🍽️ Restaurant',tm:'5m'},
+  {t:'leave',tx:'<strong>Tarık Bal</strong> left 🛏️ Superior Room',tm:'7m'},
+  {t:'msg',tx:'<strong>Berk Doğan</strong> sent a message in 🌊 Thermal Pool',tm:'9m'},
+  {t:'gift',tx:'Admin gifted <strong>Selin Kaya</strong> 🏯 Palace for 3 months',tm:'12m'},
+  {t:'enter',tx:'<strong>Naz Aydın</strong> entered 📻 3D Radio Room',tm:'14m'},
+  {t:'ban',tx:'Admin banned <strong>Mert Kılıç</strong> — spam violation',tm:'1h'},
+  {t:'tier-d',tx:'Admin changed <strong>Lara Şimşek</strong> Silver → Gold',tm:'2h'},
+  {t:'notif',tx:'Admin broadcast <em>"New live session!"</em> → Palace',tm:'3h'},
+  {t:'join',tx:'<strong>Ayşe Mercan</strong> joined as ⭐ Silver member',tm:'4h'},
+];
+function go(id){document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));document.querySelectorAll('.sb-it').forEach(b=>b.classList.remove('on'));document.getElementById('sec-'+id).classList.add('on');document.querySelectorAll('.sb-it').forEach(b=>{if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+id+"'"))b.classList.add('on')});document.getElementById('tbT').textContent=TTITLES[id]||id;}
 function renderM(){
   const q=(document.getElementById('mSr')?.value||'').toLowerCase();
   const el=document.getElementById('mBdy');
-  const f=MB.filter(m=>m.status!=='banned'&&m.status!=='frozen')
-    .filter(m=>(mF==='all'||m.tier===mF)&&(!q||m.name.toLowerCase().includes(q)||m.h.includes(q)));
+  const f=MB.filter(m=>m.status!=='banned'&&m.status!=='frozen').filter(m=>(mF==='all'||m.tier===mF)&&(!q||m.name.toLowerCase().includes(q)||m.h.includes(q)));
   document.getElementById('mCnt').textContent=f.length+' members';
-  el.innerHTML=f.map(m=>`<tr>
-    <td><div class="mu">
-      <div class="mav" style="background:${m.bg};overflow:hidden">${m.avatar?`<img src="${m.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:m.e}</div>
-      <div><div class="mn">${m.name}</div><div class="mh">@${m.h}</div></div>
-    </div></td>
-    <td><span class="tbdg ${TB[m.tier]}">${TL[m.tier]}</span></td>
-    <td><span style="font-size:0.65rem;display:flex;align-items:center;gap:4px;font-family:'DM Mono',monospace"><span style="width:6px;height:6px;border-radius:50%;background:var(--emerald);display:inline-block"></span>Active</span></td>
-    <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--emerald)">$0</td>
-    <td style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--text3)">${m.joined}</td>
-    <td style="font-size:0.7rem;color:var(--text3)">—</td>
-    <td><div class="abx">
-      <button class="ab tier" onclick="oTM('${m.id}')">↑ Tier</button>
-      <button class="ab frz" onclick="frzM('${m.id}')">❄️</button>
-      <button class="ab ban" onclick="banM('${m.id}')">🚫</button>
-      <button class="ab gift" onclick="qGift('${m.h}')">🎁</button>
-      <a class="ab inv" href="member-hub.html?user=${m.h}" style="text-decoration:none">👤</a>
-    </div></td>
-  </tr>`).join('')||`<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text3)">No members found</td></tr>`;
-  /* Update datalists */
+  el.innerHTML=f.map(m=>`<tr><td><div class="mu"><div class="mav" style="background:${m.bg}">${m.e}</div><div><div class="mn">${m.name}</div><div class="mh">@${m.h}</div></div></div></td><td><span class="tbdg ${TB[m.tier]}">${TL[m.tier]}</span></td><td><span style="font-size:0.65rem;font-family:'DM Mono',monospace;display:flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;display:inline-block;background:${m.online?'var(--emerald)':'var(--text3)'};flex-shrink:0"></span>${m.online?'Online':'Offline'}</span></td><td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--emerald)">${m.rev}</td><td style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--text3)">${m.joined}</td><td style="font-size:0.7rem;color:var(--text3)">${m.rooms.map(r=>{const rm=RMS.find(x=>x.id===r);return rm?rm.icon:''}).join(' ')||'—'}</td><td><div class="abx"><button class="ab tier" onclick="oTM(${m.id})">↑ Tier</button><button class="ab frz" onclick="frzM(${m.id})">❄️</button><button class="ab ban" onclick="banM(${m.id})">🚫</button><button class="ab gift" onclick="qGift(${m.id})">🎁</button><button class="ab inv" onclick="oRI(${m.id})">🏠+</button><a class="ab" href="member-hub.html?user=${m.handle}" style="text-decoration:none">👤 Profile</a></div></td></tr>`).join('')||`<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text3)">No members found</td></tr>`;
   const opts=MB.map(m=>`<option value="${m.name} (@${m.h})">`).join('');
-  ['gL','dmL'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML=opts;});
+  ['gL','dmL'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML=opts});
 }
-
 function setMF(el,f){document.querySelectorAll('#sec-members .pill').forEach(p=>p.classList.remove('on'));el.classList.add('on');mF=f;renderM();}
-function sortM(v){if(v==='name')MB.sort((a,b)=>a.name.localeCompare(b.name));renderM();}
-
-/* ── BAN / FREEZE ── */
-async function banM(id){
-  const m=MB.find(x=>x.id===id);
-  if(!m)return;
-  oMo('🚫 Ban Member','Ban <strong>'+m.name+'</strong>?',
-    '<input class="fi" id="bRsn" placeholder="Reason…" style="margin-top:0">',
-    [{l:'Cancel',c:'btn',f:'cMo()'},{l:'Confirm Ban',c:'btn btn-d',f:'cBan("'+id+'")'}]);
-}
-async function cBan(id){
-  const session=getSession();
-  const m=MB.find(x=>x.id===id);if(!m)return;
-  await fetch(SB+'/rest/v1/profiles?id=eq.'+id,{method:'PATCH',headers:hdr(session?.access_token),body:JSON.stringify({status:'banned'})});
-  m.status='banned';cMo();renderM();rBan();rFrz();
-  aAct({t:'ban',tx:'Admin banned <strong>'+m.name+'</strong>',tm:'just now'});
-  toast(m.name+' banned 🚫','err');
-  document.getElementById('bBan').textContent=MB.filter(x=>x.status==='banned').length;
-  document.getElementById('kR').textContent=MB.filter(x=>['banned','frozen'].includes(x.status)).length;
-}
-async function frzM(id){
-  const session=getSession();
-  const m=MB.find(x=>x.id===id);if(!m)return;
-  await fetch(SB+'/rest/v1/profiles?id=eq.'+id,{method:'PATCH',headers:hdr(session?.access_token),body:JSON.stringify({status:'frozen'})});
-  m.status='frozen';renderM();rFrz();
-  aAct({t:'tier-d',tx:'Admin froze <strong>'+m.name+'</strong>',tm:'just now'});
-  toast(m.name+' frozen ❄️','warn');
-  document.getElementById('bFrz').textContent=MB.filter(x=>x.status==='frozen').length;
-}
-async function unban(id){
-  const session=getSession();
-  const m=MB.find(x=>x.id===id);if(!m)return;
-  await fetch(SB+'/rest/v1/profiles?id=eq.'+id,{method:'PATCH',headers:hdr(session?.access_token),body:JSON.stringify({status:'active'})});
-  m.status='active';rBan();renderM();
-  aAct({t:'join',tx:'Admin unbanned <strong>'+m.name+'</strong>',tm:'just now'});
-  toast(m.name+' unbanned ✅','ok');
-  document.getElementById('bBan').textContent=MB.filter(x=>x.status==='banned').length;
-}
-async function unfrz(id){
-  const session=getSession();
-  const m=MB.find(x=>x.id===id);if(!m)return;
-  await fetch(SB+'/rest/v1/profiles?id=eq.'+id,{method:'PATCH',headers:hdr(session?.access_token),body:JSON.stringify({status:'active'})});
-  m.status='active';rFrz();renderM();
-  aAct({t:'join',tx:'Admin unfroze <strong>'+m.name+'</strong>',tm:'just now'});
-  toast(m.name+' unfrozen ▶','ok');
-}
-
-function rBan(){const el=document.getElementById('banBdy');const l=MB.filter(m=>m.status==='banned');el.innerHTML=l.map(m=>`<tr><td><div class="mu"><div class="mav" style="overflow:hidden">${m.avatar?`<img src="${m.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:m.e}</div><div><div class="mn">${m.name}</div><div class="mh">@${m.h}</div></div></div></td><td><span class="tbdg ${TB[m.tier]}">${TL[m.tier]}</span></td><td style="font-size:0.72rem;color:var(--text3)">Violation</td><td style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--text3)">${m.joined}</td><td><div class="abx"><button class="ab unban" onclick="unban('${m.id}')">✅ Unban</button><a class="ab" href="member-hub.html?user=${m.h}" style="text-decoration:none">👤</a></div></td></tr>`).join('')||`<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text3)">No banned members 🎉</td></tr>`;}
-
-function rFrz(){const el=document.getElementById('frzBdy');const l=MB.filter(m=>m.status==='frozen');el.innerHTML=l.map(m=>`<tr><td><div class="mu"><div class="mav" style="overflow:hidden">${m.avatar?`<img src="${m.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:m.e}</div><div><div class="mn">${m.name}</div><div class="mh">@${m.h}</div></div></div></td><td><span class="tbdg ${TB[m.tier]}">${TL[m.tier]}</span></td><td style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--text3)">${m.joined}</td><td><div class="abx"><button class="ab unban" onclick="unfrz('${m.id}')">▶ Unfreeze</button><button class="ab ban" onclick="banM('${m.id}')">🚫 Ban</button></div></td></tr>`).join('')||`<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--text3)">No frozen accounts ✅</td></tr>`;}
-
-/* ── TIER CHANGE ── */
-function oTM(id){
-  const m=MB.find(x=>x.id===id);if(!m)return;
-  oMo('👑 Change Tier','Update <strong>'+m.name+'</strong>:',
-    '<div style="display:flex;flex-direction:column;gap:0.4rem">'+['free','silver','gold','palace'].map(t=>`<button class="ab ${t===m.tier?'inv':''}" style="text-align:left;padding:0.52rem 0.85rem;width:100%;font-size:0.78rem" onclick="chTier('${id}','${t}')">${TL[t]}${t===m.tier?' ✓':''}</button>`).join('')+'</div>',
-    [{l:'Cancel',c:'btn',f:'cMo()'}]);
-}
-async function chTier(id,tier){
-  const session=getSession();
-  const m=MB.find(x=>x.id===id);if(!m)return;
-  const old=m.tier;
-  await fetch(SB+'/rest/v1/profiles?id=eq.'+id,{method:'PATCH',headers:hdr(session?.access_token),body:JSON.stringify({tier})});
-  m.tier=tier;cMo();renderM();
-  aAct({t:'tier-d',tx:'Admin changed <strong>'+m.name+'</strong> '+TL[old]+' → '+TL[tier],tm:'just now'});
-  toast(m.name+' → '+TL[tier]+' ✅','ok');
-}
-
-/* ── GIFT ── */
+function sortM(v){if(v==='name')MB.sort((a,b)=>a.name.localeCompare(b.name));if(v==='revenue')MB.sort((a,b)=>parseInt(b.rev)-parseInt(a.rev));if(v==='newest')MB.sort((a,b)=>b.id-a.id);renderM();}
+function banM(id){const m=MB.find(x=>x.id===id);oMo('🚫 Ban Member','Ban <strong>'+m.name+'</strong>? They lose all access.',`<div style="margin-top:0"><label class="fl">Reason</label><input class="fi" id="bRsn" placeholder="spam, abuse…"></div>`,[{l:'Cancel',c:'btn',f:'cMo()'},{l:'Confirm Ban',c:'btn btn-d',f:'cBan('+id+')'}]);}
+function cBan(id){const m=MB.find(x=>x.id===id);m.status='banned';cMo();renderM();rBan();rFrz();aAct({t:'ban',tx:'Admin banned <strong>'+m.name+'</strong>',tm:'just now'});toast(m.name+' banned 🚫','err');document.getElementById('bBan').textContent=MB.filter(x=>x.status==='banned').length;document.getElementById('kR').textContent=MB.filter(x=>x.status==='banned'||x.status==='frozen').length;}
+function frzM(id){const m=MB.find(x=>x.id===id);m.status='frozen';renderM();rFrz();aAct({t:'tier-d',tx:'Admin froze <strong>'+m.name+'</strong>',tm:'just now'});toast(m.name+' frozen ❄️','warn');document.getElementById('bFrz').textContent=MB.filter(x=>x.status==='frozen').length;document.getElementById('kR').textContent=MB.filter(x=>x.status==='banned'||x.status==='frozen').length;}
+function unban(id){const m=MB.find(x=>x.id===id);m.status='active';rBan();renderM();aAct({t:'join',tx:'Admin unbanned <strong>'+m.name+'</strong>',tm:'just now'});toast(m.name+' unbanned ✅','ok');document.getElementById('bBan').textContent=MB.filter(x=>x.status==='banned').length;document.getElementById('kR').textContent=MB.filter(x=>x.status==='banned'||x.status==='frozen').length;}
+function unfrz(id){const m=MB.find(x=>x.id===id);m.status='active';rFrz();renderM();aAct({t:'join',tx:'Admin unfroze <strong>'+m.name+'</strong>',tm:'just now'});toast(m.name+' unfrozen ▶','ok');document.getElementById('bFrz').textContent=MB.filter(x=>x.status==='frozen').length;document.getElementById('kR').textContent=MB.filter(x=>x.status==='banned'||x.status==='frozen').length;}
+function rBan(){const el=document.getElementById('banBdy');const l=MB.filter(m=>m.status==='banned');el.innerHTML=l.map(m=>`<tr><td><div class="mu"><div class="mav" style="background:${m.bg}">${m.e}</div><div><div class="mn">${m.name}</div><div class="mh">@${m.h}</div></div></div></td><td><span class="tbdg ${TB[m.tier]}">${TL[m.tier]}</span></td><td style="font-size:0.72rem;color:var(--text3)">Terms violation</td><td style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--text3)">Mar 2026</td><td><div class="abx"><button class="ab unban" onclick="unban(${m.id})">✅ Unban</button><button class="ab del" onclick="if(confirm('Delete permanently?'))toast('Deleted','err')">🗑️</button></div></td></tr>`).join('')||`<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text3)">No banned members 🎉</td></tr>`;}
+function rFrz(){const el=document.getElementById('frzBdy');const l=MB.filter(m=>m.status==='frozen');el.innerHTML=l.map(m=>`<tr><td><div class="mu"><div class="mav" style="background:${m.bg}">${m.e}</div><div><div class="mn">${m.name}</div><div class="mh">@${m.h}</div></div></div></td><td><span class="tbdg ${TB[m.tier]}">${TL[m.tier]}</span></td><td style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--text3)">Today</td><td><div class="abx"><button class="ab unban" onclick="unfrz(${m.id})">▶ Unfreeze</button><button class="ab ban" onclick="banM(${m.id})">🚫 Ban</button></div></td></tr>`).join('')||`<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--text3)">No frozen accounts ✅</td></tr>`;}
+function oTM(id){const m=MB.find(x=>x.id===id);oMo('👑 Change Tier','Update <strong>'+m.name+'</strong>:','<div style="display:flex;flex-direction:column;gap:0.4rem">'+['free','silver','gold','palace'].map(t=>`<button class="ab ${t===m.tier?'inv':''}" style="text-align:left;padding:0.52rem 0.85rem;width:100%;font-size:0.78rem" onclick="chTier(${id},'${t}')">${TL[t]}${t===m.tier?' ✓':''}</button>`).join('')+'</div>',[{l:'Cancel',c:'btn',f:'cMo()'}]);}
+function chTier(id,tier){const m=MB.find(x=>x.id===id);const old=m.tier;m.tier=tier;cMo();renderM();aAct({t:'tier-d',tx:'Admin changed <strong>'+m.name+'</strong> '+TL[old]+' → '+TL[tier],tm:'just now'});toast(m.name+' → '+TL[tier]+' ✅','ok');}
+function oRI(id){const m=MB.find(x=>x.id===id);oMo('🏠 Room Access — '+m.name,'Grant access beyond their tier:','<div style="display:flex;flex-direction:column;gap:0.4rem">'+RMS.map(r=>{const has=m.rooms.includes(r.id);return`<div style="display:flex;align-items:center;justify-content:space-between;padding:0.42rem 0.75rem;border-radius:0.5rem;background:var(--bg3);border:1px solid ${has?'rgba(244,115,42,0.3)':'var(--border)'}"><span style="font-size:0.78rem;color:var(--text1)">${r.icon} ${r.name} <span style="font-size:0.62rem;color:var(--text3)">${TL[r.tier]}</span></span><button class="ab ${has?'ban':'inv'}" onclick="tRA(${id},'${r.id}',this)">${has?'Remove':'Invite'}</button></div>`;}).join('')+'</div>',[{l:'Done',c:'btn btn-p',f:'cMo();renderM()'}]);}
+function tRA(uid,rid,btn){const m=MB.find(x=>x.id===uid);const r=RMS.find(x=>x.id===rid);if(m.rooms.includes(rid)){m.rooms=m.rooms.filter(x=>x!==rid);btn.textContent='Invite';btn.className='ab inv';btn.parentElement.style.border='1px solid var(--border)';toast(m.name+' removed from '+r.name,'warn');}else{m.rooms.push(rid);btn.textContent='Remove';btn.className='ab ban';btn.parentElement.style.border='1px solid rgba(244,115,42,0.3)';aAct({t:'enter',tx:'Admin invited <strong>'+m.name+'</strong> to '+r.icon+' '+r.name,tm:'just now'});toast(m.name+' invited to '+r.name+' ✅','ok');}}
 function sGT(el,tier){document.querySelectorAll('.gt').forEach(g=>g.className='gt');const cls={palace:'gp',gold:'gg',silver:'gs',free:'gf'};el.classList.add(cls[tier]);gT=tier;}
-function qGift(handle){document.getElementById('gMem').value=handle?'@'+handle:'';go('gift');}
-async function sendGift(){
-  const mem=document.getElementById('gMem').value;
-  const dur=document.getElementById('gDur').value;
-  if(!mem.trim()){toast('Select a member!');return;}
-  const session=getSession();
-  const handle=mem.replace('@','').split(' ')[0];
-  const target=MB.find(m=>m.h===handle||m.name.toLowerCase().includes(handle.toLowerCase()));
-  if(target){
-    await fetch(SB+'/rest/v1/profiles?id=eq.'+target.id,{method:'PATCH',headers:hdr(session?.access_token),body:JSON.stringify({tier:gT})});
-    target.tier=gT;renderM();
-  }
-  const d=dur==='0'?'permanently':'for '+dur+' month'+(dur>1?'s':'');
-  aAct({t:'gift',tx:'Admin gifted <strong>'+mem+'</strong> '+TL[gT]+' '+d,tm:'just now'});
-  toast('🎁 '+TL[gT]+' gifted!','ok');
-  document.getElementById('gMem').value='';
-}
-
-/* ── ROOMS ── */
-function rRooms(){document.getElementById('rGrid').innerHTML=RMS.map(r=>`<div class="rc"><div class="rct"><div class="rcl"><div class="rcic" style="background:${r.col}">${r.icon}</div><div><div class="rcnm">${r.name}</div><div class="rcti">${TL[r.tier]}</div></div></div><div class="rcst" style="color:${r.locked?'var(--red)':'var(--emerald)'}">${r.locked?'🔒 Locked':'⬤ Live'}</div></div><div class="rca"><button class="rcb ri" onclick="oInvRoom('${r.id}','${r.name}')">+ Invite</button><button class="rcb rm" onclick="bRoom('${r.name}')">📢</button><a class="rcb" href="${r.link}" style="text-decoration:none;display:block;text-align:center;padding:0.38rem 0;font-size:0.7rem;border:1px solid var(--border);border-radius:0.45rem;color:var(--text2)">Open</a>${r.locked?`<button class="rcb ru" onclick="tRL('${r.id}',false)">🔓</button>`:`<button class="rcb rl" onclick="tRL('${r.id}',true)">🔒</button>`}</div></div>`).join('');}
+function qGift(id){const m=MB.find(x=>x.id===id);document.getElementById('gMem').value=m.name+' (@'+m.h+')';go('gift');}
+function sendGift(){const mem=document.getElementById('gMem').value;const dur=document.getElementById('gDur').value;if(!mem.trim()){toast('Select a member!');return}const d=dur==='0'?'permanently':'for '+dur+' month'+(dur>1?'s':'');aAct({t:'gift',tx:'Admin gifted <strong>'+mem.split(' (')[0]+'</strong> '+TL[gT]+' '+d,tm:'just now'});toast('🎁 '+TL[gT]+' gifted '+d+'!','ok');document.getElementById('gMem').value='';}
+function rRooms(){document.getElementById('rGrid').innerHTML=RMS.map(r=>`<div class="rc"><div class="rct"><div class="rcl"><div class="rcic" style="background:${r.col}">${r.icon}</div><div><div class="rcnm">${r.name}</div><div class="rcti">${TL[r.tier]}</div></div></div><div class="rcst" style="color:${r.locked?'var(--red)':'var(--emerald)'}">${r.locked?'🔒 Locked':'⬤ '+r.online}</div></div><div class="rcms">${r.members.slice(0,5).map(e=>`<div class="rcm">${e}</div>`).join('')}${r.members.length>5?`<div class="rcm" style="font-size:0.55rem;color:var(--text2)">+${r.members.length-5}</div>`:''}</div><div class="rca"><button class="rcb ri" onclick="oInvRoom('${r.id}','${r.name}')">+ Invite</button><button class="rcb rm" onclick="bRoom('${r.name}')">📢</button><a class="rcb" href="${r.link}" style="text-decoration:none;display:block;text-align:center;padding:0.38rem 0;font-size:0.7rem;border:1px solid var(--border);border-radius:0.45rem;color:var(--text2)">Open</a>${r.locked?`<button class="rcb ru" onclick="tRL('${r.id}',false)">🔓</button>`:`<button class="rcb rl" onclick="tRL('${r.id}',true)">🔒</button>`}</div></div>`).join('');}
 function tRL(id,lock){const r=RMS.find(x=>x.id===id);r.locked=lock;rRooms();rWW();aAct({t:lock?'ban':'enter',tx:'Admin '+(lock?'locked':'unlocked')+' '+r.icon+' '+r.name,tm:'just now'});toast(r.name+(lock?' locked 🔒':' unlocked 🔓'),lock?'warn':'ok');}
-function lockAll(){RMS.forEach(r=>r.locked=true);rRooms();rWW();aAct({t:'ban',tx:'Admin locked ALL rooms',tm:'just now'});toast('All rooms locked!','warn');}
-function oInvRoom(rid,rname){oMo('➕ Invite to '+rname,'Select member:',`<input class="fi" list="invL" id="invI" placeholder="@handle…" style="margin-top:0"><datalist id="invL">${MB.map(m=>`<option value="${m.h}">`).join('')}</datalist>`,[{l:'Cancel',c:'btn',f:'cMo()'},{l:'Grant ✅',c:'btn btn-p',f:`cInvR('${rid}','${rname}')`}]);}
-function cInvR(rid,rname){const v=document.getElementById('invI').value;if(!v)return;const r=RMS.find(x=>x.id===rid);cMo();rRooms();aAct({t:'enter',tx:'Admin invited <strong>'+v+'</strong> to '+r.icon+' '+rname,tm:'just now'});toast('Access granted ✅','ok');}
-function bRoom(rname){oMo('📢 Broadcast to '+rname,'Message:',`<textarea class="fi fta" id="brMsg" placeholder="Your message…" style="margin-top:0"></textarea>`,[{l:'Cancel',c:'btn',f:'cMo()'},{l:'Send 📢',c:'btn btn-s',f:`sBroad('${rname}')`}]);}
-async function sBroad(rname){
-  const v=document.getElementById('brMsg').value;if(!v)return;
-  const session=getSession();
-  const room=RMS.find(r=>r.name===rname);
-  if(room&&session){
-    await fetch(SB+'/rest/v1/notifications',{method:'POST',headers:hdr(session.access_token),body:JSON.stringify(MB.filter(m=>m.status==='active').map(m=>({user_id:m.id,title:'📢 '+rname,body:v,type:'room_broadcast'})))});
-  }
-  cMo();aAct({t:'notif',tx:'Admin broadcast to '+rname+': <em>"'+v.substring(0,40)+'"</em>',tm:'just now'});toast('Broadcast sent 📢','ok');
-}
-
-/* ── WHO'S WHERE ── */
-function rWW(){document.getElementById('wwG').innerHTML=RMS.map(r=>`<div class="wwc"><div class="wwt"><div class="wwr">${r.icon} ${r.name}</div><div class="wwn" style="color:${r.locked?'var(--red)':'var(--emerald)'}">${r.locked?'🔒':'● Live'}</div></div><div class="wwav"><span style="font-size:0.72rem;color:var(--text3)">Open room</span></div></div>`).join('');const ra=document.getElementById('roomAct');if(ra)ra.innerHTML=RMS.map(r=>`<div style="display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;gap:0.4rem"><span>${r.icon}</span><span style="font-size:0.78rem;color:var(--text2)">${r.name}</span></div><span style="font-size:0.65rem;font-family:'DM Mono',monospace;color:${r.locked?'var(--red)':'var(--emerald)'}">${r.locked?'🔒':'● live'}</span></div>`).join('');}
-
-/* ── NOTIFY ── */
+function lockAll(){RMS.forEach(r=>r.locked=true);rRooms();rWW();aAct({t:'ban',tx:'Admin locked ALL rooms',tm:'just now'});toast('All rooms locked! 🔒','warn');}
+function oInvRoom(rid,rname){oMo('➕ Invite to '+rname,'Grant special room access:',`<input class="fi" list="invL" id="invI" placeholder="Name or @handle…" style="margin-top:0"><datalist id="invL">${MB.map(m=>`<option value="${m.name} (@${m.h})">`).join('')}</datalist>`,[{l:'Cancel',c:'btn',f:'cMo()'},{l:'Grant Access ✅',c:'btn btn-p',f:`cInvR('${rid}','${rname}')`}]);}
+function cInvR(rid,rname){const v=document.getElementById('invI').value;if(!v){toast('Select a member!');return}const r=RMS.find(x=>x.id===rid);r.members.push('✨');cMo();rRooms();aAct({t:'enter',tx:'Admin invited <strong>'+v.split(' (')[0]+'</strong> to '+r.icon+' '+rname,tm:'just now'});toast('Access granted to '+rname+' ✅','ok');}
+function bRoom(rname){oMo('📢 Broadcast to '+rname,'Message to everyone in this room:',`<textarea class="fi fta" id="brMsg" placeholder="Your message…" style="margin-top:0"></textarea>`,[{l:'Cancel',c:'btn',f:'cMo()'},{l:'Send 📢',c:'btn btn-s',f:`sBroad('${rname}')`}]);}
+function sBroad(rname){const v=document.getElementById('brMsg').value;if(!v){toast('Write a message!');return}cMo();aAct({t:'notif',tx:'Admin broadcast to '+rname+': <em>"'+v.substring(0,40)+'…"</em>',tm:'just now'});toast('Broadcast sent to '+rname+' 📢','ok');}
+function rWW(){document.getElementById('wwG').innerHTML=RMS.map(r=>`<div class="wwc"><div class="wwt"><div class="wwr">${r.icon} ${r.name}</div><div class="wwn" style="color:${r.locked?'var(--red)':r.online>5?'var(--emerald)':'var(--text3)'}">${r.locked?'🔒':r.online+' online'}</div></div><div class="wwav">${r.members.map(e=>`<div class="wwm">${e}</div>`).join('')}${r.members.length===0?`<span style="font-size:0.68rem;color:var(--text3)">Empty</span>`:''}</div></div>`).join('');const ra=document.getElementById('roomAct');if(ra)ra.innerHTML=RMS.map(r=>`<div style="display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;gap:0.4rem"><span>${r.icon}</span><span style="font-size:0.78rem;color:var(--text2)">${r.name}</span></div><span style="font-size:0.65rem;font-family:'DM Mono',monospace;color:${r.locked?'var(--red)':r.online>5?'var(--emerald)':'var(--text3)'}">${r.locked?'🔒':r.online+' online'}</span></div>`).join('');}
 function tNTG(el){if(el.textContent.includes('Everyone')){document.querySelectorAll('.ntg-b').forEach(b=>b.classList.remove('on'));el.classList.add('on');}else{document.querySelector('.ntg-b').classList.remove('on');el.classList.toggle('on');}}
 function sNT(el){document.querySelectorAll('.ntt-b').forEach(b=>b.classList.remove('on'));el.classList.add('on');}
-async function sendNotif(){
-  const t=document.getElementById('nTit').value.trim();
-  const b=document.getElementById('nBdy').value.trim();
-  if(!t||!b){toast('Fill in title and message!');return;}
-  const session=getSession();
-  const tg=[...document.querySelectorAll('.ntg-b.on')].map(x=>x.textContent.trim()).join(', ');
-  const tierFilter=tg.includes('Everyone')?null:tg.includes('Palace')?'palace':tg.includes('Gold')?'gold':tg.includes('Silver')?'silver':'free';
-  const targets=tierFilter?MB.filter(m=>m.tier===tierFilter&&m.status==='active'):MB.filter(m=>m.status==='active');
-  if(targets.length&&session){
-    await fetch(SB+'/rest/v1/notifications',{method:'POST',headers:hdr(session.access_token),body:JSON.stringify(targets.map(m=>({user_id:m.id,title:t,body:b,type:'announcement'})))});
-  }
-  aAct({t:'notif',tx:'Admin broadcast <em>"'+t+'"</em> → '+tg,tm:'just now'});
-  toast('📢 Sent to '+targets.length+' members!','ok');
-  document.getElementById('nTit').value='';
-  document.getElementById('nBdy').value='';
-}
-
-/* ── DM ── */
-async function sendDM(){
-  const to=document.getElementById('dmTo').value.trim();
-  const msg=document.getElementById('dmBdy').value.trim();
-  if(!to||!msg){toast('Fill in recipient and message!');return;}
-  const session=getSession();
-  const handle=to.replace('@','').split(' ')[0];
-  const target=MB.find(m=>m.h===handle||m.name.toLowerCase().includes(handle.toLowerCase()));
-  if(target&&session){
-    await fetch(SB+'/rest/v1/notifications',{method:'POST',headers:hdr(session.access_token),body:JSON.stringify([{user_id:target.id,title:'💬 Message from Topraq',body:msg,type:'dm'}])});
-  }
-  aAct({t:'msg',tx:'Admin DMed <strong>'+to+'</strong>',tm:'just now'});
-  toast('Message sent 💬','ok');
-  document.getElementById('dmTo').value='';
-  document.getElementById('dmBdy').value='';
-}
-
-/* ── ACTIVITY ── */
-function rAct(){['ovF','liveF','logF'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=(AL.length?AL:[{t:'notif',tx:'No activity yet',tm:''}]).map(a=>`<div class="afi"><div class="afi-d ${a.t}"></div><div class="afi-tx">${a.tx}</div><div class="afi-tm">${a.tm}</div></div>`).join('');});}
-function aAct(item){AL.unshift(item);if(AL.length>50)AL.pop();rAct();document.getElementById('bLive').textContent=AL.length;}
-
-/* ── MODAL ── */
+function sendNotif(){const t=document.getElementById('nTit').value.trim();const b=document.getElementById('nBdy').value.trim();if(!t||!b){toast('Fill in title and message!');return}const tg=[...document.querySelectorAll('.ntg-b.on')].map(x=>x.textContent.trim()).join(', ');aAct({t:'notif',tx:'Admin broadcast <em>"'+t+'"</em> → '+tg,tm:'just now'});toast('📢 Sent to '+tg+'!','ok');document.getElementById('nTit').value='';document.getElementById('nBdy').value='';}
+function sendDM(){const to=document.getElementById('dmTo').value.trim();const msg=document.getElementById('dmBdy').value.trim();if(!to||!msg){toast('Fill in recipient and message!');return}aAct({t:'msg',tx:'Admin DMed <strong>'+to.split(' (')[0]+'</strong>',tm:'just now'});toast('Message sent to '+to.split(' (')[0]+' 💬','ok');document.getElementById('dmTo').value='';document.getElementById('dmBdy').value='';}
+function rAct(){['ovF','liveF','logF'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=AL.map(a=>`<div class="afi"><div class="afi-d ${a.t}"></div><div class="afi-tx">${a.tx}</div><div class="afi-tm">${a.tm}</div></div>`).join('');});}
+function aAct(item){AL.unshift(item);rAct();document.getElementById('bLive').textContent=AL.length;}
 function oMo(t,s,b,acts){document.getElementById('moT').innerHTML=t;document.getElementById('moS').innerHTML=s;document.getElementById('moB').innerHTML=b;document.getElementById('moA').innerHTML=acts.map(a=>`<button class="${a.c}" onclick="${a.f}">${a.l}</button>`).join('');document.getElementById('mo').classList.add('open');}
 function cMo(){document.getElementById('mo').classList.remove('open');}
-
-/* ── TOAST ── */
-/* ── CREATOR ROOMS ── */
-async function loadCreatorRooms(){
-  try{
-    const session=getSession();
-    const token=session?.access_token||SK;
-    /* Load all creators */
-    const res=await fetch(SB+'/rest/v1/profiles?role=eq.creator&select=id,username,display_name,avatar_url&order=created_at.desc',{
-      headers:{'apikey':SK,'Authorization':'Bearer '+token}
-    });
-    const creators=await res.json();
-    const el=document.getElementById('creatorRoomsList');
-    if(!el)return;
-
-    /* Also add admin/topraq */
-    const adminRes=await fetch(SB+'/rest/v1/profiles?is_admin=eq.true&select=id,username,display_name,avatar_url',{
-      headers:{'apikey':SK,'Authorization':'Bearer '+token}
-    });
-    const admins=await adminRes.json();
-    const allCreators=[...admins,...creators.filter(c=>!admins.find(a=>a.id===c.id))];
-
-    if(!allCreators.length){
-      el.innerHTML='<div style="color:var(--text3);font-size:0.82rem;padding:1rem">No creators yet</div>';
-      return;
-    }
-
-    const ROOM_LIST=[
-      {id:'lobby',icon:'🛎️',name:'Hotel Lobby'},
-      {id:'restaurant',icon:'🍽️',name:'Restaurant'},
-      {id:'superior',icon:'🛏️',name:'Superior Room'},
-      {id:'resting',icon:'🛋️',name:'Resting Lounge'},
-      {id:'pool',icon:'🌊',name:'Thermal Pool'},
-      {id:'radio',icon:'📻',name:'3D Radio'},
-      {id:'tv',icon:'📺',name:'Cinema TV'},
-    ];
-
-    el.innerHTML=allCreators.map(c=>`
-      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:0.875rem;padding:1rem">
-        <div style="display:flex;align-items:center;gap:0.65rem;margin-bottom:0.85rem">
-          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--palace),var(--orange));display:flex;align-items:center;justify-content:center;font-size:0.85rem;overflow:hidden;flex-shrink:0">
-            ${c.avatar_url?`<img src="${c.avatar_url}" style="width:100%;height:100%;object-fit:cover">`:'🎨'}
-          </div>
-          <div>
-            <div style="font-size:0.82rem;font-weight:500;color:var(--text1)">${c.display_name||c.username}</div>
-            <div style="font-size:0.62rem;color:var(--text3);font-family:'DM Mono',monospace">@${c.username||''}</div>
-          </div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:0.3rem">
-          ${ROOM_LIST.map(r=>`
-            <a href="rooms.html?creator=${c.username||''}" 
-               style="display:flex;align-items:center;gap:0.5rem;padding:0.38rem 0.6rem;border-radius:0.45rem;border:1px solid var(--border);text-decoration:none;color:var(--text2);font-size:0.75rem;transition:all .15s"
-               onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange)'"
-               onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">
-              ${r.icon} ${r.name}
-              <span style="margin-left:auto;font-size:0.6rem;color:var(--text3);font-family:'DM Mono',monospace">Enter →</span>
-            </a>`).join('')}
-        </div>
-      </div>`).join('');
-  }catch(e){console.error('Creator rooms error:',e);}
-}
-
 let tT;
 function toast(msg,type=''){const el=document.getElementById('toast');el.textContent=msg;el.className='toast show'+(type?' '+type:'');clearTimeout(tT);tT=setTimeout(()=>el.classList.remove('show'),2800);}
-
-/* ── PLATFORM ── */
-async function lockAll(){RMS.forEach(r=>r.locked=true);rRooms();rWW();aAct({t:'ban',tx:'Admin locked ALL rooms',tm:'just now'});toast('All rooms locked!','warn');}
-
-/* ── LIVE SIM ── */
-setInterval(()=>{
-  const n=Math.floor(Math.random()*6)+Math.max(1,MB.filter(m=>m.status==='active').length*0.3);
-  document.getElementById('kO').textContent=Math.round(n);
-  document.getElementById('ltxt').textContent=Math.round(n)+' ONLINE';
-  const lc2=document.getElementById('lc2');if(lc2)lc2.textContent=Math.round(n)+' online';
-},15000);
-
-/* ── INIT ── */
-window.addEventListener('DOMContentLoaded', ()=>{
-  loadAllData();
-  setInterval(loadAllData, 60000); /* Refresh every 60s */
-});
+const lEvts=[
+  ()=>aAct({t:'enter',tx:'<strong>Selin Kaya</strong> entered 📺 Cinema TV Room',tm:'just now'}),
+  ()=>aAct({t:'msg',tx:'<strong>Kaan Öztürk</strong> sent a message in 🌊 Thermal Pool',tm:'just now'}),
+  ()=>aAct({t:'leave',tx:'<strong>Cem Arslan</strong> left 🍽️ The Restaurant',tm:'just now'}),
+  ()=>{const n=Math.floor(Math.random()*6)+10;document.getElementById('kO').textContent=n;document.getElementById('ltxt').textContent=n+' ONLINE';document.getElementById('lc2').textContent=n+' online';},
+];
+let lI=0;setInterval(()=>{lEvts[lI%lEvts.length]();lI++;},9000);
+renderM();rBan();rFrz();rRooms();rWW();rAct();
 </script>
 </body>
 </html>

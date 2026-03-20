@@ -203,6 +203,10 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
     <a href="dashboard.html" class="nav-link" id="dashLink" style="display:none">📊 Dashboard</a>
   </div>
   <div class="nav-right">
+      <div id="langToggle" style="display:flex;align-items:center;gap:0.25rem;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:100px;padding:0.18rem 0.28rem">
+        <button onclick="setLang('en')" data-lang="en" style="padding:0.18rem 0.55rem;border-radius:100px;border:none;cursor:pointer;font-size:0.68rem;font-family:'DM Sans',sans-serif;background:transparent;color:rgba(255,255,255,0.45);transition:all .15s">🇬🇧 EN</button>
+        <button onclick="setLang('tr')" data-lang="tr" style="padding:0.18rem 0.55rem;border-radius:100px;border:none;cursor:pointer;font-size:0.68rem;font-family:'DM Sans',sans-serif;background:transparent;color:rgba(255,255,255,0.45);transition:all .15s">🇹🇷 TR</button>
+      </div>
     <a href="member-hub.html" class="nav-av" id="navAvatar">🎨</a>
   </div>
 </nav>

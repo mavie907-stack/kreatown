@@ -102,6 +102,10 @@ body{font-family:'DM Sans',sans-serif;background:#0a0806;color:#e8d5b0}
   <div id="particles"></div>
   <aside class="sidebar">
     <div class="sidebar-logo">Krea<span>Town</span></div>
+    <div id="langToggle" style="display:flex;align-items:center;gap:0.25rem;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:100px;padding:0.18rem 0.28rem">
+      <button onclick="setLang('en')" data-lang="en" style="padding:0.18rem 0.55rem;border-radius:100px;border:none;cursor:pointer;font-size:0.68rem;font-family:'DM Sans',sans-serif;background:transparent;color:rgba(255,255,255,0.45)">🇬🇧</button>
+      <button onclick="setLang('tr')" data-lang="tr" style="padding:0.18rem 0.55rem;border-radius:100px;border:none;cursor:pointer;font-size:0.68rem;font-family:'DM Sans',sans-serif;background:transparent;color:rgba(255,255,255,0.45)">🇹🇷</button>
+    </div>
     <div class="sidebar-back" style="display:flex;flex-direction:column;gap:0.35rem">
       <a href="feed.html" class="back-link" style="color:var(--orange)">📰 Community Feed</a>
       <a href="javascript:history.back()" class="back-link" id="backLink">← Back</a>

@@ -187,7 +187,9 @@ function applyLang() {
   document.documentElement.lang = currentLang;
   // Update language toggle buttons
   document.querySelectorAll('[data-lang]').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-lang') === currentLang);
+    const isActive = btn.getAttribute('data-lang') === currentLang;
+    btn.style.background = isActive ? 'rgba(244,115,42,0.25)' : 'transparent';
+    btn.style.color = isActive ? '#f4732a' : '';
   });
 }
 
