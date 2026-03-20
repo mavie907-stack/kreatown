@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop — KreaTown</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#f4732a">
+<script src="/kt-utils.js" defer></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0e0c0a;--bg2:#161210;--bg3:#1e1a15;--bg4:#27211a;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --orange:#f4732a;--orange2:#ff9555;
+  --gold:#c9952a;--gold2:#f5d58a;
+  --palace:#8b6fd4;--palace2:#b8a0e8;
+  --emerald:#2dab80;--red:#e05252;--silver:#8fa3b5;
+  --text1:rgba(255,255,255,0.92);--text2:rgba(255,255,255,0.55);--text3:rgba(255,255,255,0.28);
+}
+html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text1);min-height:100vh}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:rgba(14,12,10,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 1.5rem;height:54px;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--text1);text-decoration:none;flex-shrink:0}.nav-logo span{color:var(--orange)}
+.nav-links{display:flex;align-items:center;gap:0.25rem}
+.nav-link{padding:0.35rem 0.75rem;border-radius:0.5rem;font-size:0.78rem;color:var(--text2);text-decoration:none;transition:all .15s}
+.nav-link:hover{color:var(--text1);background:rgba(255,255,255,0.05)}
+.nav-link.active{color:var(--orange)}
+.nav-right{display:flex;align-items:center;gap:0.6rem}
+.nav-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--palace),var(--orange));display:flex;align-items:center;justify-content:center;font-size:0.8rem;overflow:hidden;text-decoration:none}
+.nav-av img{width:100%;height:100%;object-fit:cover}
+
+/* HERO */
+.hero{text-align:center;padding:3rem 1.5rem 2rem;background:linear-gradient(180deg,rgba(244,115,42,0.06) 0%,transparent 100%);border-bottom:1px solid var(--border)}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:0.4rem;font-size:0.65rem;background:rgba(244,115,42,0.1);color:var(--orange);border:1px solid rgba(244,115,42,0.2);padding:0.22rem 0.85rem;border-radius:100px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem}
+.hero-title{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;line-height:1.15;margin-bottom:0.85rem}
+.hero-title span{color:var(--orange)}
+.hero-sub{font-size:0.88rem;color:var(--text2);line-height:1.7;max-width:500px;margin:0 auto 1.5rem}
+.hero-stats{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap}
+.hs{text-align:center}
+.hs-num{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--orange)}
+.hs-lab{font-size:0.62rem;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.08em}
+
+/* LAYOUT */
+.layout{max-width:1100px;margin:0 auto;padding:2rem 1.25rem;display:grid;grid-template-columns:200px 1fr;gap:1.5rem}
+
+/* SIDEBAR FILTERS */
+.filters{position:sticky;top:70px;height:fit-content}
+.filter-card{background:var(--bg2);border:1px solid var(--border);border-radius:1rem;padding:1rem;margin-bottom:0.75rem}
+.fc-title{font-family:'DM Mono',monospace;font-size:0.58rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:0.65rem}
+.filt-btn{display:flex;align-items:center;gap:0.5rem;width:100%;padding:0.42rem 0.6rem;border-radius:0.5rem;border:none;background:transparent;color:var(--text2);font-size:0.78rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;text-align:left}
+.filt-btn:hover{background:rgba(255,255,255,0.04);color:var(--text1)}
+.filt-btn.on{background:rgba(244,115,42,0.1);color:var(--orange);font-weight:500}
+.filt-ic{font-size:0.9rem;width:18px;text-align:center}
+.filt-count{margin-left:auto;font-size:0.6rem;background:rgba(255,255,255,0.08);padding:0.08rem 0.4rem;border-radius:100px;font-family:'DM Mono',monospace}
+
+/* PRODUCTS GRID */
+.products-area{}
+.products-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.5rem}
+.ph-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700}
+.ph-sub{font-size:0.7rem;color:var(--text3);margin-top:0.1rem}
+.sort-select{background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:0.72rem;padding:0.35rem 0.65rem;border-radius:0.5rem;font-family:'DM Sans',sans-serif;cursor:pointer;outline:none}
+
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
+
+/* PRODUCT CARD */
+.prod-card{background:var(--bg2);border:1px solid var(--border);border-radius:1.125rem;overflow:hidden;transition:all .25s;cursor:pointer;display:flex;flex-direction:column}
+.prod-card:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,0.3)}
+.prod-thumb{height:160px;display:flex;align-items:center;justify-content:center;font-size:3.5rem;position:relative;overflow:hidden}
+.prod-badge{position:absolute;top:0.65rem;left:0.65rem;font-size:0.55rem;padding:0.12rem 0.52rem;border-radius:100px;font-family:'DM Mono',monospace;font-weight:600;text-transform:uppercase;letter-spacing:0.06em}
+.badge-new{background:rgba(45,171,128,0.2);color:var(--emerald);border:1px solid rgba(45,171,128,0.3)}
+.badge-hot{background:rgba(244,115,42,0.2);color:var(--orange);border:1px solid rgba(244,115,42,0.3)}
+.badge-sale{background:rgba(224,82,82,0.2);color:var(--red);border:1px solid rgba(224,82,82,0.3)}
+.badge-free{background:rgba(139,111,212,0.2);color:var(--palace2);border:1px solid rgba(139,111,212,0.3)}
+.prod-type-tag{position:absolute;top:0.65rem;right:0.65rem;font-size:0.6rem;padding:0.15rem 0.5rem;border-radius:100px;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);color:var(--text2);border:1px solid rgba(255,255,255,0.1)}
+.prod-body{padding:1rem;flex:1;display:flex;flex-direction:column}
+.prod-creator{display:flex;align-items:center;gap:0.4rem;margin-bottom:0.5rem}
+.prod-av{width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,var(--palace),var(--orange));overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:0.55rem}
+.prod-av img{width:100%;height:100%;object-fit:cover}
+.prod-creator-name{font-size:0.62rem;color:var(--text3)}
+.prod-title{font-size:0.9rem;font-weight:600;color:var(--text1);line-height:1.35;margin-bottom:0.35rem}
+.prod-desc{font-size:0.72rem;color:var(--text2);line-height:1.6;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:0.75rem}
+.prod-tags{display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:0.75rem}
+.prod-tag{font-size:0.58rem;padding:0.1rem 0.45rem;border-radius:100px;background:rgba(255,255,255,0.06);color:var(--text3);border:1px solid var(--border)}
+.prod-footer{display:flex;align-items:center;justify-content:space-between;padding-top:0.75rem;border-top:1px solid var(--border)}
+.prod-price{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--orange)}
+.prod-price-orig{font-size:0.7rem;color:var(--text3);text-decoration:line-through;margin-left:0.35rem;font-family:'DM Mono',monospace}
+.prod-free-tag{font-family:'DM Mono',monospace;font-size:0.82rem;font-weight:600;color:var(--emerald)}
+.prod-buy{padding:0.42rem 1rem;background:var(--orange);border:none;border-radius:100px;color:white;font-size:0.72rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap}
+.prod-buy:hover{background:var(--orange2);transform:scale(1.04)}
+.prod-buy.free{background:rgba(139,111,212,0.2);color:var(--palace2);border:1px solid rgba(139,111,212,0.3)}
+.prod-buy.free:hover{background:rgba(139,111,212,0.3)}
+
+/* ADMIN ADD PRODUCT */
+.add-product-card{background:linear-gradient(135deg,rgba(244,115,42,0.06),rgba(139,111,212,0.04));border:2px dashed rgba(244,115,42,0.25);border-radius:1.125rem;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px;cursor:pointer;transition:all .2s;display:none}
+.add-product-card.show{display:flex}
+.add-product-card:hover{border-color:rgba(244,115,42,0.5);background:rgba(244,115,42,0.05)}
+.add-ic{font-size:2rem;margin-bottom:0.5rem;color:var(--orange)}
+.add-txt{font-size:0.82rem;color:var(--text2);margin-bottom:0.3rem}
+.add-sub{font-size:0.68rem;color:var(--text3)}
+
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(12px);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem}
+.mo.open{display:flex}
+.mo-box{background:var(--bg2);border:1px solid var(--border2);border-radius:1.25rem;padding:1.75rem;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+.mo-title{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between}
+.mo-close{background:none;border:none;color:var(--text2);cursor:pointer;font-size:1.1rem}
+.fl{display:block;font-size:0.6rem;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.3rem;margin-top:0.85rem}
+.fl:first-of-type{margin-top:0}
+.fi{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:0.625rem;color:var(--text1);font-family:'DM Sans',sans-serif;font-size:0.85rem;padding:0.6rem 0.85rem;outline:none;transition:border-color .15s}
+.fi:focus{border-color:var(--border2)}.fi::placeholder{color:var(--text3)}
+.fta{min-height:80px;resize:vertical}
+.type-row{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.85rem}
+.type-btn{padding:0.35rem 0.75rem;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:0.72rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.type-btn:hover{border-color:var(--border2);color:var(--text1)}
+.type-btn.on{border-color:var(--orange);background:rgba(244,115,42,0.12);color:var(--orange)}
+.price-row{display:flex;gap:0.5rem;align-items:center}
+.price-input{flex:1}
+.free-toggle{display:flex;align-items:center;gap:0.4rem;font-size:0.72rem;color:var(--text2);cursor:pointer}
+.submit-btn{width:100%;padding:0.75rem;background:var(--orange);color:white;border:none;border-radius:0.875rem;font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:500;cursor:pointer;transition:all .2s;margin-top:1.25rem;box-shadow:0 4px 16px rgba(244,115,42,0.3)}
+.submit-btn:hover{background:var(--orange2)}.submit-btn:disabled{opacity:0.6;pointer-events:none}
+
+/* PRODUCT DETAIL MODAL */
+.detail-thumb{width:100%;height:200px;display:flex;align-items:center;justify-content:center;font-size:5rem;border-radius:0.875rem;margin-bottom:1.25rem}
+.detail-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;margin-bottom:0.5rem}
+.detail-desc{font-size:0.82rem;color:var(--text2);line-height:1.7;margin-bottom:1rem}
+.detail-includes{background:var(--bg3);border-radius:0.75rem;padding:0.85rem 1rem;margin-bottom:1rem}
+.di-title{font-size:0.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-family:'DM Mono',monospace;margin-bottom:0.5rem}
+.di-item{display:flex;align-items:center;gap:0.5rem;font-size:0.78rem;color:var(--text2);padding:0.25rem 0}
+.detail-price{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--orange);margin-bottom:1rem}
+.buy-btn{width:100%;padding:0.85rem;background:var(--orange);border:none;border-radius:1rem;color:white;font-size:0.95rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;box-shadow:0 4px 20px rgba(244,115,42,0.35)}
+.buy-btn:hover{background:var(--orange2);transform:translateY(-1px)}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(16px);background:var(--bg3);border:1px solid var(--border2);color:var(--text1);padding:0.55rem 1.3rem;border-radius:100px;font-size:0.78rem;z-index:1000;transition:all .3s cubic-bezier(.34,1.56,.64,1);opacity:0;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast.ok{border-color:rgba(45,171,128,0.4);color:var(--emerald)}
+.toast.warn{border-color:rgba(244,115,42,0.4);color:var(--orange)}
+
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr}
+  .filters{position:static;display:flex;gap:0.5rem;overflow-x:auto;padding-bottom:0.5rem}
+  .filter-card{min-width:fit-content;white-space:nowrap;padding:0.6rem 0.85rem;margin-bottom:0}
+  .fc-title{display:none}
+  .products-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+  .hero-title{font-size:1.7rem}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">Krea<span>Town</span></a>
+  <div class="nav-links">
+    <a href="feed.html" class="nav-link">📰 Feed</a>
+    <a href="shop.html" class="nav-link active">🛍️ Shop</a>
+    <a href="topraq-hub.html" class="nav-link">🏯 Town</a>
+    <a href="rooms.html" class="nav-link">💬 Rooms</a>
+  </div>
+  <div class="nav-right">
+    <div id="langToggle" style="display:flex;align-items:center;gap:0.25rem;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:100px;padding:0.18rem 0.28rem">
+      <button onclick="setLang('en')" data-lang="en" style="padding:0.18rem 0.55rem;border-radius:100px;border:none;cursor:pointer;font-size:0.68rem;font-family:'DM Sans',sans-serif;background:transparent;color:rgba(255,255,255,0.45)">🇬🇧 EN</button>
+      <button onclick="setLang('tr')" data-lang="tr" style="padding:0.18rem 0.55rem;border-radius:100px;border:none;cursor:pointer;font-size:0.68rem;font-family:'DM Sans',sans-serif;background:transparent;color:rgba(255,255,255,0.45)">🇹🇷 TR</button>
+    </div>
+    <a href="member-hub.html" class="nav-av" id="navAv">🎨</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">🛍️ KreaTown Shop</div>
+  <h1 class="hero-title">Learn, grow &<br><span>level up</span></h1>
+  <p class="hero-sub">Exclusive digital products from KreaTown creators — courses, templates, guides and more.</p>
+  <div class="hero-stats">
+    <div class="hs"><div class="hs-num" id="statProducts">—</div><div class="hs-lab">Products</div></div>
+    <div class="hs"><div class="hs-num" id="statCreators">—</div><div class="hs-lab">Creators</div></div>
+    <div class="hs"><div class="hs-num" id="statSales">—</div><div class="hs-lab">Sales</div></div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- FILTERS -->
+  <aside class="filters">
+    <div class="filter-card">
+      <div class="fc-title">Category</div>
+      <button class="filt-btn on" onclick="setFilter(this,'all')"><span class="filt-ic">✨</span> All <span class="filt-count" id="cnt-all">0</span></button>
+      <button class="filt-btn" onclick="setFilter(this,'pdf')"><span class="filt-ic">📄</span> PDF / E-book</button>
+      <button class="filt-btn" onclick="setFilter(this,'course')"><span class="filt-ic">🎥</span> Video Course</button>
+      <button class="filt-btn" onclick="setFilter(this,'3dsmax')"><span class="filt-ic">🎨</span> 3dsMax</button>
+      <button class="filt-btn" onclick="setFilter(this,'preset')"><span class="filt-ic">🎛️</span> Preset / Template</button>
+      <button class="filt-btn" onclick="setFilter(this,'consulting')"><span class="filt-ic">📅</span> 1-on-1 Consulting</button>
+    </div>
+    <div class="filter-card">
+      <div class="fc-title">Price</div>
+      <button class="filt-btn" onclick="setPriceFilter(this,'free')"><span class="filt-ic">🎁</span> Free</button>
+      <button class="filt-btn" onclick="setPriceFilter(this,'paid')"><span class="filt-ic">💰</span> Paid</button>
+      <button class="filt-btn" onclick="setPriceFilter(this,'all')"><span class="filt-ic">✨</span> All prices</button>
+    </div>
+  </aside>
+
+  <!-- PRODUCTS -->
+  <main class="products-area">
+    <div class="products-header">
+      <div>
+        <div class="ph-title" id="catTitle">All Products</div>
+        <div class="ph-sub" id="catSub">Loading…</div>
+      </div>
+      <select class="sort-select" onchange="setSortOrder(this.value)">
+        <option value="newest">Newest first</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="popular">Most popular</option>
+      </select>
+    </div>
+
+    <div class="products-grid" id="productsGrid">
+      <div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text3)">
+        <div style="font-size:2rem;margin-bottom:0.5rem">🛍️</div>
+        Loading products…
+      </div>
+    </div>
+
+    <!-- ADD PRODUCT (admin only) -->
+    <div class="add-product-card" id="addProductCard" onclick="openAddModal()">
+      <div class="add-ic">＋</div>
+      <div class="add-txt">Add a new product</div>
+      <div class="add-sub">PDF, course, preset, consulting…</div>
+    </div>
+  </main>
+</div>
+
+<!-- ADD PRODUCT MODAL -->
+<div class="mo" id="addModal" onclick="if(event.target===this)closeModal('addModal')">
+  <div class="mo-box">
+    <div class="mo-title">
+      ➕ Add product
+      <button class="mo-close" onclick="closeModal('addModal')">✕</button>
+    </div>
+
+    <label class="fl">Product type</label>
+    <div class="type-row">
+      <button class="type-btn on" onclick="setType(this,'pdf')">📄 PDF</button>
+      <button class="type-btn" onclick="setType(this,'course')">🎥 Course</button>
+      <button class="type-btn" onclick="setType(this,'3dsmax')">🎨 3dsMax</button>
+      <button class="type-btn" onclick="setType(this,'preset')">🎛️ Preset</button>
+      <button class="type-btn" onclick="setType(this,'consulting')">📅 Consulting</button>
+    </div>
+
+    <label class="fl">Title *</label>
+    <input class="fi" id="prodTitle" placeholder="e.g. Content Strategy Masterclass">
+
+    <label class="fl">Description *</label>
+    <textarea class="fi fta" id="prodDesc" placeholder="What will they learn or get?"></textarea>
+
+    <label class="fl">What's included (one per line)</label>
+    <textarea class="fi fta" id="prodIncludes" placeholder="5 hours of video&#10;PDF workbook&#10;Lifetime access" style="min-height:70px"></textarea>
+
+    <label class="fl">Emoji icon</label>
+    <input class="fi" id="prodEmoji" placeholder="📄" value="📄" style="width:80px">
+
+    <label class="fl">Background color</label>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.5rem" id="colorPicker">
+      <div onclick="selectColor(this,'rgba(244,115,42,0.15)')" style="width:28px;height:28px;border-radius:50%;background:rgba(244,115,42,0.3);cursor:pointer;border:2px solid transparent" data-color="rgba(244,115,42,0.15)"></div>
+      <div onclick="selectColor(this,'rgba(139,111,212,0.15)')" style="width:28px;height:28px;border-radius:50%;background:rgba(139,111,212,0.3);cursor:pointer;border:2px solid transparent" data-color="rgba(139,111,212,0.15)"></div>
+      <div onclick="selectColor(this,'rgba(201,149,42,0.15)')" style="width:28px;height:28px;border-radius:50%;background:rgba(201,149,42,0.3);cursor:pointer;border:2px solid transparent" data-color="rgba(201,149,42,0.15)"></div>
+      <div onclick="selectColor(this,'rgba(45,171,128,0.15)')" style="width:28px;height:28px;border-radius:50%;background:rgba(45,171,128,0.3);cursor:pointer;border:2px solid transparent" data-color="rgba(45,171,128,0.15)"></div>
+      <div onclick="selectColor(this,'rgba(143,163,181,0.15)')" style="width:28px;height:28px;border-radius:50%;background:rgba(143,163,181,0.3);cursor:pointer;border:2px solid transparent" data-color="rgba(143,163,181,0.15)"></div>
+    </div>
+
+    <label class="fl">Content URL (download link or video URL)</label>
+    <input class="fi" id="prodUrl" placeholder="https://drive.google.com/... or youtube.com/...">
+
+    <label class="fl">Price (USD)</label>
+    <div class="price-row">
+      <input class="fi price-input" id="prodPrice" type="number" min="0" placeholder="29" step="0.01">
+      <label class="free-toggle">
+        <input type="checkbox" id="prodFree" onchange="toggleFree(this)">
+        Free
+      </label>
+    </div>
+
+    <label class="fl">Badge (optional)</label>
+    <div style="display:flex;gap:0.4rem;flex-wrap:wrap">
+      <button class="type-btn" onclick="setBadge(this,'')">None</button>
+      <button class="type-btn" onclick="setBadge(this,'new')">🟢 New</button>
+      <button class="type-btn" onclick="setBadge(this,'hot')">🔥 Hot</button>
+      <button class="type-btn" onclick="setBadge(this,'sale')">🏷️ Sale</button>
+    </div>
+
+    <button class="submit-btn" id="addProdBtn" onclick="saveProduct()">✅ Publish product</button>
+  </div>
+</div>
+
+<!-- PRODUCT DETAIL MODAL -->
+<div class="mo" id="detailModal" onclick="if(event.target===this)closeModal('detailModal')">
+  <div class="mo-box">
+    <div class="mo-title">
+      <span id="detTitle">Product</span>
+      <button class="mo-close" onclick="closeModal('detailModal')">✕</button>
+    </div>
+    <div class="detail-thumb" id="detThumb">📄</div>
+    <div class="detail-title" id="detName"></div>
+    <div class="detail-desc" id="detDesc"></div>
+    <div class="detail-includes" id="detIncludes" style="display:none">
+      <div class="di-title">What's included</div>
+      <div id="detIncludesList"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">
+      <div class="detail-price" id="detPrice"></div>
+      <div id="detSales" style="font-size:0.7rem;color:var(--text3)"></div>
+    </div>
+    <button class="buy-btn" id="detBuyBtn" onclick="buyProduct()">🛒 Purchase now</button>
+    <div id="detAdminActions" style="display:none;margin-top:0.75rem;display:flex;gap:0.5rem">
+      <button onclick="deleteProduct()" style="flex:1;padding:0.5rem;background:rgba(224,82,82,0.1);border:1px solid rgba(224,82,82,0.3);color:var(--red);border-radius:0.75rem;cursor:pointer;font-size:0.78rem;font-family:'DM Sans',sans-serif">🗑️ Delete</button>
+      <button onclick="editProduct()" style="flex:1;padding:0.5rem;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text2);border-radius:0.75rem;cursor:pointer;font-size:0.78rem;font-family:'DM Sans',sans-serif">✏️ Edit</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SB  = 'https://pkhoyabazudqmfczkhax.supabase.co';
+const SK  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
+function getSession(){try{return JSON.parse(localStorage.getItem('kt_session')||'{}')}catch(e){return {}}}
+function hdr(t){return{'apikey':SK,'Authorization':'Bearer '+(t||SK),'Content-Type':'application/json'}}
+
+let allProducts = [];
+let filteredProducts = [];
+let currentFilter = 'all';
+let priceFilter   = 'all';
+let sortOrder     = 'newest';
+let selectedType  = 'pdf';
+let selectedBadge = '';
+let selectedColor = 'rgba(244,115,42,0.15)';
+let selectedProduct = null;
+let isAdmin = false;
+let myProfile = null;
+
+const TYPE_CONFIG = {
+  pdf:        { icon:'📄', label:'PDF / E-book',   color:'rgba(244,115,42,0.12)'  },
+  course:     { icon:'🎥', label:'Video Course',    color:'rgba(139,111,212,0.12)' },
+  '3dsmax':   { icon:'🎨', label:'3dsMax Course',   color:'rgba(201,149,42,0.12)'  },
+  preset:     { icon:'🎛️', label:'Preset / Template',color:'rgba(45,171,128,0.12)'},
+  consulting: { icon:'📅', label:'1-on-1 Session',  color:'rgba(143,163,181,0.12)' },
+};
+
+window.addEventListener('DOMContentLoaded', async () => {
+  const session = getSession();
+  const uid     = session.user_id || session.id;
+
+  /* Load profile */
+  if(uid){
+    try{
+      const res  = await fetch(SB+'/rest/v1/profiles?id=eq.'+uid+'&select=is_admin,display_name,avatar_url,username',{headers:hdr(session.access_token)});
+      const data = await res.json();
+      myProfile  = data[0];
+      isAdmin    = myProfile?.is_admin || false;
+
+      if(myProfile?.avatar_url){
+        document.getElementById('navAv').innerHTML = '<img src="'+myProfile.avatar_url+'" alt="">';
+      }
+      if(isAdmin){
+        document.getElementById('addProductCard').classList.add('show');
+      }
+    }catch(e){}
+  }
+
+  await loadProducts();
+});
+
+async function loadProducts(){
+  try{
+    const res  = await fetch(SB+'/rest/v1/shop_products?order=created_at.desc&select=*',{headers:hdr(SK)});
+    const data = await res.json();
+    allProducts = Array.isArray(data) ? data : [];
+
+    /* Stats */
+    document.getElementById('statProducts').textContent = allProducts.length;
+    document.getElementById('statCreators').textContent = '1';
+    document.getElementById('statSales').textContent    = allProducts.reduce((a,p)=>a+(p.sales_count||0),0);
+    document.getElementById('cnt-all').textContent      = allProducts.length;
+
+    applyFilters();
+  }catch(e){
+    /* No products table yet — show empty state */
+    allProducts = [];
+    document.getElementById('statProducts').textContent = '0';
+    document.getElementById('statCreators').textContent = '1';
+    document.getElementById('statSales').textContent    = '0';
+    document.getElementById('cnt-all').textContent      = '0';
+    renderProducts([]);
+  }
+}
+
+function applyFilters(){
+  let result = [...allProducts];
+
+  /* Category filter */
+  if(currentFilter !== 'all') result = result.filter(p => p.type === currentFilter);
+
+  /* Price filter */
+  if(priceFilter === 'free') result = result.filter(p => p.is_free || p.price === 0);
+  if(priceFilter === 'paid') result = result.filter(p => !p.is_free && p.price > 0);
+
+  /* Sort */
+  if(sortOrder === 'price-asc')  result.sort((a,b) => (a.price||0)-(b.price||0));
+  if(sortOrder === 'price-desc') result.sort((a,b) => (b.price||0)-(a.price||0));
+  if(sortOrder === 'popular')    result.sort((a,b) => (b.sales_count||0)-(a.sales_count||0));
+
+  filteredProducts = result;
+  document.getElementById('catSub').textContent = result.length + ' product' + (result.length!==1?'s':'') + ' found';
+  renderProducts(result);
+}
+
+function renderProducts(products){
+  const grid = document.getElementById('productsGrid');
+
+  if(!products.length){
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:4rem 2rem;color:var(--text3)">
+      <div style="font-size:3rem;margin-bottom:1rem">🛍️</div>
+      <div style="font-size:0.88rem">No products yet</div>
+      ${isAdmin?'<div style="font-size:0.75rem;margin-top:0.5rem;color:var(--orange)">Click the + card below to add your first product!</div>':''}
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = products.map(p => {
+    const tc    = TYPE_CONFIG[p.type] || TYPE_CONFIG.pdf;
+    const color = p.bg_color || tc.color;
+    const icon  = p.emoji || tc.icon;
+    const price = p.is_free ? null : p.price;
+    const badge = p.badge || '';
+
+    return `<div class="prod-card" onclick="openDetail('${p.id}')">
+      <div class="prod-thumb" style="background:${color}">
+        ${badge ? `<span class="prod-badge badge-${badge}">${badge==='new'?'New':badge==='hot'?'🔥 Hot':badge==='sale'?'Sale':'Free'}</span>` : ''}
+        <span class="prod-type-tag">${tc.label}</span>
+        ${icon}
+      </div>
+      <div class="prod-body">
+        <div class="prod-creator">
+          <div class="prod-av"><img src="${myProfile?.avatar_url||''}" onerror="this.parentElement.textContent='🎨'" alt=""></div>
+          <span class="prod-creator-name">${myProfile?.display_name||'Topraq'}</span>
+        </div>
+        <div class="prod-title">${p.title}</div>
+        <div class="prod-desc">${p.description||''}</div>
+        ${p.tags ? `<div class="prod-tags">${p.tags.split(',').map(t=>`<span class="prod-tag">${t.trim()}</span>`).join('')}</div>` : ''}
+        <div class="prod-footer">
+          ${p.is_free
+            ? `<span class="prod-free-tag">Free</span>`
+            : `<div><span class="prod-price">$${parseFloat(p.price||0).toFixed(0)}</span>${p.original_price?`<span class="prod-price-orig">$${p.original_price}</span>`:''}</div>`
+          }
+          <button class="prod-buy ${p.is_free?'free':''}" onclick="event.stopPropagation();openDetail('${p.id}')">
+            ${p.is_free ? '↓ Get free' : '→ Buy now'}
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setFilter(btn, filter){
+  document.querySelectorAll('.filter-card:first-child .filt-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  currentFilter = filter;
+  const TITLES = {all:'All Products',pdf:'PDF / E-books',course:'Video Courses','3dsmax':'3dsMax Courses',preset:'Presets & Templates',consulting:'1-on-1 Consulting'};
+  document.getElementById('catTitle').textContent = TITLES[filter]||'Products';
+  applyFilters();
+}
+function setPriceFilter(btn, filter){ priceFilter=filter; applyFilters(); }
+function setSortOrder(val){ sortOrder=val; applyFilters(); }
+
+/* ── PRODUCT DETAIL ── */
+function openDetail(id){
+  const p = allProducts.find(x=>x.id===id);
+  if(!p) return;
+  selectedProduct = p;
+  const tc = TYPE_CONFIG[p.type]||TYPE_CONFIG.pdf;
+  const color = p.bg_color||tc.color;
+
+  document.getElementById('detTitle').textContent   = tc.label;
+  document.getElementById('detThumb').style.background = color;
+  document.getElementById('detThumb').textContent   = p.emoji||tc.icon;
+  document.getElementById('detName').textContent    = p.title;
+  document.getElementById('detDesc').textContent    = p.description||'';
+  document.getElementById('detPrice').textContent   = p.is_free ? 'Free' : '$'+parseFloat(p.price||0).toFixed(2);
+  document.getElementById('detPrice').style.color   = p.is_free ? 'var(--emerald)' : 'var(--orange)';
+  document.getElementById('detSales').textContent   = (p.sales_count||0)+' purchases';
+
+  /* Includes */
+  if(p.includes){
+    const items = p.includes.split('\n').filter(Boolean);
+    document.getElementById('detIncludesList').innerHTML = items.map(i=>`<div class="di-item">✅ ${i}</div>`).join('');
+    document.getElementById('detIncludes').style.display='block';
+  } else {
+    document.getElementById('detIncludes').style.display='none';
+  }
+
+  /* Buy button */
+  const btn = document.getElementById('detBuyBtn');
+  btn.textContent = p.is_free ? '↓ Download free' : `🛒 Purchase for $${parseFloat(p.price||0).toFixed(2)}`;
+
+  /* Admin actions */
+  document.getElementById('detAdminActions').style.display = isAdmin ? 'flex' : 'none';
+
+  document.getElementById('detailModal').classList.add('open');
+}
+
+async function buyProduct(){
+  if(!selectedProduct) return;
+  const p = selectedProduct;
+
+  if(p.is_free){
+    /* Direct download/access */
+    if(p.content_url){
+      window.open(p.content_url, '_blank');
+      toast('Downloading… 🎉','ok');
+    } else {
+      toast('Content will be sent to your email!','ok');
+    }
+    return;
+  }
+
+  /* Paid — redirect to checkout */
+  const session = getSession();
+  if(!session.access_token){
+    toast('Please log in to purchase','warn');
+    window.location.href = 'login.html';
+    return;
+  }
+
+  /* Save order intent */
+  try{
+    await fetch(SB+'/rest/v1/shop_orders',{
+      method:'POST',
+      headers:hdr(session.access_token),
+      body:JSON.stringify({
+        product_id: p.id,
+        user_id:    session.user_id||session.id,
+        amount:     p.price,
+        status:     'pending'
+      })
+    });
+  }catch(e){}
+
+  /* For now - show checkout modal */
+  toast('Redirecting to checkout… 💳','ok');
+  setTimeout(()=>{ window.location.href = 'checkout.html?product='+p.id+'&price='+p.price+'&title='+encodeURIComponent(p.title); }, 800);
+}
+
+async function deleteProduct(){
+  if(!selectedProduct || !isAdmin) return;
+  if(!confirm('Delete "'+selectedProduct.title+'"?')) return;
+  const session = getSession();
+  await fetch(SB+'/rest/v1/shop_products?id=eq.'+selectedProduct.id,{
+    method:'DELETE', headers:hdr(session.access_token)
+  });
+  closeModal('detailModal');
+  allProducts = allProducts.filter(p=>p.id!==selectedProduct.id);
+  applyFilters();
+  toast('Product deleted','warn');
+}
+
+/* ── ADD PRODUCT ── */
+function openAddModal(){
+  document.getElementById('addModal').classList.add('open');
+  /* Select first color */
+  document.querySelector('#colorPicker div').click();
+}
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function setType(btn,type){ document.querySelectorAll('.type-row .type-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');selectedType=type;document.getElementById('prodEmoji').value=TYPE_CONFIG[type]?.icon||'📄'; }
+function setBadge(btn,badge){ document.querySelectorAll('.type-btn').forEach(b=>{if(b.getAttribute('onclick')?.includes('setBadge'))b.classList.remove('on')});btn.classList.add('on');selectedBadge=badge; }
+function selectColor(el,color){ document.querySelectorAll('#colorPicker div').forEach(d=>d.style.border='2px solid transparent');el.style.border='2px solid var(--orange)';selectedColor=color; }
+function toggleFree(cb){ document.getElementById('prodPrice').disabled=cb.checked;if(cb.checked)document.getElementById('prodPrice').value=''; }
+
+async function saveProduct(){
+  const session = getSession();
+  if(!isAdmin){ toast('Admin only!','warn'); return; }
+
+  const title   = document.getElementById('prodTitle').value.trim();
+  const desc    = document.getElementById('prodDesc').value.trim();
+  const url     = document.getElementById('prodUrl').value.trim();
+  const price   = parseFloat(document.getElementById('prodPrice').value)||0;
+  const isFree  = document.getElementById('prodFree').checked;
+  const emoji   = document.getElementById('prodEmoji').value.trim();
+  const includes= document.getElementById('prodIncludes').value.trim();
+
+  if(!title){ toast('Title is required!','warn'); return; }
+
+  const btn = document.getElementById('addProdBtn');
+  btn.disabled=true; btn.textContent='Saving…';
+
+  try{
+    const res = await fetch(SB+'/rest/v1/shop_products',{
+      method:'POST',
+      headers:{...hdr(session.access_token),'Prefer':'return=representation'},
+      body:JSON.stringify({
+        title, description:desc, type:selectedType,
+        content_url:url, price:isFree?0:price,
+        is_free:isFree, emoji, bg_color:selectedColor,
+        badge:selectedBadge||null, includes:includes||null,
+        creator_id:session.user_id||session.id,
+        sales_count:0
+      })
+    });
+
+    if(res.ok){
+      const newProd = await res.json();
+      allProducts.unshift(Array.isArray(newProd)?newProd[0]:newProd);
+      applyFilters();
+      closeModal('addModal');
+      /* Reset form */
+      ['prodTitle','prodDesc','prodUrl','prodPrice','prodIncludes'].forEach(id=>{document.getElementById(id).value='';});
+      document.getElementById('prodFree').checked=false;
+      toast('Product published! 🎉','ok');
+      document.getElementById('statProducts').textContent = allProducts.length;
+    } else {
+      const err = await res.json().catch(()=>({}));
+      toast('Error: '+(err.message||res.status),'warn');
+    }
+  }catch(e){ toast('Save error: '+e.message,'warn'); }
+
+  btn.disabled=false; btn.textContent='✅ Publish product';
+}
+
+let tT;
+function toast(msg,type=''){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className='toast show'+(type?' '+type:'');
+  clearTimeout(tT);tT=setTimeout(()=>el.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>
