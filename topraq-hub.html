@@ -1090,7 +1090,20 @@ async function loadPosts(myTier, creatorId){
       headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
     });
     if(!res.ok) throw new Error('Failed');
-    allPosts = await res.json();
+    const posts = await res.json();
+
+    /* Manual profile join */
+    const userIds = [...new Set(posts.map(p=>p.user_id).filter(Boolean))];
+    let profileMap = {};
+    if(userIds.length){
+      const pRes = await fetch(
+        SB_KEY && SB_URL+'/rest/v1/profiles?id=in.('+userIds.join(',')+')&select=id,username,display_name,avatar_url,tier',
+        { headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY} }
+      );
+      const profiles = await pRes.json().catch(()=>[]);
+      if(Array.isArray(profiles)) profiles.forEach(p=>profileMap[p.id]=p);
+    }
+    allPosts = posts.map(p=>({...p, _profile: profileMap[p.user_id]||{}}));
     renderPosts(myTier);
   }catch(e){
     document.getElementById('postsContainer').innerHTML =
@@ -1117,9 +1130,9 @@ function renderPosts(myTier){
 
     return `<div class="post-card">
       <div class="post-header">
-        <div class="post-avatar" style="${window.CREATOR_AVATAR?'background-image:url('+window.CREATOR_AVATAR+');background-size:cover;background-position:center;font-size:0':''}">🎨</div>
+        <div class="post-avatar" style="${p._profile?.avatar_url?'background-image:url('+p._profile.avatar_url+');background-size:cover;background-position:center;font-size:0':(window.CREATOR_AVATAR?'background-image:url('+window.CREATOR_AVATAR+');background-size:cover;background-position:center;font-size:0':'')}">🎨</div>
         <div class="post-meta">
-          <div class="post-author">${window.CREATOR_NAME||'Creator'}</div>
+          <div class="post-author">${p._profile?.display_name||p._profile?.username||window.CREATOR_NAME||'Creator'}</div>
           <div class="post-date">${date}</div>
         </div>
         <span class="post-tier-badge ${TIER_BADGE_CLASS[p.tier_required||'free']}">${TIER_LABELS[p.tier_required||'free']}</span>

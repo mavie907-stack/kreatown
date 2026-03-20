@@ -413,12 +413,34 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 async function loadFeed(){
   try{
+    /* Step 1: Get posts */
     const res = await fetch(
-      SB_URL+'/rest/v1/posts?is_published=eq.true&order=created_at.desc&limit=50&select=*,profiles(id,username,display_name,avatar_url,tier)',
+      SB_URL+'/rest/v1/posts?is_published=eq.true&order=created_at.desc&limit=50&select=*',
       { headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY} }
     );
     if(!res.ok) throw new Error('Failed');
-    allPosts = await res.json();
+    const posts = await res.json();
+
+    /* Step 2: Get all unique user_ids */
+    const userIds = [...new Set(posts.map(p=>p.user_id).filter(Boolean))];
+
+    /* Step 3: Fetch profiles for those users */
+    let profileMap = {};
+    if(userIds.length){
+      const pRes = await fetch(
+        SB_URL+'/rest/v1/profiles?id=in.('+userIds.join(',')+')&select=id,username,display_name,avatar_url,tier',
+        { headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY} }
+      );
+      const profiles = await pRes.json();
+      profiles.forEach(p => profileMap[p.id] = p);
+    }
+
+    /* Step 4: Attach profiles to posts */
+    allPosts = posts.map(p => ({
+      ...p,
+      profiles: profileMap[p.user_id] || {}
+    }));
+
     document.getElementById('feedSub').textContent = allPosts.length + ' posts from the community';
     renderFeed();
   }catch(e){
