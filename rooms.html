@@ -227,6 +227,26 @@ body{font-family:'DM Sans',sans-serif;background:#0a0806;color:#e8d5b0}
   .locked-overlay{padding:1.5rem 1rem!important}
   #particles{display:none!important}
 }
+
+/* EMOJI PICKER */
+.emoji-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.08);border:none;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.emoji-btn:hover{background:rgba(255,255,255,0.14);transform:scale(1.1)}
+.emoji-panel{position:absolute;bottom:calc(100% + 8px);left:0;right:0;background:#1a1510;border:1px solid rgba(255,255,255,0.13);border-radius:1rem;padding:0.75rem;z-index:100;display:none;box-shadow:0 8px 32px rgba(0,0,0,0.5)}
+.emoji-panel.open{display:block}
+.emoji-tabs{display:flex;gap:0.3rem;margin-bottom:0.6rem;border-bottom:1px solid rgba(255,255,255,0.07);padding-bottom:0.5rem;overflow-x:auto;scrollbar-width:none}
+.emoji-tabs::-webkit-scrollbar{display:none}
+.etab{padding:0.2rem 0.5rem;border-radius:0.4rem;border:none;background:transparent;cursor:pointer;font-size:1rem;transition:background .15s;flex-shrink:0}
+.etab:hover,.etab.on{background:rgba(244,115,42,0.15)}
+.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:0.25rem;max-height:180px;overflow-y:auto;scrollbar-width:thin}
+.emoji-grid::-webkit-scrollbar{width:3px}
+.emoji-grid::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:2px}
+.eg-btn{background:none;border:none;cursor:pointer;font-size:1.25rem;padding:0.25rem;border-radius:0.4rem;transition:all .12s;line-height:1;aspect-ratio:1;display:flex;align-items:center;justify-content:center}
+.eg-btn:hover{background:rgba(255,255,255,0.1);transform:scale(1.2)}
+.reaction-bar{display:flex;gap:0.35rem;padding:0.4rem 1rem;flex-wrap:wrap;min-height:36px}
+.react-btn{padding:0.22rem 0.6rem;border-radius:100px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);cursor:pointer;font-size:0.78rem;transition:all .15s;display:flex;align-items:center;gap:0.3rem;color:rgba(255,255,255,0.7)}
+.react-btn:hover{border-color:rgba(244,115,42,0.4);background:rgba(244,115,42,0.08);color:var(--orange)}
+.react-btn.mine{border-color:rgba(244,115,42,0.5);background:rgba(244,115,42,0.12);color:var(--orange)}
+
 </style>
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#f4732a">
@@ -271,8 +291,14 @@ body{font-family:'DM Sans',sans-serif;background:#0a0806;color:#e8d5b0}
       <div class="atm-dot" id="atmDot" style="background:#f5d58a"></div>
       <span id="atmText">Warm candlelight · Soft piano · Crystal chandeliers</span>
     </div>
-    <div class="input-area">
+    <div class="input-area" style="position:relative">
+      <div class="emoji-panel" id="emojiPanel">
+        <div class="emoji-tabs" id="emojiTabs"></div>
+        <div class="emoji-grid" id="emojiGrid"></div>
+      </div>
+      <div class="reaction-bar" id="reactionBar"></div>
       <div class="input-wrap">
+        <button class="emoji-btn" onclick="toggleEmojiPanel()" title="Emoji">😊</button>
         <input class="msg-input" id="msgInput" placeholder="Say something in the lobby...">
         <button class="send-btn" id="sendBtn">➤</button>
       </div>
@@ -350,7 +376,8 @@ function renderMessages(room, isNew=false){
       ? `<img src="${m.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
       : (m.avatar||'🎨');
     const bg = m.me ? 'linear-gradient(135deg,#7c5cbf,#f4732a)' : 'rgba(255,255,255,0.08)';
-    return `<div class="msg${m.me?' me':''}">
+    const msgId = m.id || 'msg-'+Math.random().toString(36).slice(2);
+    return `<div class="msg${m.me?' me':''}" id="wrap-${msgId}">
       <div class="msg-avatar" style="background:${bg}">${avatarHtml}</div>
       <div class="msg-body">
         <div class="msg-meta">
@@ -358,7 +385,8 @@ function renderMessages(room, isNew=false){
           <span class="msg-badge badge-${m.badge}">${(m.badge||'free').toUpperCase()}</span>
           <span class="msg-time">${m.time}</span>
         </div>
-        <div class="msg-text">${m.text}</div>
+        <div class="msg-text" ondblclick="showQuickReact('${msgId}',event)">${m.text}</div>
+        <div class="reaction-bar" id="reactions-${msgId}" style="padding:0.15rem 0 0;min-height:0"></div>
       </div>
     </div>`;
   }).join('');
@@ -605,6 +633,116 @@ if('Notification' in window && Notification.permission === 'default'){
     });
   }
 })();
+
+
+/* ── EMOJI SYSTEM ── */
+const EMOJI_CATS = [
+  { icon:'😊', name:'Smileys', emojis:['😀','😂','🤣','😅','😊','😍','🥰','😘','😎','🤩','😏','😒','😢','😭','😤','😡','🥺','😳','🤔','🤗','😴','🤤','😷','🤒','🥳','🫡','😇','🤠','👻','🎭'] },
+  { icon:'❤️', name:'Hearts', emojis:['❤️','🧡','💛','💚','💙','💜','🖤','🤍','💔','❣️','💕','💞','💓','💗','💖','💘','💝','💟','♥️','🫀','💌','🫶','🤝','👏','🙌','🫂'] },
+  { icon:'🔥', name:'Hot', emojis:['🔥','💥','✨','⭐','🌟','💫','⚡','🌈','🎉','🎊','🎯','🏆','👑','💎','💰','🚀','🌙','☀️','🌊','🌸','🌺','🌹','🌻','🍀','🦋','🐝'] },
+  { icon:'👍', name:'Gestures', emojis:['👍','👎','👌','✌️','🤞','🤟','🤙','💪','🦾','👀','👁️','🫦','🤌','🫰','👋','🤚','🖐️','✋','🖖','👋','🤜','🤛','👊','✊','🤝','🙏','💅'] },
+  { icon:'🎵', name:'Music & Fun', emojis:['🎵','🎶','🎸','🎹','🎺','🎻','🥁','🎤','🎧','🎼','🎭','🎬','🎮','🕹️','🃏','🎲','🎯','🏅','🥇','🎪','🎠','🎡','🎢','🎪','🎨','🖼️'] },
+  { icon:'🍕', name:'Food', emojis:['🍕','🍔','🍟','🌮','🌯','🍜','🍝','🍣','🍱','🍦','🎂','🍰','🧁','🍩','🍫','☕','🧃','🥤','🍵','🧋','🥂','🍾','🍻','🥃','🍺','🎂'] },
+  { icon:'💅', name:'Vibe', emojis:['💅','👸','🤴','🧝','🧚','🧜','🦄','🐉','🌙','💫','🌠','🏔️','🌅','🌃','🏙️','🎆','🎇','🧨','💝','🎀','🛍️','👜','👠','💍','💄','🪞'] },
+];
+
+let emojiOpen = false;
+let currentCat = 0;
+
+function initEmoji(){
+  const tabs = document.getElementById('emojiTabs');
+  const grid = document.getElementById('emojiGrid');
+  if(!tabs || !grid) return;
+
+  /* Render tabs */
+  tabs.innerHTML = EMOJI_CATS.map((cat, i) =>
+    `<button class="etab${i===0?' on':''}" onclick="switchEmojiCat(${i},this)" title="${cat.name}">${cat.icon}</button>`
+  ).join('');
+
+  /* Render first category */
+  renderEmojiGrid(0);
+}
+
+function renderEmojiGrid(catIdx){
+  const grid = document.getElementById('emojiGrid');
+  if(!grid) return;
+  grid.innerHTML = EMOJI_CATS[catIdx].emojis.map(e =>
+    `<button class="eg-btn" onclick="insertEmoji('${e}')">${e}</button>`
+  ).join('');
+}
+
+function switchEmojiCat(idx, btn){
+  currentCat = idx;
+  document.querySelectorAll('.etab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  renderEmojiGrid(idx);
+}
+
+function toggleEmojiPanel(){
+  const panel = document.getElementById('emojiPanel');
+  if(!panel) return;
+  emojiOpen = !emojiOpen;
+  panel.classList.toggle('open', emojiOpen);
+  if(emojiOpen && !document.getElementById('emojiGrid').children.length){
+    initEmoji();
+  }
+}
+
+function insertEmoji(emoji){
+  const inp = document.getElementById('msgInput');
+  if(!inp) return;
+  const pos   = inp.selectionStart || inp.value.length;
+  inp.value   = inp.value.slice(0, pos) + emoji + inp.value.slice(pos);
+  inp.focus();
+  inp.setSelectionRange(pos + emoji.length, pos + emoji.length);
+}
+
+/* Close emoji panel on outside click */
+document.addEventListener('click', e => {
+  if(emojiOpen && !e.target.closest('.input-area')){
+    emojiOpen = false;
+    document.getElementById('emojiPanel')?.classList.remove('open');
+  }
+});
+
+/* ── MESSAGE REACTIONS ── */
+const msgReactions = {}; /* { msgId: { emoji: count } } */
+
+function addQuickReaction(msgId, emoji){
+  if(!msgReactions[msgId]) msgReactions[msgId] = {};
+  msgReactions[msgId][emoji] = (msgReactions[msgId][emoji]||0) + 1;
+  renderReactions(msgId);
+}
+
+function renderReactions(msgId){
+  const bar = document.getElementById('reactions-'+msgId);
+  if(!bar) return;
+  const r = msgReactions[msgId]||{};
+  bar.innerHTML = Object.entries(r).map(([e,n]) =>
+    `<button class="react-btn" onclick="addQuickReaction('${msgId}','${e}')">${e} <span style="font-size:0.7rem">${n}</span></button>`
+  ).join('');
+}
+
+/* Init */
+document.addEventListener('DOMContentLoaded', initEmoji);
+
+
+/* Quick react popup on double-tap */
+const QUICK_EMOJIS = ['❤️','🔥','😂','👏','😮','😢','💯','🙌'];
+function showQuickReact(msgId, e){
+  /* Remove existing popup */
+  document.querySelectorAll('.quick-react-popup').forEach(p=>p.remove());
+  const popup = document.createElement('div');
+  popup.className = 'quick-react-popup';
+  popup.style.cssText = 'position:fixed;background:#1a1510;border:1px solid rgba(255,255,255,0.15);border-radius:2rem;padding:0.4rem 0.5rem;display:flex;gap:0.25rem;z-index:200;box-shadow:0 4px 20px rgba(0,0,0,0.5)';
+  popup.style.left = Math.min(e.clientX - 80, window.innerWidth - 300)+'px';
+  popup.style.top  = (e.clientY - 56)+'px';
+  popup.innerHTML  = QUICK_EMOJIS.map(em =>
+    `<button onclick="addQuickReaction('${msgId}','${em}');this.closest('.quick-react-popup').remove()" style="background:none;border:none;cursor:pointer;font-size:1.4rem;padding:0.2rem;border-radius:50%;transition:transform .1s" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'">${em}</button>`
+  ).join('');
+  document.body.appendChild(popup);
+  setTimeout(()=>document.addEventListener('click',()=>popup.remove(),{once:true}), 50);
+}
 
 </script>
 </body>
