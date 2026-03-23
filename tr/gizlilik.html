@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Gizlilik Politikası — Kreatown</title>
+<meta name="description" content="Kreatown Gizlilik Politikası. Kişisel verilerinizi nasıl topladığımızı, kullandığımızı ve koruduğumuzu öğrenin."/>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<link rel="canonical" href="https://kreatown.com.tr/tr/gizlilik.html"/>
+<link rel="alternate" hreflang="tr" href="https://kreatown.com.tr/tr/gizlilik.html"/>
+<link rel="alternate" hreflang="en" href="https://kreatown.com/privacy.html"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Cabinet+Grotesk:wght@400;500;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#fffbf5;--bg2:#fff8ee;--black:#1a1612;
+  --orange:#f4732a;--orange-pale:#fff0e6;
+  --muted:#9c8878;--border:rgba(244,115,42,0.15);--card:#ffffff;
+  --font-display:'Cabinet Grotesk',sans-serif;
+  --font-body:'Nunito',sans-serif;--font-mono:'DM Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--black);font-family:var(--font-body);line-height:1.7;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(244,115,42,0.03) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 3rem;background:rgba(255,251,245,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--black);text-decoration:none;letter-spacing:-0.03em;}
+.nav-logo span{color:var(--orange);}
+.nav-links{display:flex;gap:1rem;align-items:center;}
+.nav-links a{font-size:0.85rem;font-weight:700;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+.nav-links a:hover{color:var(--orange);}
+.nav-cta{background:var(--orange);color:#fff!important;padding:0.5rem 1.2rem;border-radius:100px;font-weight:800!important;}
+.page{max-width:820px;margin:0 auto;padding:4rem 2rem 6rem;position:relative;z-index:1;}
+.doc-header{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--border);}
+.doc-tag{display:inline-flex;align-items:center;gap:0.4rem;background:var(--orange-pale);color:var(--orange);padding:0.3rem 0.9rem;border-radius:100px;font-size:0.72rem;font-weight:800;letter-spacing:0.04em;margin-bottom:1rem;}
+.doc-header h1{font-family:var(--font-display);font-size:clamp(2rem,4vw,2.8rem);font-weight:900;letter-spacing:-0.03em;line-height:1.1;margin-bottom:0.75rem;}
+.doc-meta{display:flex;gap:2rem;flex-wrap:wrap;}
+.doc-meta span{font-size:0.8rem;color:var(--muted);font-weight:600;font-family:var(--font-mono);}
+.highlight-box{background:var(--orange-pale);border:1px solid rgba(244,115,42,0.2);border-radius:12px;padding:1.1rem 1.3rem;margin-bottom:1rem;font-size:0.88rem;font-weight:600;color:var(--black);line-height:1.7;}
+.highlight-box strong{color:var(--orange);}
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.5rem 1.8rem;margin-bottom:3rem;}
+.toc h3{font-family:var(--font-display);font-size:0.85rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:1rem;}
+.toc ol{list-style:none;display:flex;flex-direction:column;gap:0.4rem;counter-reset:toc;}
+.toc li{counter-increment:toc;}
+.toc li::before{content:counter(toc)".";font-family:var(--font-mono);font-size:0.75rem;color:var(--orange);font-weight:700;margin-right:0.5rem;}
+.toc a{font-size:0.85rem;font-weight:700;color:var(--black);text-decoration:none;transition:color 0.2s;}
+.toc a:hover{color:var(--orange);}
+.section{margin-bottom:2.5rem;scroll-margin-top:80px;}
+.section h2{font-family:var(--font-display);font-size:1.3rem;font-weight:900;letter-spacing:-0.02em;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:2px solid var(--orange-pale);display:flex;align-items:center;gap:0.5rem;}
+.section h2 .num{font-family:var(--font-mono);font-size:0.75rem;font-weight:700;color:var(--orange);background:var(--orange-pale);padding:0.2rem 0.5rem;border-radius:6px;}
+.section p{font-size:0.92rem;color:#3a3028;line-height:1.8;margin-bottom:0.9rem;font-weight:500;}
+.section ul{padding-left:1.4rem;margin-bottom:0.9rem;}
+.section li{font-size:0.92rem;color:#3a3028;line-height:1.8;margin-bottom:0.3rem;font-weight:500;}
+.section strong{font-weight:800;color:var(--black);}
+.section a{color:var(--orange);text-decoration:none;font-weight:700;}
+.section a:hover{text-decoration:underline;}
+.data-table{width:100%;border-collapse:collapse;margin-bottom:1rem;font-size:0.85rem;}
+.data-table th{background:var(--bg2);font-weight:800;text-align:left;padding:0.7rem 0.9rem;border:1px solid var(--border);font-size:0.78rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);}
+.data-table td{padding:0.7rem 0.9rem;border:1px solid var(--border);vertical-align:top;line-height:1.5;color:#3a3028;font-weight:500;}
+.data-table tr:nth-child(even) td{background:var(--bg2);}
+.rights-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;}
+.right-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:0.9rem 1rem;}
+.right-card strong{display:block;font-size:0.85rem;font-weight:800;margin-bottom:0.25rem;}
+.right-card span{font-size:0.8rem;color:var(--muted);font-weight:600;line-height:1.5;}
+.contact-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.5rem 1.8rem;margin-top:3rem;display:flex;align-items:flex-start;gap:1rem;}
+.contact-icon{font-size:1.8rem;flex-shrink:0;}
+.contact-box h3{font-family:var(--font-display);font-size:1rem;font-weight:800;margin-bottom:0.3rem;}
+.contact-box p{font-size:0.85rem;color:var(--muted);font-weight:600;line-height:1.6;}
+.contact-box a{color:var(--orange);font-weight:700;text-decoration:none;}
+footer{background:var(--black);color:rgba(255,255,255,0.5);padding:2rem 3rem;text-align:center;font-size:0.82rem;position:relative;z-index:1;}
+footer a{color:rgba(255,255,255,0.5);text-decoration:none;margin:0 0.75rem;font-weight:600;}
+footer a:hover{color:#fff;}
+@media(max-width:768px){
+  nav{padding:1rem 1.5rem;}
+  .page{padding:2.5rem 1.25rem 4rem;}
+  .rights-grid{grid-template-columns:1fr;}
+  .data-table{display:block;overflow-x:auto;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../tr/index.html" class="nav-logo">Krea<span>town</span></a>
+  <div class="nav-links">
+    <a href="kullanim-sartlari.html">Kullanım Şartları</a>
+    <a href="kayit.html" class="nav-cta">Ücretsiz başla 🏡</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <div class="doc-header">
+    <div class="doc-tag">🔒 Yasal</div>
+    <h1>Gizlilik Politikası</h1>
+    <div class="doc-meta">
+      <span>Yürürlük tarihi: 24 Mart 2026</span>
+      <span>Son güncelleme: 24 Mart 2026</span>
+      <span>Sürüm 1.0</span>
+    </div>
+  </div>
+
+  <div class="highlight-box">
+    <strong>Özet:</strong> Platformu işletmek için yalnızca ihtiyaç duyduğumuz verileri topluyoruz: adınız, e-postanız, ödeme bilgileriniz ve kullanım verileriniz. Verilerinizi asla satmıyoruz. İstediğiniz zaman verilerinizin silinmesini talep edebilirsiniz. Supabase (veritabanı), Stripe (ödemeler), Cloudinary (medya) ve Pusher (mesajlaşma) kullanıyoruz. 6698 sayılı KVKK kapsamındaki haklarınız aşağıda açıklanmaktadır.
+  </div>
+
+  <div class="toc">
+    <h3>İçindekiler</h3>
+    <ol>
+      <li><a href="#p1">Biz kimiz</a></li>
+      <li><a href="#p2">Topladığımız veriler</a></li>
+      <li><a href="#p3">Verilerinizi nasıl kullanıyoruz</a></li>
+      <li><a href="#p4">Üçüncü taraf hizmetleri</a></li>
+      <li><a href="#p5">Çerezler ve izleme</a></li>
+      <li><a href="#p6">Veri saklama</a></li>
+      <li><a href="#p7">Haklarınız (KVKK)</a></li>
+      <li><a href="#p8">Çocukların gizliliği</a></li>
+      <li><a href="#p9">Uluslararası veri aktarımı</a></li>
+      <li><a href="#p10">Güvenlik</a></li>
+      <li><a href="#p11">Bu politikadaki değişiklikler</a></li>
+      <li><a href="#p12">İletişim ve veri talepleri</a></li>
+    </ol>
+  </div>
+
+  <div class="section" id="p1">
+    <h2><span class="num">01</span> Biz kimiz</h2>
+    <p>Kreatown ("biz", "bize", "bizim"), <strong>kreatown.com</strong> ve <strong>kreatown.com.tr</strong> adreslerinden erişilebilen içerik üreticisi üyelik platformunu işletmektedir. Kişisel verilerinizden sorumlu veri sorumlusu biziz.</p>
+    <p>Gizlilikle ilgili sorularınız için <a href="mailto:gizlilik@kreatown.com.tr">gizlilik@kreatown.com.tr</a> adresinden bize ulaşabilirsiniz.</p>
+  </div>
+
+  <div class="section" id="p2">
+    <h2><span class="num">02</span> Topladığımız veriler</h2>
+    <p>Aşağıdaki kategorilerdeki kişisel verileri topluyoruz:</p>
+    <table class="data-table">
+      <thead><tr><th>Kategori</th><th>Örnekler</th><th>Kaynak</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Hesap verileri</strong></td><td>Ad, e-posta adresi, kullanıcı adı, şifre (karma)</td><td>Doğrudan siz sağlıyorsunuz</td></tr>
+        <tr><td><strong>Profil verileri</strong></td><td>Biyografi, profil fotoğrafı, üretici sayfası içeriği</td><td>Doğrudan siz sağlıyorsunuz</td></tr>
+        <tr><td><strong>Ödeme verileri</strong></td><td>Fatura adresi, kartın son 4 hanesi, işlem geçmişi</td><td>Stripe (tam kart numaralarını görmüyoruz)</td></tr>
+        <tr><td><strong>Ödeme alma verileri</strong></td><td>Banka hesabı bilgileri, kimlik doğrulama verileri</td><td>Stripe Connect</td></tr>
+        <tr><td><strong>Kullanım verileri</strong></td><td>Ziyaret edilen sayfalar, kullanılan özellikler, oturum süresi, IP adresi</td><td>Otomatik olarak toplanır</td></tr>
+        <tr><td><strong>İletişim verileri</strong></td><td>Platform DM sistemi üzerinden gönderilen mesajlar</td><td>Doğrudan siz sağlıyorsunuz</td></tr>
+        <tr><td><strong>Cihaz verileri</strong></td><td>Tarayıcı türü, cihaz türü, işletim sistemi</td><td>Otomatik olarak toplanır</td></tr>
+      </tbody>
+    </table>
+    <p>Hassas kişisel veri (sağlık, ırk veya siyasi bilgi gibi) toplamıyoruz ve bu tür verileri platform üzerinden iletmenizi önermiyoruz.</p>
+  </div>
+
+  <div class="section" id="p3">
+    <h2><span class="num">03</span> Verilerinizi nasıl kullanıyoruz</h2>
+    <p>Kişisel verilerinizi aşağıdaki amaçlarla kullanıyoruz:</p>
+    <ul>
+      <li><strong>Hizmeti sunmak</strong> — hesabınızı oluşturmak ve yönetmek, abonelikleri ve ödemeleri işlemek, içerik iletmek;</li>
+      <li><strong>Güvenlik ve dolandırıcılık önleme</strong> — kötüye kullanımı, yetkisiz erişimi veya sahte işlemleri tespit etmek ve önlemek;</li>
+      <li><strong>İletişim</strong> — işlem e-postaları göndermek (makbuzlar, şifre sıfırlama, abonelik onayları);</li>
+      <li><strong>Platform geliştirme</strong> — özellikleri iyileştirmek ve hataları düzeltmek için kullanım kalıplarını analiz etmek;</li>
+      <li><strong>Yasal uyum</strong> — vergi ve finansal raporlama gereksinimleri dahil yasal yükümlülüklerimizi yerine getirmek;</li>
+      <li><strong>Müşteri desteği</strong> — sorularınıza yanıt vermek ve sorunları çözmek.</li>
+    </ul>
+    <p>Kişisel verilerinizi üçüncü taraflara <strong>satmıyoruz</strong>. Verilerinizi reklam profilleme amacıyla kullanmıyoruz.</p>
+  </div>
+
+  <div class="section" id="p4">
+    <h2><span class="num">04</span> Üçüncü taraf hizmetleri</h2>
+    <p>Verilerinizi bizim adımıza işleyebilecek aşağıdaki güvenilir üçüncü taraf hizmet sağlayıcılarla çalışıyoruz:</p>
+    <table class="data-table">
+      <thead><tr><th>Sağlayıcı</th><th>Amaç</th><th>Paylaşılan veri</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Supabase</strong></td><td>Veritabanı ve kimlik doğrulama</td><td>Hesap verileri, içerik, mesajlar</td></tr>
+        <tr><td><strong>Stripe</strong></td><td>Ödeme işleme ve üretici ödemeleri</td><td>Ödeme ve havale verileri</td></tr>
+        <tr><td><strong>Cloudinary</strong></td><td>Medya depolama ve dağıtım</td><td>Yüklenen görseller ve videolar</td></tr>
+        <tr><td><strong>Pusher</strong></td><td>Gerçek zamanlı mesajlaşma</td><td>Mesaj içeriği (aktarım sırasında)</td></tr>
+        <tr><td><strong>Resend</strong></td><td>İşlem e-postası</td><td>E-posta adresi, mesaj içeriği</td></tr>
+        <tr><td><strong>Vercel</strong></td><td>Barındırma ve CDN</td><td>IP adresi, kullanım günlükleri</td></tr>
+      </tbody>
+    </table>
+    <p>Her sağlayıcı, verilerinizi korumakla ve yalnızca belirlediğimiz amaçlar için kullanmakla sözleşmesel olarak yükümlüdür.</p>
+  </div>
+
+  <div class="section" id="p5">
+    <h2><span class="num">05</span> Çerezler ve izleme</h2>
+    <p>Hizmeti işletmek ve geliştirmek için çerezler ve benzeri izleme teknolojileri kullanıyoruz:</p>
+    <ul>
+      <li><strong>Zorunlu çerezler</strong> — Kimlik doğrulama ve güvenlik için gereklidir. Devre dışı bırakılamaz.</li>
+      <li><strong>İşlevsel çerezler</strong> — Tercihlerinizi hatırlar (dil, oturum durumu vb.).</li>
+      <li><strong>Analitik çerezler</strong> — Kullanıcıların platformla nasıl etkileşime girdiğini anlamamıza yardımcı olur. Siteler arası takip yapmayan gizlilik dostu analitik araçlar kullanıyoruz.</li>
+    </ul>
+    <p>Zorunlu olmayan çerezleri tarayıcı ayarlarınızdan kontrol edebilirsiniz. Belirli çerezlerin devre dışı bırakılması platform işlevselliğini etkileyebilir.</p>
+  </div>
+
+  <div class="section" id="p6">
+    <h2><span class="num">06</span> Veri saklama</h2>
+    <p>Kişisel verilerinizi hesabınız aktif olduğu sürece veya Hizmeti sunmak için gerektiği kadar saklarız:</p>
+    <ul>
+      <li><strong>Hesap verileri</strong> — hesabınız açık olduğu sürece ve hesap kurtarma imkânı tanımak amacıyla silindikten sonra 90 güne kadar saklanır;</li>
+      <li><strong>İşlem kayıtları</strong> — finansal ve vergi mevzuatına uymak için 10 yıl saklanır;</li>
+      <li><strong>Kullanım günlükleri</strong> — en fazla 12 ay saklanır;</li>
+      <li><strong>Mesajlar</strong> — konuşma mevcut olduğu sürece saklanır; hesap kapatıldığında silinir.</li>
+    </ul>
+    <p>İlgili saklama süresi dolduktan sonra verileriniz güvenli biçimde silinir veya anonimleştirilir.</p>
+  </div>
+
+  <div class="section" id="p7">
+    <h2><span class="num">07</span> Haklarınız (KVKK)</h2>
+    <p>6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) kapsamında kişisel verilerinize ilişkin aşağıdaki haklara sahipsiniz:</p>
+    <div class="rights-grid">
+      <div class="right-card"><strong>🔍 Bilgi edinme</strong><span>Hakkınızda tuttuğumuz kişisel verilerin bir kopyasını talep edin.</span></div>
+      <div class="right-card"><strong>✏️ Düzeltme</strong><span>Yanlış veya eksik verilerin düzeltilmesini talep edin.</span></div>
+      <div class="right-card"><strong>🗑️ Silme</strong><span>Kişisel verilerinizin silinmesini talep edin ("unutulma hakkı").</span></div>
+      <div class="right-card"><strong>📦 Taşınabilirlik</strong><span>Verilerinizi yapılandırılmış, makine tarafından okunabilir bir formatta alın.</span></div>
+      <div class="right-card"><strong>🚫 İtiraz</strong><span>Meşru menfaatlere dayalı işlemeye itiraz edin.</span></div>
+      <div class="right-card"><strong>⏸️ Kısıtlama</strong><span>Belirli koşullarda işlemenin kısıtlanmasını talep edin.</span></div>
+    </div>
+    <p>Bu haklardan herhangi birini kullanmak için <a href="mailto:gizlilik@kreatown.com.tr">gizlilik@kreatown.com.tr</a> adresine e-posta gönderin. 30 gün içinde yanıt vereceğiz. Ayrıca Kişisel Verileri Koruma Kurumu'na (KVKK) şikâyette bulunma hakkınız saklıdır.</p>
+  </div>
+
+  <div class="section" id="p8">
+    <h2><span class="num">08</span> Çocukların gizliliği</h2>
+    <p>Kreatown, 18 yaşın altındaki kişilere yönelik değildir. 18 yaşın altındaki bireylerden bilerek kişisel veri toplamıyoruz. Bir küçüğün hesap oluşturduğunu öğrenirsek ilgili verileri derhal sileriz. Bir küçüğün hesap açtığını düşünüyorsanız lütfen <a href="mailto:gizlilik@kreatown.com.tr">gizlilik@kreatown.com.tr</a> adresinden bize bildirin.</p>
+  </div>
+
+  <div class="section" id="p9">
+    <h2><span class="num">09</span> Uluslararası veri aktarımı</h2>
+    <p>Kreatown küresel ölçekte faaliyet göstermektedir. Verileriniz, ikamet ettiğiniz ülke dışındaki ülkelere, Amerika Birleşik Devletleri ve Avrupa Birliği üye devletleri dahil, aktarılabilir ve buralarda işlenebilir.</p>
+    <p>Uluslararası veri aktarımlarında standart sözleşme maddeleri veya yeterlilik kararları gibi uygun güvenceler sağlıyoruz. Türkiye'deki kullanıcılar için aktarımlar KVKK gerekliliklerine uygun olarak gerçekleştirilir.</p>
+  </div>
+
+  <div class="section" id="p10">
+    <h2><span class="num">10</span> Güvenlik</h2>
+    <p>Kişisel verilerinizi korumak için sektör standardı güvenlik önlemleri uyguluyoruz:</p>
+    <ul>
+      <li>Aktarımdaki tüm veriler için HTTPS şifrelemesi;</li>
+      <li>Karma ve tuzlanmış şifre depolama (düz metin şifreler hiçbir zaman saklanmaz);</li>
+      <li>Kullanıcıların yalnızca kendi verilerine erişebilmesini sağlayan veritabanı düzeyinde satır güvenliği;</li>
+      <li>Düzenli güvenlik incelemeleri ve bağımlılık güncellemeleri.</li>
+    </ul>
+    <p>İnternet üzerinden veri iletiminin %100 güvenli olduğu söylenemez. Verilerinizi korumak için çaba göstermekle birlikte mutlak güvenliği garanti edemeyiz. Bir güvenlik ihlali şüphesi durumunda lütfen derhal <a href="mailto:guvenlik@kreatown.com.tr">guvenlik@kreatown.com.tr</a> adresinden bize bildirin.</p>
+  </div>
+
+  <div class="section" id="p11">
+    <h2><span class="num">11</span> Bu politikadaki değişiklikler</h2>
+    <p>Bu Gizlilik Politikasını zaman zaman güncelleyebiliriz. Önemli değişiklikleri yürürlüğe girmesinden en az 14 gün önce e-posta veya platform üzerindeki bir bildirim aracılığıyla size bildireceğiz.</p>
+    <p>Değişikliklerin yürürlük tarihinden sonra Hizmeti kullanmaya devam etmeniz, güncellenmiş politikayı kabul ettiğiniz anlamına gelir.</p>
+  </div>
+
+  <div class="section" id="p12">
+    <h2><span class="num">12</span> İletişim ve veri talepleri</h2>
+    <p>Gizlilikle ilgili sorularınız, veri erişim talepleriniz veya haklarınızı kullanmak için lütfen aşağıdaki adreslerden bize ulaşın:</p>
+  </div>
+
+  <div class="contact-box">
+    <div class="contact-icon">🔒</div>
+    <div>
+      <h3>Kreatown Gizlilik Ekibi</h3>
+      <p>
+        Gizlilik talepleri: <a href="mailto:gizlilik@kreatown.com.tr">gizlilik@kreatown.com.tr</a><br/>
+        Güvenlik sorunları: <a href="mailto:guvenlik@kreatown.com.tr">guvenlik@kreatown.com.tr</a><br/>
+        Genel: <a href="mailto:merhaba@kreatown.com.tr">merhaba@kreatown.com.tr</a><br/>
+        Web sitesi: <a href="https://kreatown.com.tr">kreatown.com.tr</a>
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div style="margin-bottom:0.75rem;">
+    <a href="index.html">Ana Sayfa</a>
+    <a href="kullanim-sartlari.html">Şartlar</a>
+    <a href="gizlilik.html">Gizlilik</a>
+    <a href="mailto:merhaba@kreatown.com.tr">İletişim</a>
+    <a href="../../privacy.html">🌍 English</a>
+  </div>
+  <div>© 2026 Kreatown. Üreticilerin evi.</div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Giriş Yap — Kreatown</title>
+<meta name="description" content="Kreatown hesabına giriş yap ve şehrinde neler olduğunu gör."/>
+<meta property="og:title" content="Giriş Yap — Kreatown"/>
+<meta property="og:image" content="https://kreatown.com.tr/og-image.png"/>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<link rel="canonical" href="https://kreatown.com.tr/tr/giris.html"/>
+<link rel="alternate" hreflang="tr" href="https://kreatown.com.tr/tr/giris.html"/>
+<link rel="alternate" hreflang="en" href="https://kreatown.com/login.html"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Cabinet+Grotesk:wght@400;500;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#fffbf5;--bg2:#fff8ee;--black:#1a1612;
+  --orange:#f4732a;--orange-light:#ff9555;--orange-pale:#fff0e6;
+  --yellow:#fbbf24;--green:#22c55e;--green-pale:#f0fdf4;
+  --red:#ef4444;
+  --muted:#9c8878;--border:rgba(244,115,42,0.15);--card:#ffffff;
+  --input-border:rgba(26,22,18,0.15);
+  --font-display:'Cabinet Grotesk',sans-serif;
+  --font-body:'Nunito',sans-serif;--font-mono:'DM Mono',monospace;
+  --shadow:0 4px 24px rgba(244,115,42,0.08);
+  --shadow-lg:0 12px 48px rgba(244,115,42,0.14);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--black);font-family:var(--font-body);min-height:100vh;display:flex;flex-direction:column;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(244,115,42,0.04) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 3rem;background:rgba(255,251,245,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:relative;z-index:10;}
+.nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--black);text-decoration:none;letter-spacing:-0.03em;}
+.nav-logo span{color:var(--orange);}
+.nav-right{display:flex;align-items:center;gap:1rem;font-size:0.85rem;}
+.nav-right a{color:var(--muted);text-decoration:none;font-weight:700;transition:color 0.2s;}
+.nav-right a:hover{color:var(--orange);}
+.signup-btn{background:var(--orange);color:#fff!important;padding:0.5rem 1.2rem;border-radius:100px;font-weight:800!important;transition:all 0.2s;box-shadow:0 4px 12px rgba(244,115,42,0.3);}
+.signup-btn:hover{background:var(--orange-light)!important;transform:translateY(-1px);}
+.page{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 65px);position:relative;z-index:1;}
+.left-panel{background:linear-gradient(145deg,#1a1612 0%,#2d1f14 100%);padding:4rem 3.5rem;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;}
+.left-panel::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(244,115,42,0.08) 1px,transparent 1px);background-size:28px 28px;}
+.left-blob{position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(244,115,42,0.12) 0%,transparent 70%);bottom:-150px;right:-150px;border-radius:50%;}
+.left-content{position:relative;z-index:1;}
+.left-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(244,115,42,0.15);color:var(--orange);border:1px solid rgba(244,115,42,0.3);padding:0.4rem 1rem;border-radius:100px;font-size:0.75rem;font-weight:800;letter-spacing:0.04em;margin-bottom:2rem;}
+.left-panel h2{font-family:var(--font-display);font-size:clamp(1.8rem,3vw,2.6rem);font-weight:900;color:#fff;line-height:1.1;letter-spacing:-0.03em;margin-bottom:0.6rem;}
+.left-panel h2 span{color:var(--orange);}
+.left-panel>div>p{font-size:0.9rem;color:rgba(255,255,255,0.5);font-weight:600;margin-bottom:2.5rem;}
+.activity-feed{display:flex;flex-direction:column;gap:0.75rem;margin-bottom:2.5rem;}
+.activity-item{display:flex;align-items:center;gap:0.9rem;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:0.9rem 1.1rem;animation:slideIn 0.4s ease both;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-12px);}to{opacity:1;transform:translateX(0);}}
+.act-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.act-av1{background:linear-gradient(135deg,#f4732a,#fbbf24);}
+.act-av2{background:linear-gradient(135deg,#60a5fa,#a78bfa);}
+.act-av3{background:linear-gradient(135deg,#34d399,#22c55e);}
+.act-text{flex:1;}
+.act-text strong{display:block;font-size:0.82rem;font-weight:800;color:#fff;margin-bottom:0.1rem;}
+.act-text span{font-size:0.72rem;color:rgba(255,255,255,0.45);font-weight:600;}
+.act-badge{font-size:0.65rem;font-weight:800;padding:0.25rem 0.6rem;border-radius:100px;white-space:nowrap;font-family:var(--font-mono);}
+.act-b1{background:rgba(244,115,42,0.2);color:var(--orange);}
+.act-b2{background:rgba(168,139,250,0.2);color:#a78bfa);}
+.act-b3{background:rgba(52,211,153,0.2);color:#34d399;}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;}
+.stat-box{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:1rem;text-align:center;}
+.stat-val{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:#fff;line-height:1;}
+.stat-lbl{font-size:0.65rem;color:rgba(255,255,255,0.4);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-top:0.3rem;}
+.right-panel{padding:3rem 3.5rem;display:flex;flex-direction:column;justify-content:center;}
+.form-wrap{max-width:420px;width:100%;margin:0 auto;}
+.form-header{margin-bottom:2rem;}
+.form-header h1{font-family:var(--font-display);font-size:2rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.4rem;}
+.form-header p{font-size:0.88rem;color:var(--muted);font-weight:600;}
+.form-header p a{color:var(--orange);text-decoration:none;font-weight:800;}
+.form-header p a:hover{text-decoration:underline;}
+.oauth-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1.5rem;}
+.oauth-btn{display:flex;align-items:center;justify-content:center;gap:0.6rem;padding:0.75rem;border-radius:12px;border:1.5px solid var(--input-border);background:var(--card);font-size:0.85rem;font-weight:700;color:var(--black);cursor:pointer;transition:all 0.2s;font-family:var(--font-body);}
+.oauth-btn:hover{border-color:var(--orange);background:var(--orange-pale);}
+.oauth-icon{width:20px;height:20px;flex-shrink:0;}
+.divider{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.divider span{font-size:0.75rem;color:var(--muted);font-weight:700;white-space:nowrap;}
+.field{margin-bottom:1.1rem;}
+.field label{display:flex;align-items:center;justify-content:space-between;font-size:0.78rem;font-weight:800;color:var(--black);margin-bottom:0.4rem;}
+.field label a{font-weight:700;color:var(--muted);text-decoration:none;font-size:0.75rem;transition:color 0.2s;}
+.field label a:hover{color:var(--orange);}
+.field-wrap{position:relative;}
+.field input{width:100%;padding:0.85rem 1rem 0.85rem 2.6rem;border:1.5px solid var(--input-border);border-radius:12px;font-family:var(--font-body);font-size:0.9rem;font-weight:600;color:var(--black);background:var(--card);transition:all 0.2s;outline:none;}
+.field input:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(244,115,42,0.12);}
+.field input.error{border-color:var(--red);box-shadow:0 0 0 3px rgba(239,68,68,0.1);}
+.field input.success{border-color:var(--green);}
+.field-icon{position:absolute;left:0.85rem;top:50%;transform:translateY(-50%);font-size:0.9rem;pointer-events:none;}
+.field-suffix{position:absolute;right:0.85rem;top:50%;transform:translateY(-50%);font-size:0.78rem;font-weight:700;color:var(--muted);cursor:pointer;user-select:none;}
+.field-suffix:hover{color:var(--orange);}
+.field-error{font-size:0.72rem;color:var(--red);font-weight:700;margin-top:0.35rem;display:none;}
+.field-error.show{display:block;}
+.error-banner{display:none;background:#fff0f0;border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:0.75rem 1rem;font-size:0.82rem;font-weight:700;color:var(--red);margin-bottom:1.2rem;text-align:center;}
+.error-banner.show{display:block;}
+.remember-row{display:flex;align-items:center;gap:0.65rem;margin-bottom:1.5rem;}
+.remember-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--orange);cursor:pointer;}
+.remember-row label{font-size:0.82rem;font-weight:600;color:var(--muted);cursor:pointer;}
+.submit-btn{width:100%;padding:0.95rem;background:var(--orange);color:#fff;border:none;border-radius:14px;font-family:var(--font-body);font-size:1rem;font-weight:800;cursor:pointer;transition:all 0.2s;box-shadow:0 6px 20px rgba(244,115,42,0.35);display:flex;align-items:center;justify-content:center;gap:0.5rem;}
+.submit-btn:hover{background:var(--orange-light);transform:translateY(-1px);}
+.submit-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.divider-or{display:flex;align-items:center;gap:1rem;margin:1.2rem 0;}
+.divider-or::before,.divider-or::after{content:'';flex:1;height:1px;background:var(--border);}
+.divider-or span{font-size:0.72rem;color:var(--muted);font-weight:700;}
+.signup-prompt{text-align:center;padding:1rem;background:var(--bg2);border-radius:12px;border:1px solid var(--border);}
+.signup-prompt p{font-size:0.85rem;color:var(--muted);font-weight:600;}
+.signup-prompt a{color:var(--orange);text-decoration:none;font-weight:800;}
+#oauth-notice{display:none;background:var(--orange-pale);border:1px solid rgba(244,115,42,0.2);border-radius:10px;padding:0.7rem 1rem;font-size:0.8rem;font-weight:700;color:var(--orange);margin-bottom:1rem;text-align:center;}
+.success-overlay{display:none;text-align:center;padding:2rem 0;}
+.success-overlay.show{display:block;}
+.success-icon{font-size:3rem;margin-bottom:1rem;animation:pop 0.4s ease;}
+@keyframes pop{0%{transform:scale(0.5);}70%{transform:scale(1.15);}100%{transform:scale(1);}}
+.success-overlay h2{font-family:var(--font-display);font-size:1.7rem;font-weight:900;letter-spacing:-0.02em;margin-bottom:0.4rem;}
+.success-overlay p{font-size:0.88rem;color:var(--muted);font-weight:600;}
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem;}
+  .page{grid-template-columns:1fr;}
+  .left-panel{display:none;}
+  .right-panel{padding:2rem 1.5rem;}
+}
+@media(max-width:480px){.oauth-row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../tr/index.html" class="nav-logo">Krea<span>town</span></a>
+  <div class="nav-right">
+    <span style="font-size:0.85rem;color:var(--muted);font-weight:600;">Yeni misin?</span>
+    <a href="kayit.html" class="signup-btn">Ücretsiz başla 🏡</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- LEFT -->
+  <div class="left-panel">
+    <div class="left-blob"></div>
+    <div class="left-content">
+      <div class="left-badge">🏡 Şehrine hoş geldin</div>
+      <h2>Hayranların bekliyor.<br><span>Dünyan canlı.</span></h2>
+      <p>Giriş yap ve şimdiki an şehrinde neler olduğunu gör.</p>
+
+      <div class="activity-feed">
+        <div class="activity-item" style="animation-delay:0s;">
+          <div class="act-avatar act-av1">🎨</div>
+          <div class="act-text">
+            <strong>Topraq yeni video paylaştı</strong>
+            <span>2 dakika önce · Seviye 3 Villa</span>
+          </div>
+          <div class="act-badge act-b1">🏘️ Villa</div>
+        </div>
+        <div class="activity-item" style="animation-delay:0.1s;">
+          <div class="act-avatar act-av2">🌸</div>
+          <div class="act-text">
+            <strong>Selin K. Altın üye oldu</strong>
+            <span>5 dakika önce · +₺890/ay</span>
+          </div>
+          <div class="act-badge act-b2">👑 Altın</div>
+        </div>
+        <div class="activity-item" style="animation-delay:0.2s;">
+          <div class="act-avatar act-av3">🎸</div>
+          <div class="act-text">
+            <strong>Cem A. Gümüş'e abone oldu</strong>
+            <span>12 dakika önce · +₺299/ay</span>
+          </div>
+          <div class="act-badge act-b3">⭐ Gümüş</div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-val">2.4B</div>
+          <div class="stat-lbl">Aktif üye</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">₺452k</div>
+          <div class="stat-lbl">Bu ay ödenen</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">99%</div>
+          <div class="stat-lbl">Çalışma süresi</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right-panel">
+    <div class="form-wrap">
+
+      <div class="form-header">
+        <h1>Tekrar hoş geldin 👋</h1>
+        <p>Kreatown'da yeni misin? <a href="kayit.html">Hesap oluştur →</a></p>
+      </div>
+
+      <div class="oauth-row">
+        <button class="oauth-btn" onclick="oauthNotice()" type="button">
+          <svg class="oauth-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Google ile giriş
+        </button>
+        <button class="oauth-btn" onclick="oauthNotice()" type="button">
+          <svg class="oauth-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          Apple ile giriş
+        </button>
+      </div>
+      <div id="oauth-notice">Sosyal giriş çok yakında — şimdilik e-posta ile devam et 👇</div>
+
+      <div class="divider"><span>veya e-posta ile giriş yap</span></div>
+
+      <div class="error-banner" id="error-banner">E-posta veya şifre hatalı. Lütfen tekrar dene.</div>
+
+      <div class="field">
+        <label for="email">E-posta adresi</label>
+        <div class="field-wrap">
+          <span class="field-icon">✉️</span>
+          <input type="email" id="email" placeholder="sen@ornek.com" autocomplete="email"/>
+        </div>
+        <div class="field-error" id="err-email">Geçerli bir e-posta adresi gir.</div>
+      </div>
+
+      <div class="field">
+        <label for="password">
+          Şifre
+          <a href="sifremi-unuttum.html">Şifremi unuttum?</a>
+        </label>
+        <div class="field-wrap">
+          <span class="field-icon">🔒</span>
+          <input type="password" id="password" placeholder="Şifren" autocomplete="current-password"/>
+          <span class="field-suffix" onclick="togglePassword()">Göster</span>
+        </div>
+        <div class="field-error" id="err-password">Şifreni gir.</div>
+      </div>
+
+      <div class="remember-row">
+        <input type="checkbox" id="remember" checked/>
+        <label for="remember">Beni hatırla</label>
+      </div>
+
+      <button class="submit-btn" id="loginBtn" onclick="handleLogin()">
+        Kreatown'a giriş yap →
+      </button>
+
+      <div class="divider-or"><span>hesabın yok mu?</span></div>
+
+      <div class="signup-prompt">
+        <p>Kreatown'da yeni misin? <a href="kayit.html">Ücretsiz başla 🏡</a> — kredi kartı gerekmez.</p>
+      </div>
+
+      <div class="success-overlay" id="successOverlay">
+        <div class="success-icon">✅</div>
+        <h2>Giriş yapıldı!</h2>
+        <p>Paneline yönlendiriliyorsun…<br/><span id="countdown" style="font-family:var(--font-mono);font-size:0.8rem;color:var(--muted);">3 saniye içinde yönlendiriliyorsun</span></p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function oauthNotice(){
+  const n=document.getElementById('oauth-notice');
+  n.style.display='block';
+  setTimeout(()=>n.style.display='none',4000);
+}
+function togglePassword(){
+  const f=document.getElementById('password');
+  const s=document.querySelector('.field-suffix');
+  if(f.type==='password'){f.type='text';s.textContent='Gizle';}
+  else{f.type='password';s.textContent='Göster';}
+}
+function handleLogin(){
+  document.getElementById('error-banner').classList.remove('show');
+  ['email','password'].forEach(id=>{
+    document.getElementById(id).classList.remove('error','success');
+    document.getElementById('err-'+id).classList.remove('show');
+  });
+  const email=document.getElementById('email').value.trim();
+  const password=document.getElementById('password').value;
+  let ok=true;
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    document.getElementById('email').classList.add('error');
+    document.getElementById('err-email').classList.add('show');
+    ok=false;
+  } else {
+    document.getElementById('email').classList.add('success');
+  }
+  if(!password){
+    document.getElementById('password').classList.add('error');
+    document.getElementById('err-password').classList.add('show');
+    ok=false;
+  }
+  if(!ok)return;
+  const btn=document.getElementById('loginBtn');
+  btn.disabled=true;
+  btn.textContent='Giriş yapılıyor…';
+  setTimeout(()=>{
+    btn.style.display='none';
+    document.querySelector('.divider-or').style.display='none';
+    document.querySelector('.signup-prompt').style.display='none';
+    document.querySelectorAll('.field').forEach(f=>f.style.display='none');
+    document.querySelector('.remember-row').style.display='none';
+    document.getElementById('error-banner').style.display='none';
+    document.getElementById('oauth-notice').style.display='none';
+    document.querySelector('.oauth-row').style.display='none';
+    document.querySelector('.divider').style.display='none';
+    document.querySelector('.form-header').style.display='none';
+    const overlay=document.getElementById('successOverlay');
+    overlay.classList.add('show');
+    let t=3;
+    const cd=document.getElementById('countdown');
+    const iv=setInterval(()=>{
+      t--;
+      cd.textContent=t+' saniye içinde yönlendiriliyorsun';
+      if(t<=0){clearInterval(iv);window.location.href='dashboard.html';}
+    },1000);
+  },1400);
+}
+document.querySelectorAll('input[type=email],input[type=password]').forEach(el=>{
+  el.addEventListener('input',()=>{
+    el.classList.remove('error');
+    const err=document.getElementById('err-'+el.id);
+    if(err)err.classList.remove('show');
+    document.getElementById('error-banner').classList.remove('show');
+  });
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter')handleLogin();
+});
+</script>
+</body>
+</html>
