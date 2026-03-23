@@ -342,7 +342,7 @@ const ROOMS=[
   {id:'pool',icon:'🌊',name:'Thermal Pool',name_tr:'Termal Havuz',tier:'palace',tierLabel:'🏯 Palace',tierLabel_tr:'🏯 Saray',bg:'rooms/pool.jpg',bgPos:'center 25%',bgSize:'cover',atm:'Marble columns · Golden underwater glow · Steam rising',atm_tr:'Mermer sütunlar · Altın su ışığı · Yükselen buhar',atmColor:'#4ecdc4',online:2,desc:'Palace members only — the most exclusive space',desc_tr:'Yalnızca Saray üyeleri — en özel alan',particles:['#4ecdc4','#7c5cbf','#a8edea'],messages:[]}
 ]
 const TIER_ORDER=['free','silver','gold','palace']
-const MY_TIER='palace'
+// MY_TIER replaced by getMyTier()
 const LOCK_CONFIG={
   silver:{icon:'⭐',
     title:'Silver Members Only', title_tr:'Yalnızca Gümüş Üyeler',
@@ -364,6 +364,15 @@ const LOCK_CONFIG={
     btnText:'🏯 Enter the Palace · $49/mo', btnText_tr:'🏯 Saraya Gir · $49/ay'}
 }
 let currentRoom='lobby'
+/* Read real tier from session — all rooms currently free so this just future-proofs */
+function getMyTier(){
+  try{
+    const p=JSON.parse(localStorage.getItem('kt_profile')||'{}');
+    const s=JSON.parse(localStorage.getItem('kt_session')||'{}');
+    if(p.is_admin||s.is_admin) return 'palace';
+    return p.tier||'free';
+  }catch(e){return 'free';}
+}
 function createParticles(colors){const c=document.getElementById('particles');c.innerHTML='';for(let i=0;i<18;i++){const p=document.createElement('div');p.className='particle';const s=Math.random()*4+2;p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${Math.random()*8+6}s;animation-delay:${Math.random()*6}s;`;c.appendChild(p)}}
 function getLang(){return localStorage.getItem('kt_lang')||'en';}
 function rn(r){return getLang()==='tr'&&r.name_tr?r.name_tr:r.name;}
@@ -371,7 +380,7 @@ function rtl(r){return getLang()==='tr'&&r.tierLabel_tr?r.tierLabel_tr:r.tierLab
 function ratm(r){return getLang()==='tr'&&r.atm_tr?r.atm_tr:r.atm;}
 function rdesc(r){return getLang()==='tr'&&r.desc_tr?r.desc_tr:r.desc;}
 
-function renderRooms(){document.getElementById('roomList').innerHTML=ROOMS.map(r=>{const locked=TIER_ORDER.indexOf(MY_TIER)<TIER_ORDER.indexOf(r.tier);const active=r.id===currentRoom;return`<div class="room-item${active?' active':''}${locked?' locked':''}" onclick="selectRoom('${r.id}')"><span class="room-icon">${r.icon}</span><div class="room-info"><div class="room-name">${rn(r)}</div><div class="room-tier">${rtl(r)}</div></div><span class="room-count">${r.online}</span>${active&&!locked?'<div class="online-dot"></div>':''}</div>`}).join('')}
+function renderRooms(){document.getElementById('roomList').innerHTML=ROOMS.map(r=>{const locked=TIER_ORDER.indexOf(getMyTier())<TIER_ORDER.indexOf(r.tier);const active=r.id===currentRoom;return`<div class="room-item${active?' active':''}${locked?' locked':''}" onclick="selectRoom('${r.id}')"><span class="room-icon">${r.icon}</span><div class="room-info"><div class="room-name">${rn(r)}</div><div class="room-tier">${rtl(r)}</div></div><span class="room-count">${r.online}</span>${active&&!locked?'<div class="online-dot"></div>':''}</div>`}).join('')}
 function renderMessages(room, isNew=false){
   if(isNew) {
     /* Play sound - only if AudioContext is ready (user has interacted) */
@@ -411,7 +420,7 @@ function renderMessages(room, isNew=false){
   }).join('');
   setTimeout(()=>{c.scrollTop=c.scrollHeight},100);
 }
-function selectRoom(id){const room=ROOMS.find(r=>r.id===id);const locked=TIER_ORDER.indexOf(MY_TIER)<TIER_ORDER.indexOf(room.tier);if(locked){const cfg=LOCK_CONFIG[room.tier];const lang=getLang();
+function selectRoom(id){const room=ROOMS.find(r=>r.id===id);const locked=TIER_ORDER.indexOf(getMyTier())<TIER_ORDER.indexOf(room.tier);if(locked){const cfg=LOCK_CONFIG[room.tier];const lang=getLang();
     document.getElementById('lockIcon').textContent=cfg.icon;
     document.getElementById('lockTitle').textContent=lang==='tr'&&cfg.title_tr?cfg.title_tr:cfg.title;
     document.getElementById('lockDesc').textContent=lang==='tr'&&cfg.desc_tr?cfg.desc_tr:cfg.desc;
@@ -425,8 +434,7 @@ function selectRoom(id){const room=ROOMS.find(r=>r.id===id);const locked=TIER_OR
   renderRooms();
   createParticles(room.particles);
   /* Reset message tracking for fresh load */
-  const room = ROOMS.find(r=>r.id===id);
-  if(room){ room.messages=[]; room._knownIds=new Set(); room._profileCache={}; }
+  room.messages=[]; room._knownIds=new Set(); room._profileCache={};
   /* Show loading state */
   const msgEl=document.getElementById('messages');
   if(msgEl)msgEl.innerHTML='<div style="padding:2rem;text-align:center;color:rgba(255,255,255,0.25);font-size:0.8rem">Loading messages…</div>';
@@ -629,19 +637,32 @@ if('Notification' in window && Notification.permission === 'default'){
   setTimeout(()=>Notification.requestPermission(), 3000);
 }
 
-/* Load user profile for sidebar */
+/* Load user profile for sidebar — fetch from Supabase if not cached */
 (async()=>{
   try{
     const s=JSON.parse(localStorage.getItem('kt_session')||'{}');
-    const p=JSON.parse(localStorage.getItem('kt_profile')||'{}');
-    if(p.display_name||p.username){
-      const nm=document.getElementById('sidebarName');
-      const tr=document.getElementById('sidebarTier');
-      const av=document.getElementById('sidebarAv');
-      if(nm)nm.textContent=p.display_name||p.username;
-      if(tr){const tl={palace:'🏯 Palace',gold:'👑 Gold',silver:'⭐ Silver',free:'🌱 Free'};tr.textContent=tl[p.tier||'free'];}
-      if(av&&p.avatar_url)av.innerHTML='<img src="'+p.avatar_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+    let p=JSON.parse(localStorage.getItem('kt_profile')||'{}');
+
+    /* If profile not cached, fetch it */
+    if((!p.display_name&&!p.username) && s.access_token){
+      const uid=s.user_id||s.id;
+      const res=await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+uid+'&select=*',{
+        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+s.access_token}
+      });
+      const data=await res.json();
+      if(data[0]){
+        p=data[0];
+        localStorage.setItem('kt_profile',JSON.stringify(p));
+      }
     }
+
+    const nm=document.getElementById('sidebarName');
+    const tr=document.getElementById('sidebarTier');
+    const av=document.getElementById('sidebarAv');
+    if(nm&&(p.display_name||p.username)) nm.textContent=p.display_name||p.username;
+    if(tr){const tl={palace:'🏯 Palace',gold:'👑 Gold',silver:'⭐ Silver',free:'🌱 Free'};tr.textContent=tl[p.tier||'free'];}
+    if(av&&p.avatar_url)av.innerHTML='<img src="'+p.avatar_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+
     /* Smart back link */
     const ref=document.referrer;
     const bl=document.getElementById('backLink');
@@ -649,9 +670,9 @@ if('Notification' in window && Notification.permission === 'default'){
       if(ref.includes('dashboard.html'))bl.href='dashboard.html';
       else if(ref.includes('member-dashboard'))bl.href='member-dashboard.html';
       else if(ref.includes('feed.html'))bl.href='feed.html';
-      else bl.href=p.is_admin?'dashboard.html':'member-dashboard.html';
+      else bl.href=p.is_admin?'creator-dashboard.html':'member-dashboard.html';
     }
-  }catch(e){}
+  }catch(e){ console.log('Sidebar profile error:',e); }
 })();
 
 /* ── iOS/MOBILE KEYBOARD FIX ── */
