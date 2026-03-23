@@ -1,236 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Privacy Policy — KreaTown</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --orange: #f4732a;
-      --orange-light: #ff9555;
-      --orange-pale: #fff0e6;
-      --cream: #fffbf5;
-      --brown: #1a1612;
-      --muted: #9c8878;
-      --border: #ede8e3;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Nunito', sans-serif;
-      background: var(--cream);
-      color: var(--brown);
-      line-height: 1.8;
-    }
-
-    /* NAV */
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.2rem 2rem;
-      border-bottom: 1px solid var(--border);
-      background: var(--cream);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .nav-logo {
-      font-family: 'Cabinet Grotesk', sans-serif;
-      font-weight: 800;
-      font-size: 1.4rem;
-      color: var(--brown);
-      text-decoration: none;
-    }
-    .nav-logo span { color: var(--orange); }
-    .nav-back {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    .nav-back:hover { color: var(--orange); }
-
-    /* HERO */
-    .hero {
-      background: var(--orange-pale);
-      border-bottom: 1px solid var(--border);
-      padding: 4rem 2rem 3rem;
-      text-align: center;
-    }
-    .hero-badge {
-      display: inline-block;
-      background: var(--orange);
-      color: white;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 0.3rem 0.9rem;
-      border-radius: 999px;
-      margin-bottom: 1.2rem;
-    }
-    .hero h1 {
-      font-family: 'Cabinet Grotesk', sans-serif;
-      font-size: clamp(2rem, 5vw, 3rem);
-      font-weight: 800;
-      margin-bottom: 0.8rem;
-    }
-    .hero p {
-      color: var(--muted);
-      font-size: 1rem;
-      font-weight: 500;
-    }
-
-    /* CONTENT */
-    .container {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 3rem 2rem 5rem;
-    }
-    .section {
-      margin-bottom: 2.5rem;
-      padding-bottom: 2.5rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .section:last-child { border-bottom: none; }
-    .section h2 {
-      font-family: 'Cabinet Grotesk', sans-serif;
-      font-size: 1.25rem;
-      font-weight: 800;
-      margin-bottom: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .section h2 .icon {
-      width: 28px;
-      height: 28px;
-      background: var(--orange-pale);
-      border-radius: 8px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.9rem;
-    }
-    .section p { color: #3d3530; margin-bottom: 0.8rem; font-size: 0.97rem; }
-    .section ul {
-      list-style: none;
-      padding: 0;
-      margin: 0.5rem 0;
-    }
-    .section ul li {
-      padding: 0.3rem 0 0.3rem 1.4rem;
-      position: relative;
-      color: #3d3530;
-      font-size: 0.97rem;
-    }
-    .section ul li::before {
-      content: '→';
-      position: absolute;
-      left: 0;
-      color: var(--orange);
-      font-weight: 700;
-    }
-
-    /* FOOTER */
-    footer {
-      text-align: center;
-      padding: 2rem;
-      border-top: 1px solid var(--border);
-      font-size: 0.85rem;
-      color: var(--muted);
-      font-weight: 600;
-    }
-    footer a { color: var(--orange); text-decoration: none; }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Privacy Policy — Kreatown</title>
+<meta name="description" content="Kreatown Privacy Policy. Learn how we collect, use, and protect your personal data."/>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<link rel="canonical" href="https://kreatown.com/privacy.html"/>
+<link rel="alternate" hreflang="en" href="https://kreatown.com/privacy.html"/>
+<link rel="alternate" hreflang="tr" href="https://kreatown.com.tr/tr/gizlilik.html"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Cabinet+Grotesk:wght@400;500;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#fffbf5;--bg2:#fff8ee;--black:#1a1612;
+  --orange:#f4732a;--orange-pale:#fff0e6;
+  --muted:#9c8878;--border:rgba(244,115,42,0.15);--card:#ffffff;
+  --font-display:'Cabinet Grotesk',sans-serif;
+  --font-body:'Nunito',sans-serif;--font-mono:'DM Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--black);font-family:var(--font-body);line-height:1.7;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(244,115,42,0.03) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 3rem;background:rgba(255,251,245,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--black);text-decoration:none;letter-spacing:-0.03em;}
+.nav-logo span{color:var(--orange);}
+.nav-links{display:flex;gap:1rem;align-items:center;}
+.nav-links a{font-size:0.85rem;font-weight:700;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+.nav-links a:hover{color:var(--orange);}
+.nav-cta{background:var(--orange);color:#fff!important;padding:0.5rem 1.2rem;border-radius:100px;font-weight:800!important;}
+.page{max-width:820px;margin:0 auto;padding:4rem 2rem 6rem;position:relative;z-index:1;}
+.doc-header{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--border);}
+.doc-tag{display:inline-flex;align-items:center;gap:0.4rem;background:var(--orange-pale);color:var(--orange);padding:0.3rem 0.9rem;border-radius:100px;font-size:0.72rem;font-weight:800;letter-spacing:0.04em;margin-bottom:1rem;}
+.doc-header h1{font-family:var(--font-display);font-size:clamp(2rem,4vw,2.8rem);font-weight:900;letter-spacing:-0.03em;line-height:1.1;margin-bottom:0.75rem;}
+.doc-meta{display:flex;gap:2rem;flex-wrap:wrap;}
+.doc-meta span{font-size:0.8rem;color:var(--muted);font-weight:600;font-family:var(--font-mono);}
+.highlight-box{background:var(--orange-pale);border:1px solid rgba(244,115,42,0.2);border-radius:12px;padding:1.1rem 1.3rem;margin-bottom:1rem;font-size:0.88rem;font-weight:600;color:var(--black);line-height:1.7;}
+.highlight-box strong{color:var(--orange);}
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.5rem 1.8rem;margin-bottom:3rem;}
+.toc h3{font-family:var(--font-display);font-size:0.85rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:1rem;}
+.toc ol{list-style:none;display:flex;flex-direction:column;gap:0.4rem;counter-reset:toc;}
+.toc li{counter-increment:toc;}
+.toc li::before{content:counter(toc)".";font-family:var(--font-mono);font-size:0.75rem;color:var(--orange);font-weight:700;margin-right:0.5rem;}
+.toc a{font-size:0.85rem;font-weight:700;color:var(--black);text-decoration:none;transition:color 0.2s;}
+.toc a:hover{color:var(--orange);}
+.section{margin-bottom:2.5rem;scroll-margin-top:80px;}
+.section h2{font-family:var(--font-display);font-size:1.3rem;font-weight:900;letter-spacing:-0.02em;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:2px solid var(--orange-pale);display:flex;align-items:center;gap:0.5rem;}
+.section h2 .num{font-family:var(--font-mono);font-size:0.75rem;font-weight:700;color:var(--orange);background:var(--orange-pale);padding:0.2rem 0.5rem;border-radius:6px;}
+.section p{font-size:0.92rem;color:#3a3028;line-height:1.8;margin-bottom:0.9rem;font-weight:500;}
+.section ul,.section ol{padding-left:1.4rem;margin-bottom:0.9rem;}
+.section li{font-size:0.92rem;color:#3a3028;line-height:1.8;margin-bottom:0.3rem;font-weight:500;}
+.section strong{font-weight:800;color:var(--black);}
+.section a{color:var(--orange);text-decoration:none;font-weight:700;}
+.section a:hover{text-decoration:underline;}
+.data-table{width:100%;border-collapse:collapse;margin-bottom:1rem;font-size:0.85rem;}
+.data-table th{background:var(--bg2);font-weight:800;text-align:left;padding:0.7rem 0.9rem;border:1px solid var(--border);font-size:0.78rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);}
+.data-table td{padding:0.7rem 0.9rem;border:1px solid var(--border);vertical-align:top;line-height:1.5;color:#3a3028;font-weight:500;}
+.data-table tr:nth-child(even) td{background:var(--bg2);}
+.rights-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;}
+.right-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:0.9rem 1rem;}
+.right-card strong{display:block;font-size:0.85rem;font-weight:800;margin-bottom:0.25rem;}
+.right-card span{font-size:0.8rem;color:var(--muted);font-weight:600;line-height:1.5;}
+.contact-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.5rem 1.8rem;margin-top:3rem;display:flex;align-items:flex-start;gap:1rem;}
+.contact-icon{font-size:1.8rem;flex-shrink:0;}
+.contact-box h3{font-family:var(--font-display);font-size:1rem;font-weight:800;margin-bottom:0.3rem;}
+.contact-box p{font-size:0.85rem;color:var(--muted);font-weight:600;line-height:1.6;}
+.contact-box a{color:var(--orange);font-weight:700;text-decoration:none;}
+footer{background:var(--black);color:rgba(255,255,255,0.5);padding:2rem 3rem;text-align:center;font-size:0.82rem;position:relative;z-index:1;}
+footer a{color:rgba(255,255,255,0.5);text-decoration:none;margin:0 0.75rem;font-weight:600;}
+footer a:hover{color:#fff;}
+@media(max-width:768px){
+  nav{padding:1rem 1.5rem;}
+  .page{padding:2.5rem 1.25rem 4rem;}
+  .rights-grid{grid-template-columns:1fr;}
+  .data-table{display:block;overflow-x:auto;}
+}
+</style>
 </head>
 <body>
 
-  <nav>
-    <a href="index.html" class="nav-logo">KreaTown<span>.</span></a>
-    <a href="index.html" class="nav-back">← Back to home</a>
-  </nav>
+<nav>
+  <a href="index.html" class="nav-logo">Krea<span>town</span></a>
+  <div class="nav-links">
+    <a href="terms.html">Terms of Service</a>
+    <a href="register.html" class="nav-cta">Start free 🏡</a>
+  </div>
+</nav>
 
-  <div class="hero">
-    <div class="hero-badge">Legal</div>
+<div class="page">
+
+  <div class="doc-header">
+    <div class="doc-tag">🔒 Legal</div>
     <h1>Privacy Policy</h1>
-    <p>Last updated: March 2026 · Effective immediately</p>
+    <div class="doc-meta">
+      <span>Effective date: 24 March 2026</span>
+      <span>Last updated: 24 March 2026</span>
+      <span>Version 1.0</span>
+    </div>
   </div>
 
-  <div class="container">
+  <div class="highlight-box">
+    <strong>Plain-English summary:</strong> We collect only what we need to run the platform — your name, email, payment info, and usage data. We never sell your data. You can request deletion of your data at any time. We use Supabase (database), Stripe (payments), Cloudinary (media), and Pusher (messaging).
+  </div>
 
-    <div class="section">
-      <h2><span class="icon">👋</span> Introduction</h2>
-      <p>Welcome to KreaTown. We're committed to protecting your personal information and being transparent about how we use it. This policy explains what data we collect, why we collect it, and how you can control it.</p>
-      <p>By using KreaTown, you agree to the collection and use of information in accordance with this policy.</p>
+  <div class="toc">
+    <h3>Table of contents</h3>
+    <ol>
+      <li><a href="#p1">Who we are</a></li>
+      <li><a href="#p2">Data we collect</a></li>
+      <li><a href="#p3">How we use your data</a></li>
+      <li><a href="#p4">Third-party services</a></li>
+      <li><a href="#p5">Cookies &amp; tracking</a></li>
+      <li><a href="#p6">Data retention</a></li>
+      <li><a href="#p7">Your rights</a></li>
+      <li><a href="#p8">Children's privacy</a></li>
+      <li><a href="#p9">International transfers</a></li>
+      <li><a href="#p10">Security</a></li>
+      <li><a href="#p11">Changes to this policy</a></li>
+      <li><a href="#p12">Contact &amp; data requests</a></li>
+    </ol>
+  </div>
+
+  <div class="section" id="p1">
+    <h2><span class="num">01</span> Who we are</h2>
+    <p>Kreatown ("we", "us", "our") operates the creator membership platform accessible at <strong>kreatown.com</strong> and <strong>kreatown.com.tr</strong>. We are the data controller responsible for your personal data.</p>
+    <p>For privacy-related inquiries, contact us at <a href="mailto:privacy@kreatown.com">privacy@kreatown.com</a>.</p>
+  </div>
+
+  <div class="section" id="p2">
+    <h2><span class="num">02</span> Data we collect</h2>
+    <p>We collect the following categories of personal data:</p>
+    <table class="data-table">
+      <thead>
+        <tr><th>Category</th><th>Examples</th><th>Source</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Account data</strong></td><td>Name, email address, username, password (hashed)</td><td>You provide directly</td></tr>
+        <tr><td><strong>Profile data</strong></td><td>Bio, profile photo, creator page content</td><td>You provide directly</td></tr>
+        <tr><td><strong>Payment data</strong></td><td>Billing address, last 4 digits of card, transaction history</td><td>Stripe (we never see full card numbers)</td></tr>
+        <tr><td><strong>Payout data</strong></td><td>Bank account details, identity verification data</td><td>Stripe Connect</td></tr>
+        <tr><td><strong>Usage data</strong></td><td>Pages visited, features used, session duration, IP address</td><td>Automatically collected</td></tr>
+        <tr><td><strong>Communications</strong></td><td>Messages sent via the platform DM system</td><td>You provide directly</td></tr>
+        <tr><td><strong>Device data</strong></td><td>Browser type, device type, operating system</td><td>Automatically collected</td></tr>
+      </tbody>
+    </table>
+    <p>We do not collect sensitive personal data (such as health, racial, or political information) and ask that you do not submit such data through the platform.</p>
+  </div>
+
+  <div class="section" id="p3">
+    <h2><span class="num">03</span> How we use your data</h2>
+    <p>We use your personal data for the following purposes:</p>
+    <ul>
+      <li><strong>Providing the Service</strong> — creating and managing your account, processing subscriptions and payouts, delivering content;</li>
+      <li><strong>Security &amp; fraud prevention</strong> — detecting and preventing abuse, unauthorized access, or fraudulent transactions;</li>
+      <li><strong>Communications</strong> — sending transactional emails (receipts, password resets, subscription confirmations);</li>
+      <li><strong>Platform improvements</strong> — analyzing usage patterns to improve features and fix bugs;</li>
+      <li><strong>Legal compliance</strong> — fulfilling our legal obligations, including tax and financial reporting requirements;</li>
+      <li><strong>Customer support</strong> — responding to your questions and resolving issues.</li>
+    </ul>
+    <p>We do <strong>not</strong> sell your personal data to third parties. We do not use your data for advertising profiling.</p>
+  </div>
+
+  <div class="section" id="p4">
+    <h2><span class="num">04</span> Third-party services</h2>
+    <p>We work with the following trusted third-party service providers who may process your data on our behalf:</p>
+    <table class="data-table">
+      <thead>
+        <tr><th>Provider</th><th>Purpose</th><th>Data shared</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Supabase</strong></td><td>Database &amp; authentication</td><td>Account data, content, messages</td></tr>
+        <tr><td><strong>Stripe</strong></td><td>Payment processing &amp; creator payouts</td><td>Payment &amp; payout data</td></tr>
+        <tr><td><strong>Cloudinary</strong></td><td>Media storage &amp; delivery</td><td>Uploaded images &amp; videos</td></tr>
+        <tr><td><strong>Pusher</strong></td><td>Real-time messaging</td><td>Message content (in transit)</td></tr>
+        <tr><td><strong>Resend</strong></td><td>Transactional email</td><td>Email address, message content</td></tr>
+        <tr><td><strong>Vercel</strong></td><td>Hosting &amp; CDN</td><td>IP address, usage logs</td></tr>
+      </tbody>
+    </table>
+    <p>Each provider is contractually obligated to protect your data and use it only for the purposes we specify. Links to their privacy policies are available on their respective websites.</p>
+  </div>
+
+  <div class="section" id="p5">
+    <h2><span class="num">05</span> Cookies &amp; tracking</h2>
+    <p>We use cookies and similar tracking technologies to operate and improve the Service. The types of cookies we use:</p>
+    <ul>
+      <li><strong>Essential cookies</strong> — Required for authentication and security. These cannot be disabled.</li>
+      <li><strong>Functional cookies</strong> — Remember your preferences (e.g. language, logged-in state).</li>
+      <li><strong>Analytics cookies</strong> — Help us understand how users interact with the platform. We use privacy-friendly analytics that do not track you across sites.</li>
+    </ul>
+    <p>You can control non-essential cookies through your browser settings. Disabling certain cookies may affect platform functionality.</p>
+  </div>
+
+  <div class="section" id="p6">
+    <h2><span class="num">06</span> Data retention</h2>
+    <p>We retain your personal data for as long as your account is active or as needed to provide the Service. Specifically:</p>
+    <ul>
+      <li><strong>Account data</strong> — retained while your account is open, and for up to 90 days after deletion to allow account recovery;</li>
+      <li><strong>Transaction records</strong> — retained for 7 years to comply with financial and tax regulations;</li>
+      <li><strong>Usage logs</strong> — retained for up to 12 months;</li>
+      <li><strong>Messages</strong> — retained while the conversation exists; deleted upon account closure.</li>
+    </ul>
+    <p>After the applicable retention period, your data is securely deleted or anonymized.</p>
+  </div>
+
+  <div class="section" id="p7">
+    <h2><span class="num">07</span> Your rights</h2>
+    <p>Depending on your location, you may have the following rights regarding your personal data:</p>
+    <div class="rights-grid">
+      <div class="right-card"><strong>🔍 Access</strong><span>Request a copy of the personal data we hold about you.</span></div>
+      <div class="right-card"><strong>✏️ Correction</strong><span>Request correction of inaccurate or incomplete data.</span></div>
+      <div class="right-card"><strong>🗑️ Deletion</strong><span>Request deletion of your personal data ("right to be forgotten").</span></div>
+      <div class="right-card"><strong>📦 Portability</strong><span>Receive your data in a structured, machine-readable format.</span></div>
+      <div class="right-card"><strong>🚫 Objection</strong><span>Object to processing based on legitimate interests.</span></div>
+      <div class="right-card"><strong>⏸️ Restriction</strong><span>Request restriction of processing in certain circumstances.</span></div>
     </div>
+    <p>To exercise any of these rights, email <a href="mailto:privacy@kreatown.com">privacy@kreatown.com</a>. We will respond within 30 days. Users in Turkey also have rights under the KVKK (Personal Data Protection Law No. 6698).</p>
+  </div>
 
-    <div class="section">
-      <h2><span class="icon">📦</span> Information We Collect</h2>
-      <p>We collect information you provide directly to us, including:</p>
-      <ul>
-        <li>Name, email address, and password when you register</li>
-        <li>Profile information such as username, bio, and profile photo</li>
-        <li>Payment information processed securely through Stripe</li>
-        <li>Content you post, upload, or share on the platform</li>
-        <li>Messages sent between creators and fans</li>
-        <li>Communications with our support team</li>
-      </ul>
-      <p>We also collect information automatically, such as device info, IP address, browser type, and usage data.</p>
+  <div class="section" id="p8">
+    <h2><span class="num">08</span> Children's privacy</h2>
+    <p>Kreatown is not directed to children under the age of 18. We do not knowingly collect personal data from anyone under 18. If we become aware that we have collected data from a minor, we will delete it promptly. If you believe a minor has created an account, please contact us at <a href="mailto:privacy@kreatown.com">privacy@kreatown.com</a>.</p>
+  </div>
+
+  <div class="section" id="p9">
+    <h2><span class="num">09</span> International data transfers</h2>
+    <p>Kreatown operates globally. Your data may be transferred to and processed in countries outside your country of residence, including the United States and European Union member states.</p>
+    <p>When transferring data internationally, we ensure appropriate safeguards are in place, such as standard contractual clauses or adequacy decisions. For users in Turkey, transfers comply with KVKK requirements.</p>
+  </div>
+
+  <div class="section" id="p10">
+    <h2><span class="num">10</span> Security</h2>
+    <p>We implement industry-standard security measures to protect your personal data, including:</p>
+    <ul>
+      <li>HTTPS encryption for all data in transit;</li>
+      <li>Hashed and salted password storage (we never store plain-text passwords);</li>
+      <li>Row-level security on our database to ensure users can only access their own data;</li>
+      <li>Regular security reviews and dependency updates.</li>
+    </ul>
+    <p>No method of transmission over the internet is 100% secure. While we strive to protect your data, we cannot guarantee absolute security. If you suspect a security breach, please contact us immediately at <a href="mailto:security@kreatown.com">security@kreatown.com</a>.</p>
+  </div>
+
+  <div class="section" id="p11">
+    <h2><span class="num">11</span> Changes to this policy</h2>
+    <p>We may update this Privacy Policy from time to time. We will notify you of material changes by email or via a notice on the platform at least 14 days before they take effect.</p>
+    <p>Your continued use of the Service after the effective date of any changes constitutes your acceptance of the updated policy.</p>
+  </div>
+
+  <div class="section" id="p12">
+    <h2><span class="num">12</span> Contact &amp; data requests</h2>
+    <p>For any privacy-related questions, data access requests, or to exercise your rights, please contact:</p>
+  </div>
+
+  <div class="contact-box">
+    <div class="contact-icon">🔒</div>
+    <div>
+      <h3>Kreatown Privacy Team</h3>
+      <p>
+        Privacy requests: <a href="mailto:privacy@kreatown.com">privacy@kreatown.com</a><br/>
+        Security issues: <a href="mailto:security@kreatown.com">security@kreatown.com</a><br/>
+        General: <a href="mailto:hello@kreatown.com">hello@kreatown.com</a><br/>
+        Website: <a href="https://kreatown.com">kreatown.com</a>
+      </p>
     </div>
+  </div>
 
-    <div class="section">
-      <h2><span class="icon">🎯</span> How We Use Your Information</h2>
-      <p>We use the information we collect to:</p>
-      <ul>
-        <li>Provide, operate, and improve the KreaTown platform</li>
-        <li>Process payments and send payout notifications</li>
-        <li>Send you updates, newsletters, and platform announcements</li>
-        <li>Respond to your questions and support requests</li>
-        <li>Monitor and analyze usage trends to improve your experience</li>
-        <li>Detect and prevent fraud or abuse</li>
-      </ul>
-    </div>
+</div>
 
-    <div class="section">
-      <h2><span class="icon">🤝</span> Sharing Your Information</h2>
-      <p>We do not sell your personal information. We may share your data with:</p>
-      <ul>
-        <li><strong>Stripe</strong> — for secure payment processing and creator payouts</li>
-        <li><strong>Supabase</strong> — our database and authentication provider</li>
-        <li><strong>Cloudinary</strong> — for media storage and delivery</li>
-        <li><strong>Pusher</strong> — for real-time messaging features</li>
-        <li><strong>Resend</strong> — for transactional email delivery</li>
-        <li>Law enforcement when required by applicable law</li>
-      </ul>
-    </div>
+<footer>
+  <div style="margin-bottom:0.75rem;">
+    <a href="index.html">Home</a>
+    <a href="terms.html">Terms</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="mailto:hello@kreatown.com">Contact</a>
+    <a href="tr/gizlilik.html">🇹🇷 Türkçe</a>
+  </div>
+  <div>© 2026 Kreatown. Where creators belong.</div>
+</footer>
 
-    <div class="section">
-      <h2><span class="icon">🔒</span> Data Security</h2>
-      <p>We take reasonable measures to protect your personal information from unauthorized access, use, or disclosure. All data is encrypted in transit using SSL/TLS. Passwords are hashed and never stored in plain text.</p>
-      <p>However, no method of transmission over the internet is 100% secure. We encourage you to use a strong, unique password for your KreaTown account.</p>
-    </div>
-
-    <div class="section">
-      <h2><span class="icon">⚙️</span> Your Rights & Choices</h2>
-      <p>You have the right to:</p>
-      <ul>
-        <li>Access and download your personal data at any time</li>
-        <li>Correct inaccurate information in your profile</li>
-        <li>Delete your account and associated data</li>
-        <li>Opt out of marketing emails at any time</li>
-        <li>Request a copy of the data we hold about you</li>
-      </ul>
-      <p>To exercise any of these rights, contact us at <a href="/cdn-cgi/l/email-protection#5626243f2037352f163d243337223921387835393b" style="color:var(--orange);font-weight:700;"><span class="__cf_email__" data-cfemail="ed9d9f849b8c8e94ad869f888c99829a83c38e8280">[email&#160;protected]</span></a>.</p>
-    </div>
-
-    <div class="section">
-      <h2><span class="icon">🍪</span> Cookies</h2>
-      <p>We use cookies and similar tracking technologies to improve your experience on KreaTown. You can control cookies through your browser settings, though disabling them may affect some platform features.</p>
-    </div>
-
-    <div class="section">
-      <h2><span class="icon">✉️</span> Contact Us</h2>
-      <p>If you have any questions about this Privacy Policy, please reach out to us at <a href="/cdn-cgi/l/email-protection#5626243f2037352f163d243337223921387835393b" style="color:var(--orange);font-weight:700;"><span class="__cf_email__" data-cfemail="4333312a3522203a0328312622372c342d6d202c2e">[e
+</body>
+</html>

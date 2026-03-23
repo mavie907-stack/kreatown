@@ -1,224 +1,280 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Terms of Service — KreaTown</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --orange: #f4732a;
-      --orange-light: #ff9555;
-      --orange-pale: #fff0e6;
-      --cream: #fffbf5;
-      --brown: #1a1612;
-      --muted: #9c8878;
-      --border: #ede8e3;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Nunito', sans-serif;
-      background: var(--cream);
-      color: var(--brown);
-      line-height: 1.8;
-    }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Terms of Service — Kreatown</title>
+<meta name="description" content="Kreatown Terms of Service. Read our terms before using the platform."/>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<link rel="canonical" href="https://kreatown.com/terms.html"/>
+<link rel="alternate" hreflang="en" href="https://kreatown.com/terms.html"/>
+<link rel="alternate" hreflang="tr" href="https://kreatown.com.tr/tr/kullanim-sartlari.html"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Cabinet+Grotesk:wght@400;500;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#fffbf5;--bg2:#fff8ee;--black:#1a1612;
+  --orange:#f4732a;--orange-pale:#fff0e6;
+  --muted:#9c8878;--border:rgba(244,115,42,0.15);--card:#ffffff;
+  --font-display:'Cabinet Grotesk',sans-serif;
+  --font-body:'Nunito',sans-serif;--font-mono:'DM Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--black);font-family:var(--font-body);line-height:1.7;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(244,115,42,0.03) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0;}
 
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.2rem 2rem;
-      border-bottom: 1px solid var(--border);
-      background: var(--cream);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .nav-logo {
-      font-family: 'Cabinet Grotesk', sans-serif;
-      font-weight: 800;
-      font-size: 1.4rem;
-      color: var(--brown);
-      text-decoration: none;
-    }
-    .nav-logo span { color: var(--orange); }
-    .nav-back {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    .nav-back:hover { color: var(--orange); }
+nav{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 3rem;background:rgba(255,251,245,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--black);text-decoration:none;letter-spacing:-0.03em;}
+.nav-logo span{color:var(--orange);}
+.nav-links{display:flex;gap:1rem;align-items:center;}
+.nav-links a{font-size:0.85rem;font-weight:700;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+.nav-links a:hover{color:var(--orange);}
+.nav-cta{background:var(--orange);color:#fff!important;padding:0.5rem 1.2rem;border-radius:100px;font-weight:800!important;}
 
-    .hero {
-      background: var(--orange-pale);
-      border-bottom: 1px solid var(--border);
-      padding: 4rem 2rem 3rem;
-      text-align: center;
-    }
-    .hero-badge {
-      display: inline-block;
-      background: var(--orange);
-      color: white;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 0.3rem 0.9rem;
-      border-radius: 999px;
-      margin-bottom: 1.2rem;
-    }
-    .hero h1 {
-      font-family: 'Cabinet Grotesk', sans-serif;
-      font-size: clamp(2rem, 5vw, 3rem);
-      font-weight: 800;
-      margin-bottom: 0.8rem;
-    }
-    .hero p { color: var(--muted); font-size: 1rem; font-weight: 500; }
+.page{max-width:820px;margin:0 auto;padding:4rem 2rem 6rem;position:relative;z-index:1;}
 
-    .container {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 3rem 2rem 5rem;
-    }
-    .section {
-      margin-bottom: 2.5rem;
-      padding-bottom: 2.5rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .section:last-child { border-bottom: none; }
-    .section h2 {
-      font-family: 'Cabinet Grotesk', sans-serif;
-      font-size: 1.25rem;
-      font-weight: 800;
-      margin-bottom: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .section h2 .icon {
-      width: 28px;
-      height: 28px;
-      background: var(--orange-pale);
-      border-radius: 8px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.9rem;
-    }
-    .section p { color: #3d3530; margin-bottom: 0.8rem; font-size: 0.97rem; }
-    .section ul {
-      list-style: none;
-      padding: 0;
-      margin: 0.5rem 0;
-    }
-    .section ul li {
-      padding: 0.3rem 0 0.3rem 1.4rem;
-      position: relative;
-      color: #3d3530;
-      font-size: 0.97rem;
-    }
-    .section ul li::before {
-      content: '→';
-      position: absolute;
-      left: 0;
-      color: var(--orange);
-      font-weight: 700;
-    }
+/* Header */
+.doc-header{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--border);}
+.doc-tag{display:inline-flex;align-items:center;gap:0.4rem;background:var(--orange-pale);color:var(--orange);padding:0.3rem 0.9rem;border-radius:100px;font-size:0.72rem;font-weight:800;letter-spacing:0.04em;margin-bottom:1rem;}
+.doc-header h1{font-family:var(--font-display);font-size:clamp(2rem,4vw,2.8rem);font-weight:900;letter-spacing:-0.03em;line-height:1.1;margin-bottom:0.75rem;}
+.doc-meta{display:flex;gap:2rem;flex-wrap:wrap;}
+.doc-meta span{font-size:0.8rem;color:var(--muted);font-weight:600;font-family:var(--font-mono);}
 
-    footer {
-      text-align: center;
-      padding: 2rem;
-      border-top: 1px solid var(--border);
-      font-size: 0.85rem;
-      color: var(--muted);
-      font-weight: 600;
-    }
-    footer a { color: var(--orange); text-decoration: none; }
-  </style>
+/* TOC */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.5rem 1.8rem;margin-bottom:3rem;}
+.toc h3{font-family:var(--font-display);font-size:0.85rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:1rem;}
+.toc ol{list-style:none;display:flex;flex-direction:column;gap:0.4rem;counter-reset:toc;}
+.toc li{counter-increment:toc;}
+.toc li::before{content:counter(toc)".";font-family:var(--font-mono);font-size:0.75rem;color:var(--orange);font-weight:700;margin-right:0.5rem;}
+.toc a{font-size:0.85rem;font-weight:700;color:var(--black);text-decoration:none;transition:color 0.2s;}
+.toc a:hover{color:var(--orange);}
+
+/* Sections */
+.section{margin-bottom:2.5rem;scroll-margin-top:80px;}
+.section h2{font-family:var(--font-display);font-size:1.3rem;font-weight:900;letter-spacing:-0.02em;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:2px solid var(--orange-pale);display:flex;align-items:center;gap:0.5rem;}
+.section h2 .num{font-family:var(--font-mono);font-size:0.75rem;font-weight:700;color:var(--orange);background:var(--orange-pale);padding:0.2rem 0.5rem;border-radius:6px;}
+.section p{font-size:0.92rem;color:#3a3028;line-height:1.8;margin-bottom:0.9rem;font-weight:500;}
+.section ul,.section ol{padding-left:1.4rem;margin-bottom:0.9rem;}
+.section li{font-size:0.92rem;color:#3a3028;line-height:1.8;margin-bottom:0.3rem;font-weight:500;}
+.section strong{font-weight:800;color:var(--black);}
+.section a{color:var(--orange);text-decoration:none;font-weight:700;}
+.section a:hover{text-decoration:underline;}
+
+/* Highlight box */
+.highlight-box{background:var(--orange-pale);border:1px solid rgba(244,115,42,0.2);border-radius:12px;padding:1.1rem 1.3rem;margin-bottom:1rem;font-size:0.88rem;font-weight:600;color:var(--black);line-height:1.7;}
+.highlight-box strong{color:var(--orange);}
+
+/* Contact box */
+.contact-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.5rem 1.8rem;margin-top:3rem;display:flex;align-items:flex-start;gap:1rem;}
+.contact-icon{font-size:1.8rem;flex-shrink:0;}
+.contact-box h3{font-family:var(--font-display);font-size:1rem;font-weight:800;margin-bottom:0.3rem;}
+.contact-box p{font-size:0.85rem;color:var(--muted);font-weight:600;line-height:1.6;}
+.contact-box a{color:var(--orange);font-weight:700;text-decoration:none;}
+
+footer{background:var(--black);color:rgba(255,255,255,0.5);padding:2rem 3rem;text-align:center;font-size:0.82rem;position:relative;z-index:1;}
+footer a{color:rgba(255,255,255,0.5);text-decoration:none;margin:0 0.75rem;font-weight:600;}
+footer a:hover{color:#fff;}
+
+@media(max-width:768px){
+  nav{padding:1rem 1.5rem;}
+  .page{padding:2.5rem 1.25rem 4rem;}
+  .doc-meta{flex-direction:column;gap:0.5rem;}
+}
+</style>
 </head>
 <body>
 
-  <nav>
-    <a href="index.html" class="nav-logo">KreaTown<span>.</span></a>
-    <a href="index.html" class="nav-back">← Back to home</a>
-  </nav>
+<nav>
+  <a href="index.html" class="nav-logo">Krea<span>town</span></a>
+  <div class="nav-links">
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="register.html" class="nav-cta">Start free 🏡</a>
+  </div>
+</nav>
 
-  <div class="hero">
-    <div class="hero-badge">Legal</div>
+<div class="page">
+
+  <div class="doc-header">
+    <div class="doc-tag">📄 Legal</div>
     <h1>Terms of Service</h1>
-    <p>Last updated: March 2026 · Effective immediately</p>
+    <div class="doc-meta">
+      <span>Effective date: 24 March 2026</span>
+      <span>Last updated: 24 March 2026</span>
+      <span>Version 1.0</span>
+    </div>
   </div>
 
-  <div class="container">
+  <div class="highlight-box">
+    <strong>Plain-English summary:</strong> Kreatown is a creator membership platform. By using it, you agree to these terms. We provide the tools; you own your content and are responsible for it. We take a small platform fee from revenue. You can cancel anytime.
+  </div>
 
-    <div class="section">
-      <h2><span class="icon">👋</span> Welcome to KreaTown</h2>
-      <p>These Terms of Service govern your use of the KreaTown platform. By creating an account or using our services, you agree to be bound by these terms. Please read them carefully.</p>
-      <p>If you do not agree to these terms, please do not use KreaTown.</p>
+  <div class="toc">
+    <h3>Table of contents</h3>
+    <ol>
+      <li><a href="#s1">Acceptance of terms</a></li>
+      <li><a href="#s2">Eligibility</a></li>
+      <li><a href="#s3">Account registration</a></li>
+      <li><a href="#s4">Creator accounts &amp; subscriptions</a></li>
+      <li><a href="#s5">Payments, fees &amp; payouts</a></li>
+      <li><a href="#s6">Content &amp; intellectual property</a></li>
+      <li><a href="#s7">Prohibited conduct</a></li>
+      <li><a href="#s8">Privacy &amp; data</a></li>
+      <li><a href="#s9">Termination</a></li>
+      <li><a href="#s10">Disclaimers &amp; limitation of liability</a></li>
+      <li><a href="#s11">Governing law &amp; disputes</a></li>
+      <li><a href="#s12">Changes to these terms</a></li>
+      <li><a href="#s13">Contact</a></li>
+    </ol>
+  </div>
+
+  <div class="section" id="s1">
+    <h2><span class="num">01</span> Acceptance of terms</h2>
+    <p>Welcome to Kreatown ("we", "us", or "our"). By accessing or using the Kreatown platform, website, or any related services (collectively, the "Service") located at <strong>kreatown.com</strong> and <strong>kreatown.com.tr</strong>, you agree to be bound by these Terms of Service ("Terms").</p>
+    <p>If you do not agree to these Terms, please do not use the Service. These Terms apply to all users, including creators, fans, and visitors.</p>
+  </div>
+
+  <div class="section" id="s2">
+    <h2><span class="num">02</span> Eligibility</h2>
+    <p>You must be at least <strong>18 years of age</strong> to use Kreatown. By creating an account, you represent and warrant that:</p>
+    <ul>
+      <li>You are at least 18 years old;</li>
+      <li>You have the legal capacity to enter into a binding agreement;</li>
+      <li>You are not barred from using the Service under applicable law;</li>
+      <li>All information you provide is accurate and complete.</li>
+    </ul>
+    <p>If you are registering on behalf of a business or organization, you represent that you have authority to bind that entity to these Terms.</p>
+  </div>
+
+  <div class="section" id="s3">
+    <h2><span class="num">03</span> Account registration</h2>
+    <p>To access most features of Kreatown, you must create an account. When registering, you agree to:</p>
+    <ul>
+      <li>Provide accurate, current, and complete information;</li>
+      <li>Maintain the security of your password and account credentials;</li>
+      <li>Promptly update your account information if it changes;</li>
+      <li>Accept responsibility for all activity that occurs under your account;</li>
+      <li>Notify us immediately at <a href="mailto:hello@kreatown.com">hello@kreatown.com</a> if you suspect unauthorized access.</li>
+    </ul>
+    <p>You may not share your account credentials with others or create accounts on behalf of someone else without authorization. We reserve the right to suspend or terminate accounts that violate these Terms.</p>
+  </div>
+
+  <div class="section" id="s4">
+    <h2><span class="num">04</span> Creator accounts &amp; subscriptions</h2>
+    <p><strong>Creator accounts.</strong> Creators are users who publish content and offer membership tiers to fans. As a creator, you are solely responsible for the content you publish and your relationship with your subscribers.</p>
+    <p><strong>Membership tiers.</strong> Creators may set up free and paid membership tiers. Fans who subscribe to a paid tier authorize recurring charges. Creators must clearly describe what each tier includes.</p>
+    <p><strong>Fan subscriptions.</strong> Fans subscribing to a creator's paid tier authorize recurring monthly charges to their payment method. Subscriptions auto-renew unless cancelled before the renewal date.</p>
+    <p><strong>Cancellations by fans.</strong> Fans may cancel a subscription at any time. Upon cancellation, access continues until the end of the current billing period. No partial refunds are issued for unused time unless required by law.</p>
+    <p><strong>Platform subscription plans.</strong> Creators must also subscribe to a Kreatown platform plan (Starter, Pro, or Studio) to publish content. See Section 5 for pricing and fee details.</p>
+  </div>
+
+  <div class="section" id="s5">
+    <h2><span class="num">05</span> Payments, fees &amp; payouts</h2>
+    <p><strong>Platform fees.</strong> Kreatown charges creators a monthly platform subscription fee and a percentage of fan subscription revenue:</p>
+    <ul>
+      <li><strong>Starter</strong> — Free for 3 months, then $19/month + 5% revenue share</li>
+      <li><strong>Pro</strong> — $29/month + 5% revenue share</li>
+      <li><strong>Studio</strong> — $49/month + 3% revenue share</li>
+    </ul>
+    <p><strong>Payment processing.</strong> All payments are processed by Stripe, Inc. By using paid features, you agree to <a href="https://stripe.com/legal" target="_blank">Stripe's Terms of Service</a>. Kreatown does not store your full card details.</p>
+    <p><strong>Payouts.</strong> Creators receive their earnings via Stripe Connect. Payouts are subject to Stripe's payout schedule and any applicable processing fees. You must complete Stripe's identity verification to receive payouts.</p>
+    <p><strong>Taxes.</strong> You are solely responsible for determining and paying any taxes applicable to your earnings. Kreatown may issue required tax documentation where legally obligated.</p>
+    <p><strong>Refunds.</strong> Platform subscription fees are non-refundable except where required by law. Fan subscription refunds are at the creator's discretion and subject to applicable consumer protection laws.</p>
+    <p><strong>Failed payments.</strong> If a payment fails, we may retry the charge. If payment cannot be collected, we may suspend or downgrade your account.</p>
+  </div>
+
+  <div class="section" id="s6">
+    <h2><span class="num">06</span> Content &amp; intellectual property</h2>
+    <p><strong>Your content.</strong> You retain full ownership of all content you create and publish on Kreatown. By posting content, you grant Kreatown a non-exclusive, worldwide, royalty-free license to display, reproduce, and distribute your content solely for the purpose of operating and promoting the Service.</p>
+    <p><strong>Content responsibility.</strong> You are solely responsible for content you publish. You represent and warrant that:</p>
+    <ul>
+      <li>You own or have rights to all content you post;</li>
+      <li>Your content does not infringe any third-party intellectual property, privacy, or other rights;</li>
+      <li>Your content complies with all applicable laws.</li>
+    </ul>
+    <p><strong>Kreatown IP.</strong> The Kreatown name, logo, platform design, and all related intellectual property are owned by Kreatown. You may not use our branding without prior written permission.</p>
+    <p><strong>DMCA.</strong> We respect intellectual property rights. To submit a copyright infringement notice, contact <a href="mailto:legal@kreatown.com">legal@kreatown.com</a>.</p>
+  </div>
+
+  <div class="section" id="s7">
+    <h2><span class="num">07</span> Prohibited conduct</h2>
+    <p>You agree not to use Kreatown to:</p>
+    <ul>
+      <li>Post content that is illegal, harmful, threatening, abusive, harassing, defamatory, or fraudulent;</li>
+      <li>Post sexually explicit content involving minors under any circumstances;</li>
+      <li>Impersonate any person, entity, or Kreatown staff;</li>
+      <li>Collect or harvest personal data from other users without consent;</li>
+      <li>Distribute spam, malware, or any unauthorized commercial communications;</li>
+      <li>Attempt to gain unauthorized access to any account, server, or system;</li>
+      <li>Circumvent or interfere with the platform's security features;</li>
+      <li>Use the Service for any unlawful purpose or in violation of these Terms;</li>
+      <li>Engage in any activity that disrupts or interferes with the Service.</li>
+    </ul>
+    <p>Violation of these rules may result in immediate account termination and, where appropriate, referral to law enforcement.</p>
+  </div>
+
+  <div class="section" id="s8">
+    <h2><span class="num">08</span> Privacy &amp; data</h2>
+    <p>Your privacy matters to us. Our collection and use of your personal data is described in our <a href="privacy.html">Privacy Policy</a>, which is incorporated into these Terms by reference.</p>
+    <p>By using Kreatown, you consent to the collection and processing of your data as described in the Privacy Policy. If you are located in the European Union or Turkey, additional rights apply to you as described therein.</p>
+  </div>
+
+  <div class="section" id="s9">
+    <h2><span class="num">09</span> Termination</h2>
+    <p><strong>By you.</strong> You may close your account at any time by contacting us at <a href="mailto:hello@kreatown.com">hello@kreatown.com</a>. Upon closure, your content will be removed and your active subscriptions cancelled.</p>
+    <p><strong>By us.</strong> We reserve the right to suspend or terminate your account at any time if you violate these Terms, engage in fraudulent activity, or for any other reason at our sole discretion, with or without notice.</p>
+    <p><strong>Effect of termination.</strong> Upon termination, your right to use the Service ends immediately. Provisions of these Terms that by their nature should survive termination shall survive, including intellectual property provisions, disclaimers, and limitations of liability.</p>
+  </div>
+
+  <div class="section" id="s10">
+    <h2><span class="num">10</span> Disclaimers &amp; limitation of liability</h2>
+    <p><strong>As-is service.</strong> The Service is provided "as is" and "as available" without warranties of any kind, either express or implied, including but not limited to merchantability, fitness for a particular purpose, or non-infringement.</p>
+    <p><strong>No guarantee of uptime.</strong> We do not guarantee that the Service will be uninterrupted, error-free, or free of viruses or other harmful components.</p>
+    <p><strong>Limitation.</strong> To the fullest extent permitted by law, Kreatown's total liability to you for any claims arising from these Terms or your use of the Service shall not exceed the greater of (a) the amount you paid to Kreatown in the three months preceding the claim, or (b) $100 USD.</p>
+    <p><strong>Exclusion of damages.</strong> In no event shall Kreatown be liable for any indirect, incidental, special, consequential, or punitive damages, including lost profits or data.</p>
+  </div>
+
+  <div class="section" id="s11">
+    <h2><span class="num">11</span> Governing law &amp; disputes</h2>
+    <p>These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which Kreatown is registered, without regard to its conflict of law provisions.</p>
+    <p>For users in Turkey, any disputes shall be subject to Turkish law and the jurisdiction of Istanbul courts.</p>
+    <p>We encourage you to contact us first at <a href="mailto:hello@kreatown.com">hello@kreatown.com</a> to resolve any dispute informally before pursuing legal action.</p>
+  </div>
+
+  <div class="section" id="s12">
+    <h2><span class="num">12</span> Changes to these terms</h2>
+    <p>We may update these Terms from time to time. When we do, we will revise the "Last updated" date at the top of this page and, where the changes are material, notify you via email or a prominent notice on the platform.</p>
+    <p>Your continued use of the Service after any changes constitutes your acceptance of the new Terms. If you do not agree with updated Terms, you must stop using the Service.</p>
+  </div>
+
+  <div class="section" id="s13">
+    <h2><span class="num">13</span> Contact</h2>
+    <p>If you have any questions about these Terms, please contact us:</p>
+  </div>
+
+  <div class="contact-box">
+    <div class="contact-icon">✉️</div>
+    <div>
+      <h3>Kreatown Legal</h3>
+      <p>
+        Email: <a href="mailto:legal@kreatown.com">legal@kreatown.com</a><br/>
+        General: <a href="mailto:hello@kreatown.com">hello@kreatown.com</a><br/>
+        Website: <a href="https://kreatown.com">kreatown.com</a>
+      </p>
     </div>
+  </div>
 
-    <div class="section">
-      <h2><span class="icon">🏡</span> Your Account</h2>
-      <p>To use KreaTown you must:</p>
-      <ul>
-        <li>Be at least 18 years old</li>
-        <li>Provide accurate and complete registration information</li>
-        <li>Keep your password secure and confidential</li>
-        <li>Be responsible for all activity that occurs under your account</li>
-        <li>Notify us immediately of any unauthorized use of your account</li>
-      </ul>
-      <p>You may not create multiple accounts or transfer your account to another person without our consent.</p>
-    </div>
+</div>
 
-    <div class="section">
-      <h2><span class="icon">🎨</span> Content & Conduct</h2>
-      <p>You are solely responsible for the content you post on KreaTown. You agree not to post content that:</p>
-      <ul>
-        <li>Is illegal, harmful, threatening, or abusive</li>
-        <li>Infringes on any third party's intellectual property rights</li>
-        <li>Contains spam, malware, or deceptive practices</li>
-        <li>Harasses, bullies, or discriminates against others</li>
-        <li>Violates any applicable laws or regulations</li>
-      </ul>
-      <p>KreaTown reserves the right to remove content and suspend accounts that violate these terms.</p>
-    </div>
+<footer>
+  <div style="margin-bottom:0.75rem;">
+    <a href="index.html">Home</a>
+    <a href="terms.html">Terms</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="mailto:hello@kreatown.com">Contact</a>
+    <a href="tr/kullanim-sartlari.html">🇹🇷 Türkçe</a>
+  </div>
+  <div>© 2026 Kreatown. Where creators belong.</div>
+</footer>
 
-    <div class="section">
-      <h2><span class="icon">💰</span> Payments & Fees</h2>
-      <p>KreaTown charges a platform fee on creator earnings based on your subscription plan:</p>
-      <ul>
-        <li><strong>Starter</strong> — Free for 3 months, then $19/mo + 5% revenue share</li>
-        <li><strong>Pro</strong> — $29/mo + 5% revenue share</li>
-        <li><strong>Studio</strong> — $49/mo + 3% revenue share</li>
-      </ul>
-      <p>All payments are processed securely through Stripe. KreaTown is not responsible for disputes between creators and their subscribers. Payouts are subject to Stripe's terms and conditions.</p>
-    </div>
-
-    <div class="section">
-      <h2><span class="icon">🔄</span> Subscriptions & Refunds</h2>
-      <p>KreaTown subscriptions renew automatically unless cancelled. You may cancel your plan at any time from your account settings. Cancellations take effect at the end of the current billing period.</p>
-      <p>We generally do not offer refunds for partial months. If you believe you were charged in error, contact us at <a href="/cdn-cgi/l/email-protection#c4a6ada8a8adaaa384afb6a1a5b0abb3aaeaa7aba9" style="color:var(--orange);font-weight:700;"><span class="__cf_email__" data-cfemail="2e4c4742424740496e455c4b4f5a415940004d4143">[email&#160;protected]</span></a> within 14 days.</p>
-    </div>
-
-    <div class="section">
-      <h2><span class="icon">🛡️</span> Intellectual Property</h2>
-      <p>You retain ownership of all content you create and post on KreaTown. By posting content, you grant KreaTown a non-exclusive, royalty-free license to display and distribute your content on the platform.</p>
-      <p>The KreaTown name, logo, and platform design are the intellectual property of KreaTown and may not be used without our written permission.</p>
-    </div>
-
-    <div class="section">
-      <h2><span class="icon">⚠️</span> Limitation of Liability</h2>
-      <p>KreaTown is provided "as is" without warranties of any kind. We are not liable for any indirect, incidental, or consequential damages arising from your use of the platform, including loss of earnings, data, or business opportunities.</p>
-      <p>Our total liability to you shall not exceed the amount you paid to KreaTown in the 12 months preceding the claim.</p>
-    </div>
-
-    <div class="section">
-      <h2><span class="icon">📝</span> Changes to These Terms</h2>
-      <p>We may update these Terms from time to time. We will notify you of significant changes via email or a prominent notice on the platform. Continued use of KreaTown after changes constitutes acceptance of the new terms.</p>
-    </div>
-
-    <div class="section">
-      <h2><span class="icon">✉️</span> Contact Us</h2>
-      <p>For questions about these Terms of Service, please contact us at <a href="/cdn-cgi/l/email-protection#0e626b696f624e657c6b6f7a617960206d6163" style="color:var(--orange);font-weight:700;"><span class="__cf_email__" data-cfemail="99f5fcfef8f5d9f2ebfcf8edf6eef7b7faf6f4">[email
+</body>
+</html>
