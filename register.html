@@ -3,513 +3,535 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Sign Up Free — KreaTown | Build Your Town</title>
-<meta name="description" content="Join KreaTown for free. Build your creator town, grow your audience, and get paid monthly. No credit card needed."/>
-<meta property="og:title" content="Sign Up Free — KreaTown | Build Your Town"/>
-<meta property="og:description" content="Start your creator journey on KreaTown. Your own town page, tiered memberships, and monthly payouts. Free to start."/>
-<meta property="og:site_name" content="KreaTown"/>
-<meta property="og:image" content="https://kreatown.vercel.app/Luxury.png"/>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏡</text></svg>"/>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700;1,800&family=Cabinet+Grotesk:wght@400;500;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<title>Create Your Account — Kreatown</title>
+<meta name="description" content="Join Kreatown and start building your creator town. Free for 3 months, no credit card needed."/>
+<meta property="og:title" content="Create Your Account — Kreatown"/>
+<meta property="og:description" content="Join Kreatown and start building your creator town."/>
+<meta property="og:image" content="https://kreatown.com/og-image.png"/>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<link rel="canonical" href="https://kreatown.com/register.html"/>
+<link rel="alternate" hreflang="en" href="https://kreatown.com/register.html"/>
+<link rel="alternate" hreflang="tr" href="https://kreatown.com.tr/tr/kayit.html"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Cabinet+Grotesk:wght@400;500;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
-:root {
-  --bg: #fffbf5; --bg2: #fff8ee; --black: #1a1612;
-  --orange: #f4732a; --orange-light: #ff9555; --orange-pale: #fff0e6;
-  --yellow: #fbbf24; --green: #22c55e; --green-pale: #f0fdf4;
-  --muted: #9c8878; --border: rgba(244,115,42,0.15); --card: #ffffff;
-  --shadow: 0 4px 24px rgba(244,115,42,0.08);
-  --shadow-lg: 0 12px 48px rgba(244,115,42,0.14);
-  --font-display: 'Cabinet Grotesk', sans-serif;
-  --font-body: 'Nunito', sans-serif;
-  --font-mono: 'DM Mono', monospace;
+:root{
+  --bg:#fffbf5;--bg2:#fff8ee;--black:#1a1612;
+  --orange:#f4732a;--orange-light:#ff9555;--orange-pale:#fff0e6;
+  --yellow:#fbbf24;--green:#22c55e;--green-pale:#f0fdf4;
+  --red:#ef4444;--red-pale:#fff0f0;
+  --muted:#9c8878;--border:rgba(244,115,42,0.15);--card:#ffffff;
+  --input-border:rgba(26,22,18,0.15);--input-focus:var(--orange);
+  --font-display:'Cabinet Grotesk',sans-serif;
+  --font-body:'Nunito',sans-serif;--font-mono:'DM Mono',monospace;
+  --shadow:0 4px 24px rgba(244,115,42,0.08);
+  --shadow-lg:0 12px 48px rgba(244,115,42,0.14);
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-body {
-  background: var(--bg); color: var(--black); font-family: var(--font-body);
-  min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
-}
-body::before {
-  content:''; position:fixed; inset:0;
-  background-image: radial-gradient(circle, rgba(244,115,42,0.04) 1px, transparent 1px);
-  background-size: 32px 32px; pointer-events:none; z-index:0;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--black);font-family:var(--font-body);min-height:100vh;display:flex;flex-direction:column;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(244,115,42,0.04) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0;}
 
-/* LEFT */
-.left-panel {
-  background: linear-gradient(145deg, #fde8d4 0%, #fff3e6 40%, #fde2c8 80%, #f9d0a8 100%);
-  display: flex; flex-direction: column; justify-content: center;
-  padding: 4rem; position: relative; overflow: hidden;
-}
-.left-blob1 {
-  position:absolute; width:400px; height:400px;
-  background:radial-gradient(circle, rgba(244,115,42,0.18) 0%, transparent 70%);
-  top:-80px; right:-80px; border-radius:50%;
-  animation: float 8s ease-in-out infinite;
-}
-.left-blob2 {
-  position:absolute; width:280px; height:280px;
-  background:radial-gradient(circle, rgba(251,191,36,0.14) 0%, transparent 70%);
-  bottom:60px; left:-40px; border-radius:50%;
-  animation: float 10s ease-in-out infinite reverse;
-}
-@keyframes float { 0%,100%{transform:translateY(0)scale(1);} 50%{transform:translateY(-20px)scale(1.04);} }
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 3rem;background:rgba(255,251,245,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:relative;z-index:10;}
+.nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--black);text-decoration:none;letter-spacing:-0.03em;}
+.nav-logo span{color:var(--orange);}
+.nav-right{display:flex;align-items:center;gap:1rem;font-size:0.85rem;}
+.nav-right a{color:var(--muted);text-decoration:none;font-weight:700;transition:color 0.2s;}
+.nav-right a:hover{color:var(--orange);}
+.nav-right .login-btn{border:1.5px solid var(--border);padding:0.45rem 1.1rem;border-radius:100px;color:var(--black);}
+.nav-right .login-btn:hover{border-color:var(--orange);color:var(--orange);}
 
-.left-logo {
-  font-family: var(--font-display); font-size:1.5rem; font-weight:900;
-  color:var(--black); letter-spacing:-0.03em; margin-bottom:3rem;
-  display:flex; align-items:center; gap:0.4rem;
-  text-decoration:none; position:relative; z-index:1;
-}
-.left-logo .dot { width:8px; height:8px; background:var(--orange); border-radius:50%; margin-bottom:2px; }
+/* LAYOUT */
+.page{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 65px);position:relative;z-index:1;}
 
-.left-content { position:relative; z-index:1; max-width:380px; }
-.left-content h2 {
-  font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 2.6rem);
-  font-weight:900; letter-spacing:-0.04em; line-height:1.1; margin-bottom:1.2rem;
-}
-.left-content h2 em { font-style:italic; color:var(--orange); }
-.left-content p { font-size:0.9rem; color:#6b5347; line-height:1.7; font-weight:600; margin-bottom:2rem; }
+/* LEFT PANEL */
+.left-panel{background:linear-gradient(145deg,#1a1612 0%,#2d1f14 100%);padding:4rem 3.5rem;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;}
+.left-panel::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(244,115,42,0.08) 1px,transparent 1px);background-size:28px 28px;}
+.left-blob{position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(244,115,42,0.15) 0%,transparent 70%);top:-100px;right:-100px;border-radius:50%;}
+.left-content{position:relative;z-index:1;}
+.left-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(244,115,42,0.15);color:var(--orange);border:1px solid rgba(244,115,42,0.3);padding:0.4rem 1rem;border-radius:100px;font-size:0.75rem;font-weight:800;letter-spacing:0.04em;margin-bottom:2rem;}
+.left-panel h2{font-family:var(--font-display);font-size:clamp(2rem,3.5vw,2.8rem);font-weight:900;color:#fff;line-height:1.1;letter-spacing:-0.03em;margin-bottom:1rem;}
+.left-panel h2 span{color:var(--orange);}
+.left-panel p{font-size:0.95rem;color:rgba(255,255,255,0.6);line-height:1.7;font-weight:500;margin-bottom:2.5rem;max-width:38ch;}
+.perks{display:flex;flex-direction:column;gap:1rem;margin-bottom:3rem;}
+.perk{display:flex;align-items:flex-start;gap:0.9rem;}
+.perk-icon{width:36px;height:36px;border-radius:10px;background:rgba(244,115,42,0.15);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.perk-text strong{display:block;font-size:0.88rem;font-weight:800;color:#fff;margin-bottom:0.1rem;}
+.perk-text span{font-size:0.78rem;color:rgba(255,255,255,0.5);font-weight:600;}
+.mini-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:1.2rem 1.4rem;display:flex;align-items:center;gap:1rem;}
+.mini-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--orange),var(--yellow));display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.mini-info strong{display:block;font-size:0.88rem;font-weight:800;color:#fff;}
+.mini-info span{font-size:0.75rem;color:rgba(255,255,255,0.5);}
+.mini-stat{margin-left:auto;text-align:right;}
+.mini-stat strong{display:block;font-family:var(--font-display);font-size:1.2rem;font-weight:900;color:var(--orange);}
+.mini-stat span{font-size:0.7rem;color:rgba(255,255,255,0.4);font-family:var(--font-mono);}
 
-.benefit-list { display:flex; flex-direction:column; gap:0.7rem; margin-bottom:2rem; }
-.benefit-item {
-  display:flex; align-items:center; gap:0.8rem;
-  background:rgba(255,255,255,0.65); backdrop-filter:blur(8px);
-  border:1px solid rgba(244,115,42,0.15); border-radius:12px;
-  padding:0.7rem 1rem; font-size:0.85rem; font-weight:700; color:var(--black);
-  animation: slideIn 0.4s ease both;
-}
-.benefit-item:nth-child(2){animation-delay:0.1s;}
-.benefit-item:nth-child(3){animation-delay:0.2s;}
-.benefit-item:nth-child(4){animation-delay:0.3s;}
-@keyframes slideIn { from{opacity:0;transform:translateX(-10px);} to{opacity:1;transform:translateX(0);} }
+/* RIGHT PANEL - FORM */
+.right-panel{padding:3rem 3.5rem;display:flex;flex-direction:column;justify-content:center;overflow-y:auto;}
+.form-wrap{max-width:440px;width:100%;margin:0 auto;}
 
-.creator-avatars { display:flex; align-items:center; gap:0.8rem; position:relative; z-index:1; }
-.av-stack { display:flex; }
-.av-item {
-  width:32px; height:32px; border-radius:50%; border:2px solid #fff;
-  margin-left:-8px; display:flex; align-items:center; justify-content:center;
-  font-size:0.7rem; font-weight:900; color:#fff;
-}
-.av-item:first-child { margin-left:0; }
-.av-text { font-size:0.8rem; color:#6b5347; font-weight:700; }
-.av-text strong { color:var(--black); }
+/* STEPS */
+.step-indicator{display:flex;align-items:center;gap:0;margin-bottom:2.5rem;}
+.step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;font-family:var(--font-mono);border:2px solid var(--border);color:var(--muted);background:var(--bg);transition:all 0.3s;flex-shrink:0;}
+.step-dot.active{background:var(--orange);border-color:var(--orange);color:#fff;box-shadow:0 4px 12px rgba(244,115,42,0.35);}
+.step-dot.done{background:var(--green);border-color:var(--green);color:#fff;}
+.step-line{flex:1;height:2px;background:var(--border);transition:background 0.3s;}
+.step-line.done{background:var(--green);}
+.step-label{font-size:0.72rem;font-weight:700;color:var(--muted);margin-top:0.4rem;text-align:center;}
 
-/* RIGHT */
-.right-panel {
-  display:flex; flex-direction:column; justify-content:center;
-  align-items:center; padding:3rem 2rem; position:relative; z-index:1; overflow-y:auto;
-}
-.form-card {
-  background:var(--card); border-radius:24px; padding:2.5rem;
-  width:100%; max-width:440px; box-shadow:var(--shadow-lg);
-  border:1px solid rgba(244,115,42,0.1);
-  animation: fadeUp 0.5s ease both;
-}
-@keyframes fadeUp { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
+/* FORM HEADER */
+.form-header{margin-bottom:2rem;}
+.form-header h1{font-family:var(--font-display);font-size:1.8rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.4rem;}
+.form-header p{font-size:0.88rem;color:var(--muted);font-weight:600;}
+.form-header p a{color:var(--orange);text-decoration:none;font-weight:800;}
+.form-header p a:hover{text-decoration:underline;}
 
-/* Step indicator */
-.steps-indicator {
-  display:flex; gap:0.4rem; margin-bottom:1.6rem; align-items:center; justify-content:center;
+/* OAUTH */
+.oauth-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1.5rem;}
+.oauth-btn{display:flex;align-items:center;justify-content:center;gap:0.6rem;padding:0.75rem;border-radius:12px;border:1.5px solid var(--input-border);background:var(--card);font-size:0.85rem;font-weight:700;color:var(--black);text-decoration:none;cursor:pointer;transition:all 0.2s;font-family:var(--font-body);}
+.oauth-btn:hover{border-color:var(--orange);background:var(--orange-pale);}
+.oauth-icon{width:20px;height:20px;flex-shrink:0;}
+.divider{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.divider span{font-size:0.75rem;color:var(--muted);font-weight:700;white-space:nowrap;}
+
+/* FORM FIELDS */
+.form-step{display:none;}
+.form-step.active{display:block;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;}
+.field{margin-bottom:1.1rem;}
+.field label{display:block;font-size:0.78rem;font-weight:800;color:var(--black);margin-bottom:0.4rem;letter-spacing:0.01em;}
+.field-wrap{position:relative;}
+.field input{width:100%;padding:0.8rem 1rem 0.8rem 2.6rem;border:1.5px solid var(--input-border);border-radius:12px;font-family:var(--font-body);font-size:0.9rem;font-weight:600;color:var(--black);background:var(--card);transition:all 0.2s;outline:none;}
+.field input:focus{border-color:var(--input-focus);box-shadow:0 0 0 3px rgba(244,115,42,0.12);}
+.field input.error{border-color:var(--red);box-shadow:0 0 0 3px rgba(239,68,68,0.1);}
+.field input.success{border-color:var(--green);}
+.field-icon{position:absolute;left:0.85rem;top:50%;transform:translateY(-50%);font-size:0.9rem;pointer-events:none;}
+.field-suffix{position:absolute;right:0.85rem;top:50%;transform:translateY(-50%);font-size:0.78rem;font-weight:700;color:var(--muted);cursor:pointer;user-select:none;}
+.field-suffix:hover{color:var(--orange);}
+.field-hint{font-size:0.72rem;color:var(--muted);font-weight:600;margin-top:0.3rem;}
+.field-error{font-size:0.72rem;color:var(--red);font-weight:700;margin-top:0.3rem;display:none;}
+.field-error.show{display:block;}
+.username-preview{font-size:0.72rem;font-weight:700;color:var(--orange);margin-top:0.3rem;font-family:var(--font-mono);}
+
+/* PASSWORD STRENGTH */
+.pw-strength{margin-top:0.5rem;}
+.pw-bars{display:flex;gap:3px;margin-bottom:0.3rem;}
+.pw-bar{flex:1;height:3px;border-radius:2px;background:var(--border);transition:background 0.3s;}
+.pw-bar.weak{background:#ef4444;}
+.pw-bar.fair{background:var(--yellow);}
+.pw-bar.good{background:#22c55e;}
+.pw-label{font-size:0.7rem;font-weight:700;color:var(--muted);}
+
+/* TERMS */
+.terms-check{display:flex;align-items:flex-start;gap:0.75rem;margin-bottom:1.5rem;cursor:pointer;}
+.terms-check input[type=checkbox]{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--input-border);accent-color:var(--orange);flex-shrink:0;margin-top:1px;cursor:pointer;}
+.terms-check span{font-size:0.82rem;color:var(--muted);font-weight:600;line-height:1.5;}
+.terms-check span a{color:var(--orange);text-decoration:none;font-weight:800;}
+.terms-check span a:hover{text-decoration:underline;}
+
+/* PLAN SELECTOR */
+.plan-cards{display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.5rem;}
+.plan-card{border:2px solid var(--border);border-radius:14px;padding:1.1rem 1.3rem;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:1rem;position:relative;}
+.plan-card:hover{border-color:rgba(244,115,42,0.4);background:var(--orange-pale);}
+.plan-card.selected{border-color:var(--orange);background:var(--orange-pale);}
+.plan-card input[type=radio]{position:absolute;opacity:0;width:0;height:0;}
+.plan-radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.plan-card.selected .plan-radio{border-color:var(--orange);background:var(--orange);}
+.plan-card.selected .plan-radio::after{content:'';width:8px;height:8px;border-radius:50%;background:#fff;}
+.plan-emoji{font-size:1.4rem;flex-shrink:0;}
+.plan-info{flex:1;}
+.plan-info strong{display:block;font-size:0.9rem;font-weight:800;font-family:var(--font-display);}
+.plan-info span{font-size:0.75rem;color:var(--muted);font-weight:600;}
+.plan-price-tag{font-family:var(--font-mono);font-size:0.82rem;font-weight:700;color:var(--orange);white-space:nowrap;}
+.plan-popular{position:absolute;top:-10px;right:1rem;background:var(--orange);color:#fff;font-size:0.62rem;font-weight:800;letter-spacing:0.08em;padding:0.2rem 0.7rem;border-radius:100px;text-transform:uppercase;}
+
+/* SUBMIT BTN */
+.submit-btn{width:100%;padding:0.95rem;background:var(--orange);color:#fff;border:none;border-radius:14px;font-family:var(--font-body);font-size:1rem;font-weight:800;cursor:pointer;transition:all 0.2s;box-shadow:0 6px 20px rgba(244,115,42,0.35);display:flex;align-items:center;justify-content:center;gap:0.5rem;}
+.submit-btn:hover{background:var(--orange-light);transform:translateY(-1px);box-shadow:0 10px 28px rgba(244,115,42,0.45);}
+.submit-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.back-btn{width:100%;padding:0.8rem;background:transparent;color:var(--muted);border:1.5px solid var(--border);border-radius:14px;font-family:var(--font-body);font-size:0.9rem;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:0.6rem;}
+.back-btn:hover{border-color:var(--orange);color:var(--orange);}
+
+/* SUCCESS */
+.success-screen{display:none;text-align:center;padding:2rem 0;}
+.success-screen.show{display:block;}
+.success-icon{font-size:3.5rem;margin-bottom:1rem;animation:pop 0.4s ease;}
+@keyframes pop{0%{transform:scale(0.5);}70%{transform:scale(1.15);}100%{transform:scale(1);}}
+.success-screen h2{font-family:var(--font-display);font-size:1.8rem;font-weight:900;letter-spacing:-0.02em;margin-bottom:0.5rem;}
+.success-screen p{font-size:0.9rem;color:var(--muted);font-weight:600;line-height:1.6;}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem;}
+  .page{grid-template-columns:1fr;}
+  .left-panel{display:none;}
+  .right-panel{padding:2rem 1.5rem;}
 }
-.step-dot {
-  height:4px; border-radius:100px; transition:all 0.3s;
-}
-.step-dot.active { background:var(--orange); width:24px; }
-.step-dot.done { background:var(--orange); opacity:0.4; width:16px; }
-.step-dot.pending { background:var(--border); width:16px; }
-
-.form-icon { font-size:2.2rem; text-align:center; margin-bottom:0.7rem; }
-.form-title {
-  font-family: var(--font-display); font-size:1.6rem; font-weight:900;
-  text-align:center; letter-spacing:-0.03em; margin-bottom:0.3rem;
-}
-.form-title em { font-style:italic; color:var(--orange); }
-.form-subtitle { font-size:0.83rem; color:var(--muted); text-align:center; font-weight:600; margin-bottom:1.8rem; }
-.form-subtitle a { color:var(--orange); font-weight:800; text-decoration:none; }
-.form-subtitle a:hover { text-decoration:underline; }
-
-/* Social */
-.social-btns { display:flex; gap:0.7rem; margin-bottom:1.3rem; }
-.social-btn {
-  flex:1; display:flex; align-items:center; justify-content:center; gap:0.5rem;
-  padding:0.72rem; border-radius:12px; font-size:0.83rem; font-weight:800;
-  cursor:pointer; font-family:var(--font-body); transition:all 0.2s; text-decoration:none;
-}
-.btn-google { background:var(--bg2); color:var(--black); border:1.5px solid rgba(26,22,18,0.1); }
-.btn-google:hover { border-color:var(--orange); background:var(--orange-pale); }
-.btn-apple { background:var(--black); color:#fff; border:1.5px solid var(--black); }
-.btn-apple:hover { background:#2d2118; }
-
-.divider { display:flex; align-items:center; gap:0.8rem; margin-bottom:1.3rem; }
-.divider-line { flex:1; height:1px; background:var(--border); }
-.divider-text { font-size:0.7rem; color:var(--muted); font-weight:700; white-space:nowrap; }
-
-/* Form */
-.form-row { display:grid; grid-template-columns:1fr 1fr; gap:0.7rem; }
-.form-group { margin-bottom:0.9rem; }
-.form-label { font-size:0.73rem; font-weight:800; color:var(--black); display:block; margin-bottom:0.35rem; }
-.input-wrap { position:relative; }
-.input-icon { position:absolute; left:0.85rem; top:50%; transform:translateY(-50%); font-size:0.85rem; pointer-events:none; }
-.form-input {
-  width:100%; padding:0.75rem 0.85rem 0.75rem 2.5rem;
-  border:1.5px solid var(--border); border-radius:11px;
-  font-size:0.86rem; font-weight:600; color:var(--black);
-  font-family:var(--font-body); background:var(--bg2); outline:none; transition:all 0.2s;
-}
-.form-input:focus { border-color:var(--orange); background:#fff; box-shadow:0 0 0 3px rgba(244,115,42,0.08); }
-.form-input.error { border-color:#ef4444; }
-.input-toggle { position:absolute; right:0.85rem; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--muted); font-size:0.72rem; font-weight:800; font-family:var(--font-body); }
-.username-prefix { position:absolute; left:0.85rem; top:50%; transform:translateY(-50%); font-size:0.85rem; color:var(--muted); font-weight:700; }
-.form-input.with-prefix { padding-left:2.2rem; }
-.field-error { font-size:0.68rem; color:#ef4444; font-weight:700; margin-top:0.25rem; display:none; }
-.field-error.show { display:block; }
-.field-hint { font-size:0.68rem; color:var(--muted); font-weight:600; margin-top:0.25rem; }
-
-.terms-row { display:flex; align-items:flex-start; gap:0.5rem; margin-bottom:1.2rem; }
-.terms-row input[type="checkbox"] { margin-top:2px; accent-color:var(--orange); flex-shrink:0; }
-.terms-label { font-size:0.78rem; color:var(--muted); font-weight:600; line-height:1.5; }
-.terms-label a { color:var(--orange); font-weight:800; text-decoration:none; }
-.terms-label a:hover { text-decoration:underline; }
-
-.btn-submit {
-  width:100%; padding:0.9rem; background:var(--orange); color:#fff;
-  border:none; border-radius:12px; font-size:0.95rem; font-weight:900;
-  cursor:pointer; font-family:var(--font-body); transition:all 0.25s;
-  box-shadow:0 6px 20px rgba(244,115,42,0.35); letter-spacing:-0.01em;
-  display:flex; align-items:center; justify-content:center; gap:0.5rem;
-}
-.btn-submit:hover { background:var(--orange-light); transform:translateY(-2px); box-shadow:0 10px 28px rgba(244,115,42,0.45); }
-.btn-submit:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
-.btn-back {
-  width:100%; padding:0.75rem; background:transparent; color:var(--muted);
-  border:1.5px solid var(--border); border-radius:12px; font-size:0.85rem;
-  font-weight:800; cursor:pointer; font-family:var(--font-body); margin-top:0.6rem;
-  transition:all 0.2s;
-}
-.btn-back:hover { border-color:var(--orange); color:var(--orange); }
-
-.form-footer { text-align:center; margin-top:1.2rem; font-size:0.78rem; color:var(--muted); font-weight:600; }
-.form-footer a { color:var(--orange); font-weight:900; text-decoration:none; }
-.form-footer a:hover { text-decoration:underline; }
-
-/* Step 2 — Plan selection */
-.plan-grid { display:flex; flex-direction:column; gap:0.65rem; margin-bottom:1.4rem; }
-.plan-card {
-  border:2px solid var(--border); border-radius:14px; padding:1rem 1.2rem;
-  cursor:pointer; transition:all 0.2s; position:relative; background:var(--bg2);
-}
-.plan-card:hover { border-color:rgba(244,115,42,0.4); }
-.plan-card.selected { border-color:var(--orange); background:#fff9f5; }
-.plan-card.featured { border-color:rgba(244,115,42,0.4); }
-.plan-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.3rem; }
-.plan-name { font-family:var(--font-display); font-size:1rem; font-weight:900; display:flex; align-items:center; gap:0.4rem; }
-.plan-price { font-family:var(--font-display); font-size:1rem; font-weight:900; color:var(--orange); }
-.plan-desc { font-size:0.75rem; color:var(--muted); font-weight:600; }
-.plan-badge {
-  position:absolute; top:-10px; left:1rem;
-  background:var(--orange); color:#fff; font-size:0.6rem; font-weight:800;
-  padding:0.18rem 0.7rem; border-radius:100px; letter-spacing:0.06em; text-transform:uppercase;
-}
-.plan-radio { width:16px; height:16px; accent-color:var(--orange); flex-shrink:0; }
-
-/* Success */
-.success-state { display:none; text-align:center; padding:1.5rem 0; }
-.success-icon { font-size:3.5rem; margin-bottom:0.8rem; }
-.success-title { font-family:var(--font-display); font-size:1.5rem; font-weight:900; letter-spacing:-0.02em; margin-bottom:0.5rem; }
-.success-sub { font-size:0.85rem; color:var(--muted); font-weight:600; line-height:1.6; }
-.success-bar { height:4px; background:var(--border); border-radius:100px; margin-top:1.4rem; overflow:hidden; }
-.success-progress { height:100%; background:var(--orange); border-radius:100px; animation:progressFill 2.5s ease forwards; }
-@keyframes progressFill { from{width:0;} to{width:100%;} }
-
-@media (max-width:768px) {
-  body { grid-template-columns:1fr; }
-  .left-panel { display:none; }
-  .right-panel { min-height:100vh; padding:2rem 1.2rem; }
-  .form-card { padding:2rem 1.5rem; }
-  .form-row { grid-template-columns:1fr; }
+@media(max-width:480px){
+  .oauth-row{grid-template-columns:1fr;}
+  .field-row{grid-template-columns:1fr;}
 }
 </style>
 </head>
 <body>
 
-<!-- LEFT PANEL -->
-<div class="left-panel">
-  <div class="left-blob1"></div><div class="left-blob2"></div>
-  <a href="index.html" class="left-logo">Kreatown<span class="dot"></span></a>
-  <div class="left-content">
-    <h2>Build your own <em>Town.</em> Own your fans.</h2>
-    <p>No algorithm. No middleman. Just you, your content, and the fans who love it.</p>
-    <div class="benefit-list">
-      <div class="benefit-item">🏡 <span>Your own creator town — a world fans live in</span></div>
-      <div class="benefit-item">💰 <span>Keep 95%+ of earnings — we take only a small cut</span></div>
-      <div class="benefit-item">💬 <span>Tiered rooms & DMs — real fan community</span></div>
-      <div class="benefit-item">📺 <span>Radio, TV, live rooms — immersive experiences</span></div>
-    </div>
-    <div class="creator-avatars">
-      <div class="av-stack">
-        <div class="av-item" style="background:linear-gradient(135deg,#f4732a,#fbbf24)">T</div>
-        <div class="av-item" style="background:linear-gradient(135deg,#60a5fa,#a78bfa)">S</div>
-        <div class="av-item" style="background:linear-gradient(135deg,#34d399,#60a5fa)">C</div>
-        <div class="av-item" style="background:linear-gradient(135deg,#f472b6,#f4732a)">E</div>
-      </div>
-      <div class="av-text"><strong>1,200+ creators</strong> already building their town</div>
-    </div>
+<nav>
+  <a href="index.html" class="nav-logo">Krea<span>town</span></a>
+  <div class="nav-right">
+    <span style="font-size:0.85rem;color:var(--muted);font-weight:600;">Already a member?</span>
+    <a href="login.html" class="login-btn">Log in</a>
   </div>
-</div>
+</nav>
 
-<!-- RIGHT PANEL -->
-<div class="right-panel">
+<div class="page">
 
-  <!-- STEP 1 -->
-  <div class="form-card" id="step1-card">
-    <div class="steps-indicator">
-      <div class="step-dot active" id="dot1"></div>
-      <div class="step-dot pending" id="dot2"></div>
-    </div>
-    <div class="form-icon">🏡</div>
-    <h1 class="form-title">Join KreaTown</h1>
-    <p class="form-subtitle">Already have an account? <a href="login.html">Log in →</a></p>
-
-    <div class="social-btns">
-      <a href="#" class="social-btn btn-google">🔵 Google</a>
-      <a href="#" class="social-btn btn-apple">⬛ Apple</a>
-    </div>
-    <div class="divider">
-      <div class="divider-line"></div>
-      <span class="divider-text">or sign up with email</span>
-      <div class="divider-line"></div>
-    </div>
-
-    <form id="step1Form" novalidate>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label" for="firstName">First name</label>
-          <div class="input-wrap">
-            <span class="input-icon">👤</span>
-            <input type="text" id="firstName" class="form-input" placeholder="Jane" autocomplete="given-name"/>
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <div class="left-blob"></div>
+    <div class="left-content">
+      <div class="left-badge">🏡 Early Access · Free for 3 months</div>
+      <h2>Build your world.<br><span>Own your fans.</span></h2>
+      <p>No algorithm. No middleman. Just you, your content, and the fans who love it. Start your creator town today — free.</p>
+      <div class="perks">
+        <div class="perk">
+          <div class="perk-icon">🏡</div>
+          <div class="perk-text">
+            <strong>Your own creator town</strong>
+            <span>A living world your fans explore</span>
           </div>
-          <div class="field-error" id="firstName-error">Required</div>
         </div>
-        <div class="form-group">
-          <label class="form-label" for="lastName">Last name</label>
-          <div class="input-wrap">
-            <span class="input-icon">👤</span>
-            <input type="text" id="lastName" class="form-input" placeholder="Smith" autocomplete="family-name"/>
+        <div class="perk">
+          <div class="perk-icon">💰</div>
+          <div class="perk-text">
+            <strong>Keep 95%+ of earnings</strong>
+            <span>We only take a small platform cut</span>
           </div>
-          <div class="field-error" id="lastName-error">Required</div>
+        </div>
+        <div class="perk">
+          <div class="perk-icon">💬</div>
+          <div class="perk-text">
+            <strong>Tiered rooms &amp; DMs</strong>
+            <span>Real community, not just a feed</span>
+          </div>
+        </div>
+        <div class="perk">
+          <div class="perk-icon">📺</div>
+          <div class="perk-text">
+            <strong>Radio, TV &amp; live rooms</strong>
+            <span>Immersive creator experiences</span>
+          </div>
         </div>
       </div>
-
-      <div class="form-group">
-        <label class="form-label" for="username">Username (your town URL)</label>
-        <div class="input-wrap">
-          <span class="username-prefix">🏷️</span>
-          <input type="text" id="username" class="form-input with-prefix" placeholder="janesmith" autocomplete="username"/>
+      <div class="mini-card">
+        <div class="mini-avatar">🎨</div>
+        <div class="mini-info">
+          <strong>Topraq Toros</strong>
+          <span>Joined 3 weeks ago · Level 3</span>
         </div>
-        <div class="field-error" id="username-error">Username required (letters, numbers, _ only)</div>
-        <div class="field-hint">kreatown.com/@janesmith</div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="email">Email address</label>
-        <div class="input-wrap">
-          <span class="input-icon">✉️</span>
-          <input type="email" id="email" class="form-input" placeholder="jane@example.com" autocomplete="email"/>
+        <div class="mini-stat">
+          <strong>$224</strong>
+          <span>this month</span>
         </div>
-        <div class="field-error" id="email-error">Please enter a valid email</div>
       </div>
-
-      <div class="form-group">
-        <label class="form-label" for="password">Password</label>
-        <div class="input-wrap">
-          <span class="input-icon">🔒</span>
-          <input type="password" id="password" class="form-input" placeholder="At least 8 characters" autocomplete="new-password"/>
-          <button type="button" class="input-toggle" onclick="togglePwd()">show</button>
-        </div>
-        <div class="field-error" id="password-error">Password must be at least 8 characters</div>
-      </div>
-
-      <div class="terms-row">
-        <input type="checkbox" id="terms"/>
-        <label class="terms-label" for="terms">
-          I agree to KreaTown's <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a>
-        </label>
-      </div>
-
-      <button type="submit" class="btn-submit" id="step1Btn">
-        Continue to plan →
-      </button>
-    </form>
-    <div class="form-footer">Already a member? <a href="login.html">Log in here</a></div>
-  </div>
-
-  <!-- STEP 2 -->
-  <div class="form-card" id="step2-card" style="display:none;">
-    <div class="steps-indicator">
-      <div class="step-dot done"></div>
-      <div class="step-dot active"></div>
     </div>
-    <div class="form-icon">🏠</div>
-    <h2 class="form-title">Choose your <em>plan</em></h2>
-    <p class="form-subtitle">Start free. Upgrade anytime. No hidden fees.</p>
+  </div>
 
-    <div class="plan-grid">
-      <label class="plan-card" onclick="selectPlan(this,'starter')">
-        <input type="radio" name="plan" value="starter" class="plan-radio" style="display:none">
-        <div class="plan-top">
-          <div class="plan-name">🌱 Starter</div>
-          <div class="plan-price">Free</div>
-        </div>
-        <div class="plan-desc">Free for 3 months · 5% cut · Perfect to start</div>
-        <div style="font-size:0.7rem;color:var(--muted);margin-top:0.2rem">then $19/mo</div>
-      </label>
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="form-wrap">
 
-      <label class="plan-card featured selected" onclick="selectPlan(this,'pro')">
-        <div class="plan-badge">Most popular</div>
-        <input type="radio" name="plan" value="pro" class="plan-radio" style="display:none" checked>
-        <div class="plan-top">
-          <div class="plan-name">👑 Pro</div>
-          <div class="plan-price">$29/mo</div>
+      <!-- Step indicator -->
+      <div style="margin-bottom:2rem;">
+        <div class="step-indicator">
+          <div class="step-dot active" id="dot1">1</div>
+          <div class="step-line" id="line1"></div>
+          <div class="step-dot" id="dot2">2</div>
         </div>
-        <div class="plan-desc">$29/mo · 5% cut · Advanced analytics + rooms</div>
-      </label>
+        <div style="display:flex;justify-content:space-between;margin-top:0.4rem;">
+          <span class="step-label">Your account</span>
+          <span class="step-label">Choose plan</span>
+        </div>
+      </div>
 
-      <label class="plan-card" onclick="selectPlan(this,'studio')">
-        <input type="radio" name="plan" value="studio" class="plan-radio" style="display:none">
-        <div class="plan-top">
-          <div class="plan-name">🏯 Studio</div>
-          <div class="plan-price">$49/mo</div>
+      <!-- STEP 1: Account -->
+      <div class="form-step active" id="step1">
+        <div class="form-header">
+          <h1>Create your account</h1>
+          <p>Already have an account? <a href="login.html">Log in →</a></p>
         </div>
-        <div class="plan-desc">$49/mo · Only 3% cut · Full platform access</div>
-      </label>
+
+        <!-- OAuth -->
+        <div class="oauth-row">
+          <button class="oauth-btn" onclick="oauthNotice('Google')" type="button">
+            <svg class="oauth-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Continue with Google
+          </button>
+          <button class="oauth-btn" onclick="oauthNotice('Apple')" type="button">
+            <svg class="oauth-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+            Continue with Apple
+          </button>
+        </div>
+        <div id="oauth-notice" style="display:none;background:var(--orange-pale);border:1px solid rgba(244,115,42,0.2);border-radius:10px;padding:0.7rem 1rem;font-size:0.8rem;font-weight:700;color:var(--orange);margin-bottom:1rem;text-align:center;">
+          Social login coming soon — please use email for now 👇
+        </div>
+
+        <div class="divider"><span>or sign up with email</span></div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="firstName">First name</label>
+            <div class="field-wrap">
+              <span class="field-icon">👤</span>
+              <input type="text" id="firstName" placeholder="Jane" autocomplete="given-name"/>
+            </div>
+            <div class="field-error" id="err-firstName">Please enter your first name.</div>
+          </div>
+          <div class="field">
+            <label for="lastName">Last name</label>
+            <div class="field-wrap">
+              <span class="field-icon">👤</span>
+              <input type="text" id="lastName" placeholder="Smith" autocomplete="family-name"/>
+            </div>
+            <div class="field-error" id="err-lastName">Please enter your last name.</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="username">Username <span style="font-weight:600;color:var(--muted)">(your town URL)</span></label>
+          <div class="field-wrap">
+            <span class="field-icon">🏷️</span>
+            <input type="text" id="username" placeholder="janecreates" autocomplete="username" oninput="updateUsernamePreview()"/>
+          </div>
+          <div class="username-preview" id="username-preview" style="display:none;"></div>
+          <div class="field-hint">Letters, numbers and _ only. No spaces.</div>
+          <div class="field-error" id="err-username">Please choose a valid username (letters, numbers, _ only).</div>
+        </div>
+
+        <div class="field">
+          <label for="email">Email address</label>
+          <div class="field-wrap">
+            <span class="field-icon">✉️</span>
+            <input type="email" id="email" placeholder="jane@example.com" autocomplete="email"/>
+          </div>
+          <div class="field-error" id="err-email">Please enter a valid email address.</div>
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="field-wrap">
+            <span class="field-icon">🔒</span>
+            <input type="password" id="password" placeholder="Min. 8 characters" autocomplete="new-password" oninput="checkPasswordStrength()"/>
+            <span class="field-suffix" onclick="togglePassword('password',this)">Show</span>
+          </div>
+          <div class="pw-strength" id="pw-strength" style="display:none;">
+            <div class="pw-bars">
+              <div class="pw-bar" id="pb1"></div>
+              <div class="pw-bar" id="pb2"></div>
+              <div class="pw-bar" id="pb3"></div>
+              <div class="pw-bar" id="pb4"></div>
+            </div>
+            <div class="pw-label" id="pw-label"></div>
+          </div>
+          <div class="field-error" id="err-password">Password must be at least 8 characters.</div>
+        </div>
+
+        <div class="terms-check">
+          <input type="checkbox" id="terms"/>
+          <span>I agree to Kreatown's <a href="terms.html" target="_blank">Terms of Service</a> and <a href="privacy.html" target="_blank">Privacy Policy</a></span>
+        </div>
+        <div class="field-error" id="err-terms" style="margin-top:-0.8rem;margin-bottom:1rem;">Please accept the terms to continue.</div>
+
+        <button class="submit-btn" onclick="goToStep2()">Continue to plan →</button>
+      </div>
+
+      <!-- STEP 2: Plan -->
+      <div class="form-step" id="step2">
+        <div class="form-header">
+          <h1>Choose your plan</h1>
+          <p>Start free. Upgrade anytime. No hidden fees.</p>
+        </div>
+
+        <div class="plan-cards">
+          <label class="plan-card" id="plan-starter" onclick="selectPlan('starter')">
+            <input type="radio" name="plan" value="starter"/>
+            <div class="plan-radio"></div>
+            <div class="plan-emoji">🌱</div>
+            <div class="plan-info">
+              <strong>Starter</strong>
+              <span>Free for 3 months · 5% cut · Perfect to start</span>
+            </div>
+            <div class="plan-price-tag">Free<br><small style="font-size:0.65rem;color:var(--muted)">then $19/mo</small></div>
+          </label>
+
+          <label class="plan-card selected" id="plan-pro" onclick="selectPlan('pro')">
+            <div class="plan-popular">Most popular</div>
+            <input type="radio" name="plan" value="pro" checked/>
+            <div class="plan-radio"></div>
+            <div class="plan-emoji">👑</div>
+            <div class="plan-info">
+              <strong>Pro</strong>
+              <span>All features · 5% cut · Advanced analytics</span>
+            </div>
+            <div class="plan-price-tag">$29<br><small style="font-size:0.65rem;color:var(--muted)">/month</small></div>
+          </label>
+
+          <label class="plan-card" id="plan-studio" onclick="selectPlan('studio')">
+            <input type="radio" name="plan" value="studio"/>
+            <div class="plan-radio"></div>
+            <div class="plan-emoji">🏯</div>
+            <div class="plan-info">
+              <strong>Studio</strong>
+              <span>Full access · Only 3% cut · Priority support</span>
+            </div>
+            <div class="plan-price-tag">$49<br><small style="font-size:0.65rem;color:var(--muted)">/month</small></div>
+          </label>
+        </div>
+
+        <button class="submit-btn" onclick="submitForm()">Create my town 🏡</button>
+        <button class="back-btn" onclick="goToStep1()">← Back</button>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="success-screen" id="successScreen">
+        <div class="success-icon">🏡</div>
+        <h2>Your town is ready!</h2>
+        <p>Welcome to Kreatown.<br/>Taking you to your dashboard now…</p>
+        <div style="margin-top:1.5rem;font-size:0.8rem;color:var(--muted);">Redirecting in <span id="countdown">3</span>s…</div>
+      </div>
+
     </div>
-
-    <button class="btn-submit" id="step2Btn" onclick="submitRegistration()">
-      Create my town 🏡
-    </button>
-    <button class="btn-back" onclick="goBack()">← Back</button>
-    <div class="form-footer">Already a member? <a href="login.html">Log in here</a></div>
   </div>
-
-  <!-- SUCCESS -->
-  <div class="success-state" id="success-state">
-    <div class="success-icon">🏡</div>
-    <div class="success-title">Your town is ready!</div>
-    <div class="success-sub">Welcome to KreaTown.<br>Taking you to your dashboard now…</div>
-    <div class="success-bar"><div class="success-progress"></div></div>
-  </div>
-
 </div>
 
 <script>
-let registrationData = {};
-let selectedPlan = 'pro';
-
-function togglePwd() {
-  const pw = document.getElementById('password');
-  const btn = pw.nextElementSibling;
-  pw.type = pw.type === 'password' ? 'text' : 'password';
-  btn.textContent = pw.type === 'password' ? 'show' : 'hide';
+// OAuth notice
+function oauthNotice(provider){
+  const n=document.getElementById('oauth-notice');
+  n.style.display='block';
+  setTimeout(()=>n.style.display='none',4000);
 }
 
-function selectPlan(el, plan) {
-  document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedPlan = plan;
+// Username preview
+function updateUsernamePreview(){
+  const v=document.getElementById('username').value.trim();
+  const p=document.getElementById('username-preview');
+  if(v){p.style.display='block';p.textContent='kreatown.com/@'+v;}
+  else{p.style.display='none';}
 }
 
-document.getElementById('step1Form').addEventListener('submit', function(e) {
-  e.preventDefault();
-  const firstName = document.getElementById('firstName').value.trim();
-  const lastName = document.getElementById('lastName').value.trim();
-  const username = document.getElementById('username').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
-  const terms = document.getElementById('terms').checked;
-  let valid = true;
+// Password toggle
+function togglePassword(id,el){
+  const f=document.getElementById(id);
+  if(f.type==='password'){f.type='text';el.textContent='Hide';}
+  else{f.type='password';el.textContent='Show';}
+}
 
-  const validate = (id, val, condition, msg) => {
-    const el = document.getElementById(id);
-    const err = document.getElementById(id + '-error');
-    if (!condition) {
-      el.classList.add('error'); err.textContent = msg; err.classList.add('show'); valid = false;
+// Password strength
+function checkPasswordStrength(){
+  const v=document.getElementById('password').value;
+  const s=document.getElementById('pw-strength');
+  const lbl=document.getElementById('pw-label');
+  const bars=[document.getElementById('pb1'),document.getElementById('pb2'),document.getElementById('pb3'),document.getElementById('pb4')];
+  if(!v){s.style.display='none';return;}
+  s.style.display='block';
+  bars.forEach(b=>b.className='pw-bar');
+  let score=0;
+  if(v.length>=8)score++;
+  if(/[A-Z]/.test(v))score++;
+  if(/[0-9]/.test(v))score++;
+  if(/[^A-Za-z0-9]/.test(v))score++;
+  const cls=score<=1?'weak':score===2?'fair':'good';
+  const labels=['','Weak','Fair','Good','Strong'];
+  for(let i=0;i<score;i++)bars[i].classList.add(cls);
+  lbl.textContent=labels[score]||'';
+  lbl.style.color=score<=1?'#ef4444':score===2?'#fbbf24':'#22c55e';
+}
+
+// Validation
+function validate1(){
+  let ok=true;
+  const fields=[
+    {id:'firstName',err:'err-firstName',test:v=>v.trim().length>0},
+    {id:'lastName',err:'err-lastName',test:v=>v.trim().length>0},
+    {id:'username',err:'err-username',test:v=>/^[a-zA-Z0-9_]{3,}$/.test(v.trim())},
+    {id:'email',err:'err-email',test:v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim())},
+    {id:'password',err:'err-password',test:v=>v.length>=8},
+  ];
+  fields.forEach(f=>{
+    const el=document.getElementById(f.id);
+    const err=document.getElementById(f.err);
+    if(!f.test(el.value)){
+      el.classList.add('error');
+      err.classList.add('show');
+      ok=false;
     } else {
-      el.classList.remove('error'); err.classList.remove('show');
+      el.classList.remove('error');
+      el.classList.add('success');
+      err.classList.remove('show');
     }
-  };
-
-  validate('firstName', firstName, firstName.length > 0, 'Required');
-  validate('lastName', lastName, lastName.length > 0, 'Required');
-  validate('username', username, /^[a-zA-Z0-9_]{3,}$/.test(username), 'Username required (letters, numbers, _ only)');
-  validate('email', email, /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email), 'Please enter a valid email');
-  validate('password', password, password.length >= 8, 'Password must be at least 8 characters');
-
-  if (!terms) { valid = false; }
-  if (!valid) return;
-
-  registrationData = { firstName, lastName, username, email, password };
-  document.getElementById('step1-card').style.display = 'none';
-  document.getElementById('step2-card').style.display = 'block';
-});
-
-function goBack() {
-  document.getElementById('step2-card').style.display = 'none';
-  document.getElementById('step1-card').style.display = 'block';
+  });
+  const terms=document.getElementById('terms');
+  const termsErr=document.getElementById('err-terms');
+  if(!terms.checked){termsErr.classList.add('show');ok=false;}
+  else termsErr.classList.remove('show');
+  return ok;
 }
 
-async function submitRegistration() {
-  const btn = document.getElementById('step2Btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span style="display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle"></span>';
-  document.head.insertAdjacentHTML('beforeend','<style>@keyframes spin{to{transform:rotate(360deg)}}</style>');
-
-  const SB_URL = 'https://pkhoyabazudqmfczkhax.supabase.co';
-  const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
-
-  try {
-    const res = await fetch(SB_URL + '/auth/v1/signup', {
-      method: 'POST',
-      headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: registrationData.email,
-        password: registrationData.password,
-        data: {
-          display_name: registrationData.firstName + ' ' + registrationData.lastName,
-          username: registrationData.username,
-          plan: selectedPlan
-        }
-      })
-    });
-    const data = await res.json();
-
-    if (data.id || data.access_token) {
-      if (data.session) {
-        try { localStorage.setItem('kt_session', JSON.stringify(data.session)); } catch(e) {}
-      }
-      document.getElementById('step2-card').style.display = 'none';
-      document.getElementById('success-state').style.display = 'block';
-      document.querySelector('.right-panel').style.justifyContent = 'center';
-      setTimeout(() => { window.location.href = 'creator-dashboard.html'; }, 2800);
-    } else {
-      const msg = data.error_description || data.msg || 'Something went wrong. Please try again.';
-      btn.disabled = false;
-      btn.innerHTML = 'Create my town 🏡';
-      alert(msg);
-    }
-  } catch(err) {
-    btn.disabled = false;
-    btn.innerHTML = 'Create my town 🏡';
-    alert('Connection error. Please try again.');
-  }
+function goToStep2(){
+  if(!validate1())return;
+  document.getElementById('step1').classList.remove('active');
+  document.getElementById('step2').classList.add('active');
+  document.getElementById('dot1').classList.remove('active');
+  document.getElementById('dot1').classList.add('done');
+  document.getElementById('dot1').textContent='✓';
+  document.getElementById('line1').classList.add('done');
+  document.getElementById('dot2').classList.add('active');
+  window.scrollTo(0,0);
 }
 
-// Clear errors on input
-['firstName','lastName','username','email','password'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) el.addEventListener('input', function() {
-    this.classList.remove('error');
-    const err = document.getElementById(id + '-error');
-    if (err) err.classList.remove('show');
+function goToStep1(){
+  document.getElementById('step2').classList.remove('active');
+  document.getElementById('step1').classList.add('active');
+  document.getElementById('dot1').classList.add('active');
+  document.getElementById('dot1').classList.remove('done');
+  document.getElementById('dot1').textContent='1';
+  document.getElementById('line1').classList.remove('done');
+  document.getElementById('dot2').classList.remove('active');
+}
+
+function selectPlan(plan){
+  ['starter','pro','studio'].forEach(p=>{
+    document.getElementById('plan-'+p).classList.remove('selected');
+  });
+  document.getElementById('plan-'+plan).classList.add('selected');
+}
+
+function submitForm(){
+  const btn=document.querySelector('#step2 .submit-btn');
+  btn.disabled=true;
+  btn.textContent='Creating your town…';
+  setTimeout(()=>{
+    document.getElementById('step2').classList.remove('active');
+    document.getElementById('successScreen').classList.add('show');
+    document.getElementById('dot2').classList.remove('active');
+    document.getElementById('dot2').classList.add('done');
+    document.getElementById('dot2').textContent='✓';
+    let t=3;
+    const cd=document.getElementById('countdown');
+    const iv=setInterval(()=>{
+      t--;cd.textContent=t;
+      if(t<=0){clearInterval(iv);window.location.href='dashboard.html';}
+    },1000);
+  },1500);
+}
+
+// Clear error on input
+document.querySelectorAll('input').forEach(el=>{
+  el.addEventListener('input',()=>{
+    el.classList.remove('error');
+    const err=document.getElementById('err-'+el.id);
+    if(err)err.classList.remove('show');
   });
 });
 </script>
