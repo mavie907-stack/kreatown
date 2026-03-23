@@ -624,87 +624,101 @@ function getMyProfile(){
 
 async function loadMessages(roomId){
   try{
+    /* Use user token if available — required for RLS policies */
+    const session = getSession();
+    const token   = session?.access_token || SB_KEY;
+    const myId    = session?.user_id || session?.id;
+
     const res = await fetch(
-      SB_URL+'/rest/v1/room_messages?room_id=eq.'+roomId+'&order=created_at.asc&limit=100&select=*',
-      { headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY} }
+      SB_URL+'/rest/v1/room_messages?room_id=eq.'+roomId+'&order=created_at.asc&limit=200&select=*',
+      { headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token} }
     );
+
+    if(!res.ok){
+      console.warn('room_messages fetch failed:', res.status, await res.text().catch(()=>''));
+      showEmptyState(roomId, 'Could not load messages. Try refreshing.');
+      return;
+    }
+
     const data = await res.json();
     const room = ROOMS.find(r=>r.id===roomId);
     if(!room) return;
 
-    /* Init tracking set */
-    if(!room._knownIds) room._knownIds = new Set();
-    if(!room.messages)  room.messages  = [];
+    /* Init tracking */
+    if(!room._knownIds)    room._knownIds    = new Set();
+    if(!room.messages)     room.messages     = [];
+    if(!room._profileCache) room._profileCache = {};
 
     if(!Array.isArray(data) || !data.length){
-      /* Only render empty state on first load */
-      if(room.messages.length === 0) renderMessages(room, false);
+      showEmptyState(roomId, getLang()==='tr' ? 'Henüz mesaj yok. İlk mesajı sen gönder! 💬' : 'No messages yet. Say something! 💬');
       return;
     }
 
-    /* Get profiles only for NEW message senders */
-    const newMsgs  = data.filter(m => !room._knownIds.has(m.id));
-    if(!newMsgs.length) return; /* Nothing new — don't re-render */
+    /* Only process new messages */
+    const newMsgs = data.filter(m => !room._knownIds.has(m.id));
+    if(!newMsgs.length) return;
 
-    const newUids  = [...new Set(newMsgs.map(m=>m.user_id).filter(Boolean))];
-    let profileMap = {};
-
-    /* Reuse cached profiles where possible */
-    if(!room._profileCache) room._profileCache = {};
-    const missingUids = newUids.filter(id => !room._profileCache[id]);
+    /* Fetch profiles for new senders */
+    const missingUids = [...new Set(newMsgs.map(m=>m.user_id).filter(Boolean))]
+      .filter(id => !room._profileCache[id]);
 
     if(missingUids.length){
       const pRes = await fetch(
-        SB_URL+'/rest/v1/profiles?id=in.('+missingUids.join(',')+')&select=id,username,display_name,avatar_url,tier',
-        { headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY} }
+        SB_URL+'/rest/v1/profiles?id=in.('+missingUids.join(',')+')&select=id,username,display_name,avatar_url,tier,is_admin',
+        { headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token} }
       );
       const profiles = await pRes.json().catch(()=>[]);
       if(Array.isArray(profiles)) profiles.forEach(p => { room._profileCache[p.id] = p; });
     }
 
-    const session = getSession();
-    const myId    = session?.user_id || session?.id;
+    /* Clear "Loading…" / empty state div once real messages arrive */
+    const msgEl = document.getElementById('messages');
+    if(msgEl){
+      const loader = msgEl.querySelector('.kt-msg-state');
+      if(loader) loader.remove();
+    }
 
-    /* Append only new messages */
+    /* Append new messages */
     newMsgs.forEach(m => {
       const prof = room._profileCache[m.user_id] || {};
       room._knownIds.add(m.id);
 
-      /* Replace optimistic duplicate only when DB confirms same content from same user */
-      const optimisticIdx = room.messages.findIndex(ex =>
+      /* Replace matching optimistic message */
+      const optIdx = room.messages.findIndex(ex =>
         ex._optimistic && ex.text === m.content && ex.me && m.user_id === myId
       );
-      if(optimisticIdx !== -1){
-        /* Upgrade the optimistic entry to a real confirmed message */
-        room.messages[optimisticIdx] = {
-          id:      m.id,
-          avatar:  prof.avatar_url || '🎨',
-          name:    prof.display_name || prof.username || 'Member',
-          badge:   prof.tier || 'free',
-          time:    timeAgo(m.created_at),
-          text:    m.content,
-          me:      true,
-          user_id: m.user_id
-        };
+      const msg = {
+        id:      m.id,
+        avatar:  prof.avatar_url || null,
+        name:    prof.display_name || prof.username || 'Member',
+        badge:   prof.is_admin ? 'palace' : (prof.tier || 'free'),
+        time:    timeAgo(m.created_at),
+        text:    m.content,
+        me:      m.user_id === myId,
+        user_id: m.user_id
+      };
+      if(optIdx !== -1){
+        room.messages[optIdx] = msg;
       } else {
-        room.messages.push({
-          id:      m.id,
-          avatar:  prof.avatar_url || '🎨',
-          name:    prof.display_name || prof.username || 'Member',
-          badge:   prof.tier || 'free',
-          time:    timeAgo(m.created_at),
-          text:    m.content,
-          me:      m.user_id === myId,
-          user_id: m.user_id
-        });
-        /* Play receive sound for other people's messages */
+        room.messages.push(msg);
         if(m.user_id !== myId) playSound('receive');
       }
     });
 
-    renderMessages(room, newMsgs.length > 0);
+    renderMessages(room, true);
 
-  }catch(e){ console.log('Load messages error:', e); }
+  }catch(e){ console.error('Load messages error:', e); }
+}
+
+function showEmptyState(roomId, text){
+  /* Only show empty state if this is still the current room */
+  if(roomId !== currentRoom) return;
+  const msgEl = document.getElementById('messages');
+  if(!msgEl) return;
+  /* Don't overwrite real messages */
+  const room = ROOMS.find(r=>r.id===roomId);
+  if(room?.messages?.length > 0) return;
+  msgEl.innerHTML = `<div class="kt-msg-state" style="padding:3rem;text-align:center;color:rgba(255,255,255,0.25);font-size:0.82rem;font-family:'DM Mono',monospace">${text}</div>`;
 }
 
 function timeAgo(ts){
@@ -717,74 +731,69 @@ function timeAgo(ts){
 
 function subscribeRoom(roomId){
   if(sbChannel){clearInterval(sbChannel);sbChannel=null;}
-  // Poll every 4 seconds for new messages
-  sbChannel=setInterval(()=>loadMessages(roomId),4000);
+  /* Poll every 2 seconds for near-realtime feel */
+  sbChannel=setInterval(()=>loadMessages(roomId), 2000);
 }
 
 async function sendMessage(){
-  const input=document.getElementById('msgInput');
-  const text=input.value.trim();
-  if(!text)return;
-  
-  const session=getSession();
-  const profile=getMyProfile();
-  const token=session?.access_token||SB_KEY;
-  
-  // Optimistic UI update — tagged so poll can replace it with real DB version
-  const room=ROOMS.find(r=>r.id===currentRoom);
+  const input = document.getElementById('msgInput');
+  const text  = input.value.trim();
+  if(!text) return;
+
+  const session = getSession();
+  if(!session){ showToastMsg('Please log in to send messages'); return; }
+
+  const profile = getMyProfile();
+  const uid     = session.user_id || session.id;
+  const token   = session.access_token;
+
+  /* Optimistic UI */
+  const room = ROOMS.find(r=>r.id===currentRoom);
   if(!room.messages)  room.messages  = [];
   if(!room._knownIds) room._knownIds = new Set();
+  const optKey = 'opt-'+Date.now();
   room.messages.push({
-    avatar:profile.avatar_url||'🎨',
-    name:profile.display_name||profile.username||'You',
-    badge:profile.tier||'free',
-    time:'just now',
-    text,
-    me:true,
-    _optimistic:true  /* flag: will be replaced by real DB message on next poll */
+    avatar: profile.avatar_url || null,
+    name:   profile.display_name || profile.username || 'You',
+    badge:  profile.is_admin ? 'palace' : (profile.tier || 'free'),
+    time:   'just now',
+    text,   me: true,
+    _optimistic: true,
+    _optimistic_key: optKey
   });
-  renderMessages(room);
-  input.value='';
-  /* Small click sound on send */
-  if(typeof playSound !== 'undefined') setTimeout(()=>playSound('send'),50);
-  
-  // Save to Supabase
-  if(session?.user_id||session?.id){
-    try{
-      const saveRes = await fetch(SB_URL+'/rest/v1/room_messages',{
-        method:'POST',
-        headers:{
-          'apikey':SB_KEY,
-          'Authorization':'Bearer '+token,
-          'Content-Type':'application/json',
-          'Prefer':'return=minimal'
-        },
-        body:JSON.stringify({
-          room_id:currentRoom,
-          user_id:session.user_id||session.id,
-          content:text
-        })
-      });
-      if(!saveRes.ok){
-        const err = await saveRes.json().catch(()=>({}));
-        console.error('Save failed:', saveRes.status, err);
-        /* If 401 - token expired */
-        if(saveRes.status===401){
-          if(typeof refreshSession!=='undefined'){
-            const fresh = await refreshSession();
-            if(fresh){
-              /* Retry with new token */
-              await fetch(SB_URL+'/rest/v1/room_messages',{
-                method:'POST',
-                headers:{'apikey':SB_KEY,'Authorization':'Bearer '+fresh.access_token,'Content-Type':'application/json','Prefer':'return=minimal'},
-                body:JSON.stringify({room_id:currentRoom,user_id:fresh.user_id||fresh.id,content:text})
-              });
-            }
-          }
-        }
-      }
-    }catch(e){console.log('Send error:',e);}
+  renderMessages(room, true);
+  input.value = '';
+  playSound('send');
+
+  /* Save to Supabase with user token */
+  try{
+    const saveRes = await fetch(SB_URL+'/rest/v1/room_messages',{
+      method:'POST',
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify({ room_id:currentRoom, user_id:uid, content:text })
+    });
+    if(!saveRes.ok){
+      console.error('Send failed:', saveRes.status, await saveRes.text().catch(()=>''));
+      room.messages = room.messages.filter(m => m._optimistic_key !== optKey);
+      renderMessages(room, false);
+      showToastMsg('Message failed — check your connection.');
+    }
+  }catch(e){
+    console.error('Send error:',e);
+    room.messages = room.messages.filter(m => m._optimistic_key !== optKey);
+    showToastMsg('Connection error. Try again.');
   }
+}
+
+function showToastMsg(msg){
+  let t=document.getElementById('kt-toast-msg');
+  if(!t){
+    t=document.createElement('div');t.id='kt-toast-msg';
+    t.style.cssText='position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);background:rgba(20,15,10,0.95);border:1px solid rgba(244,115,42,0.4);color:rgba(255,255,255,0.85);padding:0.6rem 1.25rem;border-radius:100px;font-size:0.8rem;z-index:9999;font-family:DM Sans,sans-serif;pointer-events:none;transition:opacity .3s;white-space:nowrap';
+    document.body.appendChild(t);
+  }
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._t);t._t=setTimeout(()=>{t.style.opacity='0';},3000);
 }
 /* Load creator context from URL param */
 (async()=>{
