@@ -175,11 +175,19 @@
 /* ── MOBILE SIDEBAR TOGGLE ── */
 .sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:149;backdrop-filter:blur(4px)}
 .sb-overlay.open{display:block}
-.mob-menu-btn{display:none;position:fixed;top:0.75rem;left:0.75rem;z-index:200;width:38px;height:38px;border-radius:0.6rem;background:var(--bg2);border:1px solid var(--border);color:var(--text1);font-size:1.1rem;cursor:pointer;align-items:center;justify-content:center}
+.mob-menu-btn{display:none;position:fixed;top:0.75rem;left:0.75rem;z-index:200;width:40px;height:40px;border-radius:10px;background:var(--orange);border:none;color:white;font-size:1.1rem;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(244,115,42,0.3)}
 @media(max-width:768px){
   .mob-menu-btn{display:flex}
-  .sb{transform:translateX(-100%);transition:transform .25s ease;position:fixed;z-index:150;height:100vh}
-  .sb.open{transform:translateX(0)}
+  .sidebar{transform:translateX(-100%);transition:transform .25s ease;position:fixed;z-index:150;height:100vh}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0 !important; padding-top:56px;}
+  .page-header{top:0;}
+  .filter-tabs{flex-wrap:wrap;}
+  .ftab{font-size:0.72rem;padding:0.35rem 0.65rem;}
+  .member-table th:nth-child(3),
+  .member-table td:nth-child(3){display:none;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .tier-breakdown{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -204,7 +212,7 @@
   </nav>
   <div class="sidebar-user">
     <div class="user-av" id="sidebarAv">🎨</div>
-    <div><div class="user-name" id="sidebarName">Loading…</div><div class="user-handle" id="sidebarHandle">@…</div></div>
+    <div><div class="user-name" id="sidebarName"><span data-i18n-en="Loading…" data-i18n-tr="Yükleniyor…">Loading…</span></div><div class="user-handle" id="sidebarHandle">@…</div></div>
   </div>
 </aside>
 
@@ -229,7 +237,7 @@
         <span class="kpi-badge up">↑ +24</span>
       </div>
       <div class="kpi-val">312</div>
-      <div class="kpi-lbl">Total Members</div>
+      <div class="kpi-lbl"><span data-i18n-en="Total Members" data-i18n-tr="Toplam Üye">Total Members</span></div>
     </div>
     <div class="kpi-card">
       <div class="kpi-top">
@@ -237,7 +245,7 @@
         <span class="kpi-badge up">↑ +3</span>
       </div>
       <div class="kpi-val">48</div>
-      <div class="kpi-lbl">Gold VIP</div>
+      <div class="kpi-lbl"><span data-i18n-en="Gold VIP" data-i18n-tr="Altın VIP">Gold VIP</span></div>
     </div>
     <div class="kpi-card">
       <div class="kpi-top">
@@ -245,7 +253,7 @@
         <span class="kpi-badge up">↑ +11</span>
       </div>
       <div class="kpi-val">122</div>
-      <div class="kpi-lbl">Silver</div>
+      <div class="kpi-lbl"><span data-i18n-en="Silver" data-i18n-tr="Gümüş">Silver</span></div>
     </div>
     <div class="kpi-card">
       <div class="kpi-top">
@@ -253,7 +261,7 @@
         <span class="kpi-badge up">↑ +10</span>
       </div>
       <div class="kpi-val">142</div>
-      <div class="kpi-lbl">Free Fans</div>
+      <div class="kpi-lbl"><span data-i18n-en="Free Fans" data-i18n-tr="Ücretsiz Hayranlar">Free Fans</span></div>
     </div>
     <div class="kpi-card">
       <div class="kpi-top">
@@ -261,7 +269,7 @@
         <span class="kpi-badge dn">↓ 2</span>
       </div>
       <div class="kpi-val">2</div>
-      <div class="kpi-lbl">Churned</div>
+      <div class="kpi-lbl"><span data-i18n-en="Churned" data-i18n-tr="Ayrılan">Churned</span></div>
     </div>
   </div>
 
@@ -319,10 +327,10 @@
       <thead>
         <tr>
           <th>Member</th>
-          <th>Tier</th>
-          <th>Joined</th>
-          <th>Status</th>
-          <th>Actions</th>
+          <th><span data-i18n-en="Tier" data-i18n-tr="Kademe">Tier</span></th>
+          <th><span data-i18n-en="Joined" data-i18n-tr="Katıldı">Joined</span></th>
+          <th><span data-i18n-en="Status" data-i18n-tr="Durum">Status</span></th>
+          <th><span data-i18n-en="Actions" data-i18n-tr="İşlemler">Actions</span></th>
         </tr>
       </thead>
       <tbody id="membersTableBody" style="display:table-row-group">
@@ -337,7 +345,7 @@
           <td><span class="tier-pill tp-gold">👑 Gold</span></td>
           <td><span class="revenue-val">$29/mo</span></td>
           <td><span class="date-val">Feb 1, 2026</span></td>
-          <td><span class="status-dot"><span class="sdot sdot-active"></span> Active</span></td>
+          <td><span class="status-dot"><span class="sdot sdot-active"></span> <span data-i18n-en="Active" data-i18n-tr="Aktif">Active</span></span></td>
           <td><div class="action-row"><button class="act-btn" title="Message" onclick="event.stopPropagation();showToast('💬','Opening DM with Jenna...')">💬</button><button class="act-btn" title="View profile">👁️</button></div></td>
         </tr>
 
@@ -346,7 +354,7 @@
           <td><span class="tier-pill tp-silver">⭐ Silver</span></td>
           <td><span class="revenue-val">$9/mo</span></td>
           <td><span class="date-val">Jan 14, 2026</span></td>
-          <td><span class="status-dot"><span class="sdot sdot-active"></span> Active</span></td>
+          <td><span class="status-dot"><span class="sdot sdot-active"></span> <span data-i18n-en="Active" data-i18n-tr="Aktif">Active</span></span></td>
           <td><div class="action-row"><button class="act-btn" onclick="event.stopPropagation();showToast('💬','Opening DM with Mike...')">💬</button><button class="act-btn">👁️</button></div></td>
         </tr>
 
@@ -355,7 +363,7 @@
           <td><span class="tier-pill tp-gold">👑 Gold</span></td>
           <td><span class="revenue-val">$29/mo</span></td>
           <td><span class="date-val">Dec 20, 2025</span></td>
-          <td><span class="status-dot"><span class="sdot sdot-active"></span> Active</span></td>
+          <td><span class="status-dot"><span class="sdot sdot-active"></span> <span data-i18n-en="Active" data-i18n-tr="Aktif">Active</span></span></td>
           <td><div class="action-row"><button class="act-btn" onclick="event.stopPropagation();showToast('💬','Opening DM with Sara...')">💬</button><button class="act-btn">👁️</button></div></td>
         </tr>
 
@@ -364,7 +372,7 @@
           <td><span class="tier-pill tp-free">🌱 Free</span></td>
           <td><span class="revenue-val" style="color:var(--muted)">—</span></td>
           <td><span class="date-val">Mar 1, 2026</span></td>
-          <td><span class="status-dot"><span class="sdot sdot-active"></span> Active</span></td>
+          <td><span class="status-dot"><span class="sdot sdot-active"></span> <span data-i18n-en="Active" data-i18n-tr="Aktif">Active</span></span></td>
           <td><div class="action-row"><button class="act-btn" onclick="event.stopPropagation();showToast('💬','Opening DM with Tom...')">💬</button><button class="act-btn">👁️</button></div></td>
         </tr>
 
@@ -382,7 +390,7 @@
           <td><span class="tier-pill tp-gold">👑 Gold</span></td>
           <td><span class="revenue-val">$29/mo</span></td>
           <td><span class="date-val">Oct 12, 2025</span></td>
-          <td><span class="status-dot"><span class="sdot sdot-active"></span> Active</span></td>
+          <td><span class="status-dot"><span class="sdot sdot-active"></span> <span data-i18n-en="Active" data-i18n-tr="Aktif">Active</span></span></td>
           <td><div class="action-row"><button class="act-btn" onclick="event.stopPropagation();showToast('💬','Opening DM with David...')">💬</button><button class="act-btn">👁️</button></div></td>
         </tr>
 
@@ -391,7 +399,7 @@
           <td><span class="tier-pill tp-free">🌱 Free</span></td>
           <td><span class="revenue-val" style="color:var(--muted)">—</span></td>
           <td><span class="date-val">Feb 22, 2026</span></td>
-          <td><span class="status-dot"><span class="sdot sdot-active"></span> Active</span></td>
+          <td><span class="status-dot"><span class="sdot sdot-active"></span> <span data-i18n-en="Active" data-i18n-tr="Aktif">Active</span></span></td>
           <td><div class="action-row"><button class="act-btn" onclick="event.stopPropagation();showToast('💬','Opening DM with Amy...')">💬</button><button class="act-btn">👁️</button></div></td>
         </tr>
 
@@ -412,28 +420,28 @@
     <div class="panel-name" id="panel-name">Jenna Loves</div>
     <div class="panel-handle" id="panel-handle">@jenna_loves</div>
     <div class="panel-stats">
-      <div class="pstat"><div class="pstat-val" id="ps-revenue">$29/mo</div><div class="pstat-lbl">Revenue</div></div>
+      <div class="pstat"><div class="pstat-val" id="ps-revenue">$29/mo</div><div class="pstat-lbl"><span data-i18n-en="Revenue" data-i18n-tr="Gelir">Revenue</span></div></div>
       <div class="pstat"><div class="pstat-val" id="ps-total">$348</div><div class="pstat-lbl">All Time</div></div>
       <div class="pstat"><div class="pstat-val" id="ps-posts">12</div><div class="pstat-lbl">Posts Read</div></div>
     </div>
     <div class="panel-section">
-      <div class="panel-section-title">Membership Info</div>
-      <div class="panel-info-row"><span class="pir-label">Tier</span><span class="pir-value" id="pi-tier">👑 Gold VIP</span></div>
-      <div class="panel-info-row"><span class="pir-label">Joined</span><span class="pir-value" id="pi-joined">Feb 1, 2026</span></div>
-      <div class="panel-info-row"><span class="pir-label">Status</span><span class="pir-value" style="color:var(--green)">● Active</span></div>
-      <div class="panel-info-row"><span class="pir-label">Next billing</span><span class="pir-value">Apr 1, 2026</span></div>
+      <div class="panel-section-title"><span data-i18n-en="Membership Info" data-i18n-tr="Üyelik Bilgisi">Membership Info</span></div>
+      <div class="panel-info-row"><span class="pir-label"><span data-i18n-en="Tier" data-i18n-tr="Kademe">Tier</span></span><span class="pir-value" id="pi-tier">👑 Gold VIP</span></div>
+      <div class="panel-info-row"><span class="pir-label"><span data-i18n-en="Joined" data-i18n-tr="Katıldı">Joined</span></span><span class="pir-value" id="pi-joined">Feb 1, 2026</span></div>
+      <div class="panel-info-row"><span class="pir-label"><span data-i18n-en="Status" data-i18n-tr="Durum">Status</span></span><span class="pir-value" style="color:var(--green)"><span data-i18n-en="● Active" data-i18n-tr="● Aktif">● Active</span></span></div>
+      <div class="panel-info-row"><span class="pir-label"><span data-i18n-en="Next billing" data-i18n-tr="Sonraki ödeme">Next billing</span></span><span class="pir-value">Apr 1, 2026</span></div>
     </div>
     <div class="panel-section">
-      <div class="panel-section-title">Engagement</div>
-      <div class="panel-info-row"><span class="pir-label">Posts viewed</span><span class="pir-value" id="pi-posts">12 posts</span></div>
-      <div class="panel-info-row"><span class="pir-label">Last active</span><span class="pir-value">2 days ago</span></div>
-      <div class="panel-info-row"><span class="pir-label">Reactions given</span><span class="pir-value">34 ❤️</span></div>
+      <div class="panel-section-title"><span data-i18n-en="Engagement" data-i18n-tr="Etkileşim">Engagement</span></div>
+      <div class="panel-info-row"><span class="pir-label"><span data-i18n-en="Posts viewed" data-i18n-tr="Görüntülenen yazılar">Posts viewed</span></span><span class="pir-value" id="pi-posts">12 posts</span></div>
+      <div class="panel-info-row"><span class="pir-label"><span data-i18n-en="Last active" data-i18n-tr="Son aktif">Last active</span></span><span class="pir-value">2 days ago</span></div>
+      <div class="panel-info-row"><span class="pir-label"><span data-i18n-en="Reactions given" data-i18n-tr="Verilen tepkiler">Reactions given</span></span><span class="pir-value">34 ❤️</span></div>
     </div>
   </div>
   <div class="panel-actions">
     <button class="panel-btn pbtn-msg" onclick="sendMessageToPanel()">💬 Send Message</button>
     <button class="panel-btn pbtn-outline" onclick="showToast('🎁','Free access sent!')">🎁 Send Free Access</button>
-    <button class="panel-btn pbtn-danger" onclick="showToast('⚠️','Contact support to remove members')">Remove Member</button>
+    <button class="panel-btn pbtn-danger" onclick="showToast('⚠️','Contact support to remove members')"><span data-i18n-en="Remove Member" data-i18n-tr="Üyeyi Kaldır">Remove Member</span></button>
   </div>
 </div>
 
@@ -535,7 +543,7 @@ function renderMembersTable(members){
       </div></td>
       <td><span style="font-size:0.62rem;padding:0.15rem 0.5rem;border-radius:100px;${TIER_COLOR[tier]}">${TIER_LABELS[tier]}</span></td>
       <td style="font-size:0.72rem;color:var(--muted)">${joined}</td>
-      <td><span style="font-size:0.65rem;color:var(--green)">● Active</span></td>
+      <td><span style="font-size:0.65rem;color:var(--green)"><span data-i18n-en="● Active" data-i18n-tr="● Aktif">● Active</span></span></td>
       <td><div style="display:flex;gap:0.4rem">
         <button class="act-btn" title="Message" onclick="event.stopPropagation();dmMember('${m.id}','${name.replace(/'/g,"\\'")}')">💬</button>
         <button class="act-btn" title="View profile" onclick="event.stopPropagation();window.location.href='member-hub.html?user=${m.username||m.id}'">👁️</button>
@@ -618,13 +626,6 @@ async function messageAll(){
   showToast('📢',`Sent to ${sent} members ✅`);
 }
 
-  function filterMembers(btn, tier) {
-    document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'))
-    btn.classList.add('active')
-    activeFilter=tier;
-    applyFilters();
-  }
-
   function closePanel() {
     document.getElementById('detail-panel').classList.remove('open')
     document.getElementById('panel-overlay').classList.remove('show')
@@ -666,7 +667,7 @@ function setLang(lang){
 
 /* Mobile sidebar */
 function toggleMobileSidebar(){
-  document.querySelector('.sb')?.classList.toggle('open');
+  document.querySelector('.sidebar')?.classList.toggle('open');
   document.getElementById('sbOverlay')?.classList.toggle('open');
 }
 </script>

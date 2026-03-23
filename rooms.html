@@ -256,11 +256,11 @@ body{font-family:'DM Sans',sans-serif;background:#0a0806;color:#e8d5b0}
 /* ── MOBILE SIDEBAR TOGGLE ── */
 .sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:149;backdrop-filter:blur(4px)}
 .sb-overlay.open{display:block}
-.mob-menu-btn{display:none;position:fixed;top:0.75rem;left:0.75rem;z-index:200;width:38px;height:38px;border-radius:0.6rem;background:var(--bg2);border:1px solid var(--border);color:var(--text1);font-size:1.1rem;cursor:pointer;align-items:center;justify-content:center}
+.mob-menu-btn{display:none;position:fixed;top:0.75rem;left:0.75rem;z-index:200;width:38px;height:38px;border-radius:0.6rem;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.15);color:white;font-size:1.1rem;cursor:pointer;align-items:center;justify-content:center}
 @media(max-width:768px){
   .mob-menu-btn{display:flex}
-  .sb{transform:translateX(-100%);transition:transform .25s ease;position:fixed;z-index:150;height:100vh}
-  .sb.open{transform:translateX(0)}
+  .sidebar{transform:translateX(-100%);transition:transform .25s ease;position:fixed;z-index:150;height:100vh}
+  .sidebar.open{transform:translateX(0)}
 }
 </style>
   <link rel="manifest" href="/manifest.json">
@@ -381,44 +381,75 @@ function ratm(r){return getLang()==='tr'&&r.atm_tr?r.atm_tr:r.atm;}
 function rdesc(r){return getLang()==='tr'&&r.desc_tr?r.desc_tr:r.desc;}
 
 function renderRooms(){document.getElementById('roomList').innerHTML=ROOMS.map(r=>{const locked=TIER_ORDER.indexOf(getMyTier())<TIER_ORDER.indexOf(r.tier);const active=r.id===currentRoom;return`<div class="room-item${active?' active':''}${locked?' locked':''}" onclick="selectRoom('${r.id}')"><span class="room-icon">${r.icon}</span><div class="room-info"><div class="room-name">${rn(r)}</div><div class="room-tier">${rtl(r)}</div></div><span class="room-count">${r.online}</span>${active&&!locked?'<div class="online-dot"></div>':''}</div>`}).join('')}
-function renderMessages(room, isNew=false){
-  if(isNew) {
-    /* Play sound - only if AudioContext is ready (user has interacted) */
-    if(typeof playSound !== 'undefined' && typeof _actxReady !== 'undefined' && _actxReady) {
-      playSound('message');
-    }
-    /* Browser notification if tab hidden */
-    if(document.hidden && Notification.permission === 'granted') {
-      const lastMsg = room.messages[room.messages.length-1];
-      new Notification('KreaTown 💬 ' + (lastMsg?.name||'Member'), {
-        body: lastMsg?.text || '',
-        icon: '/manifest.json',
-        silent: false
-      });
-    }
-  }
-  const c=document.getElementById('messages');
-  c.innerHTML=room.messages.map(m=>{
-    const isUrl = m.avatar && m.avatar.startsWith('http');
+function renderMessages(room, scrollToBottom=true){
+  const c = document.getElementById('messages');
+  if(!c) return;
+
+  /* Build set of already-rendered message IDs */
+  const rendered = new Set(
+    [...c.querySelectorAll('[data-msg-id]')].map(el => el.dataset.msgId)
+  );
+
+  /* Only render messages not yet in DOM */
+  const toAdd = room.messages.filter(m => {
+    const id = m.id || m._optimistic_key;
+    return !id || !rendered.has(String(id));
+  });
+
+  toAdd.forEach(m => {
+    /* Assign a stable key for optimistic messages */
+    if(!m.id) m._optimistic_key = m._optimistic_key || ('opt-'+Date.now()+'-'+Math.random());
+    const msgKey = m.id || m._optimistic_key;
+    const isUrl  = m.avatar && m.avatar.startsWith('http');
     const avatarHtml = isUrl
       ? `<img src="${m.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
-      : (m.avatar||'🎨');
+      : (m.avatar || '🎨');
     const bg = m.me ? 'linear-gradient(135deg,#7c5cbf,#f4732a)' : 'rgba(255,255,255,0.08)';
-    const msgId = m.id || 'msg-'+Math.random().toString(36).slice(2);
-    return `<div class="msg${m.me?' me':''}" id="wrap-${msgId}">
+    const el = document.createElement('div');
+    el.className = `msg${m.me?' me':''}`;
+    el.dataset.msgId = msgKey;
+    el.innerHTML = `
       <div class="msg-avatar" style="background:${bg}">${avatarHtml}</div>
       <div class="msg-body">
         <div class="msg-meta">
           <span class="msg-name">${m.name}</span>
-          <span class="msg-badge badge-${m.badge}">${(m.badge||'free').toUpperCase()}</span>
+          <span class="msg-badge badge-${m.badge||'free'}">${(m.badge||'free').toUpperCase()}</span>
           <span class="msg-time">${m.time}</span>
+          ${m._optimistic ? '<span style="font-size:0.55rem;color:rgba(255,255,255,0.25);font-family:DM Mono,monospace">sending…</span>' : ''}
         </div>
-        <div class="msg-text" ondblclick="showQuickReact('${msgId}',event)">${m.text}</div>
-        <div class="reaction-bar" id="reactions-${msgId}" style="padding:0.15rem 0 0;min-height:0"></div>
-      </div>
-    </div>`;
-  }).join('');
-  setTimeout(()=>{c.scrollTop=c.scrollHeight},100);
+        <div class="msg-text" ondblclick="showQuickReact('${msgKey}',event)">${m.text}</div>
+        <div class="reaction-bar" id="reactions-${msgKey}" style="padding:0.15rem 0 0;min-height:0"></div>
+      </div>`;
+    c.appendChild(el);
+
+    /* If this is a confirmed message replacing an optimistic one, remove the optimistic DOM node */
+    if(m.id && rendered.has('opt-'+m._optimistic_key)){
+      const oldEl = c.querySelector(`[data-msg-id="opt-${m._optimistic_key}"]`);
+      if(oldEl) oldEl.remove();
+    }
+  });
+
+  /* Scroll to bottom if new messages arrived */
+  if(scrollToBottom && toAdd.length > 0){
+    setTimeout(()=>{ c.scrollTop = c.scrollHeight; }, 50);
+  }
+
+  /* First load: always scroll */
+  if(room.messages.length > 0 && c.children.length === room.messages.length){
+    setTimeout(()=>{ c.scrollTop = c.scrollHeight; }, 100);
+  }
+
+  /* Play receive notification for non-own new messages */
+  if(typeof Notification !== 'undefined' && document.hidden && Notification.permission === 'granted'){
+    const lastMsg = room.messages[room.messages.length-1];
+    if(lastMsg && !lastMsg.me && toAdd.includes(lastMsg)){
+      new Notification('KreaTown 💬 ' + (lastMsg.name||'Member'), {
+        body: lastMsg.text || '',
+        icon: '/logo.png',
+        silent: false
+      });
+    }
+  }
 }
 function selectRoom(id){const room=ROOMS.find(r=>r.id===id);const locked=TIER_ORDER.indexOf(getMyTier())<TIER_ORDER.indexOf(room.tier);if(locked){const cfg=LOCK_CONFIG[room.tier];const lang=getLang();
     document.getElementById('lockIcon').textContent=cfg.icon;
@@ -433,8 +464,10 @@ function selectRoom(id){const room=ROOMS.find(r=>r.id===id);const locked=TIER_OR
   document.getElementById('lockedOverlay').classList.remove('show');
   renderRooms();
   createParticles(room.particles);
-  /* Reset message tracking for fresh load */
+  /* Reset message tracking AND clear DOM for fresh load */
   room.messages=[]; room._knownIds=new Set(); room._profileCache={};
+  const msgEl=document.getElementById('messages');
+  if(msgEl) msgEl.innerHTML='';
   /* Show loading state */
   const msgEl=document.getElementById('messages');
   if(msgEl)msgEl.innerHTML='<div style="padding:2rem;text-align:center;color:rgba(255,255,255,0.25);font-size:0.8rem">Loading messages…</div>';
@@ -444,6 +477,54 @@ function selectRoom(id){const room=ROOMS.find(r=>r.id===id);const locked=TIER_OR
 function closeOverlay(){document.getElementById('lockedOverlay').classList.remove('show')}
 document.getElementById('sendBtn').addEventListener('click',sendMessage)
 document.getElementById('msgInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendMessage()})
+/* ── SOUND SYSTEM ── */
+let _actx = null;
+let _actxReady = false;
+
+function ensureAudioContext(){
+  if(!_actx){
+    try{
+      _actx = new (window.AudioContext||window.webkitAudioContext)();
+    }catch(e){ return false; }
+  }
+  if(_actx.state === 'suspended') _actx.resume();
+  _actxReady = true;
+  return true;
+}
+
+/* Unlock audio on first touch/click */
+document.addEventListener('click',  ensureAudioContext, {once:true});
+document.addEventListener('touchend', ensureAudioContext, {once:true});
+
+function playSound(type){
+  if(!ensureAudioContext()) return;
+  try{
+    const osc = _actx.createOscillator();
+    const gain = _actx.createGain();
+    osc.connect(gain);
+    gain.connect(_actx.destination);
+    const now = _actx.currentTime;
+    if(type === 'send'){
+      osc.frequency.setValueAtTime(660, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.08);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+      osc.start(now); osc.stop(now + 0.15);
+    } else if(type === 'receive'){
+      osc.frequency.setValueAtTime(520, now);
+      osc.frequency.exponentialRampToValueAtTime(660, now + 0.06);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+      osc.start(now); osc.stop(now + 0.12);
+    } else {
+      osc.frequency.setValueAtTime(440, now);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+      osc.start(now); osc.stop(now + 0.1);
+    }
+  }catch(e){}
+}
+
 /* ── SUPABASE ── */
 const SB_URL='https://pkhoyabazudqmfczkhax.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
@@ -507,23 +588,40 @@ async function loadMessages(roomId){
     newMsgs.forEach(m => {
       const prof = room._profileCache[m.user_id] || {};
       room._knownIds.add(m.id);
-      /* Remove optimistic duplicate (matched by text + me flag) */
-      room.messages = room.messages.filter(existing =>
-        !(existing._optimistic && existing.text === m.content && existing.me)
+
+      /* Replace optimistic duplicate only when DB confirms same content from same user */
+      const optimisticIdx = room.messages.findIndex(ex =>
+        ex._optimistic && ex.text === m.content && ex.me && m.user_id === myId
       );
-      room.messages.push({
-        id:      m.id,
-        avatar:  prof.avatar_url || '🎨',
-        name:    prof.display_name || prof.username || 'Member',
-        badge:   prof.tier || 'free',
-        time:    timeAgo(m.created_at),
-        text:    m.content,
-        me:      m.user_id === myId,
-        user_id: m.user_id
-      });
+      if(optimisticIdx !== -1){
+        /* Upgrade the optimistic entry to a real confirmed message */
+        room.messages[optimisticIdx] = {
+          id:      m.id,
+          avatar:  prof.avatar_url || '🎨',
+          name:    prof.display_name || prof.username || 'Member',
+          badge:   prof.tier || 'free',
+          time:    timeAgo(m.created_at),
+          text:    m.content,
+          me:      true,
+          user_id: m.user_id
+        };
+      } else {
+        room.messages.push({
+          id:      m.id,
+          avatar:  prof.avatar_url || '🎨',
+          name:    prof.display_name || prof.username || 'Member',
+          badge:   prof.tier || 'free',
+          time:    timeAgo(m.created_at),
+          text:    m.content,
+          me:      m.user_id === myId,
+          user_id: m.user_id
+        });
+        /* Play receive sound for other people's messages */
+        if(m.user_id !== myId) playSound('receive');
+      }
     });
 
-    renderMessages(room, true); /* scroll to bottom only when new msgs arrive */
+    renderMessages(room, newMsgs.length > 0);
 
   }catch(e){ console.log('Load messages error:', e); }
 }
@@ -567,7 +665,7 @@ async function sendMessage(){
   renderMessages(room);
   input.value='';
   /* Small click sound on send */
-  if(typeof playSound !== 'undefined') setTimeout(()=>playSound('success'),50);
+  if(typeof playSound !== 'undefined') setTimeout(()=>playSound('send'),50);
   
   // Save to Supabase
   if(session?.user_id||session?.id){
@@ -830,7 +928,7 @@ function setLang(lang){
 
 /* Mobile sidebar */
 function toggleMobileSidebar(){
-  document.querySelector('.sb')?.classList.toggle('open');
+  document.querySelector('.sidebar')?.classList.toggle('open');
   document.getElementById('sbOverlay')?.classList.toggle('open');
 }
 </script>
