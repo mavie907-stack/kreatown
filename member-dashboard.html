@@ -181,7 +181,7 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
     <a href="member-dashboard.html" class="sb-it on"><span class="sb-ic">🏠</span> Home</a>
     <a href="feed.html" class="sb-it"><span class="sb-ic">📰</span> <span data-i18n-en="Community Feed" data-i18n-tr="Topluluk Akışı">Community Feed</span></a>
     <a href="member-hub.html" class="sb-it" id="sbMyProfile"><span class="sb-ic">🪪</span> <span data-i18n-en="My Profile" data-i18n-tr="Profilim">My Profile</span></a>
-    <a href="messages.html" class="sb-it"><span class="sb-ic">💬</span> <span data-i18n-en="Messages" data-i18n-tr="Mesajlar">Messages</span><span class="sb-bd" id="msgBdg" style="display:none">0</span></a>
+    <a href="kreatown-messages-page.html" class="sb-it" id="sbMessages"><span class="sb-ic">💬</span> <span data-i18n-en="Messages" data-i18n-tr="Mesajlar">Messages</span><span class="sb-bd" id="msgBdg" style="display:none">0</span></a>
     <div class="sb-sec">Town</div>
     <a href="topraq-hub.html" class="sb-it" id="sbMyTown"><span class="sb-ic">🏡</span> <span data-i18n-en="My Town" data-i18n-tr="Şehrim">My Town</span></a>
     <a href="topraq-hub.html" class="sb-it"><span class="sb-ic">🏯</span> Topraq's Town</a>
@@ -295,8 +295,8 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
   <div class="mob-items">
     <a href="member-dashboard.html" class="mob-it on"><span class="mob-ico">🏠</span>Home</a>
     <a href="feed.html" class="mob-it"><span class="mob-ico">📰</span>Feed</a>
-    <a href="rooms.html" class="mob-it"><span class="mob-ico">💬</span><span data-i18n-en="Rooms" data-i18n-tr="Odalar">Rooms</span></a>
-    <a href="topraq-hub.html" class="mob-it" id="mobTownBtn"><span class="mob-ico">🏯</span><span data-i18n-en="Town" data-i18n-tr="Şehir">Town</span></a>
+    <a href="kreatown-messages-page.html" class="mob-it" id="mobMsgBtn"><span class="mob-ico">💬</span><span data-i18n-en="Messages" data-i18n-tr="Mesajlar">Messages</span><span id="mobMsgBadge" style="display:none;background:#f4732a;color:white;border-radius:50%;width:16px;height:16px;font-size:0.55rem;align-items:center;justify-content:center;position:absolute;top:6px;right:6px">0</span></a>
+    <a href="topraq-hub.html" class="mob-it" id="mobTownBtn" style="position:relative"><span class="mob-ico">🏯</span><span data-i18n-en="Town" data-i18n-tr="Şehir">Town</span></a>
     <a href="member-hub.html" class="mob-it" id="mobProfileBtn"><span class="mob-ico">🪪</span><span data-i18n-en="Profile" data-i18n-tr="Profil">Profile</span></a>
   </div>
 </nav>
@@ -405,9 +405,39 @@ window.addEventListener('DOMContentLoaded', async () => {
     /* Load recent posts & member count */
     loadRecentPosts(tier);
     loadOnlineCount();
+    loadUnreadCount(uid, token);
 
   }catch(e){ console.error(e); }
 });
+
+/* Load unread notification count — shows badge on Messages link */
+async function loadUnreadCount(uid, token){
+  try{
+    const res = await fetch(
+      SB_URL+'/rest/v1/notifications?user_id=eq.'+uid+'&is_read=eq.false&select=id',
+      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token}}
+    );
+    const data = await res.json();
+    const count = Array.isArray(data) ? data.length : 0;
+
+    /* Sidebar badge */
+    const badge = document.getElementById('msgBdg');
+    if(badge){
+      badge.textContent = count;
+      badge.style.display = count > 0 ? 'inline-flex' : 'none';
+    }
+
+    /* Mobile nav badge */
+    const mobBadge = document.getElementById('mobMsgBadge');
+    if(mobBadge){
+      mobBadge.textContent = count;
+      mobBadge.style.display = count > 0 ? 'inline-flex' : 'none';
+    }
+
+    /* Page title alert */
+    if(count > 0) document.title = '('+count+') Member Dashboard — KreaTown';
+  }catch(e){}
+};
 
 async function loadRecentPosts(myTier){
   const TIER_ORDER = ['free','silver','gold','palace'];
