@@ -3,7 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kreatown — Where Creators Belong</title>
+<title>Kreatown — İçerik Üreticileri için Dijital Şehir | Build Your World</title>
+<meta name="description" content="Kreatown, içerik üreticilerinin kendi dijital şehrini kurduğu platformdur. Üyeler kazan, seviye atla, konut büyüt. Türkiye'nin en yenilikçi creator platformu.">
+<meta name="keywords" content="kreatown, içerik üreticisi platformu, creator platform türkiye, dijital şehir, üyelik platformu, para kazan, fan membership">
+<meta name="author" content="KreaTown">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.kreatown.com/">
+
+<!-- Open Graph -->
+<meta property="og:type"        content="website">
+<meta property="og:url"         content="https://www.kreatown.com/">
+<meta property="og:title"       content="Kreatown — İçerik Üreticileri için Dijital Şehir">
+<meta property="og:description" content="Kendi şehrini kur, üyelerini kazan, seviye atla. Türkiye'nin en yenilikçi creator platformu — ücretsiz başla.">
+<meta property="og:image"       content="https://www.kreatown.com/og-image.png">
+<meta property="og:locale"      content="tr_TR">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:site_name"   content="KreaTown">
+
+<!-- Twitter Card -->
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:site"        content="@kreatown">
+<meta name="twitter:title"       content="Kreatown — İçerik Üreticileri için Dijital Şehir">
+<meta name="twitter:description" content="Kendi şehrini kur, üyelerini kazan, seviye atla. Ücretsiz başla.">
+<meta name="twitter:image"       content="https://www.kreatown.com/og-image.png">
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "KreaTown",
+  "url": "https://www.kreatown.com",
+  "description": "İçerik üreticileri için dijital şehir platformu. Üyeler kazan, seviye atla, para kazan.",
+  "inLanguage": ["tr", "en"],
+  "potentialAction": {
+    "@type": "RegisterAction",
+    "target": "https://www.kreatown.com/register.html"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "KreaTown",
+    "url": "https://www.kreatown.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.kreatown.com/logo.png"
+    }
+  }
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
@@ -539,7 +586,9 @@
     .creators-grid { grid-template-columns: 1fr 1fr; }
     .plans-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
     nav { padding: 1rem 1.5rem; }
-    .nav-links { display: none; }
+    .nav-links a:not(.btn-nav) { display: none; }
+    .hamburger { display: flex; }
+    .btn-nav { display: flex; }
     .section-concept, .section-features, .section-creators, .section-plans, .section-cta { padding: 4rem 1.5rem; }
   }
 
@@ -561,8 +610,12 @@
     .hero-title { font-size: clamp(2rem, 9vw, 2.8rem); }
     .hero-sub { font-size: 0.95rem; max-width: 100%; }
     .hero-ctas { justify-content: center; flex-direction: column; align-items: center; }
-    .btn-primary { width: 100%; max-width: 280px; justify-content: center; padding: 1rem 1.5rem; font-size: 1rem; }
-    .btn-secondary { font-size: 0.9rem; }
+    .btn-primary {
+      width: 100%; max-width: 280px; justify-content: center;
+      padding: 1rem 1.5rem; font-size: 1rem;
+      min-height: 52px; /* touch target */
+    }
+    .btn-secondary { font-size: 0.9rem; min-height: 44px; display: inline-flex; align-items: center; }
     .hero-stats { justify-content: center; gap: 1.5rem; flex-wrap: wrap; padding-top: 1.5rem; }
     .stat-num { font-size: 1.5rem; }
 
@@ -594,14 +647,15 @@
     .plans-grid { grid-template-columns: 1fr; gap: 1rem; max-width: 100%; }
     .plan-card { padding: 1.5rem; }
     .plan-price { font-size: 2rem; }
+    .plan-cta { min-height: 48px; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; }
     .section-plans { padding: 3.5rem 1.25rem; }
 
     /* CTA */
     .section-cta { padding: 5rem 1.25rem; }
     .cta-title { font-size: clamp(1.8rem, 8vw, 2.8rem); }
     .cta-btns { flex-direction: column; align-items: center; }
-    .btn-cta-primary { width: 100%; max-width: 280px; justify-content: center; }
-    .btn-cta-secondary { width: 100%; max-width: 280px; text-align: center; }
+    .btn-cta-primary { width: 100%; max-width: 280px; justify-content: center; min-height: 52px; }
+    .btn-cta-secondary { width: 100%; max-width: 280px; text-align: center; min-height: 44px; display: flex; align-items: center; justify-content: center; }
 
     /* FOOTER */
     footer { flex-direction: column; text-align: center; gap: 0.75rem; padding: 1.75rem 1.25rem; }
@@ -616,8 +670,8 @@
       padding: 0.75rem 1.25rem calc(0.75rem + env(safe-area-inset-bottom));
       gap: 0.75rem; align-items: center;
     }
-    .mobile-cta-bar .btn-primary { flex: 1; justify-content: center; border-radius: 0.875rem; }
-    .mobile-cta-bar .btn-login { color: var(--muted); font-size: 0.82rem; text-decoration: none; white-space: nowrap; }
+    .mobile-cta-bar .btn-primary { flex: 1; justify-content: center; border-radius: 0.875rem; min-height: 48px; }
+    .mobile-cta-bar .btn-login { color: var(--muted); font-size: 0.82rem; text-decoration: none; white-space: nowrap; min-height: 48px; display: flex; align-items: center; padding: 0 0.5rem; }
     body { padding-bottom: 80px; }
   }
 

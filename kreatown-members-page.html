@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Members — Kreatown Dashboard</title>
+<title>Üyeler — KreaTown Members</title>
+<meta name="description" content="KreaTown topluluk üyeleri. Creators ve üyelerle bağlantı kur.">
+<meta name="robots" content="noindex, follow">
+<meta property="og:title" content="Üyeler — KreaTown Members">
+<meta property="og:description" content="KreaTown topluluk üyeleri. Creators ve üyelerle bağlantı kur.">
+<meta property="og:site_name" content="KreaTown">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Cabinet+Grotesk:wght@400;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
   :root {
@@ -166,25 +171,40 @@
   .member-row:nth-child(5){animation-delay:0.20s;}
   .member-row:nth-child(6){animation-delay:0.24s;}
   .member-row:nth-child(7){animation-delay:0.28s;}
+
+/* ── MOBILE SIDEBAR TOGGLE ── */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:149;backdrop-filter:blur(4px)}
+.sb-overlay.open{display:block}
+.mob-menu-btn{display:none;position:fixed;top:0.75rem;left:0.75rem;z-index:200;width:38px;height:38px;border-radius:0.6rem;background:var(--bg2);border:1px solid var(--border);color:var(--text1);font-size:1.1rem;cursor:pointer;align-items:center;justify-content:center}
+@media(max-width:768px){
+  .mob-menu-btn{display:flex}
+  .sb{transform:translateX(-100%);transition:transform .25s ease;position:fixed;z-index:150;height:100vh}
+  .sb.open{transform:translateX(0)}
+}
 </style>
 </head>
 <body>
 
 <!-- SIDEBAR -->
-<aside class="sidebar">
+
+<!-- Mobile menu button -->
+<button class="mob-menu-btn" id="mobMenuBtn" onclick="toggleMobileSidebar()" aria-label="Menu">☰</button>
+<div class="sb-overlay" id="sbOverlay" onclick="toggleMobileSidebar()"></div>
+
+<aside class="sidebar" id="mainSidebar">
   <a href="/" class="sidebar-logo">Kreatown<span class="dot"></span></a>
   <nav class="sidebar-nav">
-    <a class="nav-item">📊 Overview</a>
-    <a class="nav-item">📝 My Content</a>
-    <a class="nav-item active">👥 Members</a>
-    <a class="nav-item">💬 Messages</a>
-    <a class="nav-item">💰 Earnings</a>
-    <a class="nav-item">🔗 My Hub Page</a>
-    <a class="nav-item">⚙️ Settings</a>
+    <a href="creator-dashboard.html" class="nav-item">📊 Overview</a>
+    <a href="feed.html" class="nav-item">📝 My Content</a>
+    <a href="kreatown-members-page.html" class="nav-item active">👥 Members</a>
+    <a href="messages.html" class="nav-item">💬 Messages</a>
+    <a href="settings.html#stripe" class="nav-item">💰 Earnings</a>
+    <a href="topraq-hub.html" class="nav-item">🔗 My Hub Page</a>
+    <a href="settings.html" class="nav-item">⚙️ Settings</a>
   </nav>
   <div class="sidebar-user">
-    <div class="user-av">AJ</div>
-    <div><div class="user-name">Alex Johnson</div><div class="user-handle">@alexjohnson</div></div>
+    <div class="user-av" id="sidebarAv">🎨</div>
+    <div><div class="user-name" id="sidebarName">Loading…</div><div class="user-handle" id="sidebarHandle">@…</div></div>
   </div>
 </aside>
 
@@ -196,7 +216,7 @@
       <h1 class="page-title">Members 👥</h1>
       <p class="page-sub">312 active members · +24 this week · $2,840 MRR</p>
     </div>
-    <button class="btn-msg-all" onclick="showToast('💬','Message sent to all 312 members!')">
+    <button class="btn-msg-all" onclick="messageAll()">
       💬 Message All
     </button>
   </div>
@@ -300,13 +320,17 @@
         <tr>
           <th>Member</th>
           <th>Tier</th>
-          <th>Revenue</th>
           <th>Joined</th>
           <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>
-      <tbody id="member-tbody">
+      <tbody id="membersTableBody" style="display:table-row-group">
+        <tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--muted);font-size:0.85rem">
+          <div style="display:inline-block;width:22px;height:22px;border:2px solid rgba(244,115,42,0.3);border-top-color:var(--orange);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:0.5rem"></div><br>Loading members…
+        </td></tr>
+      </tbody>
+    </table>
 
         <tr class="member-row" data-tier="gold" data-name="Jenna Loves" onclick="openPanel('Jenna Loves','@jenna_loves','gold','linear-gradient(135deg,#f4732a,#fbbf24)','JL','$29/mo','Feb 1, 2026','$348 total','12 posts viewed')">
           <td><div class="member-info"><div class="mem-av" style="background:linear-gradient(135deg,#f4732a,#fbbf24)">JL</div><div><div class="mem-name">Jenna Loves</div><div class="mem-handle">@jenna_loves</div></div></div></td>
@@ -407,50 +431,204 @@
     </div>
   </div>
   <div class="panel-actions">
-    <button class="panel-btn pbtn-msg" onclick="showToast('💬','Opening DM...')">💬 Send Message</button>
-    <button class="panel-btn pbtn-outline" onclick="showToast('🎁','Offer sent!')">🎁 Send Free Access</button>
-    <button class="panel-btn pbtn-danger" onclick="showToast('⚠️','Member removed')">Remove Member</button>
+    <button class="panel-btn pbtn-msg" onclick="sendMessageToPanel()">💬 Send Message</button>
+    <button class="panel-btn pbtn-outline" onclick="showToast('🎁','Free access sent!')">🎁 Send Free Access</button>
+    <button class="panel-btn pbtn-danger" onclick="showToast('⚠️','Contact support to remove members')">Remove Member</button>
   </div>
 </div>
 
 <div class="toast" id="toast"><span id="toast-icon">✅</span><span id="toast-msg">Done!</span></div>
 
 <script>
+const SB_URL='https://pkhoyabazudqmfczkhax.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
+const TIER_LABELS={palace:'🏯 Palace',gold:'👑 Gold',silver:'⭐ Silver',free:'🌱 Free'};
+const TIER_COLOR ={palace:'background:rgba(139,111,212,0.15);color:#b8a0e8',gold:'background:rgba(201,149,42,0.15);color:#f5d58a',silver:'background:rgba(143,163,181,0.15);color:#8fa3b5',free:'background:rgba(45,171,128,0.12);color:#2dab80'};
+
+function getSession(){try{const s=JSON.parse(localStorage.getItem('kt_session')||'{}');return s.access_token?s:null;}catch(e){return null;}}
+function hdr(t){return{'apikey':SB_KEY,'Authorization':'Bearer '+(t||SB_KEY),'Content-Type':'application/json'};}
+
+let allMembersData=[];
+let activeFilter='all';
+let activePanelMember=null;
+
+window.addEventListener('DOMContentLoaded', async()=>{
+  const session=getSession();
+  if(!session){window.location.href='login.html';return;}
+  const uid=session.user_id||session.id;
+  const token=session.access_token;
+
+  /* Load current user profile for sidebar */
+  try{
+    const res=await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+uid+'&select=*',{headers:hdr(token)});
+    const data=await res.json();
+    const me=data[0];
+    if(me){
+      document.getElementById('sidebarName').textContent=me.display_name||me.username||'Creator';
+      document.getElementById('sidebarHandle').textContent='@'+(me.username||'');
+      if(me.avatar_url) document.getElementById('sidebarAv').innerHTML='<img src="'+me.avatar_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+      if(!me.is_admin) window.location.href='member-dashboard.html';
+    }
+  }catch(e){}
+
+  await loadRealMembers(token);
+});
+
+async function loadRealMembers(token){
+  try{
+    const res=await fetch(SB_URL+'/rest/v1/profiles?is_admin=eq.false&select=*&order=created_at.desc',{headers:hdr(token)});
+    const data=await res.json();
+    if(!Array.isArray(data)) return;
+    allMembersData=data;
+    updateKPIs(data);
+    renderMembersTable(data);
+  }catch(e){console.error('Members load error',e);}
+}
+
+function updateKPIs(members){
+  const total  = members.length;
+  const palace = members.filter(m=>m.tier==='palace').length;
+  const gold   = members.filter(m=>m.tier==='gold').length;
+  const silver = members.filter(m=>m.tier==='silver').length;
+  const free   = members.filter(m=>!m.tier||m.tier==='free').length;
+  const week   = members.filter(m=>(Date.now()-new Date(m.created_at).getTime())<7*86400000).length;
+
+  /* Update header */
+  document.querySelector('.page-sub').textContent=`${total} active members · +${week} this week`;
+
+  /* Update KPI cards */
+  const kpis=document.querySelectorAll('.kpi-val');
+  if(kpis[0]) kpis[0].textContent=total;
+  if(kpis[1]) kpis[1].textContent=gold;
+  if(kpis[2]) kpis[2].textContent=silver;
+  if(kpis[3]) kpis[3].textContent=free;
+
+  /* Update filter tab counts */
+  const allTab=document.querySelector('.ftab.active');
+  document.querySelectorAll('.ftab').forEach(t=>{
+    const tier=t.getAttribute('onclick')?.match(/filterMembers\(this,'(\w+)'\)/)?.[1]||'all';
+    const count={all:total,gold,silver,free,palace}[tier]??0;
+    t.textContent=t.textContent.replace(/\(\d+\)/,'('+count+')');
+  });
+}
+
+function renderMembersTable(members){
+  const tbody=document.getElementById('membersTableBody');
+  if(!tbody) return;
+  if(!members.length){
+    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--muted)">No members yet 🏡</td></tr>';
+    return;
+  }
+  tbody.innerHTML=members.map(m=>{
+    const tier=m.tier||'free';
+    const name=m.display_name||m.username||'Member';
+    const initials=name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();
+    const grad='linear-gradient(135deg,'+({'palace':'#8b6fd4,#b8a0e8','gold':'#f4732a,#fbbf24','silver':'#60a5fa,#a78bfa','free':'#34d399,#60a5fa'}[tier]||'#9c8878,#4a3728')+')';
+    const joined=new Date(m.created_at).toLocaleDateString('en',{month:'short',day:'numeric',year:'numeric'});
+    return `<tr class="member-row" data-tier="${tier}" data-name="${name}"
+      onclick="openPanelFromData('${m.id}','${name.replace(/'/g,"\\'")}','@${m.username||''}','${tier}','${grad}','${initials}','${joined}')">
+      <td><div style="display:flex;align-items:center;gap:0.65rem">
+        <div style="width:32px;height:32px;border-radius:50%;background:${grad};display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;color:white;flex-shrink:0;overflow:hidden">
+          ${m.avatar_url?`<img src="${m.avatar_url}" style="width:100%;height:100%;object-fit:cover">`:`${initials}`}
+        </div>
+        <div><div style="font-size:0.82rem;font-weight:600;color:var(--black)">${name}</div><div style="font-size:0.65rem;color:var(--muted)">@${m.username||''}</div></div>
+      </div></td>
+      <td><span style="font-size:0.62rem;padding:0.15rem 0.5rem;border-radius:100px;${TIER_COLOR[tier]}">${TIER_LABELS[tier]}</span></td>
+      <td style="font-size:0.72rem;color:var(--muted)">${joined}</td>
+      <td><span style="font-size:0.65rem;color:var(--green)">● Active</span></td>
+      <td><div style="display:flex;gap:0.4rem">
+        <button class="act-btn" title="Message" onclick="event.stopPropagation();dmMember('${m.id}','${name.replace(/'/g,"\\'")}')">💬</button>
+        <button class="act-btn" title="View profile" onclick="event.stopPropagation();window.location.href='member-hub.html?user=${m.username||m.id}'">👁️</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function filterMembers(btn, tier){
+  document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  activeFilter=tier;
+  applyFilters();
+}
+
+function searchMembers(q){applyFilters(q);}
+
+function applyFilters(q){
+  const query=(q||document.getElementById('memberSearch')?.value||'').toLowerCase();
+  let filtered=allMembersData;
+  if(activeFilter!=='all') filtered=filtered.filter(m=>(m.tier||'free')===activeFilter);
+  if(query) filtered=filtered.filter(m=>(m.display_name||'').toLowerCase().includes(query)||(m.username||'').includes(query));
+  renderMembersTable(filtered);
+}
+
+function sortMembers(val){showToast('🔃','Sorted by '+val);}
+
+function openPanelFromData(id, name, handle, tier, grad, initials, joined){
+  activePanelMember={id,name,handle,tier};
+  document.getElementById('panel-av').style.background=grad;
+  document.getElementById('panel-av').textContent=initials;
+  document.getElementById('panel-name').textContent=name;
+  document.getElementById('panel-handle').textContent=handle;
+  document.getElementById('pi-tier').textContent=TIER_LABELS[tier]||tier;
+  document.getElementById('pi-joined').textContent=joined;
+  document.getElementById('detail-panel').classList.add('open');
+  document.getElementById('panel-overlay').classList.add('show');
+}
+
+/* Upgrade openPanel to use real data too */
+function openPanel(name, handle, tier, grad, initials, revenue, joined, total, posts){
+  openPanelFromData('', name, handle, tier, grad, initials, joined);
+  if(document.getElementById('ps-revenue')) document.getElementById('ps-revenue').textContent=revenue;
+  if(document.getElementById('ps-total'))   document.getElementById('ps-total').textContent=total.split(' ')[0];
+  if(document.getElementById('ps-posts'))   document.getElementById('ps-posts').textContent=posts.split(' ')[0];
+  if(document.getElementById('pi-posts'))   document.getElementById('pi-posts').textContent=posts;
+}
+
+async function dmMember(userId, name){
+  const session=getSession();if(!session)return;
+  const msg=prompt('Send a message to '+name+':');
+  if(!msg)return;
+  await fetch(SB_URL+'/rest/v1/notifications',{
+    method:'POST',headers:hdr(session.access_token),
+    body:JSON.stringify([{user_id:userId,title:'💬 Message from your creator',body:msg,type:'dm',is_read:false}])
+  });
+  showToast('💬','Message sent to '+name+' ✅');
+}
+
+async function sendMessageToPanel(){
+  if(!activePanelMember?.id){showToast('⚠️','No member selected');return;}
+  await dmMember(activePanelMember.id, activePanelMember.name);
+}
+
+async function messageAll(){
+  const session=getSession();if(!session)return;
+  const msg=prompt('Send a message to ALL your members:');
+  if(!msg||msg.trim().length<3)return;
+  const token=session.access_token;
+  let sent=0;
+  for(const m of allMembersData){
+    try{
+      await fetch(SB_URL+'/rest/v1/notifications',{
+        method:'POST',headers:{...hdr(token),'Prefer':'return=minimal'},
+        body:JSON.stringify([{user_id:m.id,title:'📢 Message from your creator',body:msg,type:'announcement',is_read:false}])
+      });
+      sent++;
+    }catch(e){}
+  }
+  showToast('📢',`Sent to ${sent} members ✅`);
+}
+
   function filterMembers(btn, tier) {
     document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'))
     btn.classList.add('active')
-    document.querySelectorAll('.member-row').forEach(r => {
-      r.style.display = (tier === 'all' || r.dataset.tier === tier) ? '' : 'none'
-    })
-  }
-
-  function searchMembers(q) {
-    const lower = q.toLowerCase()
-    document.querySelectorAll('.member-row').forEach(r => {
-      r.style.display = r.dataset.name.toLowerCase().includes(lower) ? '' : 'none'
-    })
-  }
-
-  function sortMembers(val) { showToast('🔃', `Sorted by ${val}`) }
-
-  function openPanel(name, handle, tier, grad, initials, revenue, joined, total, posts) {
-    document.getElementById('panel-av').style.background = grad
-    document.getElementById('panel-av').textContent      = initials
-    document.getElementById('panel-name').textContent    = name
-    document.getElementById('panel-handle').textContent  = handle
-    document.getElementById('ps-revenue').textContent    = revenue
-    document.getElementById('ps-total').textContent      = total.split(' ')[0]
-    document.getElementById('ps-posts').textContent      = posts.split(' ')[0]
-    document.getElementById('pi-tier').textContent       = tier === 'gold' ? '👑 Gold VIP' : tier === 'silver' ? '⭐ Silver' : '🌱 Free'
-    document.getElementById('pi-joined').textContent     = joined
-    document.getElementById('pi-posts').textContent      = posts
-    document.getElementById('detail-panel').classList.add('open')
-    document.getElementById('panel-overlay').classList.add('show')
+    activeFilter=tier;
+    applyFilters();
   }
 
   function closePanel() {
     document.getElementById('detail-panel').classList.remove('open')
     document.getElementById('panel-overlay').classList.remove('show')
+    activePanelMember=null;
   }
 
   let toastTimer
@@ -464,6 +642,33 @@
   }
 
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel() })
+
+/* ── i18n: shared lang system ── */
+function setLang(lang){
+  try{localStorage.setItem('kt_lang',lang);}catch(e){}
+  document.querySelectorAll('[data-i18n-en]').forEach(el=>{
+    const v=el.getAttribute('data-i18n-'+lang);
+    if(v!==null)el.innerHTML=v;
+  });
+  document.querySelectorAll('[data-lang]').forEach(btn=>{
+    const on=btn.getAttribute('data-lang')===lang;
+    btn.style.background=on?'rgba(244,115,42,0.15)':'transparent';
+    btn.style.color=on?'var(--orange)':'rgba(255,255,255,0.45)';
+    btn.style.fontWeight=on?'600':'400';
+  });
+  document.documentElement.lang=lang;
+}
+(function(){
+  let l='en';try{l=localStorage.getItem('kt_lang')||'en';}catch(e){}
+  if(l!=='tr'&&l!=='en'){const b=(navigator.language||'').toLowerCase();l=b.startsWith('tr')?'tr':'en';}
+  setLang(l);
+})();
+
+/* Mobile sidebar */
+function toggleMobileSidebar(){
+  document.querySelector('.sb')?.classList.toggle('open');
+  document.getElementById('sbOverlay')?.classList.toggle('open');
+}
 </script>
 </body>
 </html>

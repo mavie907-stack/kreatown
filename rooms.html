@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rooms — KreaTown</title>
+<title>Odalar — KreaTown | Town Rooms</title>
+<meta name="description" content="KreaTown odalarına katıl. Topluluk sohbeti, radyo, havuz ve daha fazlası.">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="Odalar — KreaTown | Town Rooms">
+<meta property="og:description" content="KreaTown odalarına katıl. Topluluk sohbeti, radyo, havuz ve daha fazlası.">
+<meta property="og:site_name" content="KreaTown">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -247,6 +252,16 @@ body{font-family:'DM Sans',sans-serif;background:#0a0806;color:#e8d5b0}
 .react-btn:hover{border-color:rgba(244,115,42,0.4);background:rgba(244,115,42,0.08);color:var(--orange)}
 .react-btn.mine{border-color:rgba(244,115,42,0.5);background:rgba(244,115,42,0.12);color:var(--orange)}
 
+
+/* ── MOBILE SIDEBAR TOGGLE ── */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:149;backdrop-filter:blur(4px)}
+.sb-overlay.open{display:block}
+.mob-menu-btn{display:none;position:fixed;top:0.75rem;left:0.75rem;z-index:200;width:38px;height:38px;border-radius:0.6rem;background:var(--bg2);border:1px solid var(--border);color:var(--text1);font-size:1.1rem;cursor:pointer;align-items:center;justify-content:center}
+@media(max-width:768px){
+  .mob-menu-btn{display:flex}
+  .sb{transform:translateX(-100%);transition:transform .25s ease;position:fixed;z-index:150;height:100vh}
+  .sb.open{transform:translateX(0)}
+}
 </style>
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#f4732a">
@@ -254,13 +269,17 @@ body{font-family:'DM Sans',sans-serif;background:#0a0806;color:#e8d5b0}
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="KreaTown">
-  <script src="/kt-utils.js" defer></script>
 </head>
 <body>
 <div class="app">
   <div class="room-bg" id="roomBg"></div>
   <div id="particles"></div>
-  <aside class="sidebar">
+  
+<!-- Mobile menu button -->
+<button class="mob-menu-btn" id="mobMenuBtn" onclick="toggleMobileSidebar()" aria-label="Menu">☰</button>
+<div class="sb-overlay" id="sbOverlay" onclick="toggleMobileSidebar()"></div>
+
+<aside class="sidebar">
     <div class="sidebar-logo">Krea<span>Town</span></div>
     <div id="langToggle" style="display:flex;align-items:center;gap:0.25rem;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:100px;padding:0.18rem 0.28rem">
       <button onclick="setLang('en')" data-lang="en" style="padding:0.18rem 0.55rem;border-radius:100px;border:none;cursor:pointer;font-size:0.68rem;font-family:'DM Sans',sans-serif;background:transparent;color:rgba(255,255,255,0.45)">🇬🇧</button>
@@ -744,6 +763,33 @@ function showQuickReact(msgId, e){
   setTimeout(()=>document.addEventListener('click',()=>popup.remove(),{once:true}), 50);
 }
 
+
+/* ── i18n: shared lang system ── */
+function setLang(lang){
+  try{localStorage.setItem('kt_lang',lang);}catch(e){}
+  document.querySelectorAll('[data-i18n-en]').forEach(el=>{
+    const v=el.getAttribute('data-i18n-'+lang);
+    if(v!==null)el.innerHTML=v;
+  });
+  document.querySelectorAll('[data-lang]').forEach(btn=>{
+    const on=btn.getAttribute('data-lang')===lang;
+    btn.style.background=on?'rgba(244,115,42,0.15)':'transparent';
+    btn.style.color=on?'var(--orange)':'rgba(255,255,255,0.45)';
+    btn.style.fontWeight=on?'600':'400';
+  });
+  document.documentElement.lang=lang;
+}
+(function(){
+  let l='en';try{l=localStorage.getItem('kt_lang')||'en';}catch(e){}
+  if(l!=='tr'&&l!=='en'){const b=(navigator.language||'').toLowerCase();l=b.startsWith('tr')?'tr':'en';}
+  setLang(l);
+})();
+
+/* Mobile sidebar */
+function toggleMobileSidebar(){
+  document.querySelector('.sb')?.classList.toggle('open');
+  document.getElementById('sbOverlay')?.classList.toggle('open');
+}
 </script>
 </body>
 </html>

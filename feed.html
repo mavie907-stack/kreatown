@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Community Feed — KreaTown</title>
+<meta name="description" content="KreaTown topluluk akışı. Creator içeriklerini keşfet, yorum yap, toplulukla bağlantı kur.">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="Community Feed — KreaTown">
+<meta property="og:description" content="KreaTown topluluk akışı. Creator içeriklerini keşfet.">
+<meta property="og:site_name" content="KreaTown">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -221,14 +226,165 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
 .promo-price{font-size:0.72rem;font-weight:600;color:var(--orange);font-family:'DM Mono',monospace;flex-shrink:0}
 .promo-free{font-size:0.72rem;font-weight:600;color:var(--emerald);font-family:'DM Mono',monospace;flex-shrink:0}
 
-/* Sponsor slot */
-.sponsor-card{background:linear-gradient(135deg,rgba(244,115,42,0.08),rgba(139,111,212,0.06));border:1px solid rgba(244,115,42,0.2);border-radius:1rem;padding:1rem;margin-bottom:0.85rem;text-align:center;cursor:pointer;transition:all .2s}
-.sponsor-card:hover{border-color:rgba(244,115,42,0.4);transform:translateY(-1px)}
-.sponsor-ico{font-size:2rem;margin-bottom:0.4rem}
-.sponsor-title{font-size:0.8rem;font-weight:600;color:var(--text1);margin-bottom:0.25rem}
-.sponsor-sub{font-size:0.65rem;color:var(--text2);line-height:1.5;margin-bottom:0.65rem}
-.sponsor-btn{display:inline-block;padding:0.35rem 0.85rem;background:var(--orange);color:white;border-radius:100px;font-size:0.68rem;font-weight:500;text-decoration:none;transition:all .15s}
-.sponsor-btn:hover{background:var(--orange2)}
+/* ══════════════════════════════════════
+   CREATOR CARD — Right Sidebar
+══════════════════════════════════════ */
+.creator-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  overflow: hidden;
+  margin-bottom: 0.85rem;
+  position: relative;
+}
+.cc-banner {
+  height: 72px;
+  background: linear-gradient(135deg, rgba(139,111,212,0.4), rgba(244,115,42,0.3));
+  position: relative;
+}
+.cc-banner-img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.cc-level-pill {
+  position: absolute; top: 0.5rem; right: 0.5rem;
+  background: rgba(14,12,10,0.75); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px; padding: 0.18rem 0.6rem;
+  font-size: 0.58rem; color: var(--palace2);
+  font-family: 'DM Mono', monospace;
+  display: flex; align-items: center; gap: 0.3rem;
+}
+.cc-body { padding: 0 1rem 1rem; }
+.cc-avatar-wrap { margin-top: -22px; margin-bottom: 0.6rem; display: flex; align-items: flex-end; justify-content: space-between; }
+.cc-av {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--palace), var(--orange));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; border: 2.5px solid var(--bg2);
+  overflow: hidden; flex-shrink: 0;
+}
+.cc-av img { width: 100%; height: 100%; object-fit: cover; }
+.cc-online-pill {
+  font-size: 0.58rem; color: var(--emerald);
+  font-family: 'DM Mono', monospace;
+  display: flex; align-items: center; gap: 0.3rem;
+}
+.cc-online-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--emerald); flex-shrink: 0; }
+.cc-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.92rem; font-weight: 700; color: var(--text1);
+  display: flex; align-items: center; gap: 0.4rem;
+  margin-bottom: 0.15rem;
+}
+.cc-verified { font-size: 0.55rem; background: rgba(244,115,42,0.15); color: var(--orange); border: 1px solid rgba(244,115,42,0.3); padding: 0.1rem 0.45rem; border-radius: 100px; font-family: 'DM Mono', monospace; }
+.cc-handle { font-size: 0.65rem; color: var(--text3); font-family: 'DM Mono', monospace; margin-bottom: 0.5rem; }
+.cc-bio { font-size: 0.72rem; color: var(--text2); line-height: 1.55; margin-bottom: 0.75rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.cc-stats {
+  display: flex; gap: 0; margin-bottom: 0.85rem;
+  background: var(--bg3); border-radius: 0.625rem; overflow: hidden;
+  border: 1px solid var(--border);
+}
+.cc-stat {
+  flex: 1; text-align: center; padding: 0.5rem 0;
+  border-right: 1px solid var(--border);
+}
+.cc-stat:last-child { border-right: none; }
+.cc-stat-num { font-family: 'Playfair Display', serif; font-size: 0.88rem; font-weight: 700; color: var(--text1); display: block; }
+.cc-stat-lbl { font-size: 0.55rem; color: var(--text3); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* Tier picker inside creator card */
+.cc-tiers { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.75rem; }
+.cc-tier-row {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.42rem 0.65rem; border-radius: 0.625rem;
+  border: 1px solid var(--border); background: transparent;
+  cursor: pointer; transition: all .15s; width: 100%;
+  font-family: 'DM Sans', sans-serif; text-align: left;
+}
+.cc-tier-row:hover { border-color: var(--border2); background: rgba(255,255,255,0.03); }
+.cc-tier-row.selected { border-color: var(--orange); background: rgba(244,115,42,0.06); }
+.cc-tier-row.palace-tier:hover, .cc-tier-row.palace-tier.selected { border-color: var(--palace); background: rgba(139,111,212,0.08); }
+.cc-tier-ico { font-size: 0.9rem; width: 18px; text-align: center; flex-shrink: 0; }
+.cc-tier-info { flex: 1; min-width: 0; }
+.cc-tier-name { font-size: 0.72rem; font-weight: 500; color: var(--text1); }
+.cc-tier-perk { font-size: 0.6rem; color: var(--text3); margin-top: 0.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cc-tier-price { font-size: 0.68rem; font-weight: 600; color: var(--orange); font-family: 'DM Mono', monospace; flex-shrink: 0; }
+.cc-tier-price.free-price { color: var(--emerald); }
+.cc-tier-price.palace-price { color: var(--palace2); }
+
+.cc-join-btn {
+  width: 100%; padding: 0.6rem; border-radius: 0.75rem;
+  font-size: 0.82rem; font-weight: 500; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: all .2s; border: none;
+  background: var(--orange); color: white;
+  box-shadow: 0 3px 12px rgba(244,115,42,0.3);
+}
+.cc-join-btn:hover { background: var(--orange2); transform: translateY(-1px); box-shadow: 0 5px 18px rgba(244,115,42,0.4); }
+.cc-join-btn.palace-btn { background: linear-gradient(135deg, var(--palace), #a98cdf); box-shadow: 0 3px 12px rgba(139,111,212,0.35); }
+.cc-join-btn.palace-btn:hover { box-shadow: 0 5px 18px rgba(139,111,212,0.45); }
+.cc-join-btn.free-btn { background: rgba(45,171,128,0.15); color: var(--emerald); border: 1px solid rgba(45,171,128,0.3); box-shadow: none; }
+.cc-join-btn.free-btn:hover { background: rgba(45,171,128,0.25); }
+.cc-already { width: 100%; text-align: center; font-size: 0.72rem; color: var(--emerald); padding: 0.5rem; font-family: 'DM Mono', monospace; }
+
+/* ══════════════════════════════════════
+   JOIN REQUEST MODAL (Palace tier)
+══════════════════════════════════════ */
+.join-modal-overlay {
+  position: fixed; inset: 0; z-index: 600;
+  background: rgba(0,0,0,0.8); backdrop-filter: blur(12px);
+  display: none; align-items: center; justify-content: center; padding: 1rem;
+}
+.join-modal-overlay.open { display: flex; }
+@keyframes jmIn { from { transform: translateY(24px) scale(0.96); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+.join-modal {
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 1.5rem; width: 100%; max-width: 460px;
+  padding: 2rem; animation: jmIn .3s ease both;
+  position: relative; overflow: hidden;
+}
+.join-modal::before {
+  content: ''; position: absolute; top: -60px; right: -60px;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(139,111,212,0.2) 0%, transparent 70%);
+  pointer-events: none;
+}
+.jm-step { display: none; }
+.jm-step.active { display: block; }
+.jm-icon { font-size: 2.2rem; margin-bottom: 0.75rem; display: block; }
+.jm-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--text1); margin-bottom: 0.4rem; }
+.jm-sub { font-size: 0.82rem; color: var(--text2); line-height: 1.6; margin-bottom: 1.25rem; }
+.jm-label { font-size: 0.62rem; color: var(--text3); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 0.35rem; }
+.jm-input {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 0.75rem; color: var(--text1); font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem; padding: 0.65rem 0.9rem; outline: none;
+  transition: border-color .15s; margin-bottom: 0.85rem;
+}
+.jm-input:focus { border-color: var(--border2); }
+.jm-input::placeholder { color: var(--text3); }
+.jm-textarea { min-height: 100px; resize: vertical; }
+.jm-btn-row { display: flex; gap: 0.6rem; margin-top: 0.5rem; }
+.jm-btn {
+  flex: 1; padding: 0.7rem; border-radius: 0.875rem; font-size: 0.85rem;
+  font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: all .2s; border: none;
+}
+.jm-btn.primary { background: linear-gradient(135deg, var(--palace), #a98cdf); color: white; box-shadow: 0 4px 14px rgba(139,111,212,0.35); }
+.jm-btn.primary:hover { box-shadow: 0 6px 20px rgba(139,111,212,0.45); transform: translateY(-1px); }
+.jm-btn.primary.orange { background: var(--orange); box-shadow: 0 4px 14px rgba(244,115,42,0.3); }
+.jm-btn.primary.orange:hover { background: var(--orange2); }
+.jm-btn.secondary { background: rgba(255,255,255,0.05); color: var(--text2); border: 1px solid var(--border); }
+.jm-btn.secondary:hover { color: var(--text1); border-color: var(--border2); }
+.jm-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--text3); font-size: 1.1rem; cursor: pointer; transition: color .15s; line-height: 1; padding: 0.25rem; }
+.jm-close:hover { color: var(--text1); }
+/* Progress dots */
+.jm-dots { display: flex; gap: 0.35rem; justify-content: center; margin-bottom: 1.25rem; }
+.jm-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); transition: all .3s; }
+.jm-dot.active { background: var(--palace); width: 18px; border-radius: 100px; }
+/* Success state */
+.jm-success { text-align: center; padding: 1rem 0; }
+.jm-success-icon { font-size: 3rem; display: block; margin-bottom: 0.75rem; animation: successPop .4s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes successPop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
 </style>
   <link rel="manifest" href="/manifest.json">
@@ -237,7 +393,6 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="KreaTown">
-  <script src="/kt-utils.js" defer></script>
 </head>
 <body>
 
@@ -319,6 +474,81 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
   <!-- RIGHT SIDEBAR -->
   <aside class="right-sb">
 
+    <!-- ── CREATOR CARD ── -->
+    <div class="creator-card" id="creatorCard">
+      <div class="cc-banner">
+        <img src="Luxury.png" alt="" class="cc-banner-img" onerror="this.style.display='none'">
+        <div class="cc-level-pill" id="ccLevelPill">🏯 Level 5 · Palace</div>
+      </div>
+      <div class="cc-body">
+        <div class="cc-avatar-wrap">
+          <div class="cc-av" id="ccAvatar">🎨</div>
+          <div class="cc-online-pill"><span class="cc-online-dot"></span> Online now</div>
+        </div>
+        <div class="cc-name">
+          <span id="ccName">Topraq Toros</span>
+          <span class="cc-verified">✦ VERIFIED</span>
+        </div>
+        <div class="cc-handle" id="ccHandle">@topraq</div>
+        <div class="cc-bio" id="ccBio">Building my town one post at a time 🏡 — Creator, storyteller & community builder.</div>
+
+        <div class="cc-stats">
+          <div class="cc-stat">
+            <span class="cc-stat-num" id="ccMembers">44</span>
+            <span class="cc-stat-lbl">Members</span>
+          </div>
+          <div class="cc-stat">
+            <span class="cc-stat-num" id="ccPosts">4</span>
+            <span class="cc-stat-lbl">Posts</span>
+          </div>
+          <div class="cc-stat">
+            <span class="cc-stat-num">#3</span>
+            <span class="cc-stat-lbl">Rank</span>
+          </div>
+        </div>
+
+        <!-- Tier picker -->
+        <div class="cc-tiers" id="ccTiers">
+          <button class="cc-tier-row selected" data-tier="free" onclick="selectCreatorTier(this)">
+            <span class="cc-tier-ico">🌱</span>
+            <div class="cc-tier-info">
+              <div class="cc-tier-name">Garden Pass</div>
+              <div class="cc-tier-perk">Free posts · Community access</div>
+            </div>
+            <span class="cc-tier-price free-price">Free</span>
+          </button>
+          <button class="cc-tier-row" data-tier="silver" onclick="selectCreatorTier(this)">
+            <span class="cc-tier-ico">⭐</span>
+            <div class="cc-tier-info">
+              <div class="cc-tier-name">Inside the House</div>
+              <div class="cc-tier-perk">Exclusive posts · Studio tours</div>
+            </div>
+            <span class="cc-tier-price">$9/mo</span>
+          </button>
+          <button class="cc-tier-row" data-tier="gold" onclick="selectCreatorTier(this)">
+            <span class="cc-tier-ico">👑</span>
+            <div class="cc-tier-info">
+              <div class="cc-tier-name">Gold Suite</div>
+              <div class="cc-tier-perk">Full strategy · DMs · Early access</div>
+            </div>
+            <span class="cc-tier-price">$19/mo</span>
+          </button>
+          <button class="cc-tier-row palace-tier" data-tier="palace" onclick="selectCreatorTier(this)">
+            <span class="cc-tier-ico">🏯</span>
+            <div class="cc-tier-info">
+              <div class="cc-tier-name">Palace Access</div>
+              <div class="cc-tier-perk">1-on-1 · Apply to join</div>
+            </div>
+            <span class="cc-tier-price palace-price">$49/mo</span>
+          </button>
+        </div>
+
+        <button class="cc-join-btn free-btn" id="ccJoinBtn" onclick="handleJoinClick()">
+          🏡 Join free — Enter the town
+        </button>
+      </div>
+    </div>
+
     <!-- FEATURED PRODUCTS -->
     <div class="promo-card">
       <div class="promo-header">
@@ -326,7 +556,6 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
         <span class="promo-badge">FEATURED</span>
       </div>
       <div id="featuredProducts">
-        <!-- Loaded dynamically -->
         <a href="milestones.html" class="promo-item">
           <div class="promo-ico" style="background:rgba(244,115,42,0.12)">🏆</div>
           <div class="promo-info">
@@ -351,31 +580,7 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
           </div>
           <span class="promo-free">Enter</span>
         </a>
-        <a href="harley.html" class="promo-item">
-          <div class="promo-ico" style="background:rgba(192,57,43,0.12)">🏍️</div>
-          <div class="promo-info">
-            <div class="promo-name">Harley Riders</div>
-            <div class="promo-sub">Join the crew</div>
-          </div>
-          <span class="promo-free">Visit</span>
-        </a>
-        <a href="shop.html" class="promo-item">
-          <div class="promo-ico" style="background:rgba(201,149,42,0.12)">🛍️</div>
-          <div class="promo-info">
-            <div class="promo-name">KreaTown Shop</div>
-            <div class="promo-sub">Courses & products</div>
-          </div>
-          <span class="promo-free">Browse</span>
-        </a>
       </div>
-    </div>
-
-    <!-- SPONSOR SLOT -->
-    <div class="sponsor-card" onclick="window.location.href='topraq-hub.html'">
-      <div class="sponsor-ico">☕</div>
-      <div class="sponsor-title">Coffee with Topraq</div>
-      <div class="sponsor-sub">Reach 100 members and join us for a real coffee meetup!</div>
-      <a href="milestones.html" class="sponsor-btn">See milestones →</a>
     </div>
 
     <!-- ONLINE NOW -->
@@ -394,6 +599,72 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
     </div>
   </aside>
 
+</div>
+
+<!-- ══════════════════════════════════════
+     JOIN REQUEST MODAL
+══════════════════════════════════════ -->
+<div class="join-modal-overlay" id="joinModal">
+  <div class="join-modal">
+    <button class="jm-close" onclick="closeJoinModal()">✕</button>
+
+    <!-- Step 1: Free / Paid instant -->
+    <div class="jm-step active" id="jmStep1">
+      <span class="jm-icon" id="jmIcon">🏡</span>
+      <div class="jm-title" id="jmTitle">Join the Town</div>
+      <div class="jm-sub" id="jmSub">You're joining as a free member. You'll get access to public posts and the community feed.</div>
+      <div class="jm-btn-row">
+        <button class="jm-btn secondary" onclick="closeJoinModal()">Cancel</button>
+        <button class="jm-btn primary orange" id="jmConfirmBtn" onclick="confirmJoin()">Enter the town 🏡</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Palace application form -->
+    <div class="jm-step" id="jmStep2">
+      <div class="jm-dots">
+        <div class="jm-dot active" id="dot1"></div>
+        <div class="jm-dot" id="dot2"></div>
+        <div class="jm-dot" id="dot3"></div>
+      </div>
+      <span class="jm-icon">🏯</span>
+      <div class="jm-title">Apply for Palace Access</div>
+      <div class="jm-sub">The Palace is invite-only. Tell Topraq a bit about yourself and why you want in. Applications are reviewed within 24h.</div>
+      <label class="jm-label">Your name</label>
+      <input class="jm-input" id="jmApplicantName" placeholder="Your display name…">
+      <label class="jm-label">Why do you want Palace access?</label>
+      <textarea class="jm-input jm-textarea" id="jmApplicantMsg" placeholder="Tell us about yourself, your goals, and why you'd be a great fit for the Palace community…"></textarea>
+      <div class="jm-btn-row">
+        <button class="jm-btn secondary" onclick="closeJoinModal()">Cancel</button>
+        <button class="jm-btn primary" onclick="submitPalaceApplication()">Send application 🏯</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Palace success -->
+    <div class="jm-step" id="jmStep3">
+      <div class="jm-dots">
+        <div class="jm-dot" id="dot1b"></div>
+        <div class="jm-dot" id="dot2b"></div>
+        <div class="jm-dot active" id="dot3b"></div>
+      </div>
+      <div class="jm-success">
+        <span class="jm-success-icon">🏯</span>
+        <div class="jm-title">Application sent!</div>
+        <div class="jm-sub" style="text-align:center">Topraq will review your application and you'll receive a notification within 24 hours. In the meantime, enjoy the community feed!</div>
+        <button class="jm-btn primary" style="margin-top:1rem" onclick="closeJoinModal()">Back to the feed</button>
+      </div>
+    </div>
+
+    <!-- Free join success -->
+    <div class="jm-step" id="jmStepSuccess">
+      <div class="jm-success">
+        <span class="jm-success-icon">🎉</span>
+        <div class="jm-title" id="jmSuccessTitle">Welcome to the town!</div>
+        <div class="jm-sub" id="jmSuccessSub" style="text-align:center">You're now a member. Welcome to the community!</div>
+        <button class="jm-btn primary orange" style="margin-top:1rem" onclick="closeJoinModal()">Start exploring 🏡</button>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <!-- CREATE POST MODAL -->
@@ -522,6 +793,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   await loadFeed();
   loadOnlineMembers();
+  loadCreatorCard();
 });
 
 async function loadFeed(){
@@ -892,7 +1164,7 @@ function toast(msg,type=''){
 }
 
 
-/* Language applied via kt-utils.js */
+/* Language applied on load */
 document.addEventListener('DOMContentLoaded', ()=>{
   setTimeout(()=>{
     const lang = localStorage.getItem('kt_lang')||'en';
@@ -1041,6 +1313,247 @@ async function loadCommentCounts(postIds){
     });
   }catch(e){}
 }
+
+/* ══════════════════════════════════════
+   CREATOR CARD — load & interact
+══════════════════════════════════════ */
+let selectedTier = 'free';
+let creatorProfile = null;
+
+async function loadCreatorCard() {
+  try {
+    /* Load admin/creator profile */
+    const r = await fetch(SB_URL+'/rest/v1/profiles?is_admin=eq.true&select=*&limit=1',{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+    });
+    const d = await r.json();
+    creatorProfile = d[0];
+    if(!creatorProfile) return;
+
+    /* Update avatar */
+    if(creatorProfile.avatar_url){
+      document.getElementById('ccAvatar').innerHTML =
+        '<img src="'+creatorProfile.avatar_url+'" alt="">';
+    }
+    /* Name / handle / bio */
+    const name = creatorProfile.display_name || creatorProfile.username || 'Creator';
+    document.getElementById('ccName').textContent    = name;
+    document.getElementById('ccHandle').textContent  = '@'+(creatorProfile.username||'creator');
+    if(creatorProfile.bio)
+      document.getElementById('ccBio').textContent   = creatorProfile.bio;
+
+    /* Member count */
+    const mRes = await fetch(SB_URL+'/rest/v1/profiles?is_admin=eq.false&select=id',{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+    });
+    const mData = await mRes.json();
+    if(Array.isArray(mData))
+      document.getElementById('ccMembers').textContent = mData.length;
+
+    /* Post count */
+    const pRes = await fetch(SB_URL+'/rest/v1/posts?is_published=eq.true&select=id',{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+    });
+    const pData = await pRes.json();
+    if(Array.isArray(pData))
+      document.getElementById('ccPosts').textContent = pData.length;
+
+  } catch(e) { console.log('Creator card error:', e); }
+
+  /* Check if user is already a member → hide join UI */
+  if(myProfile && !myProfile.is_admin){
+    const joinBtn = document.getElementById('ccJoinBtn');
+    const tiersEl = document.getElementById('ccTiers');
+    if(joinBtn){ joinBtn.textContent = '✓ Member — '+( TIER_LABELS[myProfile.tier||'free']); joinBtn.className='cc-join-btn free-btn'; joinBtn.onclick=null; joinBtn.style.cursor='default'; }
+  }
+}
+
+function selectCreatorTier(btn){
+  document.querySelectorAll('.cc-tier-row').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedTier = btn.dataset.tier;
+
+  const joinBtn = document.getElementById('ccJoinBtn');
+  if(selectedTier === 'free'){
+    joinBtn.textContent = '🏡 Join free — Enter the town';
+    joinBtn.className   = 'cc-join-btn free-btn';
+  } else if(selectedTier === 'palace'){
+    joinBtn.textContent = '🏯 Apply for Palace Access';
+    joinBtn.className   = 'cc-join-btn palace-btn';
+  } else {
+    const prices = {silver:'$9/mo', gold:'$19/mo'};
+    joinBtn.textContent = '🏡 Join for '+prices[selectedTier];
+    joinBtn.className   = 'cc-join-btn';
+  }
+}
+
+function handleJoinClick(){
+  if(!mySession){ window.location.href='login.html'; return; }
+  openJoinModal(selectedTier);
+}
+
+/* ══════════════════════════════════════
+   JOIN MODAL
+══════════════════════════════════════ */
+function openJoinModal(tier){
+  selectedTier = tier;
+  /* Reset all steps */
+  ['jmStep1','jmStep2','jmStep3','jmStepSuccess'].forEach(id=>{
+    document.getElementById(id)?.classList.remove('active');
+  });
+
+  if(tier === 'palace'){
+    /* Pre-fill name */
+    const nameInput = document.getElementById('jmApplicantName');
+    if(nameInput && myProfile) nameInput.value = myProfile.display_name||'';
+    document.getElementById('jmStep2').classList.add('active');
+  } else {
+    /* Configure step 1 for free or paid */
+    const icons  = {free:'🏡', silver:'⭐', gold:'👑'};
+    const titles = {free:'Join the Town', silver:'Join as Silver', gold:'Join as Gold'};
+    const subs   = {
+      free:   "You're joining as a free member. Enjoy public posts and the community feed!",
+      silver: "You'll unlock exclusive posts, studio tours, and calls for $9/mo. Ready to subscribe?",
+      gold:   "You'll get full strategy, DMs with the creator, and early access for $19/mo. Ready to subscribe?"
+    };
+    const btnLabels = {free:'Enter the town 🏡', silver:'Subscribe — $9/mo', gold:'Subscribe — $19/mo'};
+
+    document.getElementById('jmIcon').textContent    = icons[tier] || '🏡';
+    document.getElementById('jmTitle').textContent   = titles[tier] || 'Join';
+    document.getElementById('jmSub').textContent     = subs[tier]  || '';
+    document.getElementById('jmConfirmBtn').textContent = btnLabels[tier] || 'Join';
+    document.getElementById('jmConfirmBtn').className =
+      tier==='free' ? 'jm-btn primary orange' : 'jm-btn primary';
+    document.getElementById('jmStep1').classList.add('active');
+  }
+
+  document.getElementById('joinModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeJoinModal(){
+  document.getElementById('joinModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+async function confirmJoin(){
+  if(!mySession){ window.location.href='login.html'; return; }
+  const uid   = mySession.user_id || mySession.id;
+  const token = mySession.access_token;
+
+  if(selectedTier === 'free'){
+    /* Update profile tier in Supabase */
+    try {
+      await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+uid,{
+        method: 'PATCH',
+        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token,'Content-Type':'application/json','Prefer':'return=minimal'},
+        body: JSON.stringify({ tier: 'free' })
+      });
+      /* Send welcome notification */
+      if(creatorProfile){
+        await fetch(SB_URL+'/rest/v1/notifications',{
+          method:'POST',
+          headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token,'Content-Type':'application/json','Prefer':'return=minimal'},
+          body:JSON.stringify([{
+            user_id: uid,
+            title:   '🏡 Welcome to the town!',
+            body:    'You\'ve joined '+(creatorProfile.display_name||'the creator')+'\'s town. Enjoy the community!',
+            type:    'new_member', is_read: false
+          }])
+        });
+        /* Also notify creator */
+        await fetch(SB_URL+'/rest/v1/notifications',{
+          method:'POST',
+          headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+          body:JSON.stringify([{
+            user_id: creatorProfile.id,
+            title:   '🎉 New member joined!',
+            body:    (myProfile?.display_name||'Someone')+' just joined your town as a free member.',
+            type:    'new_member', is_read: false
+          }])
+        });
+      }
+    } catch(e) { console.log('Join error:', e); }
+
+    /* Show success */
+    document.getElementById('jmStep1').classList.remove('active');
+    document.getElementById('jmSuccessTitle').textContent = '🎉 Welcome to the town!';
+    document.getElementById('jmSuccessSub').textContent   = 'You\'re now a free member. Enjoy the community feed!';
+    document.getElementById('jmStepSuccess').classList.add('active');
+
+  } else {
+    /* Paid tier → redirect to checkout */
+    window.location.href = 'checkout.html?tier='+selectedTier;
+  }
+}
+
+async function submitPalaceApplication(){
+  const name = document.getElementById('jmApplicantName')?.value?.trim();
+  const msg  = document.getElementById('jmApplicantMsg')?.value?.trim();
+  if(!msg || msg.length < 20){ toast('Please write a bit more about yourself (at least 20 characters) 📝','warn'); return; }
+  if(!mySession){ window.location.href='login.html'; return; }
+
+  const uid   = mySession.user_id || mySession.id;
+  const token = mySession.access_token;
+
+  try {
+    /* Send application as DM notification to creator */
+    if(creatorProfile){
+      await fetch(SB_URL+'/rest/v1/notifications',{
+        method:'POST',
+        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+        body:JSON.stringify([{
+          user_id: creatorProfile.id,
+          title:   '🏯 Palace application from '+(name||myProfile?.display_name||'Someone'),
+          body:    msg,
+          type:    'dm', is_read: false,
+          meta:    JSON.stringify({ applicant_id: uid, applicant_name: name, tier_requested: 'palace' })
+        }])
+      });
+    }
+    /* Confirm to applicant */
+    await fetch(SB_URL+'/rest/v1/notifications',{
+      method:'POST',
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify([{
+        user_id: uid,
+        title:   '🏯 Your Palace application was sent!',
+        body:    'Topraq will review it and get back to you within 24 hours. Keep an eye on your notifications!',
+        type:    'announcement', is_read: false
+      }])
+    });
+  } catch(e) { console.log('Application error:', e); }
+
+  /* Progress to success step */
+  document.getElementById('jmStep2').classList.remove('active');
+  document.getElementById('jmStep3').classList.add('active');
+}
+
+/* ══════════════════════════════════════
+   i18n — feed.html (inherits from topraq-hub)
+   Reads saved preference and applies
+══════════════════════════════════════ */
+function setLang(lang){
+  try{ localStorage.setItem('kt_lang',lang); }catch(e){}
+  document.querySelectorAll('[data-i18n-en]').forEach(el=>{
+    const v=el.getAttribute('data-i18n-'+lang);
+    if(v!==null) el.innerHTML=v;
+  });
+  document.querySelectorAll('[data-lang]').forEach(btn=>{
+    const on=btn.getAttribute('data-lang')===lang;
+    btn.style.background=on?'rgba(244,115,42,0.2)':'transparent';
+    btn.style.color=on?'var(--orange)':'rgba(255,255,255,0.45)';
+  });
+}
+(function(){
+  let lang='en';
+  try{ lang=localStorage.getItem('kt_lang')||'en'; }catch(e){}
+  if(lang==='tr'||lang==='en') setLang(lang);
+  else {
+    const bl=(navigator.language||'').toLowerCase();
+    setLang(bl.startsWith('tr')?'tr':'en');
+  }
+})();
 
 /* Auto refresh every 30s */
 setInterval(loadFeed, 30000);

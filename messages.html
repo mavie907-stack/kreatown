@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Messages — KreaTown</title>
+<meta name="description" content="KreaTown mesajlaşma merkezi. Üyelerinizle DM yapın, bildirimleri yönetin.">
+<meta name="robots" content="noindex, follow">
+<meta property="og:title" content="Messages — KreaTown">
+<meta property="og:site_name" content="KreaTown">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -275,70 +279,211 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="KreaTown">
-  <script src="/kt-utils.js" defer>
-/* ── NEW DM ── */
+  <script>
+/* ══════════════════════════════════════════
+   Helper: Toast notification
+══════════════════════════════════════════ */
+function showToast(msg, type='info'){
+  let t = document.getElementById('kt-toast');
+  if(!t){
+    t = document.createElement('div');
+    t.id = 'kt-toast';
+    t.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:#1e1a16;border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.9);padding:0.65rem 1.25rem;border-radius:100px;font-size:0.82rem;font-family:"DM Sans",sans-serif;z-index:9999;transition:opacity .3s;box-shadow:0 8px 32px rgba(0,0,0,0.4);';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>{ t.style.opacity='0'; }, 3000);
+}
+
+/* ══════════════════════════════════════════
+   Tab switcher: DMs ↔ Rooms
+══════════════════════════════════════════ */
+let activeTab = 'dms';
+function switchTab(tab){
+  activeTab = tab;
+  document.getElementById('tabDMs').classList.toggle('active',   tab==='dms');
+  document.getElementById('tabRooms').classList.toggle('active', tab==='rooms');
+  renderConvList();
+}
+
+/* ══════════════════════════════════════════
+   Conversation list search filter
+══════════════════════════════════════════ */
+function filterConvs(){
+  const q = (document.getElementById('convSearch')?.value||'').toLowerCase();
+  document.querySelectorAll('#convItems > [data-conv-item]').forEach(el=>{
+    const name = (el.dataset.name||'').toLowerCase();
+    el.style.display = name.includes(q) ? '' : 'none';
+  });
+}
+
+/* ══════════════════════════════════════════
+   New DM modal
+══════════════════════════════════════════ */
 async function openNewDM(){
-  document.getElementById('newDmModal').style.display='flex';
-  /* Load members for datalist */
+  const modal = document.getElementById('newDmModal');
+  if(modal) modal.style.display='flex';
+  /* Populate member autocomplete */
   try{
     const res = await fetch(SB_URL+'/rest/v1/profiles?select=id,username,display_name&order=display_name.asc',{
       headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
     });
     const data = await res.json();
     const dl = document.getElementById('dmMemberList');
-    if(dl) dl.innerHTML = data.map(m=>`<option value="@${m.username}">${m.display_name||m.username}</option>`).join('');
+    if(dl) dl.innerHTML = data.map(m=>`<option value="@${m.username||''}">${m.display_name||m.username}</option>`).join('');
   }catch(e){}
 }
 
 async function sendNewDM(){
-  const to  = document.getElementById('dmToInput').value.trim().replace('@','');
-  const msg = document.getElementById('dmMsgInput').value.trim();
-  if(!to || !msg){ showToast('Fill in recipient and message!'); return; }
+  const toInput  = document.getElementById('dmToInput');
+  const msgInput = document.getElementById('dmMsgInput');
+  const to  = (toInput?.value||'').trim().replace('@','');
+  const msg = (msgInput?.value||'').trim();
+  if(!to || !msg){ showToast('Please fill in recipient and message ✍️'); return; }
 
-  const s = JSON.parse(localStorage.getItem('kt_session')||'{}');
-  if(!s.access_token){ showToast('Please log in'); return; }
+  const s = getSession();
+  if(!s){ showToast('Please log in first'); window.location.href='login.html'; return; }
 
-  /* Find recipient */
-  const res  = await fetch(SB_URL+'/rest/v1/profiles?username=eq.'+to+'&select=id,display_name',{
+  /* Resolve recipient by username */
+  const res  = await fetch(SB_URL+'/rest/v1/profiles?username=eq.'+encodeURIComponent(to)+'&select=id,display_name',{
     headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
   });
   const data = await res.json();
   const recipient = data[0];
+  if(!recipient){ showToast('Member @'+to+' not found 🔍'); return; }
 
-  if(!recipient){
-    showToast('Member @'+to+' not found!');
-    return;
-  }
-
-  /* Send notification */
-  await fetch(SB_URL+'/rest/v1/notifications',{
+  /* Insert notification → acts as a DM */
+  const r = await fetch(SB_URL+'/rest/v1/notifications',{
     method:'POST',
-    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+s.access_token,'Content-Type':'application/json','Prefer':'return=minimal'},
+    headers:{...hdr(s.access_token),'Prefer':'return=minimal'},
     body:JSON.stringify([{
       user_id: recipient.id,
       title:   '💬 Message from '+(myProfile?.display_name||'Someone'),
       body:    msg,
-      type:    'dm'
+      type:    'dm',
+      is_read: false
     }])
   });
 
-  document.getElementById('newDmModal').style.display='none';
-  document.getElementById('dmToInput').value='';
-  document.getElementById('dmMsgInput').value='';
-  showToast('Message sent to '+recipient.display_name+'! ✅');
+  if(r.ok){
+    document.getElementById('newDmModal').style.display='none';
+    if(toInput)  toInput.value='';
+    if(msgInput) msgInput.value='';
+    showToast('Message sent to '+recipient.display_name+' ✅');
+    /* Reload conversation list */
+    const sess = getSession();
+    if(sess) await loadNotifications(sess.user_id||sess.id, sess.access_token);
+  } else {
+    showToast('Failed to send — please try again ❌');
+  }
 }
 
 function searchMessages(){
   const q = prompt('Search messages:');
   if(!q) return;
-  /* Filter convItems */
-  document.querySelectorAll('#convItems > div').forEach(el=>{
+  document.querySelectorAll('#convItems > [data-conv-item]').forEach(el=>{
     const txt = el.textContent.toLowerCase();
     el.style.display = txt.includes(q.toLowerCase()) ? '' : 'none';
   });
 }
 
-</script>
+/* ══════════════════════════════════════════
+   Render conversation / room list
+══════════════════════════════════════════ */
+const ROOMS=[
+  {id:'lobby',      icon:'🛎️', name:'Hotel Lobby',    minTier:'free'},
+  {id:'restaurant', icon:'🍽️', name:'The Restaurant',  minTier:'free'},
+  {id:'superior',   icon:'🛏️', name:'Superior Room',   minTier:'silver'},
+  {id:'resting',    icon:'🛋️', name:'Resting Lounge',  minTier:'silver'},
+  {id:'pool',       icon:'🌊', name:'Thermal Pool',    minTier:'gold'},
+  {id:'radio',      icon:'📻', name:'3D Radio',        minTier:'gold'},
+  {id:'tv',         icon:'📺', name:'Cinema TV',       minTier:'palace'}
+];
+
+const TIER_ORDER=['free','silver','gold','palace'];
+function tierGte(a,b){ return TIER_ORDER.indexOf(a)>=TIER_ORDER.indexOf(b); }
+
+let cachedNotifs=[];
+let myTier='free';
+
+function renderConvList(notifs){
+  if(notifs) cachedNotifs=notifs;
+  const convEl=document.getElementById('convItems');
+  if(!convEl) return;
+
+  if(activeTab==='rooms'){
+    /* ── ROOMS tab ── */
+    convEl.innerHTML = ROOMS.map(r=>{
+      const locked = !tierGte(myTier, r.minTier);
+      return `<div data-conv-item data-name="${r.name}"
+        class="room-conv-item${locked?' locked':''}"
+        onclick="${locked?'showLockOverlay(\''+r.id+'\')':'openRoom(\''+r.id+'\')'}">
+        <div class="rci-icon">${r.icon}</div>
+        <div class="rci-info">
+          <div class="rci-name">${r.name}</div>
+          <div class="rci-sub">${locked?'🔒 Locked':'● Live'}</div>
+        </div>
+      </div>`;
+    }).join('');
+
+  } else {
+    /* ── DMs tab ── */
+    if(!cachedNotifs.length){
+      convEl.innerHTML='<div style="padding:2rem 1rem;text-align:center;color:rgba(255,255,255,0.3);font-size:0.82rem">No messages yet 📭</div>';
+      return;
+    }
+    const typeIcons={new_member:'🎉',dm:'💬',warning:'⚠️',announcement:'📢',room_broadcast:'🏠',gift:'🎁'};
+    convEl.innerHTML = cachedNotifs.map(n=>`
+      <div data-conv-item data-name="${(n.title||'').replace(/"/g,'')}"
+        style="padding:0.75rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:background .15s;border-left:2px solid ${!n.is_read?'var(--orange)':'transparent'};${!n.is_read?'background:rgba(244,115,42,0.04)':''}"
+        onclick="openNotif(this,'${n.id}','${encodeURIComponent(JSON.stringify(n))}')">
+        <div style="display:flex;align-items:center;gap:0.65rem">
+          <div style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">${typeIcons[n.type]||'🔔'}</div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;justify-content:space-between;gap:0.5rem">
+              <span style="font-size:0.78rem;font-weight:${!n.is_read?600:400};color:rgba(255,255,255,0.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${n.title||'Notification'}</span>
+              <span style="font-size:0.6rem;color:rgba(255,255,255,0.3);font-family:'DM Mono',monospace;flex-shrink:0">${timeAgo(n.created_at)}</span>
+            </div>
+            <div style="font-size:0.7rem;color:rgba(255,255,255,0.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${n.body||''}</div>
+          </div>
+          ${!n.is_read?'<div style="width:7px;height:7px;border-radius:50%;background:var(--orange);flex-shrink:0"></div>':''}
+        </div>
+      </div>`).join('');
+  }
+}
+
+function openRoom(roomId){
+  const room = ROOMS.find(r=>r.id===roomId);
+  if(!room) return;
+  document.getElementById('emptyChat').style.display='none';
+  document.getElementById('activeChatWrap').style.display='flex';
+  document.getElementById('lockOverlay').classList.remove('show');
+  document.getElementById('chatHeaderAv').textContent = room.icon;
+  document.getElementById('chatHeaderAv').className = 'ch-av room-av';
+  document.getElementById('chatHeaderName').textContent = room.name;
+  document.getElementById('chatHeaderSub').textContent  = '🟢 Live room';
+  document.getElementById('chatMessages').innerHTML =
+    '<div style="padding:2rem;text-align:center;color:rgba(255,255,255,0.3);font-size:0.82rem">Room chat coming soon 🏗️</div>';
+  document.querySelectorAll('#convItems > [data-conv-item]').forEach(el=>el.style.background='');
+}
+
+function showLockOverlay(roomId){
+  const room = ROOMS.find(r=>r.id===roomId);
+  const overlay = document.getElementById('lockOverlay');
+  if(!room || !overlay) return;
+  document.getElementById('emptyChat').style.display='none';
+  document.getElementById('activeChatWrap').style.display='flex';
+  overlay.classList.add('show');
+  const tierNeeded = room.minTier;
+  document.getElementById('lockIcon').textContent  = tierNeeded==='palace'?'🏯':tierNeeded==='gold'?'👑':'⭐';
+  document.getElementById('lockTitle').textContent = 'Members Only';
+  document.getElementById('lockDesc').textContent  = `This room requires ${tierNeeded} tier or above.`;
+  document.getElementById('lockBtn').className     = `lock-btn lb-${tierNeeded}`;
+  document.getElementById('lockBtn').textContent   = `Upgrade to ${tierNeeded.charAt(0).toUpperCase()+tierNeeded.slice(1)}`;
+}
+  </script>
 </head>
 <body>
 
@@ -423,6 +568,8 @@ function searchMessages(){
     <div id="activeChatWrap" style="display:none;flex:1;flex-direction:column;height:100%">
       <div class="chat-header">
         <div class="ch-left">
+          <button id="mobileBackBtn" onclick="document.getElementById('chatArea').classList.remove('show')"
+            style="display:none;background:none;border:none;color:rgba(255,255,255,0.6);font-size:1.1rem;cursor:pointer;padding:0 0.5rem 0 0;margin-right:0.25rem">←</button>
           <div class="ch-av" id="chatHeaderAv"></div>
           <div>
             <div class="ch-name" id="chatHeaderName"></div>
@@ -474,16 +621,6 @@ function searchMessages(){
 const SB_URL = 'https://pkhoyabazudqmfczkhax.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
 
-const ROOMS=[
-  {id:'lobby',icon:'🛎️',name:'Hotel Lobby'},
-  {id:'restaurant',icon:'🍽️',name:'The Restaurant'},
-  {id:'superior',icon:'🛏️',name:'Superior Room'},
-  {id:'resting',icon:'🛋️',name:'Resting Lounge'},
-  {id:'pool',icon:'🌊',name:'Thermal Pool'},
-  {id:'radio',icon:'📻',name:'3D Radio'},
-  {id:'tv',icon:'📺',name:'Cinema TV'}
-];
-
 function getSession(){
   try{
     const s=JSON.parse(localStorage.getItem('kt_session')||'{}');
@@ -514,6 +651,9 @@ window.addEventListener('DOMContentLoaded', async()=>{
     myProfile=data[0];
     if(!myProfile)return;
 
+    /* Set tier for room access gating */
+    myTier = myProfile.tier || 'free';
+
     /* Update sidebar avatar */
     const av=document.querySelector('.sc-avatar');
     if(av&&myProfile.avatar_url)av.innerHTML='<img src="'+myProfile.avatar_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
@@ -536,34 +676,21 @@ async function loadNotifications(uid,token){
     const typeIcons={new_member:'🎉',dm:'💬',warning:'⚠️',announcement:'📢',room_broadcast:'🏠',gift:'🎁'};
 
     if(!notifs.length){
-      convEl.innerHTML='<div style="padding:2rem 1rem;text-align:center;color:rgba(255,255,255,0.3);font-size:0.82rem">No messages yet 📭</div>';
+      renderConvList([]);
     } else {
-      convEl.innerHTML=notifs.map(n=>`
-        <div onclick="openNotif(this,'${n.id}','${encodeURIComponent(JSON.stringify(n))}')"
-          style="padding:0.75rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:background .15s;${!n.is_read?'background:rgba(244,115,42,0.05);border-left:3px solid #f4732a':''}">
-          <div style="display:flex;align-items:center;gap:0.65rem">
-            <div style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">${typeIcons[n.type]||'🔔'}</div>
-            <div style="flex:1;min-width:0">
-              <div style="display:flex;justify-content:space-between">
-                <span style="font-size:0.78rem;font-weight:${!n.is_read?600:400};color:rgba(255,255,255,0.9)">${n.title||'Notification'}</span>
-                <span style="font-size:0.6rem;color:rgba(255,255,255,0.3);font-family:'DM Mono',monospace">${timeAgo(n.created_at)}</span>
-              </div>
-              <div style="font-size:0.7rem;color:rgba(255,255,255,0.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${n.body||''}</div>
-            </div>
-            ${!n.is_read?'<div style="width:7px;height:7px;border-radius:50%;background:#f4732a;flex-shrink:0"></div>':''}
-          </div>
-        </div>`).join('');
+      renderConvList(notifs);
     }
 
     /* Update unread badge in nav */
+    const unread=notifs.filter(n=>!n.is_read).length;
     document.querySelectorAll('.notif-count,.unread-badge,[id*="Badge"]').forEach(el=>{
       el.textContent=unread;
       el.style.display=unread>0?'flex':'none';
     });
 
-    /* Show first notif */
+    /* Auto-open first notif */
     if(notifs.length&&!activeNotif){
-      const el=convEl.querySelector('[onclick]');
+      const el=document.querySelector('#convItems > [data-conv-item]');
       if(el) el.click();
     }
   }catch(e){console.error('notifs error',e);}
@@ -589,7 +716,14 @@ function openNotif(el, id, encoded){
   const typeIcons={new_member:'🎉',dm:'💬',warning:'⚠️',announcement:'📢',room_broadcast:'🏠',gift:'🎁'};
 
   if(emptyEl) emptyEl.style.display='none';
-  if(activeWrap) activeWrap.style.display='flex';
+  if(activeWrap){ activeWrap.style.display='flex'; activeWrap.style.flexDirection='column'; activeWrap.style.height='100%'; }
+
+  /* Mobile: show chat area as overlay */
+  if(window.innerWidth<=640){
+    document.getElementById('chatArea').classList.add('show');
+    const backBtn=document.getElementById('mobileBackBtn');
+    if(backBtn) backBtn.style.display='inline-block';
+  }
 
   /* Update chat header */
   const hName=document.getElementById('chatHeaderName');
@@ -599,28 +733,70 @@ function openNotif(el, id, encoded){
   if(hSub)  hSub.textContent=new Date(n.created_at).toLocaleString();
   if(hAv)   hAv.textContent=typeIcons[n.type]||'🔔';
 
+  /* Parse meta for Palace applications */
+  let meta = {};
+  try { meta = n.meta ? JSON.parse(n.meta) : {}; } catch(e){}
+  const isPalaceApp = n.type==='dm' && meta.tier_requested==='palace' && meta.applicant_id;
+
   /* Show message */
   if(chatEl){
+    /* Applicant avatar initials */
+    const applicantName = meta.applicant_name || n.title || 'Applicant';
+    const initials = applicantName.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase() || '?';
+
     chatEl.innerHTML=`
       <div style="display:flex;gap:0.75rem;padding:0.5rem 0;max-width:85%">
-        <div style="width:34px;height:34px;border-radius:50%;background:rgba(244,115,42,0.15);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0">${typeIcons[n.type]||'🔔'}</div>
-        <div>
+        <div style="width:34px;height:34px;border-radius:50%;background:rgba(${isPalaceApp?'139,111,212':'244,115,42'},0.18);display:flex;align-items:center;justify-content:center;font-size:${isPalaceApp?'0.72':'0.9'}rem;font-weight:600;color:rgba(255,255,255,0.85);flex-shrink:0">${isPalaceApp?initials:(typeIcons[n.type]||'🔔')}</div>
+        <div style="flex:1">
           <div style="background:rgba(255,255,255,0.07);border-radius:0 0.875rem 0.875rem 0.875rem;padding:0.75rem 1rem;font-size:0.83rem;color:rgba(255,255,255,0.85);line-height:1.6">
             ${n.body||'(no message content)'}
           </div>
           <div style="font-size:0.6rem;color:rgba(255,255,255,0.3);margin-top:0.3rem;font-family:'DM Mono',monospace">${timeAgo(n.created_at)}</div>
         </div>
       </div>
-      ${n.type==='new_member'?'<div style="margin:0.5rem 0;padding:0.65rem 1rem;background:rgba(45,171,128,0.08);border:1px solid rgba(45,171,128,0.2);border-radius:0.75rem;font-size:0.78rem;color:#2dab80">🎉 New member joined! <a href="members.html" style="color:#f4732a">View members →</a></div>':''}`;
+
+      ${isPalaceApp ? `
+      <!-- Palace Application Card -->
+      <div id="palaceActionCard" style="margin-top:0.75rem;background:linear-gradient(135deg,rgba(139,111,212,0.12),rgba(244,115,42,0.06));border:1px solid rgba(139,111,212,0.25);border-radius:1rem;padding:1.1rem 1.25rem;">
+        <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.85rem">
+          <span style="font-size:1.2rem">🏯</span>
+          <div>
+            <div style="font-size:0.82rem;font-weight:600;color:rgba(255,255,255,0.9)">Palace Application</div>
+            <div style="font-size:0.68rem;color:rgba(255,255,255,0.35);margin-top:0.1rem;font-family:'DM Mono',monospace">${applicantName} · ${timeAgo(n.created_at)}</div>
+          </div>
+        </div>
+        <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-bottom:1rem;line-height:1.5">
+          Review this application and either accept the member into the Palace tier or decline with a message.
+        </div>
+        <div style="display:flex;gap:0.6rem" id="palaceBtns">
+          <button onclick="handlePalaceDecision('accept','${meta.applicant_id}','${applicantName.replace(/'/g,"\\'")}','${n.id}')"
+            style="flex:1;padding:0.65rem;border-radius:0.75rem;border:none;background:linear-gradient(135deg,#8b6fd4,#a98cdf);color:white;font-size:0.82rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;box-shadow:0 3px 12px rgba(139,111,212,0.3)">
+            ✓ Accept into Palace
+          </button>
+          <button onclick="handlePalaceDecision('decline','${meta.applicant_id}','${applicantName.replace(/'/g,"\\'")}','${n.id}')"
+            style="flex:1;padding:0.65rem;border-radius:0.75rem;border:1px solid rgba(224,82,82,0.3);background:rgba(224,82,82,0.08);color:#e05252;font-size:0.82rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s">
+            ✕ Decline
+          </button>
+        </div>
+      </div>` : ''}
+
+      ${n.type==='new_member'?`<div style="margin:0.5rem 0;padding:0.65rem 1rem;background:rgba(45,171,128,0.08);border:1px solid rgba(45,171,128,0.2);border-radius:0.75rem;font-size:0.78rem;color:#2dab80">🎉 New member joined! <a href="members.html" style="color:#f4732a">View members →</a></div>`:''}`;
     chatEl.scrollTop=chatEl.scrollHeight;
   }
 
-  /* Enable send for DMs */
+  /* Enable reply input for regular DMs (not palace apps) */
   const sendBtn=document.getElementById('sendBtn');
   const chatInput=document.getElementById('chatInput');
-  if(sendBtn&&n.type==='dm'){
-    sendBtn.onclick=()=>sendReply(n.id);
-    if(chatInput) chatInput.placeholder='Type your reply…';
+  const inputWrap=document.querySelector('.chat-input-wrap');
+  if(isPalaceApp){
+    /* Hide the reply bar for applications — action is via Accept/Decline */
+    if(inputWrap) inputWrap.style.display='none';
+  } else {
+    if(inputWrap) inputWrap.style.display='block';
+    if(sendBtn&&n.type==='dm'){
+      sendBtn.onclick=()=>sendReply(n.id);
+      if(chatInput) chatInput.placeholder='Type your reply…';
+    }
   }
 }
 
@@ -655,6 +831,115 @@ async function sendReply(notifId){
   }
 }
 
+async function handlePalaceDecision(decision, applicantId, applicantName, notifId){
+  const s=getSession(); if(!s)return;
+  const btns=document.getElementById('palaceBtns');
+  if(btns) btns.innerHTML='<div style="font-size:0.8rem;color:rgba(255,255,255,0.4);padding:0.25rem">Processing…</div>';
+
+  try{
+    if(decision==='accept'){
+      /* 1. Upgrade member tier to palace */
+      await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+applicantId,{
+        method:'PATCH', headers:hdr(s.access_token),
+        body:JSON.stringify({tier:'palace'})
+      });
+      /* 2. Send acceptance notification to member */
+      await fetch(SB_URL+'/rest/v1/notifications',{
+        method:'POST', headers:{...hdr(s.access_token),'Prefer':'return=minimal'},
+        body:JSON.stringify([{
+          user_id: applicantId,
+          title: '🏯 You\'ve been accepted into the Palace!',
+          body: 'Congratulations! Your Palace application has been approved. Welcome to the top of the hill — you now have full Palace access.',
+          type: 'announcement', is_read: false
+        }])
+      });
+      /* 3. Update UI */
+      const card=document.getElementById('palaceActionCard');
+      if(card) card.innerHTML=`
+        <div style="display:flex;align-items:center;gap:0.75rem;padding:0.25rem">
+          <span style="font-size:1.4rem">🏯</span>
+          <div>
+            <div style="font-size:0.82rem;font-weight:600;color:#b8a0e8">${applicantName} accepted into Palace</div>
+            <div style="font-size:0.7rem;color:rgba(255,255,255,0.35);margin-top:0.2rem">Member notified · Tier upgraded ✓</div>
+          </div>
+        </div>`;
+      showToast('✓ '+applicantName+' is now a Palace member 🏯');
+
+    } else {
+      /* Decline — prompt for a reason */
+      const reason = prompt('Optional: Add a brief message to '+applicantName+' (leave blank to skip)');
+      const body = reason
+        ? 'Thank you for applying to the Palace. Unfortunately your application wasn\'t approved at this time. Message from the creator: "'+reason+'"'
+        : 'Thank you for applying to the Palace. Unfortunately your application wasn\'t approved at this time. Feel free to apply again in the future!';
+
+      await fetch(SB_URL+'/rest/v1/notifications',{
+        method:'POST', headers:{...hdr(s.access_token),'Prefer':'return=minimal'},
+        body:JSON.stringify([{
+          user_id: applicantId,
+          title: '🏯 Palace application update',
+          body: body,
+          type: 'announcement', is_read: false
+        }])
+      });
+      const card=document.getElementById('palaceActionCard');
+      if(card) card.innerHTML=`
+        <div style="display:flex;align-items:center;gap:0.75rem;padding:0.25rem">
+          <span style="font-size:1.4rem">📨</span>
+          <div>
+            <div style="font-size:0.82rem;font-weight:500;color:rgba(255,255,255,0.6)">${applicantName} — application declined</div>
+            <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:0.2rem">Member notified ✓</div>
+          </div>
+        </div>`;
+      showToast('Application declined — member notified');
+    }
+
+    /* Mark original notification as read */
+    markRead(notifId);
+
+  }catch(e){
+    console.error('Palace decision error',e);
+    showToast('Something went wrong — try again','err');
+    if(btns) btns.innerHTML='<div style="font-size:0.75rem;color:#e05252">Error — please retry</div>';
+  }
+}
+
+
+document.getElementById('chatInput')?.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && !e.shiftKey){
+    e.preventDefault();
+    document.getElementById('sendBtn')?.click();
+  }
+});
+
+/* Animate level bar */
+setTimeout(()=>{ const f=document.getElementById('lvlFill'); if(f) f.style.width='62%'; },300);
+
 /* Refresh every 30s */
 setInterval(async()=>{const s=getSession();if(!s)return;await loadNotifications(s.user_id||s.id,s.access_token);},30000);
 </script>
+
+<!-- ── NEW DM MODAL ── -->
+<div id="newDmModal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);align-items:center;justify-content:center;">
+  <div style="background:#1e1a16;border:1px solid rgba(255,255,255,0.12);border-radius:1.25rem;padding:2rem;width:90%;max-width:400px;position:relative;">
+    <button onclick="document.getElementById('newDmModal').style.display='none'" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(255,255,255,0.4);font-size:1.2rem;cursor:pointer;line-height:1">✕</button>
+    <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:rgba(255,255,255,0.9);margin-bottom:1.25rem">✏️ New Message</div>
+    <div style="margin-bottom:0.85rem">
+      <label style="font-size:0.72rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;font-family:'DM Mono',monospace;display:block;margin-bottom:0.4rem">To</label>
+      <input id="dmToInput" list="dmMemberList" placeholder="@username"
+        style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:0.625rem;padding:0.6rem 0.9rem;color:rgba(255,255,255,0.9);font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;">
+      <datalist id="dmMemberList"></datalist>
+    </div>
+    <div style="margin-bottom:1.25rem">
+      <label style="font-size:0.72rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;font-family:'DM Mono',monospace;display:block;margin-bottom:0.4rem">Message</label>
+      <textarea id="dmMsgInput" rows="3" placeholder="Write your message…"
+        style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:0.625rem;padding:0.6rem 0.9rem;color:rgba(255,255,255,0.9);font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;resize:none;"></textarea>
+    </div>
+    <button onclick="sendNewDM()"
+      style="width:100%;padding:0.75rem;background:var(--orange);border:none;border-radius:0.75rem;color:white;font-size:0.875rem;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;">
+      Send Message ➤
+    </button>
+  </div>
+</div>
+
+</body>
+</html>

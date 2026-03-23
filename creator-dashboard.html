@@ -4,10 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Creator Dashboard — KreaTown</title>
+<meta name="description" content="KreaTown creator dashboard. Manage your members, messages, and town.">
+<meta name="robots" content="noindex, follow">
+<meta property="og:title" content="Creator Dashboard — KreaTown">
+<meta property="og:description" content="KreaTown creator dashboard. Manage your members, messages, and town.">
+<meta property="og:site_name" content="KreaTown">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#f4732a">
-<script src="/kt-utils.js" defer></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -116,6 +120,11 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
 </style>
 </head>
 <body>
+
+
+<!-- Mobile menu button -->
+<button class="mob-menu-btn" id="mobMenuBtn" onclick="toggleMobileSidebar()" aria-label="Menu">☰</button>
+<div class="sb-overlay" id="sbOverlay" onclick="toggleMobileSidebar()"></div>
 
 <aside class="sb">
   <div class="sb-top">
@@ -261,6 +270,16 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
 .pill{padding:0.28rem 0.65rem;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:0.68rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
 .pill:hover{border-color:var(--border2);color:var(--text1)}
 .pill.on{border-color:var(--orange);background:rgba(244,115,42,0.1);color:var(--orange)}
+
+/* ── MOBILE SIDEBAR TOGGLE ── */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:149;backdrop-filter:blur(4px)}
+.sb-overlay.open{display:block}
+.mob-menu-btn{display:none;position:fixed;top:0.75rem;left:0.75rem;z-index:200;width:38px;height:38px;border-radius:0.6rem;background:var(--bg2);border:1px solid var(--border);color:var(--text1);font-size:1.1rem;cursor:pointer;align-items:center;justify-content:center}
+@media(max-width:768px){
+  .mob-menu-btn{display:flex}
+  .sb{transform:translateX(-100%);transition:transform .25s ease;position:fixed;z-index:150;height:100vh}
+  .sb.open{transform:translateX(0)}
+}
 </style>
 
 <script>
@@ -495,6 +514,33 @@ setInterval(async()=>{
   const uid=s.user_id||s.id;
   await loadNotifications(uid,s.access_token);
 },60000);
+
+/* ── i18n: shared lang system ── */
+function setLang(lang){
+  try{localStorage.setItem('kt_lang',lang);}catch(e){}
+  document.querySelectorAll('[data-i18n-en]').forEach(el=>{
+    const v=el.getAttribute('data-i18n-'+lang);
+    if(v!==null)el.innerHTML=v;
+  });
+  document.querySelectorAll('[data-lang]').forEach(btn=>{
+    const on=btn.getAttribute('data-lang')===lang;
+    btn.style.background=on?'rgba(244,115,42,0.15)':'transparent';
+    btn.style.color=on?'var(--orange)':'rgba(255,255,255,0.45)';
+    btn.style.fontWeight=on?'600':'400';
+  });
+  document.documentElement.lang=lang;
+}
+(function(){
+  let l='en';try{l=localStorage.getItem('kt_lang')||'en';}catch(e){}
+  if(l!=='tr'&&l!=='en'){const b=(navigator.language||'').toLowerCase();l=b.startsWith('tr')?'tr':'en';}
+  setLang(l);
+})();
+
+/* Mobile sidebar */
+function toggleMobileSidebar(){
+  document.querySelector('.sb')?.classList.toggle('open');
+  document.getElementById('sbOverlay')?.classList.toggle('open');
+}
 </script>
 </body>
 </html>

@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Log in — KreaTown</title>
+<title>Giriş Yap — KreaTown | Creator Platform</title>
+<meta name="description" content="KreaTown hesabınıza giriş yapın. Şehrinizi yönetin, üyelerinizle bağlantı kurun, kazançlarınızı takip edin.">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://www.kreatown.com/login.html">
+<meta property="og:title"       content="Giriş Yap — KreaTown">
+<meta property="og:description" content="KreaTown'a giriş yapın ve şehrinizi yönetin.">
+<meta property="og:url"         content="https://www.kreatown.com/login.html">
+<meta property="og:site_name"   content="KreaTown">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -457,8 +464,27 @@ body {
 @media (max-width: 768px) {
   body { grid-template-columns: 1fr; }
   .left-panel { display: none; }
-  .right-panel { padding: 2.5rem 1.5rem; min-height: 100vh; }
+  .right-panel {
+    padding: 2rem 1.25rem;
+    padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+    min-height: 100svh; /* use svh for mobile browsers */
+    align-items: flex-start;
+    padding-top: 2.5rem;
+  }
   .form-wrap { max-width: 100%; }
+  .form-title { font-size: 1.7rem; }
+  /* Bigger touch targets */
+  .social-btn { padding: 0.85rem 1rem; min-height: 48px; font-size: 0.88rem; }
+  .form-input { font-size: 1rem; min-height: 48px; padding: 0.85rem 1rem 0.85rem 2.75rem; }
+  .btn-submit { min-height: 52px; font-size: 1rem; border-radius: 1rem; }
+  .toggle-pass { min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; right: 0.25rem; }
+  .checkbox-wrap { width: 22px; height: 22px; }
+  .checkbox-box  { width: 22px; height: 22px; }
+}
+@media (max-width: 380px) {
+  .right-panel { padding: 1.75rem 1rem; }
+  .form-title { font-size: 1.5rem; }
+  .social-btns { grid-template-columns: 1fr; }
 }
 </style>
 </head>

@@ -3,7 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Topraq Toros — KreaTown</title>
+<title>Topraq Toros — KreaTown | Creator & Storyteller</title>
+<meta name="description" content="Topraq Toros'un KreaTown şehrine hoş geldiniz. Hikayeler, strateji, içerik üretimi ve topluluk. Üye ol, şehre katıl.">
+<meta name="keywords" content="Topraq Toros, kreatown creator, içerik üreticisi, storyteller, topluluk üyeliği">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.kreatown.com/topraq-hub.html">
+<meta property="og:type"        content="profile">
+<meta property="og:title"       content="Topraq Toros — KreaTown">
+<meta property="og:description" content="Şehrime bir adım daha yaklaş. Hikayeler, strateji ve topluluk — ücretsiz katıl.">
+<meta property="og:url"         content="https://www.kreatown.com/topraq-hub.html">
+<meta property="og:image"       content="https://www.kreatown.com/Luxury.png">
+<meta property="og:site_name"   content="KreaTown">
+<meta property="profile:username" content="topraq">
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:title"       content="Topraq Toros — KreaTown">
+<meta name="twitter:description" content="Şehrime katıl. Hikayeler, strateji, topluluk.">
+<meta name="twitter:image"       content="https://www.kreatown.com/Luxury.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "name": "Topraq Toros — KreaTown",
+  "url": "https://www.kreatown.com/topraq-hub.html",
+  "mainEntity": {
+    "@type": "Person",
+    "name": "Topraq Toros",
+    "alternateName": "@topraq",
+    "description": "Creator, Storyteller & Community Builder on KreaTown",
+    "url": "https://www.kreatown.com/topraq-hub.html",
+    "memberOf": {
+      "@type": "Organization",
+      "name": "KreaTown",
+      "url": "https://www.kreatown.com"
+    }
+  }
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -672,7 +707,6 @@ nav {
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="KreaTown">
-  <script src="/kt-utils.js" defer></script>
 </head>
 <body>
 
@@ -685,10 +719,10 @@ nav {
       <button onclick="setLang('tr')" data-lang="tr" style="padding:0.18rem 0.55rem;border-radius:100px;border:none;cursor:pointer;font-size:0.68rem;font-family:'DM Sans',sans-serif;transition:all .15s;background:transparent;color:#9c8878">🇹🇷 TR</button>
     </div>
     <a href="feed.html" id="navFeed" style="display:none">📰 Feed</a>
-    <a href="rooms.html">🏠 Rooms</a>
-    <a href="member-dashboard.html" id="navMemberDash" style="display:none">← My Dashboard</a>
-    <a href="dashboard.html" id="navAdminDash" style="display:none">← Dashboard</a>
-    <a href="#join" class="btn-join-nav" onclick="openModal()" id="navJoin">Join Topraq's Town 🏡</a>
+    <a href="rooms.html" data-i18n-en="🏠 Rooms" data-i18n-tr="🏠 Odalar">🏠 Rooms</a>
+    <a href="member-dashboard.html" id="navMemberDash" style="display:none" data-i18n-en="← My Dashboard" data-i18n-tr="← Panom">← My Dashboard</a>
+    <a href="dashboard.html" id="navAdminDash" style="display:none" data-i18n-en="← Dashboard" data-i18n-tr="← Panel">← Dashboard</a>
+    <a href="#join" class="btn-join-nav" onclick="openModal()" id="navJoin" data-i18n-en="Join Topraq's Town 🏡" data-i18n-tr="Topraq'ın Şehrine Katıl 🏡">Join Topraq's Town 🏡</a>
   </div>
 </nav>
 
@@ -698,39 +732,39 @@ nav {
        onerror="this.style.background='linear-gradient(135deg,#3a2060,#7c5cbf,#c9952a)';this.removeAttribute('alt')">
   <div class="banner-overlay"></div>
 
-  <div class="admin-badge">👑 Town Admin</div>
+  <div class="admin-badge" data-i18n-en="👑 Town Admin" data-i18n-tr="👑 Şehir Yöneticisi">👑 Town Admin</div>
 
   <div class="palace-crown">
     <span class="crown-icon">🏯</span>
     <div class="crown-text">
-      <strong>Hilltop Palace</strong>
-      <span>Level 5 · Legend status</span>
+      <strong data-i18n-en="Hilltop Palace" data-i18n-tr="Tepe Sarayı">Hilltop Palace</strong>
+      <span data-i18n-en="Level 5 · Legend status" data-i18n-tr="Seviye 5 · Efsane statüsü">Level 5 · Legend status</span>
     </div>
   </div>
 
   <div class="banner-stats">
     <div class="bstat">
       <span class="bstat-num">44</span>
-      <span class="bstat-label">Members</span>
+      <span class="bstat-label" data-i18n-en="Members" data-i18n-tr="Üye">Members</span>
     </div>
     <div class="bstat">
       <span class="bstat-num">$2,840</span>
-      <span class="bstat-label">Per month</span>
+      <span class="bstat-label" data-i18n-en="Per month" data-i18n-tr="Aylık">Per month</span>
     </div>
     <div class="bstat">
       <span class="bstat-num">4</span>
-      <span class="bstat-label">Posts</span>
+      <span class="bstat-label" data-i18n-en="Posts" data-i18n-tr="Yazı">Posts</span>
     </div>
     <div class="bstat">
       <span class="bstat-num">#3</span>
-      <span class="bstat-label">Leaderboard</span>
+      <span class="bstat-label" data-i18n-en="Leaderboard" data-i18n-tr="Sıralama">Leaderboard</span>
     </div>
   </div>
 
   <div class="level-progress-bar">
-    <div class="lp-label"><span class="lp-icon">🏯</span> Level 5 · Hilltop Palace</div>
+    <div class="lp-label"><span class="lp-icon">🏯</span> <span data-i18n-en="Level 5 · Hilltop Palace" data-i18n-tr="Seviye 5 · Tepe Sarayı">Level 5 · Hilltop Palace</span></div>
     <div class="lp-track"><div class="lp-fill"></div></div>
-    <div class="lp-next">44 / 50K members · Next: <strong>Legend 🌟</strong></div>
+    <div class="lp-next" data-i18n-en="44 / 50K members · Next: <strong>Legend 🌟</strong>" data-i18n-tr="44 / 50B üye · Sıradaki: <strong>Efsane 🌟</strong>">44 / 50K members · Next: <strong>Legend 🌟</strong></div>
   </div>
 </div>
 
@@ -754,8 +788,8 @@ nav {
         <span id="creatorNameText">KreaTown Creator</span>
         <span class="verified-badge">✦ VERIFIED</span>
       </div>
-      <div class="profile-handle">@topraq · Creator, Storyteller & Community Builder</div>
-      <p class="profile-bio">Building my town one post at a time 🏡 — I share everything I know about growing an audience, creating content that matters, and living life on your own terms. Welcome to the hilltop.</p>
+      <div class="profile-handle" data-i18n-en="@topraq · Creator, Storyteller & Community Builder" data-i18n-tr="@topraq · İçerik Üreticisi, Hikaye Anlatıcısı & Topluluk Kurucusu">@topraq · Creator, Storyteller & Community Builder</div>
+      <p class="profile-bio" data-i18n-en="Building my town one post at a time 🏡 — I share everything I know about growing an audience, creating content that matters, and living life on your own terms. Welcome to the hilltop." data-i18n-tr="Şehrime her gönderide bir adım daha yaklaşıyorum 🏡 — Kitle büyütmek, anlamlı içerik üretmek ve hayatı kendi koşullarında yaşamak hakkında bildiklerimin hepsini paylaşıyorum. Tepeye hoş geldiniz.">Building my town one post at a time 🏡 — I share everything I know about growing an audience, creating content that matters, and living life on your own terms. Welcome to the hilltop.</p>
       <div class="profile-tags">
         <span class="tag palace-tag">🏯 Palace Owner</span>
         <span class="tag">✍️ Storytelling</span>
@@ -765,8 +799,8 @@ nav {
       </div>
     </div>
     <div class="profile-actions">
-      <button class="btn-subscribe" onclick="openModal()">🏡 Join my town</button>
-      <button class="btn-dm">💬 Message</button>
+      <button class="btn-subscribe" onclick="openModal()" data-i18n-en="🏡 Join my town" data-i18n-tr="🏡 Şehrime katıl">🏡 Join my town</button>
+      <button class="btn-dm" onclick="window.location.href='kreatown-messages-page.html'" data-i18n-en="💬 Message" data-i18n-tr="💬 Mesaj">💬 Message</button>
     </div>
   </div>
 </div>
@@ -803,26 +837,26 @@ nav {
         </div>
       </div>
       <div class="house-body">
-        <div class="house-title">Topraq's Hilltop Palace</div>
-        <div class="house-sub">Unlocked at 10,000 members · Admin residence</div>
+        <div class="house-title" data-i18n-en="Topraq's Hilltop Palace" data-i18n-tr="Topraq'ın Tepe Sarayı">Topraq's Hilltop Palace</div>
+        <div class="house-sub" data-i18n-en="Unlocked at 10,000 members · Admin residence" data-i18n-tr="10.000 üyede açıldı · Yönetici konutu">Unlocked at 10,000 members · Admin residence</div>
 
         <div class="house-progress">
           <div class="hp-row">
-            <span class="hp-label">Progress to Legend</span>
+            <span class="hp-label" data-i18n-en="Progress to Legend" data-i18n-tr="Efsaneye İlerleme">Progress to Legend</span>
             <span class="hp-val">44 / 50K</span>
           </div>
           <div class="hp-track"><div class="hp-fill" style="width:0.09%"></div></div>
         </div>
 
         <div class="house-unlocks">
-          <div class="hu-title">Unlocked rooms</div>
+          <div class="hu-title" data-i18n-en="Unlocked rooms" data-i18n-tr="Açılan odalar">Unlocked rooms</div>
           <div class="unlock-grid">
-            <div class="unlock-item active"><span class="unlock-emoji">🎵</span><span class="unlock-name">Radio</span></div>
-            <div class="unlock-item active"><span class="unlock-emoji">📺</span><span class="unlock-name">3D TV</span></div>
-            <div class="unlock-item active"><span class="unlock-emoji">🏊</span><span class="unlock-name">Pool</span></div>
-            <div class="unlock-item active"><span class="unlock-emoji">🌿</span><span class="unlock-name">Garden</span></div>
-            <div class="unlock-item active"><span class="unlock-emoji">🎮</span><span class="unlock-name">Game Room</span></div>
-            <div class="unlock-item locked"><span class="unlock-emoji">🌟</span><span class="unlock-name">Legend Hall</span></div>
+            <div class="unlock-item active"><span class="unlock-emoji">🎵</span><span class="unlock-name" data-i18n-en="Radio" data-i18n-tr="Radyo">Radio</span></div>
+            <div class="unlock-item active"><span class="unlock-emoji">📺</span><span class="unlock-name" data-i18n-en="3D TV" data-i18n-tr="3D TV">3D TV</span></div>
+            <div class="unlock-item active"><span class="unlock-emoji">🏊</span><span class="unlock-name" data-i18n-en="Pool" data-i18n-tr="Havuz">Pool</span></div>
+            <div class="unlock-item active"><span class="unlock-emoji">🌿</span><span class="unlock-name" data-i18n-en="Garden" data-i18n-tr="Bahçe">Garden</span></div>
+            <div class="unlock-item active"><span class="unlock-emoji">🎮</span><span class="unlock-name" data-i18n-en="Game Room" data-i18n-tr="Oyun Odası">Game Room</span></div>
+            <div class="unlock-item locked"><span class="unlock-emoji">🌟</span><span class="unlock-name" data-i18n-en="Legend Hall" data-i18n-tr="Efsane Salonu">Legend Hall</span></div>
           </div>
         </div>
       </div>
@@ -831,86 +865,86 @@ nav {
     <!-- Membership tiers -->
     <div class="tiers-card">
       <div class="tiers-header">
-        <div class="tiers-title">Join the town</div>
-        <div class="tiers-sub">Choose your place in the world</div>
+        <div class="tiers-title" data-i18n-en="Join the town" data-i18n-tr="Şehre katıl">Join the town</div>
+        <div class="tiers-sub" data-i18n-en="Choose your place in the world" data-i18n-tr="Dünyadaki yerini seç">Choose your place in the world</div>
       </div>
 
       <div class="tier-option t-free">
         <div class="tier-icon-wrap">🌱</div>
         <div class="tier-info">
-          <div class="tier-name">Garden Pass</div>
-          <div class="tier-perk">Free posts · Community access</div>
+          <div class="tier-name" data-i18n-en="Garden Pass" data-i18n-tr="Bahçe Geçişi">Garden Pass</div>
+          <div class="tier-perk" data-i18n-en="Free posts · Community access" data-i18n-tr="Ücretsiz yazılar · Topluluk erişimi">Free posts · Community access</div>
         </div>
-        <div class="tier-price">Free<span>forever</span></div>
+        <div class="tier-price">Free<span data-i18n-en="forever" data-i18n-tr="sonsuza kadar">forever</span></div>
       </div>
 
       <div class="tier-option t-silver">
         <div class="tier-icon-wrap">⭐</div>
         <div class="tier-info">
-          <div class="tier-name">Inside the House</div>
-          <div class="tier-perk">Exclusive posts · Studio tours · Calls</div>
+          <div class="tier-name" data-i18n-en="Inside the House" data-i18n-tr="Ev İçinde">Inside the House</div>
+          <div class="tier-perk" data-i18n-en="Exclusive posts · Studio tours · Calls" data-i18n-tr="Özel yazılar · Stüdyo turları · Görüşmeler">Exclusive posts · Studio tours · Calls</div>
         </div>
-        <div class="tier-price">$9<span>/ month</span></div>
+        <div class="tier-price">$9<span data-i18n-en="/ month" data-i18n-tr="/ ay">/ month</span></div>
       </div>
 
       <div class="tier-option t-gold">
         <div class="tier-icon-wrap">👑</div>
         <div class="tier-info">
-          <div class="tier-name">Gold Suite</div>
-          <div class="tier-perk">Full strategy · DMs · Early access</div>
+          <div class="tier-name" data-i18n-en="Gold Suite" data-i18n-tr="Altın Süit">Gold Suite</div>
+          <div class="tier-perk" data-i18n-en="Full strategy · DMs · Early access" data-i18n-tr="Tam strateji · DM'ler · Erken erişim">Full strategy · DMs · Early access</div>
         </div>
-        <div class="tier-price">$19<span>/ month</span></div>
+        <div class="tier-price">$19<span data-i18n-en="/ month" data-i18n-tr="/ ay">/ month</span></div>
       </div>
 
       <div class="tier-option t-palace featured">
         <div class="tier-icon-wrap">🏯</div>
         <div class="tier-info">
-          <div class="tier-name">Palace Access</div>
-          <div class="tier-perk">1-on-1 · Private sessions · Top of hill</div>
+          <div class="tier-name" data-i18n-en="Palace Access" data-i18n-tr="Saray Erişimi">Palace Access</div>
+          <div class="tier-perk" data-i18n-en="1-on-1 · Private sessions · Top of hill" data-i18n-tr="Birebir · Özel oturumlar · Tepe">1-on-1 · Private sessions · Top of hill</div>
         </div>
-        <div class="tier-price">$49<span>/ month</span></div>
+        <div class="tier-price">$49<span data-i18n-en="/ month" data-i18n-tr="/ ay">/ month</span></div>
       </div>
 
-      <a href="#" class="btn-join-tier" onclick="openModal(); return false;">Choose your tier 🏡</a>
+      <a href="#" class="btn-join-tier" onclick="openModal(); return false;" data-i18n-en="Choose your tier 🏡" data-i18n-tr="Katmanını seç 🏡">Choose your tier 🏡</a>
     </div>
 
     <!-- Leaderboard -->
     <div class="leaderboard-card fu4">
       <div class="lb-header">
         <div>
-          <div class="lb-title">🏆 Town Leaderboard</div>
-          <div class="lb-sub">March 2026 · Fastest growing</div>
+          <div class="lb-title" data-i18n-en="🏆 Town Leaderboard" data-i18n-tr="🏆 Şehir Sıralaması">🏆 Town Leaderboard</div>
+          <div class="lb-sub" data-i18n-en="March 2026 · Fastest growing" data-i18n-tr="Mart 2026 · En hızlı büyüyen">March 2026 · Fastest growing</div>
         </div>
       </div>
       <div class="lb-item">
         <div class="lb-rank">1</div>
         <div class="lb-avatar">📸</div>
         <div class="lb-name">Jenna</div>
-        <div class="lb-members">128 members</div>
+        <div class="lb-members" data-i18n-en="128 members" data-i18n-tr="128 üye">128 members</div>
       </div>
       <div class="lb-item">
         <div class="lb-rank">2</div>
         <div class="lb-avatar">🎵</div>
         <div class="lb-name">MikeNova</div>
-        <div class="lb-members">89 members</div>
+        <div class="lb-members" data-i18n-en="89 members" data-i18n-tr="89 üye">89 members</div>
       </div>
       <div class="lb-item me">
         <div class="lb-rank">#3</div>
         <div class="lb-avatar">🎨</div>
         <div class="lb-name">Topraq <span class="lb-change">↑2</span></div>
-        <div class="lb-members">44 members</div>
+        <div class="lb-members" data-i18n-en="44 members" data-i18n-tr="44 üye">44 members</div>
       </div>
       <div class="lb-item">
         <div class="lb-rank">4</div>
         <div class="lb-avatar">✍️</div>
         <div class="lb-name">Anya</div>
-        <div class="lb-members">31 members</div>
+        <div class="lb-members" data-i18n-en="31 members" data-i18n-tr="31 üye">31 members</div>
       </div>
       <div class="lb-item">
         <div class="lb-rank">5</div>
         <div class="lb-avatar">🎬</div>
         <div class="lb-name">SamFilms</div>
-        <div class="lb-members">27 members</div>
+        <div class="lb-members" data-i18n-en="27 members" data-i18n-tr="27 üye">27 members</div>
       </div>
     </div>
 
@@ -921,43 +955,94 @@ nav {
 <div class="modal-backdrop" id="joinModal" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <button class="modal-close" onclick="closeModal()">✕</button>
-    <div class="modal-title">Join Topraq's Town 🏡</div>
-    <p class="modal-sub">Choose your place. Unlock your room.</p>
+    <div class="modal-title" data-i18n-en="Join Topraq's Town 🏡" data-i18n-tr="Topraq'ın Şehrine Katıl 🏡">Join Topraq's Town 🏡</div>
+    <p class="modal-sub" data-i18n-en="Choose your place. Unlock your room." data-i18n-tr="Yerini seç. Odanın kilidini aç.">Choose your place. Unlock your room.</p>
     <div class="modal-tiers">
       <div class="modal-tier" onclick="selectTier(this)">
         <div>
-          <div class="modal-tier-name">🌱 Garden Pass</div>
-          <div class="modal-tier-perks">Free posts · Community access</div>
+          <div class="modal-tier-name" data-i18n-en="🌱 Garden Pass" data-i18n-tr="🌱 Bahçe Geçişi">🌱 Garden Pass</div>
+          <div class="modal-tier-perks" data-i18n-en="Free posts · Community access" data-i18n-tr="Ücretsiz yazılar · Topluluk erişimi">Free posts · Community access</div>
         </div>
-        <div class="modal-tier-price">Free</div>
+        <div class="modal-tier-price" data-i18n-en="Free" data-i18n-tr="Ücretsiz">Free</div>
       </div>
       <div class="modal-tier" onclick="selectTier(this)">
         <div>
-          <div class="modal-tier-name">⭐ Inside the House</div>
-          <div class="modal-tier-perks">Exclusive posts · Studio tours</div>
+          <div class="modal-tier-name" data-i18n-en="⭐ Inside the House" data-i18n-tr="⭐ Ev İçinde">⭐ Inside the House</div>
+          <div class="modal-tier-perks" data-i18n-en="Exclusive posts · Studio tours" data-i18n-tr="Özel yazılar · Stüdyo turları">Exclusive posts · Studio tours</div>
         </div>
         <div class="modal-tier-price">$9/mo</div>
       </div>
       <div class="modal-tier selected" onclick="selectTier(this)">
         <div>
-          <div class="modal-tier-name">👑 Gold Suite</div>
-          <div class="modal-tier-perks">Full strategy · DMs · Early access</div>
+          <div class="modal-tier-name" data-i18n-en="👑 Gold Suite" data-i18n-tr="👑 Altın Süit">👑 Gold Suite</div>
+          <div class="modal-tier-perks" data-i18n-en="Full strategy · DMs · Early access" data-i18n-tr="Tam strateji · DM'ler · Erken erişim">Full strategy · DMs · Early access</div>
         </div>
         <div class="modal-tier-price">$19/mo</div>
       </div>
       <div class="modal-tier" onclick="selectTier(this)">
         <div>
-          <div class="modal-tier-name">🏯 Palace Access</div>
-          <div class="modal-tier-perks">1-on-1 · Private sessions</div>
+          <div class="modal-tier-name" data-i18n-en="🏯 Palace Access" data-i18n-tr="🏯 Saray Erişimi">🏯 Palace Access</div>
+          <div class="modal-tier-perks" data-i18n-en="1-on-1 · Private sessions" data-i18n-tr="Birebir · Özel oturumlar">1-on-1 · Private sessions</div>
         </div>
         <div class="modal-tier-price">$49/mo</div>
       </div>
     </div>
-    <button class="btn-modal-join" onclick="closeModal()">Join for $19/mo — Enter the town 🏡</button>
+    <button class="btn-modal-join" onclick="closeModal()" data-i18n-en="Join for $19/mo — Enter the town 🏡" data-i18n-tr="$19/ay ile Katıl — Şehre Gir 🏡">Join for $19/mo — Enter the town 🏡</button>
   </div>
 </div>
 
 <script>
+/* ══════════════════════════════════════════════
+   i18n — Full translation system
+   Default: English. Auto-switches to Turkish
+   if browser language is tr / tr-TR.
+══════════════════════════════════════════════ */
+let currentLang = 'en';
+
+function applyLang(lang) {
+  currentLang = lang;
+
+  /* Update every element that has data-i18n-en / data-i18n-tr */
+  document.querySelectorAll('[data-i18n-en]').forEach(el => {
+    const val = el.getAttribute('data-i18n-' + lang);
+    if (val !== null) el.innerHTML = val;
+  });
+
+  /* Highlight active lang button */
+  document.querySelectorAll('[data-lang]').forEach(btn => {
+    const isActive = btn.getAttribute('data-lang') === lang;
+    btn.style.background = isActive ? 'var(--orange)' : 'transparent';
+    btn.style.color      = isActive ? '#fff'          : '#9c8878';
+    btn.style.fontWeight = isActive ? '600'           : '400';
+  });
+
+  /* Update <html lang=""> attribute */
+  document.documentElement.lang = lang;
+
+  /* Persist preference */
+  try { localStorage.setItem('kt_lang', lang); } catch(e) {}
+}
+
+function setLang(lang) {
+  applyLang(lang);
+}
+
+/* Auto-detect on load */
+(function detectLang() {
+  /* 1. Respect saved preference */
+  let saved = null;
+  try { saved = localStorage.getItem('kt_lang'); } catch(e) {}
+  if (saved === 'tr' || saved === 'en') { applyLang(saved); return; }
+
+  /* 2. Auto-detect Turkish browser */
+  const browserLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+  if (browserLang === 'tr' || browserLang.startsWith('tr-')) {
+    applyLang('tr');
+  } else {
+    applyLang('en');
+  }
+})();
+
 /* ── SUPABASE ── */
 const SB_URL='https://pkhoyabazudqmfczkhax.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
@@ -981,8 +1066,6 @@ function getSession(){
 
 /* Load creator profile & posts on page load */
 window.addEventListener('DOMContentLoaded', async () => {
-  /* Apply language on load */
-  if(typeof applyLang !== 'undefined') setTimeout(applyLang, 100);
   const session = getSession();
 
   /* Update nav based on session */
@@ -1190,13 +1273,19 @@ function closeModal() {
 function selectTier(el) {
   document.querySelectorAll('.modal-tier').forEach(t => t.classList.remove('selected'));
   el.classList.add('selected');
-  const price = el.querySelector('.modal-tier-price').textContent;
-  const name = el.querySelector('.modal-tier-name').textContent;
+  const priceEl = el.querySelector('.modal-tier-price');
+  const nameEl  = el.querySelector('.modal-tier-name');
+  const price = priceEl.textContent.trim();
+  const name  = nameEl.getAttribute('data-i18n-' + currentLang) || nameEl.textContent.trim();
   const btn = document.querySelector('.btn-modal-join');
-  if (price === 'Free') {
-    btn.textContent = 'Join for free — Enter the town 🏡';
+  if (price === 'Free' || price === 'Ücretsiz') {
+    btn.textContent = currentLang === 'tr'
+      ? 'Ücretsiz Katıl — Şehre Gir 🏡'
+      : 'Join for free — Enter the town 🏡';
   } else {
-    btn.textContent = `Join for ${price} — Enter the town 🏡`;
+    btn.textContent = currentLang === 'tr'
+      ? `${price} ile Katıl — Şehre Gir 🏡`
+      : `Join for ${price} — Enter the town 🏡`;
   }
 }
 
@@ -1229,8 +1318,8 @@ function handleAvatarUpload(event) {
 
 <!-- MOBILE ACTION BAR -->
 <div class="mobile-action-bar">
-  <button class="btn-subscribe" onclick="openModal()">🏡 Join my town</button>
-  <button class="btn-dm">💬 Message</button>
+  <button class="btn-subscribe" onclick="openModal()" data-i18n-en="🏡 Join my town" data-i18n-tr="🏡 Şehrime katıl">🏡 Join my town</button>
+  <button class="btn-dm" onclick="window.location.href='kreatown-messages-page.html'" data-i18n-en="💬 Message" data-i18n-tr="💬 Mesaj">💬 Message</button>
 </div>
 </body>
 </html>
