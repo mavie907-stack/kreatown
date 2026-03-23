@@ -289,11 +289,11 @@ body{font-family:'DM Sans',sans-serif;background:#0a0806;color:#e8d5b0}
       <a href="feed.html" class="back-link" style="color:var(--orange)" id="feedBackLink">📰 Community Feed</a>
       <a href="javascript:history.back()" class="back-link" id="backLink">← Back</a>
     </div>
-    <div class="rooms-label">Rooms</div>
+    <div class="rooms-label"><span data-i18n-en="Rooms" data-i18n-tr="Odalar">Rooms</span></div>
     <div id="roomList"></div>
     <div class="sidebar-footer">
       <div class="user-avatar" id="sidebarAv">🎨</div>
-      <div><div class="user-name" id="sidebarName">Loading…</div><div class="user-tier" id="sidebarTier">Member</div></div>
+      <div><div class="user-name" id="sidebarName"><span data-i18n-en="Loading…" data-i18n-tr="Yükleniyor…">Loading…</span></div><div class="user-tier" id="sidebarTier">Member</div></div>
       <div class="online-dot" style="margin-left:auto"></div>
     </div>
   </aside>
@@ -424,6 +424,9 @@ function selectRoom(id){const room=ROOMS.find(r=>r.id===id);const locked=TIER_OR
   document.getElementById('lockedOverlay').classList.remove('show');
   renderRooms();
   createParticles(room.particles);
+  /* Reset message tracking for fresh load */
+  const room = ROOMS.find(r=>r.id===id);
+  if(room){ room.messages=[]; room._knownIds=new Set(); room._profileCache={}; }
   /* Show loading state */
   const msgEl=document.getElementById('messages');
   if(msgEl)msgEl.innerHTML='<div style="padding:2rem;text-align:center;color:rgba(255,255,255,0.25);font-size:0.8rem">Loading messages…</div>';
@@ -451,52 +454,68 @@ function getMyProfile(){
 
 async function loadMessages(roomId){
   try{
-    /* Step 1: Get messages for this room */
     const res = await fetch(
       SB_URL+'/rest/v1/room_messages?room_id=eq.'+roomId+'&order=created_at.asc&limit=100&select=*',
       { headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY} }
     );
     const data = await res.json();
+    const room = ROOMS.find(r=>r.id===roomId);
+    if(!room) return;
+
+    /* Init tracking set */
+    if(!room._knownIds) room._knownIds = new Set();
+    if(!room.messages)  room.messages  = [];
+
     if(!Array.isArray(data) || !data.length){
-      const room = ROOMS.find(r=>r.id===roomId);
-      if(room){ room.messages=[]; renderMessages(room, false); }
+      /* Only render empty state on first load */
+      if(room.messages.length === 0) renderMessages(room, false);
       return;
     }
 
-    /* Step 2: Get profiles for message senders */
-    const userIds = [...new Set(data.map(m=>m.user_id).filter(Boolean))];
+    /* Get profiles only for NEW message senders */
+    const newMsgs  = data.filter(m => !room._knownIds.has(m.id));
+    if(!newMsgs.length) return; /* Nothing new — don't re-render */
+
+    const newUids  = [...new Set(newMsgs.map(m=>m.user_id).filter(Boolean))];
     let profileMap = {};
-    if(userIds.length){
+
+    /* Reuse cached profiles where possible */
+    if(!room._profileCache) room._profileCache = {};
+    const missingUids = newUids.filter(id => !room._profileCache[id]);
+
+    if(missingUids.length){
       const pRes = await fetch(
-        SB_URL+'/rest/v1/profiles?id=in.('+userIds.join(',')+')&select=id,username,display_name,avatar_url,tier',
+        SB_URL+'/rest/v1/profiles?id=in.('+missingUids.join(',')+')&select=id,username,display_name,avatar_url,tier',
         { headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY} }
       );
       const profiles = await pRes.json().catch(()=>[]);
-      if(Array.isArray(profiles)) profiles.forEach(p => profileMap[p.id] = p);
+      if(Array.isArray(profiles)) profiles.forEach(p => { room._profileCache[p.id] = p; });
     }
 
-    const room    = ROOMS.find(r=>r.id===roomId);
     const session = getSession();
     const myId    = session?.user_id || session?.id;
 
-    room.messages = data.map(m => {
-      const prof = profileMap[m.user_id] || {};
-      return {
-        id:     m.id,
-        avatar: prof.avatar_url || '🎨',
-        name:   prof.display_name || prof.username || 'Member',
-        badge:  prof.tier || 'free',
-        time:   timeAgo(m.created_at),
-        text:   m.content,
-        me:     m.user_id === myId,
-        user_id:m.user_id
-      };
+    /* Append only new messages */
+    newMsgs.forEach(m => {
+      const prof = room._profileCache[m.user_id] || {};
+      room._knownIds.add(m.id);
+      /* Remove optimistic duplicate (matched by text + me flag) */
+      room.messages = room.messages.filter(existing =>
+        !(existing._optimistic && existing.text === m.content && existing.me)
+      );
+      room.messages.push({
+        id:      m.id,
+        avatar:  prof.avatar_url || '🎨',
+        name:    prof.display_name || prof.username || 'Member',
+        badge:   prof.tier || 'free',
+        time:    timeAgo(m.created_at),
+        text:    m.content,
+        me:      m.user_id === myId,
+        user_id: m.user_id
+      });
     });
 
-    const prevCount = room._msgCount || 0;
-    const newCount  = room.messages.length;
-    renderMessages(room, newCount > prevCount);
-    room._msgCount = newCount;
+    renderMessages(room, true); /* scroll to bottom only when new msgs arrive */
 
   }catch(e){ console.log('Load messages error:', e); }
 }
@@ -524,15 +543,18 @@ async function sendMessage(){
   const profile=getMyProfile();
   const token=session?.access_token||SB_KEY;
   
-  // Optimistic UI update
+  // Optimistic UI update — tagged so poll can replace it with real DB version
   const room=ROOMS.find(r=>r.id===currentRoom);
+  if(!room.messages)  room.messages  = [];
+  if(!room._knownIds) room._knownIds = new Set();
   room.messages.push({
-    avatar:profile.avatar_url||'🎨', /* URL or emoji */
+    avatar:profile.avatar_url||'🎨',
     name:profile.display_name||profile.username||'You',
     badge:profile.tier||'free',
     time:'just now',
     text,
-    me:true
+    me:true,
+    _optimistic:true  /* flag: will be replaced by real DB message on next poll */
   });
   renderMessages(room);
   input.value='';
