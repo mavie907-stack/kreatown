@@ -115,8 +115,9 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
 .rp-time{font-size:0.6rem;color:var(--text3);font-family:'DM Mono',monospace;flex-shrink:0;margin-top:3px}
 
 /* ROOMS QUICK */
-.room-quick{display:flex;align-items:center;justify-content:space-between;padding:0.55rem 0;border-bottom:1px solid var(--border)}
+.room-quick{display:flex;align-items:center;justify-content:space-between;padding:0.55rem 0;border-bottom:1px solid var(--border);text-decoration:none;cursor:pointer;transition:background .15s;border-radius:0.3rem;padding-left:0.25rem;margin-left:-0.25rem}
 .room-quick:last-child{border-bottom:none}
+.room-quick:hover,.room-quick:active{background:rgba(244,115,42,0.06)}
 .rq-left{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--text2)}
 .rq-cnt{font-size:0.62rem;color:var(--emerald);font-family:'DM Mono',monospace}
 
@@ -267,11 +268,11 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
       <div class="card">
         <div class="ch"><div class="ct">Active rooms</div><a href="rooms.html" class="ca">Enter →</a></div>
         <div class="cb">
-          <div class="room-quick"><div class="rq-left">🛎️ Hotel Lobby</div><span class="rq-cnt">● 12</span></div>
-          <div class="room-quick"><div class="rq-left">🍽️ The Restaurant</div><span class="rq-cnt">● 7</span></div>
-          <div class="room-quick"><div class="rq-left">🛏️ Superior Room</div><span class="rq-cnt">● 4</span></div>
-          <div class="room-quick"><div class="rq-left">🌊 Thermal Pool</div><span class="rq-cnt">● 2</span></div>
-          <div class="room-quick"><div class="rq-left">📻 3D Radio</div><span class="rq-cnt">● 5</span></div>
+          <a href="rooms.html?room=lobby"      class="room-quick"><div class="rq-left">🛎️ Hotel Lobby</div><span class="rq-cnt">● 12</span></a>
+          <a href="rooms.html?room=restaurant" class="room-quick"><div class="rq-left">🍽️ The Restaurant</div><span class="rq-cnt">● 7</span></a>
+          <a href="rooms.html?room=superior"   class="room-quick"><div class="rq-left">🛏️ Superior Room</div><span class="rq-cnt">● 4</span></a>
+          <a href="rooms.html?room=pool"       class="room-quick"><div class="rq-left">🌊 Thermal Pool</div><span class="rq-cnt">● 2</span></a>
+          <a href="rooms.html?room=resting"    class="room-quick"><div class="rq-left">🛋️ Resting Lounge</div><span class="rq-cnt">● 3</span></a>
         </div>
       </div>
     </div>
