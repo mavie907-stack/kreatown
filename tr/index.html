@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Kreatown — İçerik Üreticilerinin Dijital Şehri</title>
+<meta name="description" content="Kreatown, başarının dünyaını inşa ettiği içerik üretici platformu. Kulübeden başla, köşke kazan. Hayran kitlen sana her ay ödeme yapsın."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://kreatown.com.tr/"/>
+<meta property="og:title" content="Kreatown — İçerik Üreticilerinin Dijital Şehri"/>
+<meta property="og:description" content="Dünyaını kur. İmparatorluğunu büyüt. Başarının gerçekten yaşadığın alanı inşa ettiği tek içerik platformu."/>
+<meta property="og:image" content="https://kreatown.com.tr/og-image.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<link rel="canonical" href="https://kreatown.com.tr/"/>
+<link rel="alternate" hreflang="tr" href="https://kreatown.com.tr/"/>
+<link rel="alternate" hreflang="en" href="https://kreatown.com/"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700;1,800&family=Cabinet+Grotesk:wght@400;500;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#fffbf5;--bg2:#fff8ee;--black:#1a1612;--brown:#2d2118;
+  --orange:#f4732a;--orange-light:#ff9555;--orange-pale:#fff0e6;
+  --yellow:#fbbf24;--yellow-pale:#fffbeb;--green:#22c55e;--green-pale:#f0fdf4;
+  --pink:#f472b6;--blue:#60a5fa;--muted:#9c8878;
+  --border:rgba(244,115,42,0.15);--card:#ffffff;
+  --font-display:'Cabinet Grotesk',sans-serif;
+  --font-body:'Nunito',sans-serif;--font-mono:'DM Mono',monospace;
+  --shadow:0 4px 24px rgba(244,115,42,0.08);
+  --shadow-lg:0 12px 48px rgba(244,115,42,0.14);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--black);font-family:var(--font-body);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(244,115,42,0.04) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 3rem;background:rgba(255,251,245,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:var(--font-display);font-size:1.5rem;font-weight:900;color:var(--black);letter-spacing:-0.03em;display:flex;align-items:center;gap:0.4rem;text-decoration:none;}
+.nav-logo .dot{width:8px;height:8px;background:var(--orange);border-radius:50%;display:inline-block;margin-bottom:2px;}
+.nav-links{display:flex;gap:2rem;list-style:none;align-items:center;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:700;transition:color 0.2s;}
+.nav-links a:hover{color:var(--orange);}
+.nav-cta{background:var(--orange)!important;color:#fff!important;padding:0.65rem 1.5rem;border-radius:100px;font-weight:800!important;font-size:0.85rem!important;transition:all 0.2s!important;box-shadow:0 4px 12px rgba(244,115,42,0.3);}
+.nav-cta:hover{background:var(--orange-light)!important;transform:translateY(-1px);}
+.nav-lang{font-size:0.78rem;font-weight:700;color:var(--muted);text-decoration:none;border:.5px solid var(--border);padding:0.3rem 0.7rem;border-radius:100px;transition:all 0.2s;}
+.nav-lang:hover{color:var(--orange);border-color:rgba(244,115,42,0.4);}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px;z-index:200;}
+.hamburger span{display:block;width:22px;height:2px;background:var(--black);border-radius:2px;transition:all 0.3s;}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.mobile-menu{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,251,245,0.98);z-index:150;flex-direction:column;align-items:center;justify-content:center;gap:2rem;}
+.mobile-menu.open{display:flex;}
+.mobile-menu a{font-family:var(--font-display);font-size:1.8rem;font-weight:900;color:var(--black);text-decoration:none;letter-spacing:-0.02em;transition:color 0.2s;}
+.mobile-menu a:hover{color:var(--orange);}
+.mobile-menu .mob-cta{background:var(--orange);color:#fff!important;padding:0.9rem 2.5rem;border-radius:100px;font-size:1.1rem!important;}
+.hero{min-height:100vh;display:flex;align-items:center;padding:8rem 3rem 5rem;position:relative;overflow:hidden;}
+.hero-blob1{position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(244,115,42,0.12) 0%,transparent 70%);top:-100px;right:-100px;border-radius:50%;animation:float 8s ease-in-out infinite;}
+.hero-blob2{position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(251,191,36,0.1) 0%,transparent 70%);bottom:50px;left:-50px;border-radius:50%;animation:float 10s ease-in-out infinite reverse;}
+@keyframes float{0%,100%{transform:translateY(0px) scale(1);}50%{transform:translateY(-30px) scale(1.05);}}
+.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;max-width:1200px;margin:0 auto;width:100%;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.hero-badge{display:inline-flex;align-items:center;gap:0.5rem;background:var(--orange-pale);color:var(--orange);border:1px solid rgba(244,115,42,0.2);padding:0.4rem 1rem;border-radius:100px;font-size:0.78rem;font-weight:800;letter-spacing:0.03em;margin-bottom:1.5rem;animation:fadeUp 0.6s ease both;}
+.hero h1{font-family:var(--font-display);font-size:clamp(2.8rem,5.5vw,5rem);font-weight:900;line-height:1.05;letter-spacing:-0.04em;margin-bottom:1.5rem;animation:fadeUp 0.6s 0.1s ease both;opacity:0;}
+.hero h1 .highlight{color:var(--orange);position:relative;display:inline-block;}
+.hero h1 .highlight::after{content:'';position:absolute;bottom:4px;left:0;right:0;height:6px;background:rgba(244,115,42,0.2);border-radius:3px;z-index:-1;}
+.hero-sub{font-size:1.05rem;color:var(--muted);line-height:1.8;margin-bottom:2.5rem;font-weight:500;max-width:44ch;animation:fadeUp 0.6s 0.2s ease both;opacity:0;}
+.hero-actions{display:flex;gap:1rem;align-items:center;margin-bottom:2.5rem;animation:fadeUp 0.6s 0.3s ease both;opacity:0;flex-wrap:wrap;}
+.btn-primary{background:var(--orange);color:#fff;padding:0.9rem 2rem;border-radius:100px;font-family:var(--font-body);font-size:0.95rem;font-weight:800;border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:0.5rem;transition:all 0.2s;box-shadow:0 6px 20px rgba(244,115,42,0.35);}
+.btn-primary:hover{background:var(--orange-light);transform:translateY(-2px);}
+.btn-secondary{color:var(--black);background:transparent;padding:0.9rem 2rem;border-radius:100px;font-size:0.95rem;font-weight:700;border:2px solid rgba(26,22,18,0.12);cursor:pointer;text-decoration:none;transition:all 0.2s;}
+.btn-secondary:hover{border-color:var(--orange);color:var(--orange);}
+.early-access-bar{display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:2rem;animation:fadeUp 0.6s 0.35s ease both;opacity:0;}
+.ea-pill{display:inline-flex;align-items:center;gap:0.5rem;background:var(--card);border:1px solid var(--border);padding:0.5rem 1.1rem;border-radius:100px;font-size:0.8rem;font-weight:700;color:var(--black);box-shadow:var(--shadow);}
+.ea-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(34,197,94,0.2);}
+.hero-right{animation:fadeUp 0.6s 0.2s ease both;opacity:0;}
+.creator-card{background:var(--card);border-radius:24px;padding:2rem;box-shadow:var(--shadow-lg);border:1px solid rgba(244,115,42,0.1);position:relative;}
+.creator-card::before{content:'🏡';position:absolute;top:-20px;right:2rem;font-size:2.5rem;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.1));animation:float 4s ease-in-out infinite;}
+.card-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid #f5f0eb;}
+.creator-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--orange),var(--yellow));display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.creator-info h3{font-family:var(--font-display);font-size:1rem;font-weight:800;}
+.creator-info p{font-size:0.78rem;color:var(--muted);font-weight:600;}
+.creator-badge{margin-left:auto;background:var(--green-pale);color:var(--green);font-size:0.7rem;font-weight:800;padding:0.3rem 0.7rem;border-radius:100px;font-family:var(--font-mono);}
+.card-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0.8rem;margin-bottom:1.5rem;}
+.cstat{background:var(--bg2);border-radius:12px;padding:0.9rem;text-align:center;}
+.cstat-val{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--black);line-height:1;}
+.cstat-label{font-size:0.65rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-top:0.3rem;}
+.card-tiers{display:flex;flex-direction:column;gap:0.6rem;margin-bottom:1.5rem;}
+.tier-row{display:flex;align-items:center;gap:0.8rem;padding:0.7rem 1rem;border-radius:10px;background:var(--bg2);border:1px solid transparent;transition:all 0.2s;}
+.tier-row:hover{border-color:var(--orange);}
+.tier-name{font-size:0.82rem;font-weight:800;flex:1;}
+.tier-members{font-size:0.72rem;color:var(--muted);font-family:var(--font-mono);}
+.tier-price{font-size:0.82rem;font-weight:800;color:var(--orange);}
+.card-earning{background:linear-gradient(135deg,var(--orange),var(--orange-light));border-radius:14px;padding:1.2rem 1.5rem;display:flex;align-items:center;justify-content:space-between;color:white;}
+.earning-label{font-size:0.78rem;font-weight:700;opacity:0.85;}
+.earning-amount{font-family:var(--font-display);font-size:1.8rem;font-weight:900;line-height:1;}
+.earning-sub{font-size:0.7rem;opacity:0.75;font-weight:600;}
+.earning-trend{background:rgba(255,255,255,0.2);padding:0.4rem 0.8rem;border-radius:100px;font-size:0.78rem;font-weight:800;}
+.trust-bar{padding:2.5rem 3rem;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:1rem;position:relative;z-index:1;flex-wrap:wrap;}
+.trust-label{font-size:0.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;white-space:nowrap;margin-right:1rem;}
+.trust-items{display:flex;gap:2.5rem;align-items:center;flex-wrap:wrap;justify-content:center;}
+.trust-item{font-family:var(--font-display);font-size:1rem;font-weight:900;color:#ccc;letter-spacing:-0.02em;transition:color 0.2s;}
+.trust-item:hover{color:var(--orange);}
+.section{padding:7rem 3rem;position:relative;z-index:1;}
+.section-inner{max-width:1200px;margin:0 auto;}
+.section-badge{display:inline-flex;align-items:center;gap:0.5rem;background:var(--orange-pale);color:var(--orange);padding:0.35rem 1rem;border-radius:100px;font-size:0.75rem;font-weight:800;letter-spacing:0.04em;margin-bottom:1.2rem;}
+.section-title{font-family:var(--font-display);font-size:clamp(2rem,4vw,3.2rem);font-weight:900;letter-spacing:-0.03em;line-height:1.1;margin-bottom:1rem;}
+.section-title .hl{color:var(--orange);}
+.section-sub{font-size:1rem;color:var(--muted);font-weight:500;line-height:1.7;max-width:50ch;margin-bottom:3.5rem;}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;}
+.step{background:var(--card);border-radius:20px;padding:2.2rem;border:1px solid rgba(244,115,42,0.1);box-shadow:var(--shadow);transition:all 0.3s;position:relative;overflow:hidden;}
+.step::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--orange),var(--yellow));opacity:0;transition:opacity 0.3s;}
+.step:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);}
+.step:hover::before{opacity:1;}
+.step-num{font-family:var(--font-display);font-size:3.5rem;font-weight:900;color:rgba(244,115,42,0.08);line-height:1;position:absolute;top:1rem;right:1.5rem;}
+.step-icon{font-size:2rem;margin-bottom:1.2rem;display:block;}
+.step h3{font-family:var(--font-display);font-size:1.15rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:0.6rem;}
+.step p{font-size:0.88rem;color:var(--muted);line-height:1.7;font-weight:500;}
+.features-section{background:var(--bg2);}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;}
+.feat{background:var(--card);border-radius:18px;padding:1.8rem;border:1px solid rgba(244,115,42,0.08);transition:all 0.3s;}
+.feat:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
+.feat-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:1.1rem;}
+.feat-icon.orange{background:var(--orange-pale);}
+.feat-icon.yellow{background:var(--yellow-pale);}
+.feat-icon.green{background:var(--green-pale);}
+.feat h3{font-family:var(--font-display);font-size:1rem;font-weight:800;margin-bottom:0.5rem;}
+.feat p{font-size:0.83rem;color:var(--muted);line-height:1.7;font-weight:500;}
+.levels-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;}
+.level-card{background:var(--card);border-radius:18px;padding:1.5rem 1rem;text-align:center;border:1px solid rgba(244,115,42,0.1);box-shadow:var(--shadow);transition:all 0.3s;}
+.level-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
+.level-card.active-level{border-color:var(--orange);background:linear-gradient(145deg,#fff8f4,#ffffff);}
+.level-num{font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:0.5rem;}
+.level-emoji{font-size:2.2rem;margin-bottom:0.6rem;display:block;}
+.level-range{font-family:var(--font-mono);font-size:0.65rem;color:var(--muted);margin-bottom:0.4rem;}
+.level-name{font-family:var(--font-display);font-size:0.9rem;font-weight:800;margin-bottom:0.4rem;}
+.level-desc{font-size:0.72rem;color:var(--muted);line-height:1.5;}
+.creators-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;}
+.creator-tile{background:var(--card);border-radius:20px;padding:2rem;border:1px solid rgba(244,115,42,0.1);box-shadow:var(--shadow);transition:all 0.3s;}
+.creator-tile:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
+.ct-level{font-size:0.72rem;font-weight:800;color:var(--muted);margin-bottom:1rem;}
+.ct-avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:1rem;}
+.ct-av1{background:linear-gradient(135deg,#f4732a,#fbbf24);}
+.ct-av2{background:linear-gradient(135deg,#60a5fa,#a78bfa);}
+.ct-av3{background:linear-gradient(135deg,#34d399,#22c55e);}
+.ct-name{font-family:var(--font-display);font-size:1.1rem;font-weight:800;}
+.ct-handle{font-size:0.78rem;color:var(--muted);font-weight:600;margin-bottom:0.3rem;}
+.ct-badge{display:inline-flex;align-items:center;gap:0.3rem;font-size:0.7rem;font-weight:800;padding:0.25rem 0.6rem;border-radius:100px;margin-bottom:1.2rem;}
+.ct-b1{background:var(--orange-pale);color:var(--orange);}
+.ct-b2{background:#f8fafc;color:#64748b;}
+.ct-b3{background:var(--yellow-pale);color:#d97706;}
+.ct-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;}
+.ct-stat{background:var(--bg2);border-radius:10px;padding:0.7rem;text-align:center;}
+.ct-stat-val{font-family:var(--font-display);font-size:1.1rem;font-weight:900;line-height:1;}
+.ct-stat-lbl{font-size:0.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-top:0.2rem;}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:1000px;margin:0 auto;}
+.plan{background:var(--card);border-radius:24px;padding:2.5rem;border:2px solid rgba(244,115,42,0.1);position:relative;transition:all 0.3s;}
+.plan:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);}
+.plan.featured{border-color:var(--orange);background:linear-gradient(145deg,#fff8f4,#ffffff);}
+.plan-top-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--orange);color:white;font-size:0.68rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;padding:0.3rem 1.2rem;border-radius:100px;white-space:nowrap;}
+.plan-name{font-family:var(--font-display);font-size:1.3rem;font-weight:900;margin-bottom:0.5rem;}
+.plan-desc{font-size:0.82rem;color:var(--muted);font-weight:600;margin-bottom:1.5rem;}
+.plan-price{margin-bottom:0.5rem;}
+.plan-price .amount{font-family:var(--font-display);font-size:2.8rem;font-weight:900;letter-spacing:-0.04em;line-height:1;}
+.plan-price .period{font-size:0.85rem;color:var(--muted);font-weight:600;}
+.plan-cut{font-size:0.78rem;font-weight:800;color:var(--orange);margin-bottom:1.5rem;font-family:var(--font-mono);}
+.plan-divider{height:1px;background:rgba(244,115,42,0.1);margin:1.5rem 0;}
+.plan-features{display:flex;flex-direction:column;gap:0.7rem;margin-bottom:2rem;}
+.plan-feature{display:flex;align-items:flex-start;gap:0.6rem;font-size:0.85rem;font-weight:600;}
+.plan-feature::before{content:'✓';color:var(--orange);font-weight:900;flex-shrink:0;margin-top:1px;}
+.plan-btn{display:block;text-align:center;padding:0.85rem;border-radius:100px;font-weight:800;font-size:0.9rem;text-decoration:none;transition:all 0.2s;}
+.plan-btn-primary{background:var(--orange);color:#fff;box-shadow:0 4px 16px rgba(244,115,42,0.35);}
+.plan-btn-primary:hover{background:var(--orange-light);transform:translateY(-1px);}
+.plan-btn-outline{border:2px solid rgba(244,115,42,0.2);color:var(--orange);}
+.plan-btn-outline:hover{border-color:var(--orange);background:var(--orange-pale);}
+.cta-section{background:linear-gradient(135deg,var(--orange),var(--orange-light));padding:6rem 3rem;text-align:center;position:relative;overflow:hidden;z-index:1;}
+.cta-section::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.08) 1px,transparent 1px);background-size:28px 28px;}
+.cta-section h2{font-family:var(--font-display);font-size:clamp(2rem,4vw,3rem);font-weight:900;color:#fff;letter-spacing:-0.03em;margin-bottom:1rem;position:relative;}
+.cta-section p{color:rgba(255,255,255,0.85);font-size:1rem;font-weight:600;margin-bottom:2rem;position:relative;}
+.cta-section .btn-white{background:#fff;color:var(--orange);padding:1rem 2.5rem;border-radius:100px;font-weight:800;font-size:1rem;text-decoration:none;display:inline-flex;align-items:center;gap:0.5rem;transition:all 0.2s;box-shadow:0 8px 24px rgba(0,0,0,0.15);position:relative;}
+.cta-section .btn-white:hover{transform:translateY(-2px);}
+.cta-note{font-size:0.78rem;color:rgba(255,255,255,0.7);margin-top:1rem;position:relative;}
+footer{background:var(--black);color:rgba(255,255,255,0.6);padding:4rem 3rem 2rem;position:relative;z-index:1;}
+.footer-inner{max-width:1200px;margin:0 auto;}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem;}
+.footer-brand{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:#fff;margin-bottom:0.8rem;}
+.footer-tagline{font-size:0.85rem;line-height:1.6;max-width:26ch;}
+.footer-col h4{font-size:0.78rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.4);margin-bottom:1rem;}
+.footer-col a{display:block;font-size:0.85rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:0.6rem;transition:color 0.2s;font-weight:600;}
+.footer-col a:hover{color:#fff;}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding-top:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.footer-copy{font-size:0.8rem;}
+.footer-links{display:flex;gap:1.5rem;}
+.footer-links a{font-size:0.8rem;color:rgba(255,255,255,0.6);text-decoration:none;font-weight:600;}
+.footer-links a:hover{color:#fff;}
+.mob-sticky{display:none;position:fixed;bottom:0;left:0;right:0;z-index:90;background:rgba(255,251,245,0.96);backdrop-filter:blur(12px);border-top:1px solid var(--border);padding:0.9rem 1.5rem;gap:0.8rem;}
+@media(max-width:1024px){
+  .hero-inner{grid-template-columns:1fr;gap:3rem;}
+  .hero-right{order:-1;}
+  .creator-card{max-width:500px;margin:0 auto;}
+  .levels-grid{grid-template-columns:repeat(3,1fr);}
+  .footer-top{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:768px){
+  nav{padding:1rem 1.5rem;}
+  .nav-links{display:none;}
+  .hamburger{display:flex;}
+  .hero{padding:7rem 1.5rem 4rem;}
+  .section{padding:5rem 1.5rem;}
+  .trust-bar{padding:2rem 1.5rem;}
+  .steps{grid-template-columns:1fr;}
+  .features-grid{grid-template-columns:1fr 1fr;}
+  .levels-grid{grid-template-columns:repeat(2,1fr);}
+  .creators-grid{grid-template-columns:1fr;}
+  .pricing-grid{grid-template-columns:1fr;}
+  .cta-section{padding:4rem 1.5rem;}
+  footer{padding:3rem 1.5rem 6rem;}
+  .footer-top{grid-template-columns:1fr;gap:2rem;}
+  .footer-bottom{flex-direction:column;text-align:center;}
+  .mob-sticky{display:flex;}
+}
+@media(max-width:480px){
+  .features-grid{grid-template-columns:1fr;}
+  .levels-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#concept" onclick="closeMobile()">Nasıl çalışır</a>
+  <a href="#features" onclick="closeMobile()">Özellikler</a>
+  <a href="#creators" onclick="closeMobile()">Üreticiler</a>
+  <a href="#plans" onclick="closeMobile()">Fiyatlandırma</a>
+  <a href="giris.html" onclick="closeMobile()">Giriş yap</a>
+  <a href="kayit.html" class="mob-cta" onclick="closeMobile()">Ücretsiz başla 🏡</a>
+</div>
+
+<nav>
+  <a href="/" class="nav-logo">Krea<span style="color:var(--orange)">town</span><span class="dot"></span></a>
+  <ul class="nav-links">
+    <li><a href="#concept">Nasıl çalışır</a></li>
+    <li><a href="#features">Özellikler</a></li>
+    <li><a href="#creators">Üreticiler</a></li>
+    <li><a href="#plans">Fiyatlar</a></li>
+    <li><a href="giris.html">Giriş yap</a></li>
+    <li><a href="https://kreatown.com/" class="nav-lang">🌍 English</a></li>
+    <li><a href="kayit.html" class="nav-cta">Ücretsiz başla 🏡</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" onclick="toggleMobile()" aria-label="Menüyü aç">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-blob1"></div>
+  <div class="hero-blob2"></div>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-badge"><span>🏡</span> İçerik Platformu · Erken Erişim</div>
+      <h1>Dünyaını kur.<br><span class="highlight">İmparatorluğunu büyüt.</span></h1>
+      <p class="hero-sub">Kreatown, başarının gerçekten yaşadığın alanı inşa ettiği tek içerik üretici platformu. Kulübeden başla, köşkü kazan. Her yeni üye seni zirveye bir adım daha yaklaştırır.</p>
+      <div class="early-access-bar">
+        <span class="ea-pill"><span class="dot"></span> Erken erişimde — ücretsiz katıl</span>
+        <span class="ea-pill">🔒 Kredi kartı gerekmez</span>
+        <span class="ea-pill">⚡ İlk 3 ay ücretsiz</span>
+      </div>
+      <div class="hero-actions">
+        <a href="kayit.html" class="btn-primary">Ücretsiz şehrini kur 🏡</a>
+        <a href="#concept" class="btn-secondary">Nasıl çalışır →</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="creator-card">
+        <div class="card-header">
+          <div class="creator-avatar">🎨</div>
+          <div class="creator-info">
+            <h3>Topraq Toros</h3>
+            <p>@topraq · Yaratıcı & Hikaye Anlatıcısı</p>
+          </div>
+          <div class="creator-badge">● CANLI</div>
+        </div>
+        <div class="card-stats">
+          <div class="cstat"><div class="cstat-val">44</div><div class="cstat-label">Üye</div></div>
+          <div class="cstat"><div class="cstat-val">3</div><div class="cstat-label">Katman</div></div>
+          <div class="cstat"><div class="cstat-val">🏘️</div><div class="cstat-label">Seviye 3</div></div>
+        </div>
+        <div class="card-tiers">
+          <div class="tier-row"><span>🌱</span><span class="tier-name">Bahçe</span><span class="tier-members">28 üye</span><span class="tier-price">Ücretsiz</span></div>
+          <div class="tier-row"><span>⭐</span><span class="tier-name">Gümüş Oda</span><span class="tier-members">12 üye</span><span class="tier-price">₺299/ay</span></div>
+          <div class="tier-row"><span>👑</span><span class="tier-name">Altın Penthouse</span><span class="tier-members">4 üye</span><span class="tier-price">₺899/ay</span></div>
+        </div>
+        <div class="card-earning">
+          <div><div class="earning-label">Bu ay</div><div class="earning-amount">₺7.180</div><div class="earning-sub">Doğrudan hesabına</div></div>
+          <div class="earning-trend">↑ Büyüyor</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="trust-bar">
+  <span class="trust-label">Altyapı</span>
+  <div class="trust-items">
+    <span class="trust-item">Stripe</span>
+    <span class="trust-item">Supabase</span>
+    <span class="trust-item">Cloudinary</span>
+    <span class="trust-item">Vercel</span>
+    <span class="trust-item">Pusher</span>
+  </div>
+</div>
+
+<!-- Nasıl çalışır -->
+<section class="section" id="concept">
+  <div class="section-inner">
+    <div class="section-badge">✨ Kreatown sistemi</div>
+    <h2 class="section-title">Evin <span class="hl">kitlenle büyür</span></h2>
+    <p class="section-sub">Kazandığın her yeni üye dünyaını yükseltir. Küçük kulübeden tepe köşküne — platform büyümeni görsel, somut ve finansal olarak ödüllendirir.</p>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><span class="step-icon">🏡</span><h3>Şehrini talep et</h3><p>Kaydol, kullanıcı adını seç ve kreatown.com.tr/@sen adresinde kendi sayfanı al. Şehrin küçük bir kulübe olarak başlar — hayranların taşınmaya hazır.</p></div>
+      <div class="step"><div class="step-num">2</div><span class="step-icon">💰</span><h3>Katmanlarını kur</h3><p>Ücretsiz, gümüş ve altın üyelik katmanları oluştur. Premium içerikleri, DM'leri ve odaları kitlen için mantıklı katmanların arkasına kilitle.</p></div>
+      <div class="step"><div class="step-num">3</div><span class="step-icon">📈</span><h3>Büyü ve seviye atla</h3><p>Üye sayın arttıkça evin seviye atlar — Kulübeden Köşke. Aylık yarışmalara katıl ve yolda yeni özellikler aç.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Seviyeler -->
+<section class="section features-section">
+  <div class="section-inner">
+    <div class="section-badge">🏠 Dünyan gelişiyor</div>
+    <h2 class="section-title">Beş seviye. <span class="hl">Bir yolculuk.</span></h2>
+    <p class="section-sub">Her kilometre taşı, hayranlarının keşfedebileceği daha büyük, daha iyi bir dünyayı açar.</p>
+    <div class="levels-grid">
+      <div class="level-card"><div class="level-num">Seviye 1</div><span class="level-emoji">🏠</span><div class="level-range">0 – 1B üye</div><div class="level-name">Kulübe</div><div class="level-desc">Temel içerik akışı + 2 katman</div></div>
+      <div class="level-card active-level"><div class="level-num">Seviye 2</div><span class="level-emoji">🏡</span><div class="level-range">1B – 5B üye</div><div class="level-name">Ev</div><div class="level-desc">DM + 3D bahçe açılır</div></div>
+      <div class="level-card"><div class="level-num">Seviye 3</div><span class="level-emoji">🏘️</span><div class="level-range">5B – 10B üye</div><div class="level-name">Villa</div><div class="level-desc">3D Radyo 🎵 + havuz + yarışmalar</div></div>
+      <div class="level-card"><div class="level-num">Seviye 4</div><span class="level-emoji">🏰</span><div class="level-range">10B – 25B üye</div><div class="level-name">Malikane</div><div class="level-desc">3D TV 📺 + canlı etkinlikler</div></div>
+      <div class="level-card"><div class="level-num">Seviye 5</div><span class="level-emoji">🏯</span><div class="level-range">50B+ üye</div><div class="level-name">Köşk</div><div class="level-desc">Tam şehir. Helipad. Efsane statüsü.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Özellikler -->
+<section class="section" id="features">
+  <div class="section-inner">
+    <div class="section-badge">⚡ İhtiyacın olan her şey</div>
+    <h2 class="section-title">Sadece bir sayfa değil. <span class="hl">Canlı bir dünya.</span></h2>
+    <p class="section-sub">Ödemelerden topluluğa kadar bir içerik üreticisinin ihtiyaç duyduğu her araç, büyüyen evreninin içinde.</p>
+    <div class="features-grid">
+      <div class="feat"><div class="feat-icon orange">🏡</div><h3>Kendi şehrin</h3><p>Üretici sayfan büyüdükçe gelişen canlı bir dünya. kreatown.com.tr/@sen adresini her yerde paylaş.</p></div>
+      <div class="feat"><div class="feat-icon yellow">💰</div><h3>Her ay kazan</h3><p>Hayranlar katmanlarına abone olur. Stripe aracılığıyla doğrudan ödeme alarak her ay otomatik kazanırsın.</p></div>
+      <div class="feat"><div class="feat-icon orange">🔒</div><h3>Kilitli içerik odaları</h3><p>Farklı odalar farklı içerikleri açar. Ücretsiz hayranlar bahçeye girer. Altın üyeler penthouse'a.</p></div>
+      <div class="feat"><div class="feat-icon green">🎮</div><h3>Seviye atlama yarışmaları</h3><p>Aylık büyüme yarışmalarında diğer üreticilerle rekabet et. Ödüller, ev yükseltmeleri ve platform avantajları kazan.</p></div>
+      <div class="feat"><div class="feat-icon yellow">💬</div><h3>Doğrudan mesajlaşma</h3><p>En büyük hayranlarınla yerleşik mesajlaşma yoluyla bire bir bağlantı kur. 1B üyede açılır.</p></div>
+      <div class="feat"><div class="feat-icon green">📊</div><h3>Üretici analitiği</h3><p>Gelir, üye büyümesi, içerik performansı ve ev seviye ilerlemenizi tek bir panoda takip et.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Üreticiler -->
+<section class="section features-section" id="creators">
+  <div class="section-inner">
+    <div class="section-badge">🌟 Zaten kazanıyorlar</div>
+    <h2 class="section-title">Şehrini kuran <span class="hl">üreticiler</span></h2>
+    <p class="section-sub">Kreatown'da dünyalarını büyüten erken üreticileri gör.</p>
+    <div class="creators-grid">
+      <div class="creator-tile">
+        <div class="ct-level">🏘️ Seviye 3 · Villa</div>
+        <div class="ct-avatar ct-av1">🎨</div>
+        <div class="ct-name">Topraq Toros</div>
+        <div class="ct-handle">@topraq · Yaratıcı & Hikaye Anlatıcısı</div>
+        <div class="ct-badge ct-b1">🔥 Hızla büyüyor</div>
+        <div class="ct-stats">
+          <div class="ct-stat"><div class="ct-stat-val">44</div><div class="ct-stat-lbl">Üye</div></div>
+          <div class="ct-stat"><div class="ct-stat-val">₺7.180</div><div class="ct-stat-lbl">Aylık</div></div>
+          <div class="ct-stat"><div class="ct-stat-val">4</div><div class="ct-stat-lbl">Gönderi</div></div>
+        </div>
+      </div>
+      <div class="creator-tile">
+        <div class="ct-level">🏰 Seviye 4 · Malikane</div>
+        <div class="ct-avatar ct-av2">📸</div>
+        <div class="ct-name">Selin Karadağ</div>
+        <div class="ct-handle">@selin · Fotoğrafçı</div>
+        <div class="ct-badge ct-b2">⭐ Gümüş statüsü</div>
+        <div class="ct-stats">
+          <div class="ct-stat"><div class="ct-stat-val">128</div><div class="ct-stat-lbl">Üye</div></div>
+          <div class="ct-stat"><div class="ct-stat-val">₺28.900</div><div class="ct-stat-lbl">Aylık</div></div>
+          <div class="ct-stat"><div class="ct-stat-val">22</div><div class="ct-stat-lbl">Gönderi</div></div>
+        </div>
+      </div>
+      <div class="creator-tile">
+        <div class="ct-level">🏯 Seviye 5 · Köşk</div>
+        <div class="ct-avatar ct-av3">🎵</div>
+        <div class="ct-name">Cem Aydın</div>
+        <div class="ct-handle">@cem · Müzik Yapımcısı</div>
+        <div class="ct-badge ct-b3">👑 Altın statüsü</div>
+        <div class="ct-stats">
+          <div class="ct-stat"><div class="ct-stat-val">89</div><div class="ct-stat-lbl">Üye</div></div>
+          <div class="ct-stat"><div class="ct-stat-val">₺20.400</div><div class="ct-stat-lbl">Aylık</div></div>
+          <div class="ct-stat"><div class="ct-stat-val">17</div><div class="ct-stat-lbl">Gönderi</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Fiyatlandırma -->
+<section class="section" id="plans">
+  <div class="section-inner" style="text-align:center;">
+    <div class="section-badge">💸 Basit fiyatlandırma</div>
+    <h2 class="section-title">Birlikte büyü, <span class="hl">birlikte kazan</span></h2>
+    <p class="section-sub" style="margin:0 auto 3.5rem;">Ne kadar büyürsen anlaşman o kadar iyi olur.</p>
+    <div class="pricing-grid">
+      <div class="plan">
+        <div class="plan-name">Başlangıç</div>
+        <div class="plan-desc">Başlamak için mükemmel</div>
+        <div class="plan-price"><span class="amount">₺0</span><span class="period"> / 3 ay</span></div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.3rem;">sonra ₺590/ay</div>
+        <div class="plan-cut">+ %5 gelir paylaşımı</div>
+        <div class="plan-divider"></div>
+        <div class="plan-features">
+          <div class="plan-feature">Kendi şehir sayfan</div>
+          <div class="plan-feature">2 üyelik katmanına kadar</div>
+          <div class="plan-feature">İçerik akışı + kilitleme</div>
+          <div class="plan-feature">Temel analitik</div>
+          <div class="plan-feature">Seviye 1–2 ev yükseltmeleri</div>
+        </div>
+        <a href="kayit.html" class="plan-btn plan-btn-outline">Ücretsiz başla</a>
+      </div>
+      <div class="plan featured">
+        <div class="plan-top-badge">En Popüler</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-desc">Gelişmiş analitik + odalar</div>
+        <div class="plan-price"><span class="amount">₺890</span><span class="period"> / ay</span></div>
+        <div class="plan-cut">+ %5 gelir paylaşımı</div>
+        <div class="plan-divider"></div>
+        <div class="plan-features">
+          <div class="plan-feature">Başlangıç'taki her şey</div>
+          <div class="plan-feature">Sınırsız üyelik katmanı</div>
+          <div class="plan-feature">Hayranlarla DM</div>
+          <div class="plan-feature">Seviye yarışmalarına erişim</div>
+          <div class="plan-feature">Tüm ev seviyeleri açık</div>
+          <div class="plan-feature">Öncelikli destek</div>
+        </div>
+        <a href="kayit.html" class="plan-btn plan-btn-primary">Pro'yu ücretsiz dene</a>
+      </div>
+      <div class="plan">
+        <div class="plan-name">Stüdyo</div>
+        <div class="plan-desc">Tam platform erişimi</div>
+        <div class="plan-price"><span class="amount">₺1.490</span><span class="period"> / ay</span></div>
+        <div class="plan-cut">+ %3 gelir paylaşımı</div>
+        <div class="plan-divider"></div>
+        <div class="plan-features">
+          <div class="plan-feature">Pro'daki her şey</div>
+          <div class="plan-feature">En düşük gelir payı (%3)</div>
+          <div class="plan-feature">3D TV &amp; Radyo erken erişim</div>
+          <div class="plan-feature">Özel şehir markası</div>
+          <div class="plan-feature">Gelişmiş analitik</div>
+          <div class="plan-feature">Özel hesap yöneticisi</div>
+        </div>
+        <a href="kayit.html" class="plan-btn plan-btn-outline">Stüdyo'ya geç</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Şehrin seni bekliyor.<br>Kulübeyle başla.</h2>
+  <p>Kreatown'da dünyalarını kuran erken üreticilere katıl.<br>Başlamak ücretsiz — kredi kartı gerekmez.</p>
+  <a href="kayit.html" class="btn-white">Şehrini ücretsiz kur 🏡</a>
+  <div class="cta-note">3 ay ücretsiz · İstediğin zaman iptal · Anında kurulum</div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">Kreatown</div>
+        <div class="footer-tagline">Üreticilerin evi. Dünyaını kur, imparatorluğunu büyüt ve seni en çok seven hayranlar tarafından ödeme al.</div>
+      </div>
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <a href="#concept">Nasıl çalışır</a>
+        <a href="#features">Özellikler</a>
+        <a href="#plans">Fiyatlar</a>
+        <a href="#creators">Üreticiler</a>
+      </div>
+      <div class="footer-col">
+        <h4>Hesap</h4>
+        <a href="kayit.html">Ücretsiz kaydol</a>
+        <a href="giris.html">Giriş yap</a>
+        <a href="https://kreatown.com/">🌍 English site</a>
+      </div>
+      <div class="footer-col">
+        <h4>Yasal</h4>
+        <a href="kullanim-sartlari.html">Kullanım Şartları</a>
+        <a href="gizlilik.html">Gizlilik Politikası</a>
+        <a href="mailto:merhaba@kreatown.com.tr">İletişim</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 Kreatown. Üreticilerin evi.</span>
+      <div class="footer-links">
+        <a href="gizlilik.html">Gizlilik</a>
+        <a href="kullanim-sartlari.html">Şartlar</a>
+        <a href="mailto:merhaba@kreatown.com.tr">İletişim</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="mob-sticky" style="display:none;" id="mobSticky">
+  <a href="giris.html" class="btn-secondary" style="flex:1;text-align:center;padding:0.75rem;">Giriş yap</a>
+  <a href="kayit.html" class="btn-primary" style="flex:2;text-align:center;padding:0.75rem;">Ücretsiz başla 🏡</a>
+</div>
+
+<script>
+function toggleMobile(){
+  const m=document.getElementById('mobileMenu');
+  const h=document.getElementById('hamburger');
+  m.classList.toggle('open');
+  h.classList.toggle('open');
+  document.body.style.overflow=m.classList.contains('open')?'hidden':'';
+}
+function closeMobile(){
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+  document.body.style.overflow='';
+}
+window.addEventListener('scroll',()=>{
+  const s=document.getElementById('mobSticky');
+  if(window.innerWidth<=768){
+    s.style.display=window.scrollY>300?'flex':'none';
+  }
+});
+window.addEventListener('resize',()=>{
+  if(window.innerWidth>768) closeMobile();
+});
+</script>
+</body>
+</html>

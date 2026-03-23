@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Hesap Oluştur — Kreatown</title>
+<meta name="description" content="Kreatown'a katıl ve yaratıcı şehrini kurmaya başla. 3 ay ücretsiz, kredi kartı gerekmez."/>
+<meta property="og:title" content="Hesap Oluştur — Kreatown"/>
+<meta property="og:image" content="https://kreatown.com.tr/og-image.png"/>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<link rel="canonical" href="https://kreatown.com.tr/tr/kayit.html"/>
+<link rel="alternate" hreflang="tr" href="https://kreatown.com.tr/tr/kayit.html"/>
+<link rel="alternate" hreflang="en" href="https://kreatown.com/register.html"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Cabinet+Grotesk:wght@400;500;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#fffbf5;--bg2:#fff8ee;--black:#1a1612;
+  --orange:#f4732a;--orange-light:#ff9555;--orange-pale:#fff0e6;
+  --yellow:#fbbf24;--green:#22c55e;--green-pale:#f0fdf4;
+  --red:#ef4444;--red-pale:#fff0f0;
+  --muted:#9c8878;--border:rgba(244,115,42,0.15);--card:#ffffff;
+  --input-border:rgba(26,22,18,0.15);--input-focus:var(--orange);
+  --font-display:'Cabinet Grotesk',sans-serif;
+  --font-body:'Nunito',sans-serif;--font-mono:'DM Mono',monospace;
+  --shadow:0 4px 24px rgba(244,115,42,0.08);
+  --shadow-lg:0 12px 48px rgba(244,115,42,0.14);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--black);font-family:var(--font-body);min-height:100vh;display:flex;flex-direction:column;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(244,115,42,0.04) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 3rem;background:rgba(255,251,245,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:relative;z-index:10;}
+.nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--black);text-decoration:none;letter-spacing:-0.03em;}
+.nav-logo span{color:var(--orange);}
+.nav-right{display:flex;align-items:center;gap:1rem;font-size:0.85rem;}
+.nav-right a{color:var(--muted);text-decoration:none;font-weight:700;transition:color 0.2s;}
+.nav-right a:hover{color:var(--orange);}
+.nav-right .login-btn{border:1.5px solid var(--border);padding:0.45rem 1.1rem;border-radius:100px;color:var(--black);}
+.nav-right .login-btn:hover{border-color:var(--orange);color:var(--orange);}
+.page{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 65px);position:relative;z-index:1;}
+.left-panel{background:linear-gradient(145deg,#1a1612 0%,#2d1f14 100%);padding:4rem 3.5rem;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;}
+.left-panel::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(244,115,42,0.08) 1px,transparent 1px);background-size:28px 28px;}
+.left-blob{position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(244,115,42,0.15) 0%,transparent 70%);top:-100px;right:-100px;border-radius:50%;}
+.left-content{position:relative;z-index:1;}
+.left-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(244,115,42,0.15);color:var(--orange);border:1px solid rgba(244,115,42,0.3);padding:0.4rem 1rem;border-radius:100px;font-size:0.75rem;font-weight:800;letter-spacing:0.04em;margin-bottom:2rem;}
+.left-panel h2{font-family:var(--font-display);font-size:clamp(2rem,3.5vw,2.8rem);font-weight:900;color:#fff;line-height:1.1;letter-spacing:-0.03em;margin-bottom:1rem;}
+.left-panel h2 span{color:var(--orange);}
+.left-panel p{font-size:0.95rem;color:rgba(255,255,255,0.6);line-height:1.7;font-weight:500;margin-bottom:2.5rem;max-width:38ch;}
+.perks{display:flex;flex-direction:column;gap:1rem;margin-bottom:3rem;}
+.perk{display:flex;align-items:flex-start;gap:0.9rem;}
+.perk-icon{width:36px;height:36px;border-radius:10px;background:rgba(244,115,42,0.15);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.perk-text strong{display:block;font-size:0.88rem;font-weight:800;color:#fff;margin-bottom:0.1rem;}
+.perk-text span{font-size:0.78rem;color:rgba(255,255,255,0.5);font-weight:600;}
+.mini-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:1.2rem 1.4rem;display:flex;align-items:center;gap:1rem;}
+.mini-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--orange),var(--yellow));display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.mini-info strong{display:block;font-size:0.88rem;font-weight:800;color:#fff;}
+.mini-info span{font-size:0.75rem;color:rgba(255,255,255,0.5);}
+.mini-stat{margin-left:auto;text-align:right;}
+.mini-stat strong{display:block;font-family:var(--font-display);font-size:1.2rem;font-weight:900;color:var(--orange);}
+.mini-stat span{font-size:0.7rem;color:rgba(255,255,255,0.4);font-family:var(--font-mono);}
+.right-panel{padding:3rem 3.5rem;display:flex;flex-direction:column;justify-content:center;overflow-y:auto;}
+.form-wrap{max-width:440px;width:100%;margin:0 auto;}
+.step-indicator{display:flex;align-items:center;gap:0;}
+.step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;font-family:var(--font-mono);border:2px solid var(--border);color:var(--muted);background:var(--bg);transition:all 0.3s;flex-shrink:0;}
+.step-dot.active{background:var(--orange);border-color:var(--orange);color:#fff;box-shadow:0 4px 12px rgba(244,115,42,0.35);}
+.step-dot.done{background:var(--green);border-color:var(--green);color:#fff;}
+.step-line{flex:1;height:2px;background:var(--border);transition:background 0.3s;}
+.step-line.done{background:var(--green);}
+.step-label{font-size:0.72rem;font-weight:700;color:var(--muted);}
+.form-header{margin-bottom:2rem;}
+.form-header h1{font-family:var(--font-display);font-size:1.8rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.4rem;}
+.form-header p{font-size:0.88rem;color:var(--muted);font-weight:600;}
+.form-header p a{color:var(--orange);text-decoration:none;font-weight:800;}
+.oauth-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1.5rem;}
+.oauth-btn{display:flex;align-items:center;justify-content:center;gap:0.6rem;padding:0.75rem;border-radius:12px;border:1.5px solid var(--input-border);background:var(--card);font-size:0.85rem;font-weight:700;color:var(--black);cursor:pointer;transition:all 0.2s;font-family:var(--font-body);}
+.oauth-btn:hover{border-color:var(--orange);background:var(--orange-pale);}
+.oauth-icon{width:20px;height:20px;flex-shrink:0;}
+.divider{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.divider span{font-size:0.75rem;color:var(--muted);font-weight:700;white-space:nowrap;}
+.form-step{display:none;}
+.form-step.active{display:block;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;}
+.field{margin-bottom:1.1rem;}
+.field label{display:block;font-size:0.78rem;font-weight:800;color:var(--black);margin-bottom:0.4rem;}
+.field-wrap{position:relative;}
+.field input{width:100%;padding:0.8rem 1rem 0.8rem 2.6rem;border:1.5px solid var(--input-border);border-radius:12px;font-family:var(--font-body);font-size:0.9rem;font-weight:600;color:var(--black);background:var(--card);transition:all 0.2s;outline:none;}
+.field input:focus{border-color:var(--input-focus);box-shadow:0 0 0 3px rgba(244,115,42,0.12);}
+.field input.error{border-color:var(--red);box-shadow:0 0 0 3px rgba(239,68,68,0.1);}
+.field input.success{border-color:var(--green);}
+.field-icon{position:absolute;left:0.85rem;top:50%;transform:translateY(-50%);font-size:0.9rem;pointer-events:none;}
+.field-suffix{position:absolute;right:0.85rem;top:50%;transform:translateY(-50%);font-size:0.78rem;font-weight:700;color:var(--muted);cursor:pointer;user-select:none;}
+.field-suffix:hover{color:var(--orange);}
+.field-hint{font-size:0.72rem;color:var(--muted);font-weight:600;margin-top:0.3rem;}
+.field-error{font-size:0.72rem;color:var(--red);font-weight:700;margin-top:0.3rem;display:none;}
+.field-error.show{display:block;}
+.username-preview{font-size:0.72rem;font-weight:700;color:var(--orange);margin-top:0.3rem;font-family:var(--font-mono);}
+.pw-strength{margin-top:0.5rem;}
+.pw-bars{display:flex;gap:3px;margin-bottom:0.3rem;}
+.pw-bar{flex:1;height:3px;border-radius:2px;background:var(--border);transition:background 0.3s;}
+.pw-bar.weak{background:#ef4444;}
+.pw-bar.fair{background:var(--yellow);}
+.pw-bar.good{background:#22c55e;}
+.pw-label{font-size:0.7rem;font-weight:700;color:var(--muted);}
+.terms-check{display:flex;align-items:flex-start;gap:0.75rem;margin-bottom:1.5rem;cursor:pointer;}
+.terms-check input[type=checkbox]{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--input-border);accent-color:var(--orange);flex-shrink:0;margin-top:1px;cursor:pointer;}
+.terms-check span{font-size:0.82rem;color:var(--muted);font-weight:600;line-height:1.5;}
+.terms-check span a{color:var(--orange);text-decoration:none;font-weight:800;}
+.plan-cards{display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.5rem;}
+.plan-card{border:2px solid var(--border);border-radius:14px;padding:1.1rem 1.3rem;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:1rem;position:relative;}
+.plan-card:hover{border-color:rgba(244,115,42,0.4);background:var(--orange-pale);}
+.plan-card.selected{border-color:var(--orange);background:var(--orange-pale);}
+.plan-card input[type=radio]{position:absolute;opacity:0;width:0;height:0;}
+.plan-radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.plan-card.selected .plan-radio{border-color:var(--orange);background:var(--orange);}
+.plan-card.selected .plan-radio::after{content:'';width:8px;height:8px;border-radius:50%;background:#fff;}
+.plan-emoji{font-size:1.4rem;flex-shrink:0;}
+.plan-info{flex:1;}
+.plan-info strong{display:block;font-size:0.9rem;font-weight:800;font-family:var(--font-display);}
+.plan-info span{font-size:0.75rem;color:var(--muted);font-weight:600;}
+.plan-price-tag{font-family:var(--font-mono);font-size:0.82rem;font-weight:700;color:var(--orange);white-space:nowrap;text-align:right;}
+.plan-popular{position:absolute;top:-10px;right:1rem;background:var(--orange);color:#fff;font-size:0.62rem;font-weight:800;letter-spacing:0.08em;padding:0.2rem 0.7rem;border-radius:100px;text-transform:uppercase;}
+.submit-btn{width:100%;padding:0.95rem;background:var(--orange);color:#fff;border:none;border-radius:14px;font-family:var(--font-body);font-size:1rem;font-weight:800;cursor:pointer;transition:all 0.2s;box-shadow:0 6px 20px rgba(244,115,42,0.35);display:flex;align-items:center;justify-content:center;gap:0.5rem;}
+.submit-btn:hover{background:var(--orange-light);transform:translateY(-1px);}
+.submit-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.back-btn{width:100%;padding:0.8rem;background:transparent;color:var(--muted);border:1.5px solid var(--border);border-radius:14px;font-family:var(--font-body);font-size:0.9rem;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:0.6rem;}
+.back-btn:hover{border-color:var(--orange);color:var(--orange);}
+.success-screen{display:none;text-align:center;padding:2rem 0;}
+.success-screen.show{display:block;}
+.success-icon{font-size:3.5rem;margin-bottom:1rem;animation:pop 0.4s ease;}
+@keyframes pop{0%{transform:scale(0.5);}70%{transform:scale(1.15);}100%{transform:scale(1);}}
+.success-screen h2{font-family:var(--font-display);font-size:1.8rem;font-weight:900;letter-spacing:-0.02em;margin-bottom:0.5rem;}
+.success-screen p{font-size:0.9rem;color:var(--muted);font-weight:600;line-height:1.6;}
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem;}
+  .page{grid-template-columns:1fr;}
+  .left-panel{display:none;}
+  .right-panel{padding:2rem 1.5rem;}
+}
+@media(max-width:480px){
+  .oauth-row{grid-template-columns:1fr;}
+  .field-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../tr/index.html" class="nav-logo">Krea<span>town</span></a>
+  <div class="nav-right">
+    <span style="font-size:0.85rem;color:var(--muted);font-weight:600;">Zaten üye misin?</span>
+    <a href="giris.html" class="login-btn">Giriş yap</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="left-panel">
+    <div class="left-blob"></div>
+    <div class="left-content">
+      <div class="left-badge">🏡 Erken Erişim · 3 Ay Ücretsiz</div>
+      <h2>Dünyaını kur.<br><span>Hayranlarına sahip ol.</span></h2>
+      <p>Algoritma yok. Aracı yok. Sadece sen, içeriğin ve seni seven hayranlar. Ücretsiz başla.</p>
+      <div class="perks">
+        <div class="perk"><div class="perk-icon">🏡</div><div class="perk-text"><strong>Kendi yaratıcı şehrin</strong><span>Hayranlarının keşfettiği canlı bir dünya</span></div></div>
+        <div class="perk"><div class="perk-icon">💰</div><div class="perk-text"><strong>Kazancının %95'ini koru</strong><span>Sadece küçük bir platform kesintisi alıyoruz</span></div></div>
+        <div class="perk"><div class="perk-icon">💬</div><div class="perk-text"><strong>Katmanlı odalar &amp; DM</strong><span>Gerçek topluluk, sadece bir akış değil</span></div></div>
+        <div class="perk"><div class="perk-icon">📺</div><div class="perk-text"><strong>Radyo, TV &amp; canlı odalar</strong><span>Sürükleyici yaratıcı deneyimler</span></div></div>
+      </div>
+      <div class="mini-card">
+        <div class="mini-avatar">🎨</div>
+        <div class="mini-info"><strong>Topraq Toros</strong><span>3 hafta önce katıldı · Seviye 3</span></div>
+        <div class="mini-stat"><strong>₺7.180</strong><span>bu ay</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="form-wrap">
+
+      <div style="margin-bottom:2rem;">
+        <div class="step-indicator">
+          <div class="step-dot active" id="dot1">1</div>
+          <div class="step-line" id="line1"></div>
+          <div class="step-dot" id="dot2">2</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:0.4rem;">
+          <span class="step-label">Hesabın</span>
+          <span class="step-label">Plan seç</span>
+        </div>
+      </div>
+
+      <!-- STEP 1 -->
+      <div class="form-step active" id="step1">
+        <div class="form-header">
+          <h1>Hesap oluştur</h1>
+          <p>Zaten hesabın var mı? <a href="giris.html">Giriş yap →</a></p>
+        </div>
+
+        <div class="oauth-row">
+          <button class="oauth-btn" onclick="oauthNotice()" type="button">
+            <svg class="oauth-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Google ile devam et
+          </button>
+          <button class="oauth-btn" onclick="oauthNotice()" type="button">
+            <svg class="oauth-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+            Apple ile devam et
+          </button>
+        </div>
+        <div id="oauth-notice" style="display:none;background:var(--orange-pale);border:1px solid rgba(244,115,42,0.2);border-radius:10px;padding:0.7rem 1rem;font-size:0.8rem;font-weight:700;color:var(--orange);margin-bottom:1rem;text-align:center;">
+          Sosyal giriş çok yakında — şimdilik e-posta ile devam et 👇
+        </div>
+
+        <div class="divider"><span>veya e-posta ile kaydol</span></div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="firstName">Ad</label>
+            <div class="field-wrap">
+              <span class="field-icon">👤</span>
+              <input type="text" id="firstName" placeholder="Ayşe" autocomplete="given-name"/>
+            </div>
+            <div class="field-error" id="err-firstName">Adını gir.</div>
+          </div>
+          <div class="field">
+            <label for="lastName">Soyad</label>
+            <div class="field-wrap">
+              <span class="field-icon">👤</span>
+              <input type="text" id="lastName" placeholder="Yılmaz" autocomplete="family-name"/>
+            </div>
+            <div class="field-error" id="err-lastName">Soyadını gir.</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="username">Kullanıcı adı <span style="font-weight:600;color:var(--muted)">(şehir URL'in)</span></label>
+          <div class="field-wrap">
+            <span class="field-icon">🏷️</span>
+            <input type="text" id="username" placeholder="aysekreatif" autocomplete="username" oninput="updateUsernamePreview()"/>
+          </div>
+          <div class="username-preview" id="username-preview" style="display:none;"></div>
+          <div class="field-hint">Harf, rakam ve _ kullanılabilir. Boşluk olmaz.</div>
+          <div class="field-error" id="err-username">Geçerli bir kullanıcı adı seç (harf, rakam, _ olabilir, en az 3 karakter).</div>
+        </div>
+
+        <div class="field">
+          <label for="email">E-posta adresi</label>
+          <div class="field-wrap">
+            <span class="field-icon">✉️</span>
+            <input type="email" id="email" placeholder="ayse@ornek.com" autocomplete="email"/>
+          </div>
+          <div class="field-error" id="err-email">Geçerli bir e-posta adresi gir.</div>
+        </div>
+
+        <div class="field">
+          <label for="password">Şifre</label>
+          <div class="field-wrap">
+            <span class="field-icon">🔒</span>
+            <input type="password" id="password" placeholder="En az 8 karakter" autocomplete="new-password" oninput="checkPasswordStrength()"/>
+            <span class="field-suffix" onclick="togglePassword('password',this)">Göster</span>
+          </div>
+          <div class="pw-strength" id="pw-strength" style="display:none;">
+            <div class="pw-bars">
+              <div class="pw-bar" id="pb1"></div>
+              <div class="pw-bar" id="pb2"></div>
+              <div class="pw-bar" id="pb3"></div>
+              <div class="pw-bar" id="pb4"></div>
+            </div>
+            <div class="pw-label" id="pw-label"></div>
+          </div>
+          <div class="field-error" id="err-password">Şifre en az 8 karakter olmalı.</div>
+        </div>
+
+        <div class="terms-check">
+          <input type="checkbox" id="terms"/>
+          <span>Kreatown'ın <a href="kullanim-sartlari.html" target="_blank">Kullanım Şartları</a>'nı ve <a href="gizlilik.html" target="_blank">Gizlilik Politikası</a>'nı kabul ediyorum</span>
+        </div>
+        <div class="field-error" id="err-terms" style="margin-top:-0.8rem;margin-bottom:1rem;">Devam etmek için şartları kabul et.</div>
+
+        <button class="submit-btn" onclick="goToStep2()">Plana devam et →</button>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="form-step" id="step2">
+        <div class="form-header">
+          <h1>Planını seç</h1>
+          <p>Ücretsiz başla. İstediğin zaman yükselt. Gizli ücret yok.</p>
+        </div>
+
+        <div class="plan-cards">
+          <label class="plan-card" id="plan-starter" onclick="selectPlan('starter')">
+            <input type="radio" name="plan" value="starter"/>
+            <div class="plan-radio"></div>
+            <div class="plan-emoji">🌱</div>
+            <div class="plan-info"><strong>Başlangıç</strong><span>3 ay ücretsiz · %5 kesinti · Başlamak için mükemmel</span></div>
+            <div class="plan-price-tag">Ücretsiz<br><small style="font-size:0.65rem;color:var(--muted)">sonra ₺590/ay</small></div>
+          </label>
+
+          <label class="plan-card selected" id="plan-pro" onclick="selectPlan('pro')">
+            <div class="plan-popular">En Popüler</div>
+            <input type="radio" name="plan" value="pro" checked/>
+            <div class="plan-radio"></div>
+            <div class="plan-emoji">👑</div>
+            <div class="plan-info"><strong>Pro</strong><span>Tüm özellikler · %5 kesinti · Gelişmiş analitik</span></div>
+            <div class="plan-price-tag">₺890<br><small style="font-size:0.65rem;color:var(--muted)">/ay</small></div>
+          </label>
+
+          <label class="plan-card" id="plan-studio" onclick="selectPlan('studio')">
+            <input type="radio" name="plan" value="studio"/>
+            <div class="plan-radio"></div>
+            <div class="plan-emoji">🏯</div>
+            <div class="plan-info"><strong>Stüdyo</strong><span>Tam erişim · Sadece %3 kesinti · Öncelikli destek</span></div>
+            <div class="plan-price-tag">₺1.490<br><small style="font-size:0.65rem;color:var(--muted)">/ay</small></div>
+          </label>
+        </div>
+
+        <button class="submit-btn" onclick="submitForm()">Şehrimi kur 🏡</button>
+        <button class="back-btn" onclick="goToStep1()">← Geri</button>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="success-screen" id="successScreen">
+        <div class="success-icon">🏡</div>
+        <h2>Şehrin hazır!</h2>
+        <p>Kreatown'a hoş geldin.<br/>Paneline yönlendiriliyorsun…</p>
+        <div style="margin-top:1.5rem;font-size:0.8rem;color:var(--muted);"><span id="countdown">3</span> saniye içinde yönlendiriliyorsun…</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function oauthNotice(){
+  const n=document.getElementById('oauth-notice');
+  n.style.display='block';
+  setTimeout(()=>n.style.display='none',4000);
+}
+function updateUsernamePreview(){
+  const v=document.getElementById('username').value.trim();
+  const p=document.getElementById('username-preview');
+  if(v){p.style.display='block';p.textContent='kreatown.com.tr/@'+v;}
+  else p.style.display='none';
+}
+function togglePassword(id,el){
+  const f=document.getElementById(id);
+  if(f.type==='password'){f.type='text';el.textContent='Gizle';}
+  else{f.type='password';el.textContent='Göster';}
+}
+function checkPasswordStrength(){
+  const v=document.getElementById('password').value;
+  const s=document.getElementById('pw-strength');
+  const lbl=document.getElementById('pw-label');
+  const bars=[document.getElementById('pb1'),document.getElementById('pb2'),document.getElementById('pb3'),document.getElementById('pb4')];
+  if(!v){s.style.display='none';return;}
+  s.style.display='block';
+  bars.forEach(b=>b.className='pw-bar');
+  let score=0;
+  if(v.length>=8)score++;
+  if(/[A-Z]/.test(v))score++;
+  if(/[0-9]/.test(v))score++;
+  if(/[^A-Za-z0-9]/.test(v))score++;
+  const cls=score<=1?'weak':score===2?'fair':'good';
+  const labels=['','Zayıf','Orta','İyi','Güçlü'];
+  for(let i=0;i<score;i++)bars[i].classList.add(cls);
+  lbl.textContent=labels[score]||'';
+  lbl.style.color=score<=1?'#ef4444':score===2?'#fbbf24':'#22c55e';
+}
+function validate1(){
+  let ok=true;
+  const fields=[
+    {id:'firstName',err:'err-firstName',test:v=>v.trim().length>0},
+    {id:'lastName',err:'err-lastName',test:v=>v.trim().length>0},
+    {id:'username',err:'err-username',test:v=>/^[a-zA-Z0-9_]{3,}$/.test(v.trim())},
+    {id:'email',err:'err-email',test:v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim())},
+    {id:'password',err:'err-password',test:v=>v.length>=8},
+  ];
+  fields.forEach(f=>{
+    const el=document.getElementById(f.id);
+    const err=document.getElementById(f.err);
+    if(!f.test(el.value)){el.classList.add('error');err.classList.add('show');ok=false;}
+    else{el.classList.remove('error');el.classList.add('success');err.classList.remove('show');}
+  });
+  const terms=document.getElementById('terms');
+  const termsErr=document.getElementById('err-terms');
+  if(!terms.checked){termsErr.classList.add('show');ok=false;}
+  else termsErr.classList.remove('show');
+  return ok;
+}
+function goToStep2(){
+  if(!validate1())return;
+  document.getElementById('step1').classList.remove('active');
+  document.getElementById('step2').classList.add('active');
+  document.getElementById('dot1').classList.remove('active');
+  document.getElementById('dot1').classList.add('done');
+  document.getElementById('dot1').textContent='✓';
+  document.getElementById('line1').classList.add('done');
+  document.getElementById('dot2').classList.add('active');
+  window.scrollTo(0,0);
+}
+function goToStep1(){
+  document.getElementById('step2').classList.remove('active');
+  document.getElementById('step1').classList.add('active');
+  document.getElementById('dot1').classList.add('active');
+  document.getElementById('dot1').classList.remove('done');
+  document.getElementById('dot1').textContent='1';
+  document.getElementById('line1').classList.remove('done');
+  document.getElementById('dot2').classList.remove('active');
+}
+function selectPlan(plan){
+  ['starter','pro','studio'].forEach(p=>document.getElementById('plan-'+p).classList.remove('selected'));
+  document.getElementById('plan-'+plan).classList.add('selected');
+}
+function submitForm(){
+  const btn=document.querySelector('#step2 .submit-btn');
+  btn.disabled=true;btn.textContent='Şehrin kuruluyor…';
+  setTimeout(()=>{
+    document.getElementById('step2').classList.remove('active');
+    document.getElementById('successScreen').classList.add('show');
+    document.getElementById('dot2').classList.remove('active');
+    document.getElementById('dot2').classList.add('done');
+    document.getElementById('dot2').textContent='✓';
+    let t=3;const cd=document.getElementById('countdown');
+    const iv=setInterval(()=>{t--;cd.textContent=t;if(t<=0){clearInterval(iv);window.location.href='dashboard.html';}},1000);
+  },1500);
+}
+document.querySelectorAll('input').forEach(el=>{
+  el.addEventListener('input',()=>{
+    el.classList.remove('error');
+    const err=document.getElementById('err-'+el.id);
+    if(err)err.classList.remove('show');
+  });
+});
+</script>
+</body>
+</html>
