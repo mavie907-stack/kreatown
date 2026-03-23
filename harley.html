@@ -7,7 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#e8941a">
-<script src="/kt-utils.js" defer></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -178,7 +177,7 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
 <!-- HERO -->
 <div class="hero">
   <div class="hero-bg">
-    <img class="hero-bg-img" src="/mnt/user-data/uploads/indir.png" onerror="this.style.display='none'" alt="">
+    <img class="hero-bg-img" src="harley-hero.jpg" onerror="this.style.background='linear-gradient(135deg,#1a0a00,#3d1a00)';this.style.display='none'" alt="Harley Riders">
     <div class="hero-overlay"></div>
     <div class="hero-grain"></div>
   </div>
@@ -258,8 +257,7 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
 
     <!-- FEATURED BIKE -->
     <div class="bike-card">
-      <img class="bike-img" src="/mnt/user-data/uploads/indir.png" 
-           onerror="this.style.display='none'" alt="Harley-Davidson Sportster S">
+      <img class="bike-img" src="harley-bike.jpg" onerror="this.style.display='none'" alt="Harley-Davidson Sportster S">
       <div class="bike-name">Sportster S</div>
       <div class="bike-sub">Revolution Max 1250T · 2024</div>
       <span class="bike-tag">🏍️ Creator's Ride</span>
@@ -330,8 +328,13 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
     <label class="fl">Your story *</label>
     <textarea class="fi fta" id="postContent" placeholder="Share the details — route, feelings, tips…"></textarea>
 
-    <label class="fl">Photo URL (optional)</label>
-    <input class="fi" id="postImg" placeholder="https://... (paste image link)">
+    <label class="fl">Photo (optional)</label>
+    <div id="imgUploadArea" style="border:2px dashed rgba(255,255,255,0.12);border-radius:0.75rem;padding:1rem;text-align:center;cursor:pointer;transition:border-color .2s;margin-bottom:0.5rem" onclick="document.getElementById('postImgFile').click()">
+      <div id="imgPreview" style="display:none;margin-bottom:0.5rem"><img id="imgPreviewEl" style="max-width:100%;max-height:200px;border-radius:0.5rem;object-fit:cover"></div>
+      <div id="imgUploadHint" style="font-size:0.75rem;color:rgba(255,255,255,0.3)">📷 Tap to upload a photo from your device</div>
+      <input type="file" id="postImgFile" accept="image/*" style="display:none" onchange="previewHarleyImg(this)">
+    </div>
+    <input class="fi" id="postImg" placeholder="…or paste an image URL" style="font-size:0.75rem">
 
     <button class="submit-btn" id="submitPostBtn" onclick="submitHarleyPost()">🏍️ Share with the crew</button>
   </div>
@@ -370,7 +373,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('createBox').classList.add('show');
         /* Update nav */
         document.getElementById('navJoin').textContent  = '🏍️ My Dashboard';
-        document.getElementById('navJoin').href          = myProfile.is_admin ? 'dashboard.html' : 'member-dashboard.html';
+        document.getElementById('navJoin').href          = myProfile.is_admin ? 'creator-dashboard.html' : 'member-dashboard.html';
         document.getElementById('heroJoin').textContent  = '🏍️ Go to community →';
         document.getElementById('heroJoin').href         = 'feed.html';
         /* Avatar */
@@ -388,54 +391,62 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 async function loadPosts(){
   try{
-    /* Load harley-tagged posts from main posts table */
+    const session = getSession();
+    const token   = session.access_token || SK;
+
     const res  = await fetch(
-      SB+'/rest/v1/posts?is_published=eq.true&order=created_at.desc&limit=30&select=*',
-      { headers:{'apikey':SK,'Authorization':'Bearer '+SK} }
+      SB+'/rest/v1/posts?is_published=eq.true&order=created_at.desc&limit=50&select=*',
+      { headers:{'apikey':SK,'Authorization':'Bearer '+token} }
     );
     const data = await res.json();
 
-    /* Filter harley posts OR show all if none tagged */
+    /* Match community='harley', type='harley', tags contain 'harley', or any harley category */
     let harleyPosts = Array.isArray(data)
-      ? data.filter(p => p.community === 'harley' || p.tags?.includes('harley'))
+      ? data.filter(p =>
+          p.community === 'harley' ||
+          p.type === 'harley' ||
+          (p.tags && (p.tags.includes('harley') || p.tags.includes('ride'))) ||
+          ['ride','photo','maint','event','gear'].includes(p.community_cat)
+        )
       : [];
 
-    /* If no harley posts yet, show welcome post */
     if(!harleyPosts.length){
       harleyPosts = [{
         id:'welcome',
         user_id:'system',
         title:'🏍️ Welcome to Harley Riders community!',
         content:'This is your space. Share your rides, your bike, your passion. The road is calling — and so is the crew.',
-        type:'harley',
-        community:'harley',
-        tier_required:'free',
-        reactions_heart:0,
-        reactions_fire:0,
+        type:'harley', community:'harley', community_cat:'ride',
+        tier_required:'free', reactions_heart:0, reactions_fire:0,
         created_at:new Date().toISOString(),
         _profile:{display_name:'Topraq',username:'topraq',avatar_url:null,tier:'palace'}
       }];
     }
 
     /* Get profiles */
-    const uids = [...new Set(harleyPosts.map(p=>p.user_id).filter(Boolean))];
+    const uids = [...new Set(harleyPosts.map(p=>p.user_id).filter(id=>id&&id!=='system'))];
     let pMap   = {};
-    if(uids.length && !harleyPosts[0]._profile){
+    if(uids.length){
       const pRes = await fetch(
         SB+'/rest/v1/profiles?id=in.('+uids.join(',')+')&select=id,username,display_name,avatar_url,tier',
-        { headers:{'apikey':SK,'Authorization':'Bearer '+SK} }
+        { headers:{'apikey':SK,'Authorization':'Bearer '+token} }
       );
       const profs = await pRes.json().catch(()=>[]);
       if(Array.isArray(profs)) profs.forEach(p=>pMap[p.id]=p);
-      harleyPosts = harleyPosts.map(p=>({...p,_profile:pMap[p.user_id]||{}}));
     }
+    harleyPosts = harleyPosts.map(p=>({
+      ...p, _profile: p._profile || pMap[p.user_id] || {}
+    }));
 
     allPosts = harleyPosts;
-    document.getElementById('statPosts').textContent = harleyPosts.length;
-    document.getElementById('statRides').textContent = harleyPosts.filter(p=>p.community==='harley'||p.tags?.includes('ride')).length;
+    document.getElementById('statPosts').textContent = harleyPosts.filter(p=>p.id!=='welcome').length;
+    document.getElementById('statRides').textContent = harleyPosts.filter(p=>
+      p.community_cat==='ride'||p.tags?.includes('ride')
+    ).length;
     renderPosts();
   }catch(e){
-    document.getElementById('postsContainer').innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text3)">🏍️ Be the first to post!</div>';
+    document.getElementById('postsContainer').innerHTML =
+      '<div style="text-align:center;padding:3rem;color:var(--text3)">🏍️ Be the first to post!</div>';
   }
 }
 
@@ -545,6 +556,21 @@ function setPostCat(btn, cat){
   postCat = cat;
 }
 
+let harleyCoverFile = null;
+
+function previewHarleyImg(input){
+  const file = input.files[0];
+  if(!file) return;
+  harleyCoverFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('imgPreviewEl').src = e.target.result;
+    document.getElementById('imgPreview').style.display = 'block';
+    document.getElementById('imgUploadHint').textContent = '✅ '+file.name+' — tap to change';
+  };
+  reader.readAsDataURL(file);
+}
+
 async function submitHarleyPost(){
   const session = getSession();
   if(!session.access_token){ toast('Please log in','warn'); return; }
@@ -556,31 +582,62 @@ async function submitHarleyPost(){
   const btn = document.getElementById('submitPostBtn');
   btn.disabled=true; btn.textContent='Sharing…';
 
+  let coverUrl = imgUrl || null;
+
   try{
+    /* Upload image file if selected */
+    if(harleyCoverFile){
+      btn.textContent = 'Uploading photo…';
+      const ext  = harleyCoverFile.name.split('.').pop().toLowerCase();
+      const path = 'harley/'+session.user_id+'-'+Date.now()+'.'+ext;
+      const upRes = await fetch(SB+'/storage/v1/object/posts/'+path,{
+        method:'POST',
+        headers:{
+          'apikey':SK,
+          'Authorization':'Bearer '+session.access_token,
+          'Content-Type':harleyCoverFile.type,
+          'x-upsert':'true'
+        },
+        body: harleyCoverFile
+      });
+      if(upRes.ok){
+        coverUrl = SB+'/storage/v1/object/public/posts/'+path;
+      } else {
+        console.warn('Image upload failed:', await upRes.text());
+        toast('Photo upload failed — post will be shared without image');
+      }
+    }
+
+    btn.textContent = 'Posting…';
     const res = await fetch(SB+'/rest/v1/posts',{
       method:'POST',
       headers:{'apikey':SK,'Authorization':'Bearer '+session.access_token,'Content-Type':'application/json','Prefer':'return=minimal'},
       body:JSON.stringify({
-        user_id:     session.user_id||session.id,
-        creator_id:  session.user_id||session.id,
+        user_id:      session.user_id||session.id,
+        creator_id:   session.user_id||session.id,
         title, content,
-        excerpt:     content.substring(0,140),
-        cover_url:   imgUrl||null,
-        type:        'post',
+        excerpt:      content.substring(0,140),
+        cover_url:    coverUrl,
+        image_url:    coverUrl,
+        type:         'post',
         tier_required:'free',
         is_published: true,
-        community:   'harley',
+        community:    'harley',
         community_cat: postCat,
-        tags:        'harley,'+postCat
+        tags:         'harley,'+postCat
       })
     });
 
     if(res.ok||res.status===201){
       toast('Posted! 🏍️🔥','ok');
       closePostModal();
+      /* Reset form */
       document.getElementById('postTitle').value='';
       document.getElementById('postContent').value='';
       document.getElementById('postImg').value='';
+      document.getElementById('imgPreview').style.display='none';
+      document.getElementById('imgUploadHint').textContent='📷 Tap to upload a photo from your device';
+      harleyCoverFile = null;
       await loadPosts();
     } else {
       const err = await res.json().catch(()=>({}));
