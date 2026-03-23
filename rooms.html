@@ -451,32 +451,113 @@ function renderMessages(room, scrollToBottom=true){
     }
   }
 }
-function selectRoom(id){const room=ROOMS.find(r=>r.id===id);const locked=TIER_ORDER.indexOf(getMyTier())<TIER_ORDER.indexOf(room.tier);if(locked){const cfg=LOCK_CONFIG[room.tier];const lang=getLang();
+function selectRoom(id){
+  const room=ROOMS.find(r=>r.id===id);
+  if(!room) return;
+  const locked=TIER_ORDER.indexOf(getMyTier())<TIER_ORDER.indexOf(room.tier);
+  if(locked){
+    const cfg=LOCK_CONFIG[room.tier];
+    const lang=getLang();
     document.getElementById('lockIcon').textContent=cfg.icon;
     document.getElementById('lockTitle').textContent=lang==='tr'&&cfg.title_tr?cfg.title_tr:cfg.title;
     document.getElementById('lockDesc').textContent=lang==='tr'&&cfg.desc_tr?cfg.desc_tr:cfg.desc;
     const btn=document.getElementById('lockBtn');
     btn.className='lock-btn '+cfg.btnClass;
-    btn.textContent=lang==='tr'&&cfg.btnText_tr?cfg.btnText_tr:cfg.btnText;document.getElementById('lockedOverlay').classList.add('show');return}currentRoom=id;const bg=document.getElementById('roomBg');bg.style.backgroundImage=`url('${room.bg}')`;bg.style.backgroundPosition=room.bgPos||'center center';bg.style.backgroundSize=room.bgSize||'cover';document.getElementById('roomTitle').textContent=room.icon+' '+rn(room);
-    document.getElementById('roomDesc').textContent=rdesc(room);
-    document.getElementById('onlineCount').textContent=room.online+' '+(getLang()==='tr'?'çevrimiçi':'online');
-    document.getElementById('atmText').textContent=ratm(room);document.getElementById('atmDot').style.background=room.atmColor;document.getElementById('msgInput').placeholder=getLang()==='tr'?rn(room).toLowerCase()+' odasında bir şey yaz…':'Say something in '+room.name.toLowerCase()+'...';
+    btn.textContent=lang==='tr'&&cfg.btnText_tr?cfg.btnText_tr:cfg.btnText;
+    document.getElementById('lockedOverlay').classList.add('show');
+    return;
+  }
+  currentRoom=id;
+  const bg=document.getElementById('roomBg');
+  bg.style.backgroundImage=`url('${room.bg}')`;
+  bg.style.backgroundPosition=room.bgPos||'center center';
+  bg.style.backgroundSize=room.bgSize||'cover';
+  document.getElementById('roomTitle').textContent=room.icon+' '+rn(room);
+  document.getElementById('roomDesc').textContent=rdesc(room);
+  document.getElementById('onlineCount').textContent=room.online+' '+(getLang()==='tr'?'çevrimiçi':'online');
+  document.getElementById('atmText').textContent=ratm(room);
+  document.getElementById('atmDot').style.background=room.atmColor;
+  document.getElementById('msgInput').placeholder=getLang()==='tr'?rn(room).toLowerCase()+' odasında bir şey yaz…':'Say something in '+room.name.toLowerCase()+'...';
   document.getElementById('lockedOverlay').classList.remove('show');
   renderRooms();
   createParticles(room.particles);
   /* Reset message tracking AND clear DOM for fresh load */
   room.messages=[]; room._knownIds=new Set(); room._profileCache={};
   const msgEl=document.getElementById('messages');
-  if(msgEl) msgEl.innerHTML='';
-  /* Show loading state */
-  const msgEl=document.getElementById('messages');
-  if(msgEl)msgEl.innerHTML='<div style="padding:2rem;text-align:center;color:rgba(255,255,255,0.25);font-size:0.8rem">Loading messages…</div>';
+  if(msgEl) msgEl.innerHTML='<div style="padding:2rem;text-align:center;color:rgba(255,255,255,0.25);font-size:0.8rem">Loading messages…</div>';
   loadMessages(id);
   subscribeRoom(id);
 }
 function closeOverlay(){document.getElementById('lockedOverlay').classList.remove('show')}
-document.getElementById('sendBtn').addEventListener('click',sendMessage)
-document.getElementById('msgInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendMessage()})
+
+/* ── INIT on DOM ready ── */
+document.addEventListener('DOMContentLoaded', async () => {
+
+  /* Wire up send button and Enter key */
+  document.getElementById('sendBtn')?.addEventListener('click', sendMessage);
+  document.getElementById('msgInput')?.addEventListener('keydown', e=>{
+    if(e.key==='Enter' && !e.shiftKey) sendMessage();
+  });
+
+  /* Load user profile — always fetch fresh from Supabase for accuracy */
+  await loadSidebarProfile();
+
+  /* Render rooms and select lobby */
+  renderRooms();
+  selectRoom('lobby');
+  loadMessages('lobby');
+  subscribeRoom('lobby');
+
+  /* Request notification permission */
+  if('Notification' in window && Notification.permission === 'default'){
+    setTimeout(()=>Notification.requestPermission(), 3000);
+  }
+});
+
+async function loadSidebarProfile(){
+  try{
+    const s=JSON.parse(localStorage.getItem('kt_session')||'{}');
+    let p=JSON.parse(localStorage.getItem('kt_profile')||'{}');
+
+    /* Always fetch fresh profile so admin status is current */
+    if(s.access_token){
+      const uid=s.user_id||s.id;
+      const res=await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+uid+'&select=*',{
+        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+s.access_token}
+      });
+      const data=await res.json();
+      if(data[0]){
+        p=data[0];
+        localStorage.setItem('kt_profile',JSON.stringify(p));
+      }
+    }
+
+    /* Update sidebar UI */
+    const nm=document.getElementById('sidebarName');
+    const tr=document.getElementById('sidebarTier');
+    const av=document.getElementById('sidebarAv');
+    if(nm) nm.textContent=p.display_name||p.username||'Member';
+    if(tr){
+      const tl={palace:'🏯 Palace',gold:'👑 Gold',silver:'⭐ Silver',free:'🌱 Free'};
+      tr.textContent = p.is_admin ? '👑 Admin' : (tl[p.tier||'free']);
+    }
+    if(av&&p.avatar_url) av.innerHTML='<img src="'+p.avatar_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+
+    /* Smart back link */
+    const bl=document.getElementById('backLink');
+    if(bl){
+      const ref=document.referrer;
+      if(ref.includes('creator-dashboard'))bl.href='creator-dashboard.html';
+      else if(ref.includes('member-dashboard'))bl.href='member-dashboard.html';
+      else if(ref.includes('feed'))bl.href='feed.html';
+      else bl.href=p.is_admin?'creator-dashboard.html':'member-dashboard.html';
+    }
+
+    /* Re-render rooms now that we know real tier/admin status */
+    renderRooms();
+
+  }catch(e){ console.log('Sidebar profile error:',e); }
+}
 /* ── SOUND SYSTEM ── */
 let _actx = null;
 let _actxReady = false;
@@ -729,49 +810,7 @@ async function sendMessage(){
   }catch(e){}
 })();
 
-selectRoom('lobby');loadMessages('lobby');subscribeRoom('lobby');
-/* Request notification permission */
-if('Notification' in window && Notification.permission === 'default'){
-  setTimeout(()=>Notification.requestPermission(), 3000);
-}
-
-/* Load user profile for sidebar — fetch from Supabase if not cached */
-(async()=>{
-  try{
-    const s=JSON.parse(localStorage.getItem('kt_session')||'{}');
-    let p=JSON.parse(localStorage.getItem('kt_profile')||'{}');
-
-    /* If profile not cached, fetch it */
-    if((!p.display_name&&!p.username) && s.access_token){
-      const uid=s.user_id||s.id;
-      const res=await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+uid+'&select=*',{
-        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+s.access_token}
-      });
-      const data=await res.json();
-      if(data[0]){
-        p=data[0];
-        localStorage.setItem('kt_profile',JSON.stringify(p));
-      }
-    }
-
-    const nm=document.getElementById('sidebarName');
-    const tr=document.getElementById('sidebarTier');
-    const av=document.getElementById('sidebarAv');
-    if(nm&&(p.display_name||p.username)) nm.textContent=p.display_name||p.username;
-    if(tr){const tl={palace:'🏯 Palace',gold:'👑 Gold',silver:'⭐ Silver',free:'🌱 Free'};tr.textContent=tl[p.tier||'free'];}
-    if(av&&p.avatar_url)av.innerHTML='<img src="'+p.avatar_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
-
-    /* Smart back link */
-    const ref=document.referrer;
-    const bl=document.getElementById('backLink');
-    if(bl){
-      if(ref.includes('dashboard.html'))bl.href='dashboard.html';
-      else if(ref.includes('member-dashboard'))bl.href='member-dashboard.html';
-      else if(ref.includes('feed.html'))bl.href='feed.html';
-      else bl.href=p.is_admin?'creator-dashboard.html':'member-dashboard.html';
-    }
-  }catch(e){ console.log('Sidebar profile error:',e); }
-})();
+/* Creator slug loading — runs independently */
 
 /* ── iOS/MOBILE KEYBOARD FIX ── */
 (function(){
