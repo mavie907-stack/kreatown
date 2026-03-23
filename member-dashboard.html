@@ -257,6 +257,7 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
           <div class="qlinks">
             <a href="feed.html" class="ql"><span class="ql-ic">📰</span><span class="ql-txt"><span data-i18n-en="Community Feed" data-i18n-tr="Topluluk Akışı">Community Feed</span></span><span class="ql-arrow">→</span></a>
             <a href="rooms.html" class="ql"><span class="ql-ic">💬</span><span class="ql-txt">Enter Rooms</span><span class="ql-arrow">→</span></a>
+            <a href="topraq-hub.html" class="ql" id="qlMyTown"><span class="ql-ic">🏡</span><span class="ql-txt"><span data-i18n-en="My Town" data-i18n-tr="Şehrim">My Town</span></span><span class="ql-arrow">→</span></a>
             <a href="topraq-hub.html" class="ql" id="qlCreatorTown"><span class="ql-ic">🏯</span><span class="ql-txt">Topraq's Town</span><span class="ql-arrow">→</span></a>
             <a href="member-hub.html" class="ql" id="qlMyHub"><span class="ql-ic">🪪</span><span class="ql-txt"><span data-i18n-en="My Profile & Posts" data-i18n-tr="Profilim & Yazılar">My Profile & Posts</span></span><span class="ql-arrow">→</span></a>
             <a href="settings.html" class="ql"><span class="ql-ic">⚙️</span><span class="ql-txt">Settings & Profile</span><span class="ql-arrow">→</span></a>
@@ -400,8 +401,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     if(mobProfileBtn) mobProfileBtn.href = myHubUrl;
 
     /* Quick links */
-    const qlMyHub = document.getElementById('qlMyHub');
-    if(qlMyHub) qlMyHub.href = myHubUrl;
+    const qlMyHub  = document.getElementById('qlMyHub');
+    const qlMyTown = document.getElementById('qlMyTown');
+    if(qlMyHub)  qlMyHub.href  = myHubUrl;
+    if(qlMyTown) qlMyTown.href = myTownUrl;
 
     /* Load recent posts & member count */
     loadRecentPosts(tier);

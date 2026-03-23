@@ -1107,8 +1107,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     const paramUser  = urlParams.get('user') || urlParams.get('username');
 
     if(paramUser){
-      /* Load specific user by username */
-      const r0 = await fetch(SB_URL+'/rest/v1/profiles?username=eq.'+encodeURIComponent(paramUser)+'&select=*',{
+      /* Check if it looks like a UUID (36 chars with dashes) or a username */
+      const isUUID = /^[0-9a-f-]{36}$/i.test(paramUser);
+      const query  = isUUID
+        ? SB_URL+'/rest/v1/profiles?id=eq.'+encodeURIComponent(paramUser)+'&select=*'
+        : SB_URL+'/rest/v1/profiles?username=eq.'+encodeURIComponent(paramUser)+'&select=*';
+      const r0 = await fetch(query,{
         headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
       });
       const d0 = await r0.json();
