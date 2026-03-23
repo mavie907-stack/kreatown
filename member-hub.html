@@ -176,11 +176,22 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,251,245,0.92);backdrop
 /* ── MOBILE SIDEBAR TOGGLE ── */
 .sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:149;backdrop-filter:blur(4px)}
 .sb-overlay.open{display:block}
-.mob-menu-btn{display:none;position:fixed;top:0.75rem;left:0.75rem;z-index:200;width:38px;height:38px;border-radius:0.6rem;background:var(--bg2);border:1px solid var(--border);color:var(--text1);font-size:1.1rem;cursor:pointer;align-items:center;justify-content:center}
+.mob-menu-btn{display:none;position:fixed;top:0.75rem;left:0.75rem;z-index:200;width:38px;height:38px;border-radius:0.6rem;background:var(--orange);border:none;color:white;font-size:1.1rem;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(244,115,42,0.3)}
+
+/* ── MOBILE BOTTOM NAV ── */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(255,251,245,0.97);border-top:1px solid rgba(244,115,42,0.15);padding:0.4rem 0 calc(0.4rem + env(safe-area-inset-bottom));z-index:190;backdrop-filter:blur(16px)}
+.mob-items{display:flex;justify-content:space-around;align-items:center}
+.mob-it{display:flex;flex-direction:column;align-items:center;gap:0.15rem;cursor:pointer;padding:0.4rem 0.75rem;border-radius:0.5rem;font-size:0.58rem;color:var(--muted);text-decoration:none;transition:all .15s;-webkit-tap-highlight-color:transparent;min-width:44px;min-height:44px;justify-content:center}
+.mob-it.on{color:var(--orange)}
+.mob-it:active{background:rgba(244,115,42,0.08);transform:scale(0.95)}
+.mob-ico{font-size:1.2rem;line-height:1}
+
 @media(max-width:768px){
   .mob-menu-btn{display:flex}
-  .sb{transform:translateX(-100%);transition:transform .25s ease;position:fixed;z-index:150;height:100vh}
-  .sb.open{transform:translateX(0)}
+  .sb{display:none!important}  /* hide completely — no transform ghost layer */
+  .mob-nav{display:block!important}
+  body{padding-bottom:72px}
+  nav{padding-left:3.5rem}  /* make room for hamburger */
 }
 </style>
 </head>
@@ -190,7 +201,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,251,245,0.92);backdrop
   <a href="index.html" class="nav-logo">Krea<span>Town</span></a>
   <div class="nav-right">
     <span class="admin-badge" id="adminBadge" style="display:none">👑 Admin</span>
-    <a href="dashboard.html" class="nav-btn">Dashboard</a>
+    <a href="creator-dashboard.html" class="nav-btn"><span data-i18n-en="Dashboard" data-i18n-tr="Panel">Dashboard</span></a>
     <a href="rooms.html" class="nav-btn primary">Enter Rooms →</a>
   </div>
 </nav>
@@ -207,7 +218,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,251,245,0.92);backdrop
   <div class="profile-header">
     <div class="profile-avatar" id="profileAvatar">🎨</div>
     <div class="profile-info">
-      <div class="profile-name" id="profileName">Loading…</div>
+      <div class="profile-name" id="profileName"><span data-i18n-en="Loading…" data-i18n-tr="Yükleniyor…">Loading…</span></div>
       <div class="profile-handle" id="profileHandle">@…</div>
       <div class="profile-bio" id="profileBio"></div>
       <div class="profile-tags" id="profileTags"></div>
@@ -235,8 +246,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,251,245,0.92);backdrop
   <!-- STATS -->
   <div class="stats-row">
     <div class="stat"><div class="stat-v" id="statPosts">0</div><div class="stat-l">Posts</div></div>
-    <div class="stat"><div class="stat-v" id="statJoined">—</div><div class="stat-l">Joined</div></div>
-    <div class="stat"><div class="stat-v" id="statTier">Free</div><div class="stat-l">Tier</div></div>
+    <div class="stat"><div class="stat-v" id="statJoined">—</div><div class="stat-l"><span data-i18n-en="Joined" data-i18n-tr="Katıldı">Joined</span></div></div>
+    <div class="stat"><div class="stat-v" id="statTier"><span data-i18n-en="Free" data-i18n-tr="Ücretsiz">Free</span></div><div class="stat-l"><span data-i18n-en="Tier" data-i18n-tr="Kademe">Tier</span></div></div>
   </div>
 
   <!-- CONTENT -->
@@ -678,6 +689,19 @@ async function publishPost(){
 /* Show create button if viewing own profile */
 function checkOwnProfile(){
   if(!myProfile || !currentProfile) return;
+
+  /* Wire mobile nav Town button to the viewed profile's town */
+  const mobTownBtn = document.getElementById('mobHubTownBtn');
+  if(mobTownBtn){
+    const uname = currentProfile.username || currentProfile.id;
+    mobTownBtn.href = 'topraq-hub.html?user=' + encodeURIComponent(uname);
+    /* If viewing own profile, mark Town as active */
+    if(myProfile.id === currentProfile.id){
+      document.querySelectorAll('.mob-it').forEach(b => b.classList.remove('on'));
+      mobTownBtn.classList.add('on');
+    }
+  }
+
   if(myProfile.id === currentProfile.id || isAdmin){
     document.getElementById('createBtn').classList.add('show');
   }
@@ -714,9 +738,20 @@ function setLang(lang){
 
 /* Mobile sidebar */
 function toggleMobileSidebar(){
-  document.querySelector('.sb')?.classList.toggle('open');
+  document.querySelector('.sidebar')?.classList.toggle('open');
   document.getElementById('sbOverlay')?.classList.toggle('open');
 }
 </script>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="mob-nav">
+  <div class="mob-items">
+    <a href="member-dashboard.html" class="mob-it"><span class="mob-ico">🏠</span>Home</a>
+    <a href="feed.html" class="mob-it"><span class="mob-ico">📰</span>Feed</a>
+    <a href="rooms.html" class="mob-it"><span class="mob-ico">💬</span>Rooms</a>
+    <a href="#" class="mob-it on" id="mobHubTownBtn"><span class="mob-ico">🏯</span>Town</a>
+    <a href="settings.html" class="mob-it"><span class="mob-ico">⚙️</span>Settings</a>
+  </div>
+</nav>
 </body>
 </html>
