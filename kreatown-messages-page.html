@@ -170,17 +170,17 @@
 <aside class="sidebar">
   <div class="sidebar-logo">Kreatown<span class="dot"></span></div>
   <nav class="sidebar-nav">
-    <button class="nav-item">📊 Overview</button>
-    <button class="nav-item">📝 My Content</button>
-    <button class="nav-item">👥 Members</button>
-    <button class="nav-item active">💬 Messages <span class="nav-badge">3</span></button>
-    <button class="nav-item">💰 Earnings</button>
-    <button class="nav-item">🔗 My Hub Page</button>
-    <button class="nav-item">⚙️ Settings</button>
+    <a href="member-dashboard.html" class="nav-item">📊 Overview</a>
+    <a href="member-hub.html" class="nav-item" id="navMyContent">📝 My Content</a>
+    <a href="feed.html" class="nav-item">👥 Community</a>
+    <a href="messages.html" class="nav-item active">💬 Messages <span class="nav-badge" id="navMsgBadge">3</span></a>
+    <a href="member-dashboard.html" class="nav-item">💰 Dashboard</a>
+    <a href="topraq-hub.html" class="nav-item" id="navMyHub">🔗 My Hub Page</a>
+    <a href="settings.html" class="nav-item">⚙️ Settings</a>
   </nav>
   <div class="sidebar-user">
-    <div class="user-av">AJ</div>
-    <div><div class="user-name">Alex Johnson</div><div class="user-handle">@alexjohnson</div></div>
+    <div class="user-av" id="sidebarAv">🎨</div>
+    <div><div class="user-name" id="sidebarName">Loading…</div><div class="user-handle" id="sidebarHandle">@…</div></div>
   </div>
 </aside>
 
@@ -519,7 +519,57 @@
   window.addEventListener('load', () => {
     const first = document.querySelector('.conv-item')
     if (first) first.click()
+
+    // Load real profile into sidebar
+    loadSidebarProfile()
   })
+
+  async function loadSidebarProfile(){
+    try{
+      const s = JSON.parse(localStorage.getItem('kt_session')||'{}')
+      if(!s.access_token) return
+
+      const uid = s.user_id || s.id
+      const SB_URL = 'https://pkhoyabazudqmfczkhax.supabase.co'
+      const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8'
+
+      // Try cache first
+      let p = JSON.parse(localStorage.getItem('kt_profile')||'{}')
+      if(!p.display_name && !p.username){
+        const res  = await fetch(SB_URL+'/rest/v1/profiles?id=eq.'+uid+'&select=*',{
+          headers:{'apikey':SB_KEY,'Authorization':'Bearer '+s.access_token}
+        })
+        const data = await res.json()
+        p = data[0] || {}
+        if(p.id) localStorage.setItem('kt_profile', JSON.stringify(p))
+      }
+
+      // Update sidebar
+      const nm = document.getElementById('sidebarName')
+      const hd = document.getElementById('sidebarHandle')
+      const av = document.getElementById('sidebarAv')
+      if(nm) nm.textContent = p.display_name || p.username || 'Member'
+      if(hd) hd.textContent = '@' + (p.username || '')
+      if(av){
+        if(p.avatar_url){
+          av.innerHTML = '<img src="'+p.avatar_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'
+        } else {
+          av.textContent = (p.display_name||p.username||'?').charAt(0).toUpperCase()
+        }
+      }
+
+      // Wire up dynamic nav links
+      const username = p.username || uid
+      const myHubLink = document.getElementById('navMyHub')
+      if(myHubLink) myHubLink.href = 'topraq-hub.html?user=' + encodeURIComponent(username)
+      const myContentLink = document.getElementById('navMyContent')
+      if(myContentLink) myContentLink.href = 'member-hub.html?user=' + encodeURIComponent(username)
+
+      // Redirect admin to messages.html (full version) instead
+      if(p.is_admin) window.location.href = 'messages.html'
+
+    }catch(e){ console.log('Sidebar profile error:', e) }
+  }
 </script>
 </body>
 </html>

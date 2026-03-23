@@ -346,24 +346,41 @@ async function sendNewDM(){
   const s = getSession();
   if(!s){ showToast('Please log in first'); window.location.href='login.html'; return; }
 
-  /* Resolve recipient by username */
-  const res  = await fetch(SB_URL+'/rest/v1/profiles?username=eq.'+encodeURIComponent(to)+'&select=id,display_name',{
-    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
-  });
+  /* Resolve recipient by username OR display_name */
+  const res = await fetch(
+    SB_URL+'/rest/v1/profiles?or=(username.eq.'+encodeURIComponent(to)+',display_name.ilike.'+encodeURIComponent('%'+to+'%')+')&select=id,display_name,username&limit=1',
+    {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}}
+  );
   const data = await res.json();
   const recipient = data[0];
   if(!recipient){ showToast('Member @'+to+' not found 🔍'); return; }
 
-  /* Insert notification → acts as a DM */
+  const senderName = myProfile?.display_name || myProfile?.username || 'Admin';
+  const uid = s.user_id || s.id;
+
+  /* 1. Send notification TO recipient */
   const r = await fetch(SB_URL+'/rest/v1/notifications',{
     method:'POST',
     headers:{...hdr(s.access_token),'Prefer':'return=minimal'},
     body:JSON.stringify([{
       user_id: recipient.id,
-      title:   '💬 Message from '+(myProfile?.display_name||'Someone'),
+      title:   '💬 Message from '+senderName,
       body:    msg,
       type:    'dm',
       is_read: false
+    }])
+  });
+
+  /* 2. Save sent copy in admin's OWN inbox so it shows in their messages */
+  await fetch(SB_URL+'/rest/v1/notifications',{
+    method:'POST',
+    headers:{...hdr(s.access_token),'Prefer':'return=minimal'},
+    body:JSON.stringify([{
+      user_id: uid,
+      title:   '📤 Sent to '+(recipient.display_name||recipient.username),
+      body:    msg,
+      type:    'dm',
+      is_read: true  /* already read — it's the sent copy */
     }])
   });
 
@@ -371,12 +388,12 @@ async function sendNewDM(){
     document.getElementById('newDmModal').style.display='none';
     if(toInput)  toInput.value='';
     if(msgInput) msgInput.value='';
-    showToast('Message sent to '+recipient.display_name+' ✅');
-    /* Reload conversation list */
-    const sess = getSession();
-    if(sess) await loadNotifications(sess.user_id||sess.id, sess.access_token);
+    showToast('✅ Message sent to '+(recipient.display_name||recipient.username));
+    /* Reload */
+    await loadNotifications(uid, s.access_token);
   } else {
-    showToast('Failed to send — please try again ❌');
+    const err = await r.json().catch(()=>({}));
+    showToast('Failed to send: '+(err.message||'try again') +' ❌');
   }
 }
 
@@ -395,11 +412,11 @@ function searchMessages(){
 const ROOMS=[
   {id:'lobby',      icon:'🛎️', name:'Hotel Lobby',    minTier:'free'},
   {id:'restaurant', icon:'🍽️', name:'The Restaurant',  minTier:'free'},
-  {id:'superior',   icon:'🛏️', name:'Superior Room',   minTier:'silver'},
-  {id:'resting',    icon:'🛋️', name:'Resting Lounge',  minTier:'silver'},
-  {id:'pool',       icon:'🌊', name:'Thermal Pool',    minTier:'gold'},
-  {id:'radio',      icon:'📻', name:'3D Radio',        minTier:'gold'},
-  {id:'tv',         icon:'📺', name:'Cinema TV',       minTier:'palace'}
+  {id:'superior',   icon:'🛏️', name:'Superior Room',   minTier:'free'},
+  {id:'resting',    icon:'🛋️', name:'Resting Lounge',  minTier:'free'},
+  {id:'pool',       icon:'🌊', name:'Thermal Pool',    minTier:'free'},
+  {id:'radio',      icon:'📻', name:'3D Radio',        minTier:'free'},
+  {id:'tv',         icon:'📺', name:'Cinema TV',       minTier:'free'}
 ];
 
 const TIER_ORDER=['free','silver','gold','palace'];
@@ -494,38 +511,36 @@ function showLockOverlay(roomId){
     <div class="sidebar-logo-text">Krea<span>Town</span></div>
   </div>
   <div class="sidebar-creator">
-    <div class="sc-avatar">🎨</div>
+    <div class="sc-avatar" id="scAvatar">🎨</div>
     <div>
-      <div class="sc-name">Topraq Toros</div>
-      <div class="sc-level">⭐ Level 7 Creator</div>
+      <div class="sc-name" id="scName">Loading…</div>
+      <div class="sc-level" id="scLevel">✍️ Creator</div>
     </div>
-    <div class="sc-badge">ADMIN</div>
+    <div class="sc-badge" id="scBadge" style="display:none">ADMIN</div>
   </div>
-    <nav class="sidebar-nav">
+  <nav class="sidebar-nav">
     <div class="nav-section-label">Overview</div>
-    <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
-    <a href="earnings.html" class="nav-item"><span class="nav-icon">💰</span> Earnings</a>
-    <a href="members.html" class="nav-item"><span class="nav-icon">👥</span> Members <span class="nav-badge">44</span></a>
+    <a href="creator-dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+    <a href="settings.html#stripe" class="nav-item"><span class="nav-icon">💰</span> Earnings</a>
+    <a href="kreatown-members-page.html" class="nav-item"><span class="nav-icon">👥</span> Members <span class="nav-badge" id="memberCountBadge">…</span></a>
     <div class="nav-section-label">Content</div>
-    <a href="#" class="nav-item"><span class="nav-icon">✍️</span> Posts <span style="font-size:0.55rem;color:var(--text3);margin-left:auto;padding:0.1rem 0.38rem;border:1px solid var(--border);border-radius:100px">Soon</span></a>
-    <a href="#" class="nav-item"><span class="nav-icon">🔒</span> Tiers <span style="font-size:0.55rem;color:var(--text3);margin-left:auto;padding:0.1rem 0.38rem;border:1px solid var(--border);border-radius:100px">Soon</span></a>
-    <a href="messages.html" class="nav-item active"><span class="nav-icon">💬</span> Messages <span class="nav-badge">3</span></a>
+    <a href="feed.html" class="nav-item"><span class="nav-icon">✍️</span> Posts</a>
+    <a href="settings.html" class="nav-item"><span class="nav-icon">🔒</span> Tiers</a>
+    <a href="messages.html" class="nav-item active"><span class="nav-icon">💬</span> <span data-i18n-en="Messages" data-i18n-tr="Mesajlar">Messages</span> <span class="nav-badge" id="unreadBadgeSidebar">…</span></a>
     <div class="nav-section-label">My Town</div>
-    <a href="topraq-hub.html" class="nav-item"><span class="nav-icon">🏯</span> My Palace</a>
-    <a href="rooms.html" class="nav-item"><span class="nav-icon">🏠</span> Rooms</a>
+    <a href="topraq-hub.html" class="nav-item" id="navMyPalace"><span class="nav-icon">🏯</span> My Palace</a>
+    <a href="rooms.html" class="nav-item"><span class="nav-icon">🏠</span> <span data-i18n-en="Rooms" data-i18n-tr="Odalar">Rooms</span></a>
     <a href="radio.html" class="nav-item"><span class="nav-icon">🎵</span> 3D Radio</a>
     <a href="tv.html" class="nav-item"><span class="nav-icon">📺</span> 3D TV</a>
-    <a href="kreatown-town-view.html" class="nav-item"><span class="nav-icon">🗺️</span> Town Map</a>
-    <a href="#" class="nav-item"><span class="nav-icon">🏆</span> Competitions <span style="font-size:0.55rem;color:var(--text3);margin-left:auto;padding:0.1rem 0.38rem;border:1px solid var(--border);border-radius:100px">Soon</span></a>
     <div class="nav-section-label">Settings</div>
     <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
     <a href="settings.html#stripe" class="nav-item"><span class="nav-icon">💳</span> Stripe Connect</a>
-    <a href="member-hub.html" class="nav-item" style="color:var(--emerald);border-left:2px solid rgba(45,171,128,0.3)"><span class="nav-icon">🪪</span> My Profile</a>
-    <a href="admin.html" class="nav-item" style="color:var(--orange);border-left:2px solid rgba(244,115,42,0.3)"><span class="nav-icon">👑</span> Admin Panel</a>
+    <a href="member-hub.html" class="nav-item" id="navMyProfile" style="color:var(--emerald);border-left:2px solid rgba(45,171,128,0.3)"><span class="nav-icon">🪪</span> My Profile</a>
+    <a href="creator-dashboard.html" class="nav-item" style="color:var(--orange);border-left:2px solid rgba(244,115,42,0.3)"><span class="nav-icon">👑</span> Admin Panel</a>
   </nav>
   <div class="sidebar-bottom">
     <div class="level-mini">
-      <div class="lm-top"><span class="lm-label">Level 7 → 8</span><span class="lm-val">620 / 1000 xp</span></div>
+      <div class="lm-top"><span class="lm-label" id="lvlLabel">Palace</span><span class="lm-val" id="lvlVal">Admin</span></div>
       <div class="lm-track"><div class="lm-fill" id="lvlFill"></div></div>
     </div>
   </div>
@@ -538,7 +553,7 @@ function showLockOverlay(roomId){
   <div class="conv-list">
     <div class="conv-header">
       <div class="conv-header-top">
-        <div class="conv-title">Messages</div>
+        <div class="conv-title"><span data-i18n-en="Messages" data-i18n-tr="Mesajlar">Messages</span></div>
         <button class="new-dm-btn" title="New DM" onclick="openNewDM()">✏️</button>
       </div>
       <div class="conv-tabs">
@@ -560,8 +575,8 @@ function showLockOverlay(roomId){
     <!-- Empty state (default) -->
     <div class="empty-chat" id="emptyChat">
       <div class="empty-icon">💬</div>
-      <div class="empty-title">Select a conversation</div>
-      <div class="empty-sub">Choose a DM or room from the list<br>to start chatting with your fans.</div>
+      <div class="empty-title"><span data-i18n-en="Select a conversation" data-i18n-tr="Konuşma seç">Select a conversation</span></div>
+      <div class="empty-sub"><span data-i18n-en="Choose a DM or room from the list" data-i18n-tr="Listeden bir DM veya oda seç">Choose a DM or room from the list</span><br><span data-i18n-en="to start chatting with your fans." data-i18n-tr="hayranlarınla sohbet etmeye başla.">to start chatting with your fans.</span></div>
     </div>
 
     <!-- Active chat -->
@@ -610,7 +625,7 @@ function showLockOverlay(roomId){
   <!-- COL 3: Room members panel -->
   <div class="members-panel hidden" id="membersPanel">
     <div class="mp-header">
-      <div class="mp-title" id="mpTitle">Members online</div>
+      <div class="mp-title" id="mpTitle"><span data-i18n-en="Members online" data-i18n-tr="Çevrimiçi üyeler">Members online</span></div>
     </div>
     <div class="mp-list" id="mpList"></div>
   </div>
@@ -651,12 +666,37 @@ window.addEventListener('DOMContentLoaded', async()=>{
     myProfile=data[0];
     if(!myProfile)return;
 
-    /* Set tier for room access gating */
-    myTier = myProfile.tier || 'free';
+    /* Set tier — admin bypasses all locks */
+    myTier = myProfile.is_admin ? 'palace' : (myProfile.tier || 'free');
 
-    /* Update sidebar avatar */
-    const av=document.querySelector('.sc-avatar');
-    if(av&&myProfile.avatar_url)av.innerHTML='<img src="'+myProfile.avatar_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+    /* ── Update sidebar with real profile ── */
+    const av   = document.getElementById('scAvatar');
+    const name = document.getElementById('scName');
+    const lvl  = document.getElementById('scLevel');
+    const badge= document.getElementById('scBadge');
+
+    if(av && myProfile.avatar_url)
+      av.innerHTML='<img src="'+myProfile.avatar_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+    if(name) name.textContent = myProfile.display_name||myProfile.username||'Creator';
+    if(lvl)  lvl.textContent  = myProfile.is_admin ? '👑 Admin' : ('✍️ ' + (myProfile.tier||'free').charAt(0).toUpperCase()+(myProfile.tier||'free').slice(1));
+    if(badge && myProfile.is_admin) badge.style.display='block';
+
+    /* Dynamic profile/town links */
+    const username = myProfile.username || uid;
+    const navMyProfile = document.getElementById('navMyProfile');
+    const navMyPalace  = document.getElementById('navMyPalace');
+    if(navMyProfile) navMyProfile.href = 'member-hub.html?user='+encodeURIComponent(username);
+    if(navMyPalace)  navMyPalace.href  = 'topraq-hub.html?user='+encodeURIComponent(username);
+
+    /* Load member count for badge */
+    fetch(SB_URL+'/rest/v1/profiles?is_admin=eq.false&select=id',{headers:hdr(token)})
+      .then(r=>r.json()).then(d=>{
+        const badge = document.getElementById('memberCountBadge');
+        if(badge && Array.isArray(d)) badge.textContent = d.length;
+      }).catch(()=>{});
+
+    /* Animate level bar */
+    setTimeout(()=>{ const f=document.getElementById('lvlFill'); if(f) f.style.width='85%'; },400);
 
     await loadNotifications(uid,token);
   }catch(e){console.error(e);}
@@ -664,34 +704,39 @@ window.addEventListener('DOMContentLoaded', async()=>{
 
 async function loadNotifications(uid,token){
   try{
-    const res=await fetch(SB_URL+'/rest/v1/notifications?user_id=eq.'+uid+'&order=created_at.desc&limit=50',{headers:hdr(token)});
+    /* Load notifications addressed to this user */
+    const res=await fetch(
+      SB_URL+'/rest/v1/notifications?user_id=eq.'+uid+'&order=created_at.desc&limit=100',
+      {headers:hdr(token)}
+    );
+    if(!res.ok){
+      console.error('Notifications fetch failed:', res.status);
+      renderConvList([]);
+      return;
+    }
     const notifs=await res.json();
 
-    const unread=notifs.filter(n=>!n.is_read).length;
+    /* Always show DMs tab first */
+    activeTab = 'dms';
+    document.getElementById('tabDMs')?.classList.add('active');
+    document.getElementById('tabRooms')?.classList.remove('active');
 
-    /* Render into convItems */
-    const convEl=document.getElementById('convItems');
-    if(!convEl)return;
+    renderConvList(Array.isArray(notifs) ? notifs : []);
 
-    const typeIcons={new_member:'🎉',dm:'💬',warning:'⚠️',announcement:'📢',room_broadcast:'🏠',gift:'🎁'};
-
-    if(!notifs.length){
-      renderConvList([]);
-    } else {
-      renderConvList(notifs);
-    }
-
-    /* Update unread badge in nav */
-    const unread=notifs.filter(n=>!n.is_read).length;
-    document.querySelectorAll('.notif-count,.unread-badge,[id*="Badge"]').forEach(el=>{
-      el.textContent=unread;
-      el.style.display=unread>0?'flex':'none';
+    /* Update unread badges */
+    const unread = (Array.isArray(notifs)?notifs:[]).filter(n=>!n.is_read).length;
+    document.querySelectorAll('.notif-count,.unread-badge,[id*="Badge"],.nav-badge').forEach(el=>{
+      if(el.id === 'memberCountBadge') return; /* skip member count badge */
+      if(unread > 0){ el.textContent=unread; el.style.display='flex'; }
+      else { el.style.display='none'; }
     });
+    const sideBadge = document.getElementById('unreadBadgeSidebar');
+    if(sideBadge){ sideBadge.textContent = unread || ''; sideBadge.style.display = unread ? 'inline' : 'none'; }
 
     /* Auto-open first notif */
-    if(notifs.length&&!activeNotif){
+    if(Array.isArray(notifs) && notifs.length && !activeNotif){
       const el=document.querySelector('#convItems > [data-conv-item]');
-      if(el) el.click();
+      if(el) setTimeout(()=>el.click(), 100);
     }
   }catch(e){console.error('notifs error',e);}
 }
@@ -780,7 +825,7 @@ function openNotif(el, id, encoded){
         </div>
       </div>` : ''}
 
-      ${n.type==='new_member'?`<div style="margin:0.5rem 0;padding:0.65rem 1rem;background:rgba(45,171,128,0.08);border:1px solid rgba(45,171,128,0.2);border-radius:0.75rem;font-size:0.78rem;color:#2dab80">🎉 New member joined! <a href="members.html" style="color:#f4732a">View members →</a></div>`:''}`;
+      ${n.type==='new_member'?`<div style="margin:0.5rem 0;padding:0.65rem 1rem;background:rgba(45,171,128,0.08);border:1px solid rgba(45,171,128,0.2);border-radius:0.75rem;font-size:0.78rem;color:#2dab80">🎉 New member joined! <a href="kreatown-members-page.html" style="color:#f4732a">View members →</a></div>`:''}`;
     chatEl.scrollTop=chatEl.scrollHeight;
   }
 
@@ -808,27 +853,63 @@ async function markRead(id){
 }
 
 async function sendReply(notifId){
-  const s=getSession();if(!s)return;
+  const s=getSession(); if(!s)return;
   const msg=document.getElementById('chatInput')?.value?.trim();
   if(!msg)return;
-  /* Send to admin */
-  const aRes=await fetch(SB_URL+'/rest/v1/profiles?is_admin=eq.true&select=id',{headers:hdr(SB_KEY)});
-  const admins=await aRes.json();
-  if(admins[0]){
-    await fetch(SB_URL+'/rest/v1/notifications',{
-      method:'POST',headers:hdr(s.access_token),
-      body:JSON.stringify([{user_id:admins[0].id,title:'💬 Reply from '+myProfile?.display_name,body:msg,type:'dm'}])
-    });
-    document.getElementById('chatInput').value='';
-    /* Show sent message */
-    const chatEl=document.getElementById('chatMessages');
-    if(chatEl){
-      chatEl.innerHTML+=`<div style="display:flex;justify-content:flex-end;margin:0.5rem 0">
-        <div style="background:#f4732a;border-radius:0.875rem 0 0.875rem 0.875rem;padding:0.65rem 1rem;font-size:0.83rem;color:white;max-width:75%">${msg}</div>
-      </div>`;
-      chatEl.scrollTop=chatEl.scrollHeight;
-    }
+
+  const uid   = s.user_id||s.id;
+  const token = s.access_token;
+  const senderName = myProfile?.display_name || myProfile?.username || 'Admin';
+
+  /* Figure out WHO to reply to:
+     - If this is a DM from a member (title contains "from"), extract their user_id from meta
+     - Otherwise default: if admin is replying, send back to the notification's original sender */
+  let replyToId = null;
+
+  /* Try to get sender from the active notification */
+  if(activeNotif){
+    try{
+      const meta = activeNotif.meta ? JSON.parse(activeNotif.meta) : {};
+      if(meta.sender_id) replyToId = meta.sender_id;
+    }catch(e){}
   }
+
+  /* If can't determine from meta, and WE are admin, reply to all members who sent DMs recently */
+  /* Simple fallback: just save in admin's own inbox as sent copy */
+  const notifBody = [{
+    user_id: uid, /* sent copy for admin */
+    title:   '📤 Sent reply',
+    body:    msg,
+    type:    'dm',
+    is_read: true
+  }];
+
+  /* If we have a replyToId, also send to them */
+  if(replyToId && replyToId !== uid){
+    notifBody.push({
+      user_id: replyToId,
+      title:   '💬 Reply from '+senderName,
+      body:    msg,
+      type:    'dm',
+      is_read: false
+    });
+  }
+
+  await fetch(SB_URL+'/rest/v1/notifications',{
+    method:'POST', headers:{...hdr(token),'Prefer':'return=minimal'},
+    body:JSON.stringify(notifBody)
+  });
+
+  document.getElementById('chatInput').value='';
+  const chatEl=document.getElementById('chatMessages');
+  if(chatEl){
+    chatEl.innerHTML+=`<div style="display:flex;justify-content:flex-end;margin:0.5rem 0">
+      <div style="background:#f4732a;border-radius:0.875rem 0 0.875rem 0.875rem;padding:0.65rem 1rem;font-size:0.83rem;color:white;max-width:75%">${msg.replace(/</g,'&lt;')}</div>
+    </div>`;
+    chatEl.scrollTop=chatEl.scrollHeight;
+  }
+  /* Reload to show sent copy */
+  await loadNotifications(uid, token);
 }
 
 async function handlePalaceDecision(decision, applicantId, applicantName, notifId){
@@ -916,6 +997,27 @@ setTimeout(()=>{ const f=document.getElementById('lvlFill'); if(f) f.style.width
 
 /* Refresh every 30s */
 setInterval(async()=>{const s=getSession();if(!s)return;await loadNotifications(s.user_id||s.id,s.access_token);},30000);
+
+/* ── i18n ── */
+function setLang(lang){
+  try{localStorage.setItem('kt_lang',lang);}catch(e){}
+  document.querySelectorAll('[data-i18n-en]').forEach(el=>{
+    const v=el.getAttribute('data-i18n-'+lang);
+    if(v!==null)el.innerHTML=v;
+  });
+  document.querySelectorAll('[data-lang]').forEach(btn=>{
+    const on=btn.getAttribute('data-lang')===lang;
+    btn.style.background=on?'rgba(244,115,42,0.15)':'transparent';
+    btn.style.color=on?'var(--orange)':'rgba(255,255,255,0.45)';
+    btn.style.fontWeight=on?'600':'400';
+  });
+  document.documentElement.lang=lang;
+}
+(function(){
+  let l='en';try{l=localStorage.getItem('kt_lang')||'en';}catch(e){}
+  if(l!=='tr'&&l!=='en'){const b=(navigator.language||'').toLowerCase();l=b.startsWith('tr')?'tr':'en';}
+  setLang(l);
+})();
 </script>
 
 <!-- ── NEW DM MODAL ── -->
