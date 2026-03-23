@@ -1099,17 +1099,32 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  /* Load creator profile — try admin first, fallback to username */
+  /* Load creator profile — check URL param first, then admin fallback */
   let creator = null;
   try{
-    /* Try by is_admin */
-    const r1 = await fetch(SB_URL+'/rest/v1/profiles?is_admin=eq.true&select=*&limit=1',{
-      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
-    });
-    const d1 = await r1.json();
-    creator = d1[0] || null;
+    /* Check for ?user=username param — allows members to view their own hub */
+    const urlParams  = new URLSearchParams(window.location.search);
+    const paramUser  = urlParams.get('user') || urlParams.get('username');
 
-    /* Fallback: try username=topraq */
+    if(paramUser){
+      /* Load specific user by username */
+      const r0 = await fetch(SB_URL+'/rest/v1/profiles?username=eq.'+encodeURIComponent(paramUser)+'&select=*',{
+        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+      });
+      const d0 = await r0.json();
+      creator = d0[0] || null;
+    }
+
+    /* No param — load admin (Topraq's town) */
+    if(!creator){
+      const r1 = await fetch(SB_URL+'/rest/v1/profiles?is_admin=eq.true&select=*&limit=1',{
+        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+      });
+      const d1 = await r1.json();
+      creator = d1[0] || null;
+    }
+
+    /* Final fallback: try username=topraq */
     if(!creator){
       const r2 = await fetch(SB_URL+'/rest/v1/profiles?username=eq.topraq&select=*',{
         headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
@@ -1164,13 +1179,18 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 async function loadPosts(myTier, creatorId){
   try{
-    // Show all published posts (community feed style)
+    const session = getSession();
+    const token   = session?.access_token || SB_KEY;
+
+    /* Filter by creator when viewing a specific member's hub */
     let url = SB_URL+'/rest/v1/posts?is_published=eq.true&order=created_at.desc&select=*';
-    // Optional: filter by creator - comment out for community feed
-    // if(creatorId) url += '&creator_id=eq.'+creatorId;
+    if(creatorId){
+      /* Show posts by this specific creator (by user_id OR creator_id) */
+      url += '&or=(user_id.eq.'+creatorId+',creator_id.eq.'+creatorId+')';
+    }
 
     const res = await fetch(url,{
-      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token}
     });
     if(!res.ok) throw new Error('Failed');
     const posts = await res.json();

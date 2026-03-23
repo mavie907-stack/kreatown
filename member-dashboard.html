@@ -136,9 +136,9 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
 .toast.warn{border-color:rgba(244,115,42,0.35);color:var(--orange)}
 
 @media(max-width:768px){
-  .sb{display:none}
+  .sb{display:none!important}  /* fully hide sidebar — don't use transform which leaves invisible layer */
   .mob-nav{display:block!important}
-  .main{padding-bottom:70px}
+  .main{padding-bottom:75px}
   .krow{grid-template-columns:repeat(2,1fr)}
   .grid2{grid-template-columns:1fr}
   .content{padding-bottom:5rem}
@@ -148,11 +148,7 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
 .sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:149;backdrop-filter:blur(4px)}
 .sb-overlay.open{display:block}
 .mob-menu-btn{display:none;position:fixed;top:0.75rem;left:0.75rem;z-index:200;width:38px;height:38px;border-radius:0.6rem;background:var(--bg2);border:1px solid var(--border);color:var(--text1);font-size:1.1rem;cursor:pointer;align-items:center;justify-content:center}
-@media(max-width:768px){
-  .mob-menu-btn{display:flex}
-  .sb{transform:translateX(-100%);transition:transform .25s ease;position:fixed;z-index:150;height:100vh}
-  .sb.open{transform:translateX(0)}
-}
+/* Note: sidebar uses display:none on mobile, no transform needed */
 </style>
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#f4732a">
@@ -176,24 +172,24 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
   <a href="member-hub.html" class="sb-profile">
     <div class="sb-av" id="sbAv">🎨</div>
     <div>
-      <div class="sb-nm" id="sbNm">Loading…</div>
+      <div class="sb-nm" id="sbNm"><span data-i18n-en="Loading…" data-i18n-tr="Yükleniyor…">Loading…</span></div>
       <div class="sb-tier" id="sbTier">🌱 Free member</div>
     </div>
   </a>
   <nav class="sb-nav">
     <div class="sb-sec">My Space</div>
     <a href="member-dashboard.html" class="sb-it on"><span class="sb-ic">🏠</span> Home</a>
-    <a href="feed.html" class="sb-it"><span class="sb-ic">📰</span> Community Feed</a>
-    <a href="member-hub.html" class="sb-it"><span class="sb-ic">🪪</span> My Profile</a>
-    <a href="messages.html" class="sb-it"><span class="sb-ic">💬</span> Messages<span class="sb-bd" id="msgBdg" style="display:none">0</span></a>
+    <a href="feed.html" class="sb-it"><span class="sb-ic">📰</span> <span data-i18n-en="Community Feed" data-i18n-tr="Topluluk Akışı">Community Feed</span></a>
+    <a href="member-hub.html" class="sb-it" id="sbMyProfile"><span class="sb-ic">🪪</span> <span data-i18n-en="My Profile" data-i18n-tr="Profilim">My Profile</span></a>
+    <a href="messages.html" class="sb-it"><span class="sb-ic">💬</span> <span data-i18n-en="Messages" data-i18n-tr="Mesajlar">Messages</span><span class="sb-bd" id="msgBdg" style="display:none">0</span></a>
     <div class="sb-sec">Town</div>
+    <a href="topraq-hub.html" class="sb-it" id="sbMyTown"><span class="sb-ic">🏡</span> <span data-i18n-en="My Town" data-i18n-tr="Şehrim">My Town</span></a>
     <a href="topraq-hub.html" class="sb-it"><span class="sb-ic">🏯</span> Topraq's Town</a>
-    <a href="rooms.html" class="sb-it"><span class="sb-ic">🏠</span> Rooms</a>
-    <a href="kreatown-town-view.html" class="sb-it"><span class="sb-ic">🗺️</span> Town Map</a>
-    <a href="radio.html" class="sb-it"><span class="sb-ic">📻</span> 3D Radio</a>
-    <a href="tv.html" class="sb-it"><span class="sb-ic">📺</span> 3D TV</a>
-    <div class="sb-sec">Account</div>
-    <a href="settings.html" class="sb-it"><span class="sb-ic">⚙️</span> Settings</a>
+    <a href="rooms.html" class="sb-it"><span class="sb-ic">🏠</span> <span data-i18n-en="Rooms" data-i18n-tr="Odalar">Rooms</span></a>
+    <a href="radio.html" class="sb-it"><span class="sb-ic">📻</span> <span data-i18n-en="3D Radio" data-i18n-tr="3D Radyo">3D Radio</span></a>
+    <a href="tv.html" class="sb-it"><span class="sb-ic">📺</span> <span data-i18n-en="3D TV" data-i18n-tr="3D TV">3D TV</span></a>
+    <div class="sb-sec"><span data-i18n-en="Account" data-i18n-tr="Hesap">Account</span></div>
+    <a href="settings.html" class="sb-it"><span class="sb-ic">⚙️</span> <span data-i18n-en="Settings" data-i18n-tr="Ayarlar">Settings</span></a>
   </nav>
   <div class="sb-bot">
     <button class="sb-logout" onclick="logout()">← Log out</button>
@@ -223,9 +219,9 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
 
     <!-- KPIs -->
     <div class="krow">
-      <div class="kpi ko"><div class="kl">My tier</div><div class="kv" id="kTier">Free</div><div class="ks" id="kTierSub">Explore KreaTown</div></div>
+      <div class="kpi ko"><div class="kl">My tier</div><div class="kv" id="kTier"><span data-i18n-en="Free" data-i18n-tr="Ücretsiz">Free</span></div><div class="ks" id="kTierSub">Explore KreaTown</div></div>
       <div class="kpi ke"><div class="kl">Community posts</div><div class="kv" id="kPosts">—</div><div class="ks">Today's feed</div></div>
-      <div class="kpi kg"><div class="kl">Members online</div><div class="kv" id="kOnline">—</div><div class="ks">Right now</div></div>
+      <div class="kpi kg"><div class="kl"><span data-i18n-en="Members online" data-i18n-tr="Çevrimiçi üyeler">Members online</span></div><div class="kv" id="kOnline">—</div><div class="ks">Right now</div></div>
       <div class="kpi kp"><div class="kl">Active rooms</div><div class="kv">7</div><div class="ks">Open for chat</div></div>
     </div>
 
@@ -258,11 +254,10 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
         <div class="ch"><div class="ct">Quick access</div></div>
         <div class="cb">
           <div class="qlinks">
-            <a href="feed.html" class="ql"><span class="ql-ic">📰</span><span class="ql-txt">Community Feed</span><span class="ql-arrow">→</span></a>
+            <a href="feed.html" class="ql"><span class="ql-ic">📰</span><span class="ql-txt"><span data-i18n-en="Community Feed" data-i18n-tr="Topluluk Akışı">Community Feed</span></span><span class="ql-arrow">→</span></a>
             <a href="rooms.html" class="ql"><span class="ql-ic">💬</span><span class="ql-txt">Enter Rooms</span><span class="ql-arrow">→</span></a>
-            <a href="topraq-hub.html" class="ql"><span class="ql-ic">🏯</span><span class="ql-txt">Topraq's Town</span><span class="ql-arrow">→</span></a>
-            <a href="member-hub.html" class="ql"><span class="ql-ic">🪪</span><span class="ql-txt">My Profile & Posts</span><span class="ql-arrow">→</span></a>
-            <a href="kreatown-town-view.html" class="ql"><span class="ql-ic">🗺️</span><span class="ql-txt">Town Map</span><span class="ql-arrow">→</span></a>
+            <a href="topraq-hub.html" class="ql" id="qlCreatorTown"><span class="ql-ic">🏯</span><span class="ql-txt">Topraq's Town</span><span class="ql-arrow">→</span></a>
+            <a href="member-hub.html" class="ql" id="qlMyHub"><span class="ql-ic">🪪</span><span class="ql-txt"><span data-i18n-en="My Profile & Posts" data-i18n-tr="Profilim & Yazılar">My Profile & Posts</span></span><span class="ql-arrow">→</span></a>
             <a href="settings.html" class="ql"><span class="ql-ic">⚙️</span><span class="ql-txt">Settings & Profile</span><span class="ql-arrow">→</span></a>
           </div>
         </div>
@@ -288,7 +283,7 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
         <a href="feed.html" class="ca">See all →</a>
       </div>
       <div class="cb" id="recentPosts">
-        <div style="text-align:center;padding:1.5rem;color:var(--text3);font-size:0.8rem">Loading…</div>
+        <div style="text-align:center;padding:1.5rem;color:var(--text3);font-size:0.8rem"><span data-i18n-en="Loading…" data-i18n-tr="Yükleniyor…">Loading…</span></div>
       </div>
     </div>
 
@@ -300,9 +295,9 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
   <div class="mob-items">
     <a href="member-dashboard.html" class="mob-it on"><span class="mob-ico">🏠</span>Home</a>
     <a href="feed.html" class="mob-it"><span class="mob-ico">📰</span>Feed</a>
-    <a href="rooms.html" class="mob-it"><span class="mob-ico">💬</span>Rooms</a>
-    <a href="topraq-hub.html" class="mob-it"><span class="mob-ico">🏯</span>Town</a>
-    <a href="member-hub.html" class="mob-it"><span class="mob-ico">🪪</span>Profile</a>
+    <a href="rooms.html" class="mob-it"><span class="mob-ico">💬</span><span data-i18n-en="Rooms" data-i18n-tr="Odalar">Rooms</span></a>
+    <a href="topraq-hub.html" class="mob-it" id="mobTownBtn"><span class="mob-ico">🏯</span><span data-i18n-en="Town" data-i18n-tr="Şehir">Town</span></a>
+    <a href="member-hub.html" class="mob-it" id="mobProfileBtn"><span class="mob-ico">🪪</span><span data-i18n-en="Profile" data-i18n-tr="Profil">Profile</span></a>
   </div>
 </nav>
 
@@ -377,9 +372,35 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     /* Redirect admin to their dashboard */
     if(p.is_admin){
-      window.location.href = 'dashboard.html';
+      window.location.href = 'creator-dashboard.html';
       return;
     }
+
+    /* Wire up dynamic links using member's own username */
+    const username = p.username || p.id;
+    const myHubUrl  = 'member-hub.html?user=' + encodeURIComponent(username);
+    const myTownUrl = 'topraq-hub.html?user=' + encodeURIComponent(username);
+
+    /* Sidebar links */
+    const sbMyProfile = document.getElementById('sbMyProfile');
+    if(sbMyProfile) sbMyProfile.href = myHubUrl;
+
+    const sbMyTown = document.getElementById('sbMyTown');
+    if(sbMyTown) sbMyTown.href = myTownUrl;
+
+    /* Sidebar profile avatar link */
+    const sbProfileLink = document.querySelector('a.sb-profile');
+    if(sbProfileLink) sbProfileLink.href = myHubUrl;
+
+    /* Mobile nav — Town → member's own town, Profile → member's own hub */
+    const mobTownBtn    = document.getElementById('mobTownBtn');
+    const mobProfileBtn = document.getElementById('mobProfileBtn');
+    if(mobTownBtn)    mobTownBtn.href    = myTownUrl;
+    if(mobProfileBtn) mobProfileBtn.href = myHubUrl;
+
+    /* Quick links */
+    const qlMyHub = document.getElementById('qlMyHub');
+    if(qlMyHub) qlMyHub.href = myHubUrl;
 
     /* Load recent posts & member count */
     loadRecentPosts(tier);
@@ -394,7 +415,7 @@ async function loadRecentPosts(myTier){
   try{
     const res = await fetch(
       SB_URL+'/rest/v1/posts?is_published=eq.true&order=created_at.desc&limit=5&select=*,profiles(username,display_name,avatar_url,tier)',
-      { headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY} }
+      { headers:{'apikey':SB_KEY,'Authorization':'Bearer '+(getSession()?.access_token||SB_KEY)} }
     );
     if(!res.ok) throw new Error();
     const posts = await res.json();
