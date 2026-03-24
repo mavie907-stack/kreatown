@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Şifremi Unuttum — Kreatown</title>
+<meta name="description" content="Kreatown şifreni sıfırla. Hesabına geri dönmen için sana bir bağlantı gönderelim."/>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<link rel="canonical" href="https://kreatown.com.tr/tr/sifremi-unuttum.html"/>
+<link rel="alternate" hreflang="tr" href="https://kreatown.com.tr/tr/sifremi-unuttum.html"/>
+<link rel="alternate" hreflang="en" href="https://kreatown.com/forgot-password.html"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Cabinet+Grotesk:wght@400;500;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#fffbf5;--bg2:#fff8ee;--black:#1a1612;
+  --orange:#f4732a;--orange-light:#ff9555;--orange-pale:#fff0e6;
+  --green:#22c55e;--red:#ef4444;
+  --muted:#9c8878;--border:rgba(244,115,42,0.15);--card:#ffffff;
+  --input-border:rgba(26,22,18,0.15);
+  --font-display:'Cabinet Grotesk',sans-serif;
+  --font-body:'Nunito',sans-serif;--font-mono:'DM Mono',monospace;
+  --shadow-lg:0 12px 48px rgba(244,115,42,0.14);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--black);font-family:var(--font-body);min-height:100vh;display:flex;flex-direction:column;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(244,115,42,0.04) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 3rem;background:rgba(255,251,245,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:relative;z-index:10;}
+.nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--black);text-decoration:none;letter-spacing:-0.03em;}
+.nav-logo span{color:var(--orange);}
+.nav-right a{font-size:0.85rem;font-weight:700;color:var(--black);text-decoration:none;border:1.5px solid var(--border);padding:0.45rem 1.1rem;border-radius:100px;transition:all 0.2s;}
+.nav-right a:hover{border-color:var(--orange);color:var(--orange);}
+.blob1{position:fixed;width:500px;height:500px;background:radial-gradient(circle,rgba(244,115,42,0.08) 0%,transparent 70%);top:-100px;right:-100px;border-radius:50%;pointer-events:none;}
+.blob2{position:fixed;width:350px;height:350px;background:radial-gradient(circle,rgba(251,191,36,0.07) 0%,transparent 70%);bottom:-50px;left:-50px;border-radius:50%;pointer-events:none;}
+.page{flex:1;display:flex;align-items:center;justify-content:center;padding:3rem 1.5rem;position:relative;z-index:1;}
+.card{background:var(--card);border-radius:24px;padding:2.8rem 2.5rem;max-width:460px;width:100%;box-shadow:var(--shadow-lg);border:1px solid rgba(244,115,42,0.1);}
+.state{display:none;}.state.active{display:block;}
+.state-icon{font-size:2.8rem;margin-bottom:1.2rem;display:block;animation:pop 0.4s ease;}
+@keyframes pop{0%{transform:scale(0.7);}70%{transform:scale(1.1);}100%{transform:scale(1);}}
+.card h1{font-family:var(--font-display);font-size:1.7rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.5rem;}
+.card p{font-size:0.9rem;color:var(--muted);font-weight:600;line-height:1.6;margin-bottom:1.8rem;}
+.card p a{color:var(--orange);text-decoration:none;font-weight:800;}
+.field{margin-bottom:1.2rem;}
+.field label{display:block;font-size:0.78rem;font-weight:800;color:var(--black);margin-bottom:0.4rem;}
+.field-wrap{position:relative;}
+.field input{width:100%;padding:0.85rem 1rem 0.85rem 2.6rem;border:1.5px solid var(--input-border);border-radius:12px;font-family:var(--font-body);font-size:0.9rem;font-weight:600;color:var(--black);background:var(--card);transition:all 0.2s;outline:none;}
+.field input:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(244,115,42,0.12);}
+.field input.error{border-color:var(--red);}
+.field input.success{border-color:var(--green);}
+.field-icon{position:absolute;left:0.85rem;top:50%;transform:translateY(-50%);font-size:0.9rem;pointer-events:none;}
+.field-error{font-size:0.72rem;color:var(--red);font-weight:700;margin-top:0.35rem;display:none;}
+.field-error.show{display:block;}
+.submit-btn{width:100%;padding:0.95rem;background:var(--orange);color:#fff;border:none;border-radius:14px;font-family:var(--font-body);font-size:1rem;font-weight:800;cursor:pointer;transition:all 0.2s;box-shadow:0 6px 20px rgba(244,115,42,0.35);display:flex;align-items:center;justify-content:center;}
+.submit-btn:hover{background:var(--orange-light);transform:translateY(-1px);}
+.submit-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.back-link{display:flex;align-items:center;justify-content:center;gap:0.4rem;margin-top:1.2rem;font-size:0.85rem;font-weight:700;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+.back-link:hover{color:var(--orange);}
+.sent-icon{font-size:3.5rem;margin-bottom:1.2rem;display:block;animation:pop 0.5s ease;}
+.sent-email{font-family:var(--font-mono);font-size:0.85rem;font-weight:700;color:var(--orange);background:var(--orange-pale);padding:0.5rem 1rem;border-radius:10px;display:inline-block;margin:0.5rem 0 1.5rem;word-break:break-all;}
+.info-box{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.5rem;}
+.info-box p{font-size:0.83rem;color:var(--muted);font-weight:600;line-height:1.6;margin:0;}
+.info-box p+p{margin-top:0.5rem;}
+.resend-btn{width:100%;padding:0.85rem;background:transparent;color:var(--orange);border:1.5px solid rgba(244,115,42,0.3);border-radius:14px;font-family:var(--font-body);font-size:0.9rem;font-weight:800;cursor:pointer;transition:all 0.2s;}
+.resend-btn:hover{background:var(--orange-pale);border-color:var(--orange);}
+.resend-btn:disabled{opacity:0.5;cursor:not-allowed;}
+.countdown-text{font-size:0.78rem;color:var(--muted);text-align:center;margin-top:0.6rem;font-family:var(--font-mono);}
+@media(max-width:520px){nav{padding:1rem 1.5rem;}.card{padding:2rem 1.5rem;}}
+</style>
+</head>
+<body>
+<div class="blob1"></div>
+<div class="blob2"></div>
+
+<nav>
+  <a href="../tr/index.html" class="nav-logo">Krea<span>town</span></a>
+  <div class="nav-right">
+    <a href="giris.html">← Girişe dön</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="card">
+
+    <div class="state active" id="state1">
+      <span class="state-icon">🔑</span>
+      <h1>Şifreni mi unuttun?</h1>
+      <p>Olur, merak etme. Hesabına bağlı e-posta adresini gir, sana sıfırlama bağlantısı gönderelim.</p>
+
+      <div class="field">
+        <label for="email">E-posta adresi</label>
+        <div class="field-wrap">
+          <span class="field-icon">✉️</span>
+          <input type="email" id="email" placeholder="sen@ornek.com" autocomplete="email"/>
+        </div>
+        <div class="field-error" id="err-email">Geçerli bir e-posta adresi gir.</div>
+      </div>
+
+      <button class="submit-btn" id="sendBtn" onclick="sendReset()">Sıfırlama bağlantısı gönder →</button>
+      <a href="giris.html" class="back-link">← Girişe dön</a>
+    </div>
+
+    <div class="state" id="state2">
+      <span class="sent-icon">📬</span>
+      <h1>Gelen kutunu kontrol et</h1>
+      <p>Şifre sıfırlama bağlantısını şu adrese gönderdik:</p>
+      <div class="sent-email" id="sentEmail"></div>
+      <div class="info-box">
+        <p>📨 Bağlantının geçerlilik süresi <strong>30 dakika</strong>.</p>
+        <p>💡 Bir dakika içinde göremezsen spam veya gereksiz posta klasörünü kontrol et.</p>
+      </div>
+      <button class="resend-btn" id="resendBtn" onclick="resend()" disabled>E-postayı tekrar gönder</button>
+      <div class="countdown-text" id="countdownText">60 saniye sonra tekrar gönderebilirsin</div>
+      <a href="giris.html" class="back-link" style="margin-top:1rem;">← Girişe dön</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function sendReset(){
+  const email=document.getElementById('email').value.trim();
+  const errEl=document.getElementById('err-email');
+  const input=document.getElementById('email');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){input.classList.add('error');errEl.classList.add('show');return;}
+  input.classList.remove('error');input.classList.add('success');errEl.classList.remove('show');
+  const btn=document.getElementById('sendBtn');
+  btn.disabled=true;btn.textContent='Gönderiliyor…';
+  setTimeout(()=>{
+    document.getElementById('state1').classList.remove('active');
+    document.getElementById('state2').classList.add('active');
+    document.getElementById('sentEmail').textContent=email;
+    startCountdown();
+  },1200);
+}
+function startCountdown(){
+  let secs=60;
+  const btn=document.getElementById('resendBtn');
+  const txt=document.getElementById('countdownText');
+  btn.disabled=true;
+  const iv=setInterval(()=>{
+    secs--;
+    txt.textContent=secs>0?`${secs} saniye sonra tekrar gönderebilirsin`:'';
+    if(secs<=0){clearInterval(iv);btn.disabled=false;txt.textContent='';}
+  },1000);
+}
+function resend(){
+  const btn=document.getElementById('resendBtn');
+  btn.disabled=true;btn.textContent='Gönderiliyor…';
+  setTimeout(()=>{
+    btn.textContent='✓ Gönderildi!';
+    setTimeout(()=>{btn.textContent='E-postayı tekrar gönder';startCountdown();},2000);
+  },1000);
+}
+document.getElementById('email').addEventListener('keydown',e=>{if(e.key==='Enter')sendReset();});
+document.getElementById('email').addEventListener('input',()=>{
+  document.getElementById('email').classList.remove('error');
+  document.getElementById('err-email').classList.remove('show');
+});
+</script>
+</body>
+</html>
