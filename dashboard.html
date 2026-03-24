@@ -1,453 +1,1310 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Dashboard — Kreatown</title>
-<meta name="robots" content="noindex"/>
-<link rel="icon" type="image/png" href="/favicon.png"/>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Cabinet+Grotesk:wght@400;500;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — KreaTown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
-:root{
-  --bg:#fffbf5;--bg2:#fff8ee;--black:#1a1612;
-  --orange:#f4732a;--orange-light:#ff9555;--orange-pale:#fff0e6;
-  --yellow:#fbbf24;--yellow-pale:#fffbeb;
-  --green:#22c55e;--green-pale:#f0fdf4;
-  --red:#ef4444;
-  --muted:#9c8878;--border:rgba(244,115,42,0.12);--card:#fff;
-  --sidebar:220px;
-  --font-display:'Cabinet Grotesk',sans-serif;
-  --font-body:'Nunito',sans-serif;--font-mono:'DM Mono',monospace;
-  --shadow:0 2px 12px rgba(244,115,42,0.07);
-  --shadow-md:0 4px 24px rgba(244,115,42,0.10);
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #0e0c0a;
+  --bg2:       #161310;
+  --bg3:       #1e1a16;
+  --bg4:       #252018;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.12);
+  --orange:    #f4732a;
+  --orange2:   #ff9555;
+  --gold:      #c9952a;
+  --gold2:     #f5d58a;
+  --palace:    #8b6fd4;
+  --palace2:   #b8a0e8;
+  --emerald:   #2dab80;
+  --red:       #e05252;
+  --text1:     rgba(255,255,255,0.92);
+  --text2:     rgba(255,255,255,0.55);
+  --text3:     rgba(255,255,255,0.28);
+  --sidebar-w: 240px;
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;}
-body{background:var(--bg);color:var(--black);font-family:var(--font-body);display:flex;overflow:hidden;}
-body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(244,115,42,0.025) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0;}
+
+html, body { height: 100%; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text1);
+  display: flex;
+  overflow: hidden;
+}
 
 /* ── SIDEBAR ── */
-.sidebar{width:var(--sidebar);background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;transition:transform 0.3s;}
-.sidebar-logo{padding:1.3rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.5rem;}
-.sidebar-logo a{font-family:var(--font-display);font-size:1.2rem;font-weight:900;color:var(--black);text-decoration:none;letter-spacing:-0.02em;}
-.sidebar-logo a span{color:var(--orange);}
-.sidebar-logo .live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 2px rgba(34,197,94,0.25);margin-left:auto;}
-.nav-section{padding:0.75rem 0.6rem 0.3rem;font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);padding-left:1.1rem;}
-.nav-item{display:flex;align-items:center;gap:0.7rem;padding:0.65rem 1.1rem;font-size:0.83rem;font-weight:700;color:var(--muted);text-decoration:none;border-radius:0 10px 10px 0;margin-right:0.6rem;cursor:pointer;transition:all 0.15s;border:none;background:none;width:calc(100% - 0.6rem);text-align:left;}
-.nav-item:hover{background:var(--bg2);color:var(--black);}
-.nav-item.active{background:var(--orange-pale);color:var(--orange);font-weight:800;}
-.nav-item .icon{font-size:1rem;width:20px;text-align:center;flex-shrink:0;}
-.nav-item .badge{margin-left:auto;font-size:0.6rem;font-weight:800;background:var(--orange);color:#fff;padding:0.15rem 0.5rem;border-radius:100px;font-family:var(--font-mono);}
-.sidebar-footer{margin-top:auto;padding:1rem 0.6rem;border-top:1px solid var(--border);}
-.creator-chip{display:flex;align-items:center;gap:0.65rem;padding:0.6rem 0.7rem;border-radius:12px;cursor:pointer;transition:background 0.15s;}
-.creator-chip:hover{background:var(--bg2);}
-.chip-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--orange),var(--yellow));display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;}
-.chip-name{font-size:0.8rem;font-weight:800;color:var(--black);}
-.chip-handle{font-size:0.65rem;color:var(--muted);font-weight:600;}
-.chip-more{margin-left:auto;font-size:0.75rem;color:var(--muted);}
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  height: 100vh; flex-shrink: 0;
+  position: relative; overflow: hidden;
+}
+.sidebar::before {
+  content: '';
+  position: absolute; bottom: -80px; left: -40px;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(139,111,212,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.sidebar-logo {
+  padding: 1.5rem 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.sidebar-logo-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem; font-weight: 700; color: var(--text1);
+}
+.sidebar-logo-text span { color: var(--orange); }
+
+.sidebar-creator {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.sc-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--palace), var(--orange));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+  border: 1.5px solid rgba(139,111,212,0.4);
+}
+.sc-name { font-size: 0.82rem; font-weight: 500; color: var(--text1); }
+.sc-level {
+  font-size: 0.65rem; color: var(--palace2);
+  display: flex; align-items: center; gap: 0.2rem; margin-top: 0.1rem;
+}
+.sc-badge {
+  margin-left: auto; flex-shrink: 0;
+  background: rgba(139,111,212,0.15); color: var(--palace2);
+  font-size: 0.6rem; padding: 0.15rem 0.45rem; border-radius: 100px;
+  border: 1px solid rgba(139,111,212,0.25); font-weight: 500;
+}
+
+.sidebar-nav { padding: 0.75rem 0; flex: 1; overflow-y: auto; }
+.nav-section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.12em;
+  padding: 0.75rem 1.25rem 0.35rem;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.65rem 1.25rem; cursor: pointer;
+  color: var(--text2); font-size: 0.82rem;
+  transition: all .18s; border: none; background: none;
+  width: 100%; text-align: left; text-decoration: none;
+  border-left: 2px solid transparent;
+  font-family: 'DM Sans', sans-serif;
+}
+.nav-item:hover { color: var(--text1); background: rgba(255,255,255,0.04); }
+.nav-item.active {
+  color: var(--orange); background: rgba(244,115,42,0.08);
+  border-left-color: var(--orange); font-weight: 500;
+}
+.nav-icon { font-size: 1rem; width: 18px; text-align: center; flex-shrink: 0; }
+.nav-badge {
+  margin-left: auto; background: var(--orange);
+  color: white; font-size: 0.58rem; padding: 0.1rem 0.4rem;
+  border-radius: 100px; font-weight: 500;
+}
+
+.sidebar-bottom {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--border);
+}
+.level-mini {
+  background: rgba(139,111,212,0.1); border-radius: 0.625rem;
+  padding: 0.75rem; border: 1px solid rgba(139,111,212,0.2);
+}
+.lm-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.lm-label { font-size: 0.7rem; color: var(--text2); }
+.lm-val { font-size: 0.68rem; color: var(--palace2); font-family: 'DM Mono', monospace; }
+.lm-track { height: 4px; background: rgba(255,255,255,0.08); border-radius: 100px; overflow: hidden; }
+.lm-fill {
+  height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--palace), var(--gold2));
+  border-radius: 100px;
+  transition: width 1.5s ease;
+}
 
 /* ── MAIN ── */
-.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;position:relative;z-index:1;}
-
-/* Top bar */
-.topbar{background:rgba(255,251,245,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0.9rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.topbar-left h1{font-family:var(--font-display);font-size:1.2rem;font-weight:900;letter-spacing:-0.02em;}
-.topbar-left p{font-size:0.75rem;color:var(--muted);font-weight:600;margin-top:0.1rem;}
-.topbar-right{display:flex;align-items:center;gap:0.75rem;}
-.icon-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.9rem;transition:all 0.15s;position:relative;}
-.icon-btn:hover{border-color:var(--orange);background:var(--orange-pale);}
-.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--orange);border:1.5px solid var(--bg);}
-.new-post-btn{background:var(--orange);color:#fff;padding:0.6rem 1.2rem;border-radius:100px;font-size:0.82rem;font-weight:800;border:none;cursor:pointer;font-family:var(--font-body);transition:all 0.2s;box-shadow:0 4px 12px rgba(244,115,42,0.3);display:flex;align-items:center;gap:0.4rem;}
-.new-post-btn:hover{background:var(--orange-light);transform:translateY(-1px);}
-
-/* Content area */
-.content{flex:1;overflow-y:auto;padding:1.5rem 2rem 3rem;}
-
-/* KPI cards */
-.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.9rem;margin-bottom:1.5rem;}
-.kpi{background:var(--card);border-radius:16px;padding:1.1rem 1.2rem;border:1px solid var(--border);box-shadow:var(--shadow);}
-.kpi-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:0.6rem;}
-.kpi-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
-.kpi-icon.orange{background:var(--orange-pale);}
-.kpi-icon.green{background:var(--green-pale);}
-.kpi-icon.yellow{background:var(--yellow-pale);}
-.kpi-icon.blue{background:#eff6ff;}
-.kpi-change{font-size:0.65rem;font-weight:800;padding:0.2rem 0.5rem;border-radius:100px;font-family:var(--font-mono);}
-.kpi-change.up{background:var(--green-pale);color:var(--green);}
-.kpi-change.dn{background:#fff0f0;color:var(--red);}
-.kpi-val{font-family:var(--font-display);font-size:1.75rem;font-weight:900;line-height:1;letter-spacing:-0.03em;margin-bottom:0.2rem;}
-.kpi-lbl{font-size:0.65rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;}
-
-/* Charts row */
-.charts-row{display:grid;grid-template-columns:1.6fr 1fr;gap:0.9rem;margin-bottom:1.5rem;}
-.widget{background:var(--card);border-radius:16px;padding:1.2rem 1.3rem;border:1px solid var(--border);box-shadow:var(--shadow);}
-.widget-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;}
-.widget-title{font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);}
-.widget-badge{font-size:0.65rem;font-weight:800;background:var(--green-pale);color:var(--green);padding:0.2rem 0.5rem;border-radius:100px;font-family:var(--font-mono);}
-
-/* Bar chart */
-.bar-chart{display:flex;align-items:flex-end;gap:6px;height:90px;margin-bottom:0.5rem;}
-.bar{flex:1;border-radius:5px 5px 0 0;background:linear-gradient(180deg,var(--orange),rgba(244,115,42,0.25));transition:opacity 0.2s;cursor:pointer;position:relative;}
-.bar:hover{opacity:0.75;}
-.bar.highlight{background:linear-gradient(180deg,var(--yellow),rgba(251,191,36,0.25));}
-.bar-labels{display:flex;gap:6px;}
-.bar-lbl{flex:1;text-align:center;font-size:0.55rem;color:var(--muted);font-family:var(--font-mono);font-weight:700;}
-
-/* Donut chart */
-.donut-wrap{display:flex;align-items:center;gap:1.2rem;}
-.donut{position:relative;width:90px;height:90px;flex-shrink:0;}
-.donut svg{transform:rotate(-90deg);}
-.donut-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.donut-label strong{font-family:var(--font-display);font-size:1.1rem;font-weight:900;line-height:1;}
-.donut-label span{font-size:0.55rem;color:var(--muted);font-weight:700;text-transform:uppercase;}
-.donut-legend{display:flex;flex-direction:column;gap:0.5rem;flex:1;}
-.legend-item{display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;font-weight:700;}
-.legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
-.legend-pct{margin-left:auto;font-family:var(--font-mono);font-size:0.72rem;color:var(--muted);}
-
-/* Bottom row */
-.bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:0.9rem;}
-
-/* Recent posts */
-.post-row{display:flex;align-items:center;gap:0.8rem;padding:0.7rem 0;border-bottom:1px solid var(--border);}
-.post-row:last-child{border-bottom:none;}
-.post-thumb-sm{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
-.pt-orange{background:var(--orange-pale);}
-.pt-yellow{background:var(--yellow-pale);}
-.pt-green{background:var(--green-pale);}
-.pt-blue{background:#eff6ff;}
-.post-info{flex:1;min-width:0;}
-.post-info strong{display:block;font-size:0.82rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.post-info span{font-size:0.68rem;color:var(--muted);font-weight:600;}
-.post-stat{font-family:var(--font-mono);font-size:0.7rem;font-weight:700;color:var(--muted);text-align:right;white-space:nowrap;}
-
-/* Members list */
-.member-row{display:flex;align-items:center;gap:0.7rem;padding:0.6rem 0;border-bottom:1px solid var(--border);}
-.member-row:last-child{border-bottom:none;}
-.m-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;color:#fff;flex-shrink:0;}
-.m-av1{background:linear-gradient(135deg,#f4732a,#fbbf24);}
-.m-av2{background:linear-gradient(135deg,#60a5fa,#a78bfa);}
-.m-av3{background:linear-gradient(135deg,#34d399,#22c55e);}
-.m-av4{background:linear-gradient(135deg,#f472b6,#f4732a);}
-.m-av5{background:linear-gradient(135deg,#fbbf24,#f4732a);}
-.m-name{font-size:0.8rem;font-weight:700;flex:1;}
-.m-tier{font-size:0.62rem;font-weight:800;padding:0.2rem 0.5rem;border-radius:100px;}
-.t-gold{background:var(--yellow-pale);color:#d97706;}
-.t-silver{background:#f8fafc;color:#64748b;}
-.t-free{background:var(--green-pale);color:#16a34a;}
-.m-date{font-size:0.62rem;color:var(--muted);font-family:var(--font-mono);font-weight:600;text-align:right;}
-
-/* House level banner */
-.level-banner{background:linear-gradient(135deg,#1a1612,#3d2a1a);border-radius:16px;padding:1.2rem 1.5rem;display:flex;align-items:center;gap:1.2rem;margin-bottom:1.5rem;position:relative;overflow:hidden;}
-.level-banner::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(244,115,42,0.1) 1px,transparent 1px);background-size:20px 20px;}
-.level-house{font-size:2.5rem;flex-shrink:0;position:relative;z-index:1;}
-.level-info{flex:1;position:relative;z-index:1;}
-.level-info strong{display:block;font-family:var(--font-display);font-size:1rem;font-weight:900;color:#fff;margin-bottom:0.2rem;}
-.level-info span{font-size:0.75rem;color:rgba(255,255,255,0.55);font-weight:600;}
-.level-bar{flex:1;max-width:200px;position:relative;z-index:1;}
-.level-bar-bg{height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;margin-bottom:0.3rem;}
-.level-bar-fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--yellow));border-radius:3px;width:44%;}
-.level-bar-labels{display:flex;justify-content:space-between;font-size:0.6rem;font-weight:700;color:rgba(255,255,255,0.4);font-family:var(--font-mono);}
-.level-cta{background:rgba(244,115,42,0.2);border:1px solid rgba(244,115,42,0.35);color:var(--orange);padding:0.5rem 1rem;border-radius:100px;font-size:0.75rem;font-weight:800;cursor:pointer;font-family:var(--font-body);transition:all 0.2s;position:relative;z-index:1;white-space:nowrap;}
-.level-cta:hover{background:rgba(244,115,42,0.3);}
-
-/* Mobile nav toggle */
-.mob-nav-btn{display:none;position:fixed;top:1rem;left:1rem;z-index:200;width:38px;height:38px;background:var(--card);border:1px solid var(--border);border-radius:10px;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;box-shadow:var(--shadow);}
-
-/* Responsive */
-@media(max-width:1100px){
-  .kpi-grid{grid-template-columns:repeat(2,1fr);}
-  .charts-row{grid-template-columns:1fr;}
+.main {
+  flex: 1; overflow-y: auto;
+  background: var(--bg);
+  display: flex; flex-direction: column;
 }
-@media(max-width:900px){
-  :root{--sidebar:0px;}
-  .sidebar{transform:translateX(-220px);width:220px;}
-  .sidebar.open{transform:translateX(0);}
-  .main{margin-left:0;}
-  .mob-nav-btn{display:flex;}
-  .topbar{padding:0.9rem 1rem 0.9rem 3.5rem;}
-  .content{padding:1.2rem 1rem 3rem;}
-  .bottom-row{grid-template-columns:1fr;}
-  .level-banner{flex-wrap:wrap;}
-  .level-bar{max-width:100%;width:100%;}
+
+/* TOP BAR */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(14,12,10,0.9); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.9rem 2rem;
+  display: flex; align-items: center; justify-content: space-between;
 }
-@media(max-width:600px){
-  .kpi-grid{grid-template-columns:1fr 1fr;}
-  .charts-row{grid-template-columns:1fr;}
-  .topbar-right .new-post-btn span{display:none;}
+.topbar-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem; font-weight: 700; color: var(--text1);
 }
+.topbar-sub { font-size: 0.75rem; color: var(--text3); margin-top: 0.1rem; }
+.topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+.period-select {
+  background: var(--bg3); border: 1px solid var(--border2);
+  color: var(--text2); font-size: 0.78rem; padding: 0.45rem 0.75rem;
+  border-radius: 0.5rem; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  outline: none;
+}
+.period-select:focus { border-color: var(--orange); }
+.topbar-notif {
+  position: relative; width: 34px; height: 34px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 1rem; transition: border-color .2s;
+}
+.topbar-notif:hover { border-color: var(--border2); }
+.notif-dot {
+  position: absolute; top: 6px; right: 6px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--orange); border: 1.5px solid var(--bg);
+}
+
+/* ── CONTENT ── */
+.content { padding: 1.75rem 2rem 3rem; }
+
+/* KPI GRID */
+.kpi-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+.kpi-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 1rem; padding: 1.25rem 1.25rem 1rem;
+  position: relative; overflow: hidden;
+  transition: border-color .2s, transform .2s;
+}
+.kpi-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.kpi-card::after {
+  content: ''; position: absolute;
+  top: 0; right: 0; width: 60px; height: 60px; border-radius: 50%;
+  opacity: 0.06; transform: translate(20px, -20px);
+}
+.kpi-card.k-orange::after { background: var(--orange); }
+.kpi-card.k-gold::after   { background: var(--gold); }
+.kpi-card.k-palace::after { background: var(--palace); }
+.kpi-card.k-emerald::after{ background: var(--emerald); }
+.kpi-label {
+  font-size: 0.7rem; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  font-family: 'DM Mono', monospace; margin-bottom: 0.6rem;
+}
+.kpi-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem; font-weight: 700; line-height: 1;
+  letter-spacing: -0.02em;
+}
+.kpi-card.k-orange .kpi-val { color: var(--orange); }
+.kpi-card.k-gold   .kpi-val { color: var(--gold2); }
+.kpi-card.k-palace .kpi-val { color: var(--palace2); }
+.kpi-card.k-emerald .kpi-val{ color: var(--emerald); }
+.kpi-change {
+  font-size: 0.72rem; margin-top: 0.4rem;
+  display: flex; align-items: center; gap: 0.3rem;
+}
+.kpi-up   { color: var(--emerald); }
+.kpi-down { color: var(--red); }
+.kpi-neutral { color: var(--text3); }
+.kpi-icon {
+  position: absolute; bottom: 1rem; right: 1.1rem;
+  font-size: 1.6rem; opacity: 0.18;
+}
+
+/* CHARTS ROW */
+.charts-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+.chart-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 1rem; padding: 1.25rem; overflow: hidden;
+}
+.chart-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+.chart-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem; font-weight: 700; color: var(--text1);
+}
+.chart-sub { font-size: 0.72rem; color: var(--text3); margin-top: 0.15rem; }
+.chart-tag {
+  font-size: 0.65rem; padding: 0.2rem 0.55rem; border-radius: 100px;
+  font-weight: 500;
+}
+.tag-up   { background: rgba(45,171,128,0.12); color: var(--emerald); }
+.tag-down { background: rgba(224, 82,82,0.12);  color: var(--red); }
+.chart-canvas-wrap { position: relative; height: 180px; }
+
+/* BOTTOM ROW */
+.bottom-row {
+  display: grid; grid-template-columns: 1.4fr 1fr; gap: 1rem;
+}
+
+/* MEMBERS TABLE */
+.members-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 1rem; overflow: hidden;
+}
+.card-header {
+  padding: 1.1rem 1.25rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem; font-weight: 700; color: var(--text1);
+}
+.card-action {
+  font-size: 0.72rem; color: var(--orange);
+  cursor: pointer; background: none; border: none;
+  font-family: 'DM Sans', sans-serif; transition: opacity .2s;
+}
+.card-action:hover { opacity: 0.7; }
+
+.members-table { width: 100%; border-collapse: collapse; }
+.members-table th {
+  font-size: 0.62rem; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 0.6rem 1.25rem; text-align: left;
+  font-family: 'DM Mono', monospace; font-weight: 400;
+  border-bottom: 1px solid var(--border);
+}
+.members-table td {
+  padding: 0.75rem 1.25rem; font-size: 0.8rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: var(--text2);
+}
+.members-table tr:last-child td { border-bottom: none; }
+.members-table tr:hover td { background: rgba(255,255,255,0.02); }
+.member-cell { display: flex; align-items: center; gap: 0.65rem; }
+.mem-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; flex-shrink: 0;
+}
+.mem-name { font-size: 0.8rem; color: var(--text1); font-weight: 400; }
+.mem-handle { font-size: 0.68rem; color: var(--text3); }
+.tier-pill {
+  font-size: 0.62rem; padding: 0.18rem 0.5rem; border-radius: 100px;
+  font-weight: 500; white-space: nowrap;
+}
+.tp-palace  { background: rgba(139,111,212,0.15); color: var(--palace2); }
+.tp-gold    { background: rgba(201,149,42,0.12);  color: var(--gold2); }
+.tp-silver  { background: rgba(150,170,190,0.12); color: #8ab0c8; }
+.tp-free    { background: rgba(45,171,128,0.1);   color: var(--emerald); }
+.mem-revenue { color: var(--gold2); font-family: 'DM Mono', monospace; font-size: 0.75rem; }
+.mem-joined  { font-family: 'DM Mono', monospace; font-size: 0.72rem; }
+
+/* ACTIVITY / UNLOCKS */
+.activity-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 1rem; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.activity-list { padding: 0.5rem 0; flex: 1; overflow-y: auto; }
+.activity-item {
+  display: flex; align-items: flex-start; gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background .15s;
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-item:hover { background: rgba(255,255,255,0.02); }
+.ai-icon {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; flex-shrink: 0; margin-top: 0.05rem;
+}
+.ai-orange { background: rgba(244,115,42,0.15); }
+.ai-gold   { background: rgba(201,149,42,0.12); }
+.ai-palace { background: rgba(139,111,212,0.15); }
+.ai-emerald{ background: rgba(45,171,128,0.12); }
+.ai-text { font-size: 0.78rem; color: var(--text2); line-height: 1.5; }
+.ai-text strong { color: var(--text1); font-weight: 500; }
+.ai-time { font-size: 0.65rem; color: var(--text3); margin-top: 0.15rem; font-family: 'DM Mono', monospace; }
+
+/* HOUSE LEVEL CARD */
+.house-level-card {
+  background: linear-gradient(135deg, rgba(139,111,212,0.12), rgba(201,149,42,0.08));
+  border: 1px solid rgba(139,111,212,0.25);
+  border-radius: 1rem; padding: 1.25rem; margin-bottom: 1rem;
+  position: relative; overflow: hidden;
+}
+.house-level-card::before {
+  content: '🏯'; position: absolute;
+  right: 1rem; top: 50%; transform: translateY(-50%);
+  font-size: 3.5rem; opacity: 0.12;
+}
+.hl-tag { font-size: 0.62rem; color: var(--palace2); font-family: 'DM Mono', monospace; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.4rem; }
+.hl-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: var(--text1); }
+.hl-sub { font-size: 0.72rem; color: var(--text3); margin-top: 0.15rem; margin-bottom: 1rem; }
+.hl-progress { }
+.hlp-row { display: flex; justify-content: space-between; margin-bottom: 0.35rem; }
+.hlp-label { font-size: 0.68rem; color: var(--text3); }
+.hlp-val { font-size: 0.68rem; color: var(--palace2); font-family: 'DM Mono', monospace; }
+.hlp-track { height: 5px; background: rgba(255,255,255,0.07); border-radius: 100px; overflow: hidden; }
+.hlp-fill {
+  height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--palace), var(--gold2));
+  border-radius: 100px; transition: width 1.8s ease;
+}
+.hl-next-unlock {
+  margin-top: 0.85rem; padding: 0.6rem 0.75rem;
+  background: rgba(255,255,255,0.04); border-radius: 0.5rem;
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.72rem; color: var(--text2);
+}
+.hl-next-unlock strong { color: var(--gold2); }
+
+/* PAYOUT CARD */
+.payout-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 1rem; padding: 1.25rem;
+}
+.pc-amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem; font-weight: 700; color: var(--gold2);
+  letter-spacing: -0.02em; margin: 0.3rem 0;
+}
+.pc-sub { font-size: 0.72rem; color: var(--text3); }
+.pc-breakdown { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.pc-row { display: flex; justify-content: space-between; font-size: 0.78rem; }
+.pc-row-label { color: var(--text3); }
+.pc-row-val { color: var(--text2); font-family: 'DM Mono', monospace; }
+.pc-row-val.positive { color: var(--emerald); }
+.pc-row-val.negative { color: var(--red); }
+.pc-divider { height: 1px; background: var(--border); margin: 0.35rem 0; }
+.btn-payout {
+  width: 100%; margin-top: 1rem; padding: 0.7rem;
+  background: linear-gradient(135deg, var(--gold), #e8a820);
+  color: #1a1000; border: none; border-radius: 0.625rem;
+  font-size: 0.82rem; font-weight: 500; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: opacity .2s;
+}
+.btn-payout:hover { opacity: 0.88; }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fu1 { animation: fadeUp .5s .05s ease both; }
+.fu2 { animation: fadeUp .5s .12s ease both; }
+.fu3 { animation: fadeUp .5s .2s  ease both; }
+.fu4 { animation: fadeUp .5s .28s ease both; }
+.fu5 { animation: fadeUp .5s .36s ease both; }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+@media (max-width: 1100px) {
+  .kpi-grid { grid-template-columns: repeat(2,1fr); }
+  .charts-row { grid-template-columns: 1fr; }
+  .bottom-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 1100px) {
+  .kpi-grid { grid-template-columns: repeat(2,1fr); }
+  .charts-row { grid-template-columns: 1fr; }
+  .bottom-row { grid-template-columns: 1fr; }
+}
+@media (max-width: 860px) {
+  .sidebar { width: 200px; }
+  .sidebar-logo-text { font-size: 1rem; }
+  .nav-item { font-size: 0.75rem; padding: 0.55rem 1rem; }
+  .topbar { padding: 0.75rem 1.25rem; }
+  .topbar-title { font-size: 1rem; }
+  .topbar-sub { display: none; }
+  .content { padding: 1.25rem 1.25rem 3rem; }
+}
+@media (max-width: 640px) {
+  .sidebar { display: none; }
+  .main { width: 100%; }
+  .topbar { padding: 0.75rem 1rem; }
+  .topbar-title { font-size: 0.95rem; }
+  .topbar-right .period-select { display: none; }
+  .content { padding: 1rem 1rem 5rem; }
+  .kpi-grid { grid-template-columns: repeat(2,1fr); gap: 0.75rem; }
+  .kpi-val { font-size: 1.6rem; }
+  .kpi-icon { font-size: 1.2rem; }
+  .kpi-label { font-size: 0.62rem; }
+  .chart-card { padding: 1rem; }
+  .chart-title { font-size: 0.875rem; }
+  .chart-canvas-wrap { height: 150px; }
+  .bottom-row { grid-template-columns: 1fr; gap: 0.875rem; }
+  .members-table th { padding: 0.5rem 0.75rem; font-size: 0.58rem; }
+  .members-table td { padding: 0.6rem 0.75rem; font-size: 0.72rem; }
+  .mem-name { font-size: 0.72rem; }
+  .mem-handle { font-size: 0.6rem; }
+  .mem-avatar { width: 24px; height: 24px; font-size: 0.68rem; }
+  .card-header { padding: 0.875rem 1rem 0.6rem; }
+  .card-title { font-size: 0.875rem; }
+  .house-level-card { padding: 1rem; }
+  .hl-title { font-size: 0.9rem; }
+  .payout-card { padding: 1rem; }
+  .pc-amount { font-size: 1.5rem; }
+  .activity-item { padding: 0.6rem 1rem; }
+  .ai-icon { width: 26px; height: 26px; font-size: 0.75rem; }
+  .ai-text { font-size: 0.72rem; }
+
+  /* MOBILE NAV BAR replaces sidebar */
+  .mobile-nav-bar { display: flex !important; }
+  body { padding-bottom: 64px; overflow: hidden; }
+  .main { overflow-y: auto; }
+}
+
+@media (max-width: 380px) {
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+  .kpi-val { font-size: 1.4rem; }
+  .content { padding: 0.875rem 0.875rem 5rem; }
+}
+
+.mobile-nav-bar {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 300;
+  background: rgba(14,12,10,0.97); backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding: 0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom));
+  justify-content: space-around; align-items: center;
+}
+.mnb-item {
+  display: flex; flex-direction: column; align-items: center; gap: 0.18rem;
+  cursor: pointer; padding: 0.3rem 0.75rem; border-radius: 0.5rem;
+  transition: background .15s;
+}
+.mnb-item.active { background: rgba(244,115,42,0.12); }
+.mnb-icon { font-size: 1.1rem; }
+.mnb-label { font-size: 0.55rem; color: rgba(255,255,255,0.45); letter-spacing: 0.03em; }
+.mnb-item.active .mnb-label { color: var(--orange); }
+
+
+/* Global Feed */
+.feed-filter-btn{font-size:0.68rem!important;padding:0.2rem 0.55rem!important}
+.feed-filter-btn.active{background:rgba(244,115,42,0.12)!important;color:var(--orange)!important;border-color:rgba(244,115,42,0.3)!important}
+.feed-post{display:flex;gap:0.75rem;padding:0.85rem 1.1rem;border-bottom:1px solid var(--border);transition:background .15s;cursor:pointer;text-decoration:none}
+.feed-post:hover{background:rgba(255,255,255,0.03)}
+.feed-post:last-child{border-bottom:none}
+.fp-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--orange),var(--gold));display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0;overflow:hidden}
+.fp-avatar img{width:100%;height:100%;object-fit:cover}
+.fp-body{flex:1;min-width:0}
+.fp-meta{display:flex;align-items:center;gap:0.4rem;margin-bottom:0.2rem;flex-wrap:wrap}
+.fp-name{font-size:0.78rem;font-weight:500;color:var(--text1)}
+.fp-tier{font-size:0.55rem;padding:0.08rem 0.38rem;border-radius:100px;font-family:'DM Mono',monospace}
+.fp-type{font-size:0.6rem;color:var(--text3);font-family:'DM Mono',monospace;margin-left:auto}
+.fp-title{font-size:0.82rem;color:var(--text1);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:0.15rem}
+.fp-excerpt{font-size:0.72rem;color:var(--text3);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.5}
+.fp-footer{display:flex;align-items:center;gap:0.6rem;margin-top:0.35rem}
+.fp-time{font-size:0.62rem;color:var(--text3);font-family:'DM Mono',monospace}
+.fp-reactions{display:flex;gap:0.35rem;margin-left:auto}
+.fp-react{font-size:0.65rem;color:var(--text3);cursor:pointer;background:none;border:none;padding:0;transition:color .15s}
+.fp-react:hover{color:var(--orange)}
+.fp-img{width:52px;height:52px;border-radius:0.5rem;object-fit:cover;flex-shrink:0}
+
 </style>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#f4732a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="KreaTown">
+  <script src="/kt-utils.js" defer></script>
 </head>
 <body>
 
-<!-- Mobile nav toggle -->
-<button class="mob-nav-btn" id="mobNavBtn" onclick="toggleSidebar()">☰</button>
-
-<!-- Sidebar -->
-<div class="sidebar" id="sidebar">
+<!-- SIDEBAR -->
+<aside class="sidebar">
   <div class="sidebar-logo">
-    <a href="index.html">Krea<span>town</span></a>
-    <div class="live-dot"></div>
+    <span style="font-size:1.2rem">🏯</span>
+    <div class="sidebar-logo-text">Krea<span>Town</span></div>
   </div>
 
-  <div class="nav-section">Main</div>
-  <button class="nav-item active" onclick="setActive(this)"><span class="icon">📊</span> Overview</button>
-  <button class="nav-item" onclick="setActive(this)"><span class="icon">📝</span> Content</button>
-  <button class="nav-item" onclick="setActive(this)"><span class="icon">👥</span> Members <span class="badge">44</span></button>
-  <button class="nav-item" onclick="setActive(this)"><span class="icon">💬</span> Messages <span class="badge">3</span></button>
+  <div class="sidebar-creator">
+    <div class="sc-avatar">🎨</div>
+    <div>
+      <div class="sc-name">Topraq Toros</div>
+      <div class="sc-level">🏯 Hilltop Palace</div>
+    </div>
+    <div class="sc-badge">ADMIN</div>
+  </div>
 
-  <div class="nav-section">Money</div>
-  <button class="nav-item" onclick="setActive(this)"><span class="icon">💰</span> Earnings</button>
-  <button class="nav-item" onclick="setActive(this)"><span class="icon">💳</span> Payouts</button>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <a href="dashboard.html" class="nav-item active">
+      <span class="nav-icon">📊</span> Dashboard
+    </a>
+    <a href="feed.html" class="nav-item" style="color:var(--emerald);border-left:2px solid rgba(45,171,128,0.3)">
+      <span class="nav-icon">📰</span> Community Feed
+    </a>
+    <a href="earnings.html" class="nav-item">
+      <span class="nav-icon">💰</span> Earnings
+    </a>
+    <a href="milestones.html" class="nav-item">
+      <span class="nav-icon">🏆</span> Milestones
+    </a>
+    <a href="shop.html" class="nav-item">
+      <span class="nav-icon">🛍️</span> Shop
+    </a>
+    <a href="members.html" class="nav-item">
+      <span class="nav-icon">👥</span> Members
+      <span class="nav-badge">44</span>
+    </a>
 
-  <div class="nav-section">Settings</div>
-  <button class="nav-item" onclick="setActive(this)"><span class="icon">🏡</span> My town</button>
-  <button class="nav-item" onclick="setActive(this)"><span class="icon">⚙️</span> Settings</button>
+    <div class="nav-section-label">Content</div>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">✍️</span> Posts
+      <span style="font-size:0.55rem;color:var(--text3);margin-left:auto;padding:0.1rem 0.4rem;border:1px solid var(--border);border-radius:100px;">Soon</span>
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">🔒</span> Tiers
+      <span style="font-size:0.55rem;color:var(--text3);margin-left:auto;padding:0.1rem 0.4rem;border:1px solid var(--border);border-radius:100px;">Soon</span>
+    </a>
+    <a href="messages.html" class="nav-item">
+      <span class="nav-icon">💬</span> Messages
+      <span class="nav-badge" id="msgBadge" style="display:none">0</span>
+    </a>
 
-  <div class="sidebar-footer">
-    <div class="creator-chip" onclick="window.location.href='creatorhub.html'">
-      <div class="chip-av">🎨</div>
-      <div>
-        <div class="chip-name">Topraq Toros</div>
-        <div class="chip-handle">@topraq</div>
+    <div class="nav-section-label">My Town</div>
+    <a href="topraq-hub.html" class="nav-item">
+      <span class="nav-icon">🏯</span> My Palace
+    </a>
+    <a href="rooms.html" class="nav-item">
+      <span class="nav-icon">🏠</span> Rooms
+    </a>
+    <a href="radio.html" class="nav-item">
+      <span class="nav-icon">🎵</span> 3D Radio
+    </a>
+    <a href="tv.html" class="nav-item">
+      <span class="nav-icon">📺</span> 3D TV
+    </a>
+    <a href="kreatown-town-view.html" class="nav-item">
+      <span class="nav-icon">🗺️</span> Town Map
+    </a>
+    <a href="harley.html" class="nav-item">
+      <span class="nav-icon">🏍️</span> Harley Riders
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">🏆</span> Competitions
+      <span style="font-size:0.55rem;color:var(--text3);margin-left:auto;padding:0.1rem 0.4rem;border:1px solid var(--border);border-radius:100px;">Soon</span>
+    </a>
+
+    <div class="nav-section-label">Settings</div>
+    <a href="settings.html" class="nav-item">
+      <span class="nav-icon">⚙️</span> Settings
+    </a>
+    <a href="settings.html#stripe" class="nav-item">
+      <span class="nav-icon">💳</span> Stripe Connect
+    </a>
+    <a href="member-hub.html" class="nav-item" style="border-left:2px solid rgba(45,171,128,0.3);color:var(--emerald)">
+      <span class="nav-icon">🪪</span> My Profile
+    </a>
+    <a href="admin.html" class="nav-item" style="border-left:2px solid rgba(244,115,42,0.3);color:var(--orange)">
+      <span class="nav-icon">👑</span> Admin Panel
+    </a>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <div class="level-mini">
+      <div class="lm-top">
+        <span class="lm-label">To Legend status</span>
+        <span class="lm-val" id="lmVal">44 / 50K</span>
       </div>
-      <div class="chip-more">↗</div>
+      <div class="lm-track">
+        <div class="lm-fill" id="lmFill"></div>
+      </div>
     </div>
   </div>
-</div>
+</aside>
 
-<!-- Main -->
-<div class="main">
-
-  <!-- Topbar -->
+<!-- MAIN -->
+<main class="main">
+  <!-- TOPBAR -->
   <div class="topbar">
-    <div class="topbar-left">
-      <h1>Good morning, Topraq 👋</h1>
-      <p>Tuesday, 24 March 2026 · Your town is live</p>
+    <div>
+      <div class="topbar-title">Good evening, Topraq 👑</div>
+      <div class="topbar-sub">Saturday, 14 March 2026 · Your palace is running smoothly</div>
     </div>
     <div class="topbar-right">
-      <div class="icon-btn" title="Notifications">🔔<div class="notif-dot"></div></div>
-      <div class="icon-btn" title="View town" onclick="window.location.href='creatorhub.html'">🏡</div>
-      <button class="new-post-btn" onclick="newPost()">✍️ <span>New post</span></button>
+      <div id="langToggle" style="display:flex;align-items:center;gap:0.35rem;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:100px;padding:0.2rem 0.3rem">
+        <button onclick="setLang('en')" data-lang="en" style="padding:0.18rem 0.55rem;border-radius:100px;border:none;cursor:pointer;font-size:0.68rem;font-family:'DM Sans',sans-serif;transition:all .15s;background:transparent;color:rgba(255,255,255,0.45)">🇬🇧 EN</button>
+        <button onclick="setLang('tr')" data-lang="tr" style="padding:0.18rem 0.55rem;border-radius:100px;border:none;cursor:pointer;font-size:0.68rem;font-family:'DM Sans',sans-serif;transition:all .15s;background:transparent;color:rgba(255,255,255,0.45)">🇹🇷 TR</button>
+      </div>
+      <select class="period-select">
+        <option>Last 30 days</option>
+        <option>Last 90 days</option>
+        <option>This year</option>
+        <option>All time</option>
+      </select>
+      <div class="topbar-notif" onclick="window.location.href='messages.html'" style="cursor:pointer" title="Notifications">
+        🔔<div class="notif-dot" id="notifDot" style="display:none"></div>
+        <span id="bellCount" style="position:absolute;top:-4px;right:-4px;background:var(--orange);color:white;font-size:0.5rem;padding:0.1rem 0.3rem;border-radius:100px;display:none;font-family:'DM Mono',monospace"></span>
+      </div>
+      <button onclick="logout()" style="background:rgba(224,82,82,0.1);border:1px solid rgba(224,82,82,0.25);color:rgba(224,82,82,0.8);border-radius:0.5rem;padding:0.4rem 0.75rem;font-size:0.72rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s" onmouseover="this.style.background='rgba(224,82,82,0.2)'" onmouseout="this.style.background='rgba(224,82,82,0.1)'">Log out</button>
+      <a href="topraq-hub.html" style="text-decoration:none;background:rgba(244,115,42,0.12);color:var(--orange);border:1px solid rgba(244,115,42,0.25);font-size:0.78rem;padding:0.45rem 0.85rem;border-radius:0.5rem;transition:all .2s;">View my town →</a>
     </div>
   </div>
 
-  <!-- Content -->
   <div class="content">
 
-    <!-- Level banner -->
-    <div class="level-banner">
-      <div class="level-house">🏘️</div>
-      <div class="level-info">
-        <strong>Level 3 · The Villa</strong>
-        <span>44 members · Growing fast</span>
+    <!-- KPI CARDS -->
+    <div class="kpi-grid fu1">
+      <div class="kpi-card k-gold">
+        <div class="kpi-label">Monthly Revenue</div>
+        <div class="kpi-val">$2,840</div>
+        <div class="kpi-change kpi-up">↑ 18% vs last month</div>
+        <div class="kpi-icon">💰</div>
       </div>
-      <div class="level-bar">
-        <div class="level-bar-bg"><div class="level-bar-fill"></div></div>
-        <div class="level-bar-labels"><span>Lvl 3 · 1K</span><span>Lvl 4 · 10K</span></div>
-      </div>
-      <button class="level-cta">Invite members →</button>
-    </div>
-
-    <!-- KPIs -->
-    <div class="kpi-grid">
-      <div class="kpi">
-        <div class="kpi-top">
-          <div class="kpi-icon orange">💰</div>
-          <div class="kpi-change up">↑ 12%</div>
-        </div>
-        <div class="kpi-val">$224</div>
-        <div class="kpi-lbl">This month</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-top">
-          <div class="kpi-icon green">👥</div>
-          <div class="kpi-change up">↑ 3</div>
-        </div>
+      <div class="kpi-card k-orange">
+        <div class="kpi-label">Total Members</div>
         <div class="kpi-val">44</div>
-        <div class="kpi-lbl">Total members</div>
+        <div class="kpi-change kpi-up">↑ 6 new this month</div>
+        <div class="kpi-icon">👥</div>
       </div>
-      <div class="kpi">
-        <div class="kpi-top">
-          <div class="kpi-icon yellow">📝</div>
-          <div class="kpi-change up">↑ 2</div>
-        </div>
-        <div class="kpi-val">12</div>
-        <div class="kpi-lbl">Posts published</div>
+      <div class="kpi-card k-palace">
+        <div class="kpi-label">Palace Members</div>
+        <div class="kpi-val">7</div>
+        <div class="kpi-change kpi-up">↑ 2 new this month</div>
+        <div class="kpi-icon">🏯</div>
       </div>
-      <div class="kpi">
-        <div class="kpi-top">
-          <div class="kpi-icon blue">👁️</div>
-          <div class="kpi-change dn">↓ 4%</div>
-        </div>
-        <div class="kpi-val">1,840</div>
-        <div class="kpi-lbl">Views this month</div>
+      <div class="kpi-card k-emerald">
+        <div class="kpi-label">Avg Revenue / Member</div>
+        <div class="kpi-val">$64</div>
+        <div class="kpi-change kpi-up">↑ $8 vs last month</div>
+        <div class="kpi-icon">📈</div>
       </div>
     </div>
 
-    <!-- Charts -->
-    <div class="charts-row">
-
-      <!-- Revenue chart -->
-      <div class="widget">
-        <div class="widget-head">
-          <div class="widget-title">Revenue (last 8 months)</div>
-          <div class="widget-badge">+12% vs last month</div>
+    <!-- CHARTS -->
+    <div class="charts-row fu2">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Revenue over time</div>
+            <div class="chart-sub">Monthly earnings · Last 6 months</div>
+          </div>
+          <span class="chart-tag tag-up">↑ 18% MoM</span>
         </div>
-        <div class="bar-chart" id="barChart"></div>
-        <div class="bar-labels" id="barLabels"></div>
+        <div class="chart-canvas-wrap">
+          <canvas id="revenueChart"></canvas>
+        </div>
       </div>
-
-      <!-- Tier breakdown -->
-      <div class="widget">
-        <div class="widget-head">
-          <div class="widget-title">Members by tier</div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Member growth</div>
+            <div class="chart-sub">Cumulative subscribers · Last 6 months</div>
+          </div>
+          <span class="chart-tag tag-up">↑ 16% MoM</span>
         </div>
-        <div class="donut-wrap">
-          <div class="donut">
-            <svg width="90" height="90" viewBox="0 0 90 90">
-              <circle cx="45" cy="45" r="34" fill="none" stroke="#f5f0eb" stroke-width="12"/>
-              <circle cx="45" cy="45" r="34" fill="none" stroke="#f4732a" stroke-width="12"
-                stroke-dasharray="213 0" stroke-dashoffset="0" opacity="0.9"/>
-              <circle cx="45" cy="45" r="34" fill="none" stroke="#fbbf24" stroke-width="12"
-                stroke-dasharray="57 156" stroke-dashoffset="-97" opacity="0.85"/>
-              <circle cx="45" cy="45" r="34" fill="none" stroke="#22c55e" stroke-width="12"
-                stroke-dasharray="27 186" stroke-dashoffset="-154" opacity="0.8"/>
-            </svg>
-            <div class="donut-label">
-              <strong>44</strong>
-              <span>total</span>
+        <div class="chart-canvas-wrap">
+          <canvas id="membersChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM ROW -->
+    <div class="bottom-row fu3">
+
+      <!-- LEFT: Members table + Tier donut -->
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+
+        <!-- Members table -->
+        <div class="members-card">
+          <div class="card-header">
+            <div class="card-title">Recent members</div>
+            <a href="members.html" class="card-action" style="text-decoration:none">See all →</a>
+          </div>
+          <table class="members-table">
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>Tier</th>
+                <th>Revenue</th>
+                <th>Joined</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="window.location.href='member-hub.html?user=elif'" style="cursor:pointer">
+                <td><div class="member-cell"><div class="mem-avatar" style="background:rgba(139,111,212,0.2)">🌟</div><div><div class="mem-name">Elif Yıldız</div><div class="mem-handle">@elif</div></div></div></td>
+                <td><span class="tier-pill tp-palace">🏯 Palace</span></td>
+                <td class="mem-revenue">$49</td>
+                <td class="mem-joined" style="color:var(--text3)">Mar 12</td>
+              </tr>
+              <tr onclick="window.location.href='member-hub.html?user=ahmetkaya'" style="cursor:pointer">
+                <td><div class="member-cell"><div class="mem-avatar" style="background:rgba(201,149,42,0.15)">👑</div><div><div class="mem-name">Ahmet Kaya</div><div class="mem-handle">@ahmetkaya</div></div></div></td>
+                <td><span class="tier-pill tp-gold">👑 Gold</span></td>
+                <td class="mem-revenue">$19</td>
+                <td class="mem-joined" style="color:var(--text3)">Mar 10</td>
+              </tr>
+              <tr onclick="window.location.href='member-hub.html?user=sarademir'" style="cursor:pointer">
+                <td><div class="member-cell"><div class="mem-avatar" style="background:rgba(150,170,190,0.15)">⭐</div><div><div class="mem-name">Sara Demir</div><div class="mem-handle">@sarademir</div></div></div></td>
+                <td><span class="tier-pill tp-silver">⭐ Silver</span></td>
+                <td class="mem-revenue">$9</td>
+                <td class="mem-joined" style="color:var(--text3)">Mar 8</td>
+              </tr>
+              <tr onclick="window.location.href='member-hub.html?user=canoz'" style="cursor:pointer">
+                <td><div class="member-cell"><div class="mem-avatar" style="background:rgba(45,171,128,0.12)">🌱</div><div><div class="mem-name">Can Öztürk</div><div class="mem-handle">@canoz</div></div></div></td>
+                <td><span class="tier-pill tp-free">🌱 Free</span></td>
+                <td class="mem-revenue" style="color:var(--text3)">$0</td>
+                <td class="mem-joined" style="color:var(--text3)">Mar 7</td>
+              </tr>
+              <tr onclick="window.location.href='member-hub.html?user=zeynep'" style="cursor:pointer">
+                <td><div class="member-cell"><div class="mem-avatar" style="background:rgba(139,111,212,0.2)">🏯</div><div><div class="mem-name">Zeynep Al</div><div class="mem-handle">@zeynep</div></div></div></td>
+                <td><span class="tier-pill tp-palace">🏯 Palace</span></td>
+                <td class="mem-revenue">$49</td>
+                <td class="mem-joined" style="color:var(--text3)">Mar 5</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tier breakdown chart -->
+        <div class="chart-card" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:center;">
+          <div>
+            <div class="chart-title" style="margin-bottom:0.2rem">Tier breakdown</div>
+            <div class="chart-sub" style="margin-bottom:1rem">44 total members</div>
+            <div style="display:flex;flex-direction:column;gap:0.5rem;">
+              <div style="display:flex;justify-content:space-between;font-size:0.75rem;">
+                <span style="color:var(--palace2)">🏯 Palace</span>
+                <span style="color:var(--text2);font-family:'DM Mono',monospace">7 · $343</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:0.75rem;">
+                <span style="color:var(--gold2)">👑 Gold</span>
+                <span style="color:var(--text2);font-family:'DM Mono',monospace">12 · $228</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:0.75rem;">
+                <span style="color:#8ab0c8">⭐ Silver</span>
+                <span style="color:var(--text2);font-family:'DM Mono',monospace">15 · $135</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:0.75rem;">
+                <span style="color:var(--emerald)">🌱 Free</span>
+                <span style="color:var(--text2);font-family:'DM Mono',monospace">10 · $0</span>
+              </div>
             </div>
           </div>
-          <div class="donut-legend">
-            <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> 🌱 Garden <span class="legend-pct">64%</span></div>
-            <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div> ⭐ Silver <span class="legend-pct">27%</span></div>
-            <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div> 👑 Gold <span class="legend-pct">9%</span></div>
+          <div style="position:relative;height:140px;">
+            <canvas id="tierChart"></canvas>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Bottom row -->
-    <div class="bottom-row">
+      <!-- RIGHT COLUMN -->
+      <div style="display:flex;flex-direction:column;gap:1rem;">
 
-      <!-- Recent posts -->
-      <div class="widget">
-        <div class="widget-head">
-          <div class="widget-title">Recent posts</div>
-          <a href="#" style="font-size:0.75rem;font-weight:800;color:var(--orange);text-decoration:none;">View all →</a>
+        <!-- House level -->
+        <div class="house-level-card fu4">
+          <div class="hl-tag">Current residence</div>
+          <div class="hl-title">🏯 Hilltop Palace</div>
+          <div class="hl-sub">Level 5 · All rooms unlocked</div>
+          <div class="hl-progress">
+            <div class="hlp-row">
+              <span class="hlp-label">Progress to Legend</span>
+              <span class="hlp-val">44 / 50,000</span>
+            </div>
+            <div class="hlp-track">
+              <div class="hlp-fill" id="hlpFill"></div>
+            </div>
+          </div>
+          <div class="hl-next-unlock">
+            🌟 Next unlock: <strong>Legend Hall</strong> at 50K members
+          </div>
         </div>
-        <div class="post-row">
-          <div class="post-thumb-sm pt-orange">🎨</div>
-          <div class="post-info"><strong>Why I quit my job to build things nobody asked for</strong><span>Mar 24 · Free · Essay</span></div>
-          <div class="post-stat">61 views<br/>❤️ 38</div>
+
+        <!-- Payout card -->
+        <div class="payout-card fu4">
+          <div class="card-header" style="padding:0 0 0.75rem;border-color:var(--border);">
+            <div class="card-title">This month's payout</div>
+            <span style="font-size:0.65rem;color:var(--text3)">Paid out Mar 28</span>
+          </div>
+          <div style="padding-top:0.75rem;">
+            <div class="pc-sub">Gross revenue</div>
+            <div class="pc-amount">$2,840</div>
+            <div class="pc-breakdown">
+              <div class="pc-row">
+                <span class="pc-row-label">Palace tier (7 × $49)</span>
+                <span class="pc-row-val positive">+$343</span>
+              </div>
+              <div class="pc-row">
+                <span class="pc-row-label">Gold tier (12 × $19)</span>
+                <span class="pc-row-val positive">+$228</span>
+              </div>
+              <div class="pc-row">
+                <span class="pc-row-label">Silver tier (15 × $9)</span>
+                <span class="pc-row-val positive">+$135</span>
+              </div>
+              <div class="pc-divider"></div>
+              <div class="pc-row">
+                <span class="pc-row-label">KreaTown fee (8%)</span>
+                <span class="pc-row-val negative">−$227</span>
+              </div>
+              <div class="pc-row">
+                <span class="pc-row-label">Stripe processing</span>
+                <span class="pc-row-val negative">−$84</span>
+              </div>
+              <div class="pc-divider"></div>
+              <div class="pc-row" style="font-weight:500;">
+                <span style="color:var(--text1)">Net payout</span>
+                <span class="pc-row-val" style="color:var(--gold2);font-size:0.85rem;">$2,529</span>
+              </div>
+            </div>
+            <button class="btn-payout">💳 Request payout — $2,529</button>
+          </div>
         </div>
-        <div class="post-row">
-          <div class="post-thumb-sm pt-yellow">🎬</div>
-          <div class="post-info"><strong>Full process: painting a 3-hour portrait</strong><span>Mar 21 · Gold · Video</span></div>
-          <div class="post-stat">22 views<br/>❤️ 22</div>
+
+        <!-- Global Feed -->
+        <div class="activity-card fu5">
+          <div class="card-header">
+            <div class="card-title">🏡 Town Feed</div>
+            <div style="display:flex;gap:0.4rem">
+              <button class="card-action feed-filter-btn active" onclick="filterFeed(this,'all')">All</button>
+              <button class="card-action feed-filter-btn" onclick="filterFeed(this,'post')">📝</button>
+              <button class="card-action feed-filter-btn" onclick="filterFeed(this,'photo')">📸</button>
+              <button class="card-action feed-filter-btn" onclick="filterFeed(this,'podcast')">🎙️</button>
+            </div>
+          </div>
+          <div id="globalFeed" style="max-height:420px;overflow-y:auto">
+            <div style="padding:2rem;text-align:center;color:var(--text3);font-size:0.82rem">Loading feed…</div>
+          </div>
         </div>
-        <div class="post-row">
-          <div class="post-thumb-sm pt-blue">🎙️</div>
-          <div class="post-info"><strong>Monthly voice note: what's been on my mind</strong><span>Mar 18 · Silver · Audio</span></div>
-          <div class="post-stat">14 views<br/>❤️ 14</div>
-        </div>
-        <div class="post-row">
-          <div class="post-thumb-sm pt-green">🌍</div>
-          <div class="post-info"><strong>Street portraits from Istanbul — 48 hours</strong><span>Mar 14 · Free · Photos</span></div>
-          <div class="post-stat">98 views<br/>❤️ 61</div>
-        </div>
+
       </div>
-
-      <!-- Recent members -->
-      <div class="widget">
-        <div class="widget-head">
-          <div class="widget-title">Recent members</div>
-          <a href="#" style="font-size:0.75rem;font-weight:800;color:var(--orange);text-decoration:none;">View all →</a>
-        </div>
-        <div class="member-row">
-          <div class="m-av m-av1">S</div>
-          <div class="m-name">Selin K.</div>
-          <div class="m-tier t-gold">👑 Gold</div>
-          <div class="m-date">Today</div>
-        </div>
-        <div class="member-row">
-          <div class="m-av m-av2">A</div>
-          <div class="m-name">Ahmet Y.</div>
-          <div class="m-tier t-silver">⭐ Silver</div>
-          <div class="m-date">Yesterday</div>
-        </div>
-        <div class="member-row">
-          <div class="m-av m-av3">E</div>
-          <div class="m-name">Elif D.</div>
-          <div class="m-tier t-free">🌱 Free</div>
-          <div class="m-date">Mar 22</div>
-        </div>
-        <div class="member-row">
-          <div class="m-av m-av4">M</div>
-          <div class="m-name">Mert Ö.</div>
-          <div class="m-tier t-silver">⭐ Silver</div>
-          <div class="m-date">Mar 21</div>
-        </div>
-        <div class="member-row">
-          <div class="m-av m-av5">C</div>
-          <div class="m-name">Ceren A.</div>
-          <div class="m-tier t-gold">👑 Gold</div>
-          <div class="m-date">Mar 20</div>
-        </div>
-      </div>
-
     </div>
   </div>
-</div>
+</main>
 
 <script>
-// Render bar chart
-const months = ['Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
-const vals   = [42, 68, 55, 90, 110, 148, 200, 224];
-const max    = Math.max(...vals);
-const bc = document.getElementById('barChart');
-const bl = document.getElementById('barLabels');
-vals.forEach((v,i)=>{
-  const bar = document.createElement('div');
-  bar.className = 'bar' + (i===vals.length-1?' highlight':'');
-  bar.style.height = (v/max*100)+'%';
-  bar.title = '$'+v;
-  bc.appendChild(bar);
-  const lbl = document.createElement('div');
-  lbl.className = 'bar-lbl';
-  lbl.textContent = months[i];
-  bl.appendChild(lbl);
+// ── SUPABASE AUTH ──
+const SUPABASE_URL = 'https://pkhoyabazudqmfczkhax.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraG95YWJhenVkcW1mY3praGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzM0OTksImV4cCI6MjA4ODQ0OTQ5OX0.sedlDlDNWHoNXz4yczYyDzwrZRRqNWozAT-TV7-pOS8';
+
+// Get session from any storage key (kt_session or kt_user)
+function getSession() {
+  const keys = ['kt_session', 'kt_user'];
+  for (const key of keys) {
+    const raw = localStorage.getItem(key);
+    if (raw) {
+      try {
+        const s = JSON.parse(raw);
+        if (s.access_token) return s;
+        if (s.id) return s; // kt_user format
+      } catch(e) {}
+    }
+  }
+  return null;
+}
+
+async function getProfile(userId, token) {
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/profiles?id=eq.' + userId + '&select=*', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + (token || SUPABASE_KEY) }
+    });
+    const data = await res.json();
+    return data[0] || null;
+  } catch(e) { return null; }
+}
+
+async function initDashboard() {
+  const session = getSession();
+
+  // No redirect — just load profile if session exists
+  if (!session) {
+    console.log('No session found');
+    return;
+  }
+
+  // Get user id from session
+  const userId = session.user_id || session.id;
+  const token  = session.access_token || SUPABASE_KEY;
+
+  // Get profile
+  if (userId) {
+    const profile = await getProfile(userId, token);
+    if (profile) {
+      const nameEl = document.querySelector('.sc-name');
+      if (nameEl) nameEl.textContent = profile.display_name || profile.username || 'Creator';
+
+      const levelEl = document.querySelector('.sc-level');
+      if (levelEl) {
+        const tier = profile.tier || 'free';
+        const tierLabel = {free:'🌱 Free', silver:'⭐ Silver', gold:'👑 Gold', palace:'🏯 Palace'}[tier] || tier;
+        levelEl.textContent = tierLabel;
+      }
+
+      const topbarTitle = document.querySelector('.topbar-title');
+      if (topbarTitle) topbarTitle.textContent = 'Welcome back, ' + (profile.display_name || profile.username || 'Creator') + ' 👑';
+
+      localStorage.setItem('kt_profile', JSON.stringify(profile));
+
+      // Show admin link only for admins
+      const adminLink = document.querySelector('a[href="admin.html"]');
+      if (adminLink) {
+        adminLink.style.display = profile.is_admin ? 'flex' : 'none';
+      }
+
+      // Update avatar
+      const avatarEl = document.querySelector('.sc-avatar');
+      if (avatarEl && profile.avatar_url) {
+        avatarEl.innerHTML = '<img src="' + profile.avatar_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+      }
+    }
+  }
+}
+
+function logout() {
+  ['kt_session','kt_user','kt_profile'].forEach(k => localStorage.removeItem(k));
+  window.location.href = 'login.html';
+}
+
+// Init
+window.addEventListener('DOMContentLoaded', initDashboard);
+
+/* ── GLOBAL FEED ── */
+let allPosts = [];
+let feedFilter = 'all';
+
+async function loadGlobalFeed() {
+  const feedEl = document.getElementById('globalFeed');
+  if(!feedEl) return;
+
+  try {
+    const res = await fetch(
+      SB_URL + '/rest/v1/posts?select=*,profiles(id,username,display_name,avatar_url,tier)&order=created_at.desc&limit=30&is_published=eq.true',
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
+    );
+
+    if(!res.ok) throw new Error('No posts yet');
+    allPosts = await res.json();
+    renderFeed();
+
+  } catch(e) {
+    feedEl.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text3);font-size:0.82rem">📝 No posts yet — be the first to post!</div>';
+  }
+}
+
+function renderFeed() {
+  const feedEl = document.getElementById('globalFeed');
+  if(!feedEl) return;
+
+  const filtered = feedFilter === 'all' ? allPosts : allPosts.filter(p => p.type === feedFilter);
+
+  if(!filtered.length) {
+    feedEl.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text3);font-size:0.82rem">No posts in this category yet.</div>';
+    return;
+  }
+
+  const TIER_COLORS = {palace:'rgba(139,111,212,0.15)',gold:'rgba(201,149,42,0.15)',silver:'rgba(143,163,181,0.15)',free:'rgba(45,171,128,0.1)'};
+  const TIER_TEXT   = {palace:'var(--palace2)',gold:'var(--gold2)',silver:'#8fa3b5',free:'var(--emerald)'};
+  const TIER_LABELS = {palace:'🏯',gold:'👑',silver:'⭐',free:'🌱'};
+  const TYPE_ICONS  = {post:'📝',photo:'📸',podcast:'🎙️'};
+
+  feedEl.innerHTML = filtered.map(p => {
+    const profile = p.profiles || {};
+    const tier    = profile.tier || 'free';
+    const name    = profile.display_name || profile.username || 'Member';
+    const handle  = profile.username || '';
+    const timeAgo = getTimeAgo(p.created_at);
+
+    return `<a href="member-hub.html?user=${handle}" class="feed-post">
+      <div class="fp-avatar">
+        ${profile.avatar_url ? `<img src="${profile.avatar_url}" alt="">` : TIER_LABELS[tier]}
+      </div>
+      <div class="fp-body">
+        <div class="fp-meta">
+          <span class="fp-name">${name}</span>
+          <span class="fp-tier" style="background:${TIER_COLORS[tier]};color:${TIER_TEXT[tier]}">${TIER_LABELS[tier]} ${tier}</span>
+          <span class="fp-type">${TYPE_ICONS[p.type||'post']} ${p.type||'post'}</span>
+        </div>
+        <div class="fp-title">${p.title||'Untitled'}</div>
+        <div class="fp-excerpt">${p.excerpt||p.content?.substring(0,100)||''}</div>
+        <div class="fp-footer">
+          <span class="fp-time">${timeAgo}</span>
+          <div class="fp-reactions">
+            <button class="fp-react" onclick="event.preventDefault();quickReact('${p.id}','❤️',this)">❤️ ${p.reactions_heart||0}</button>
+            <button class="fp-react" onclick="event.preventDefault();quickReact('${p.id}','🔥',this)">🔥 ${p.reactions_fire||0}</button>
+          </div>
+        </div>
+      </div>
+      ${p.cover_url ? `<img class="fp-img" src="${p.cover_url}" alt="">` : ''}
+    </a>`;
+  }).join('');
+}
+
+function filterFeed(btn, filter) {
+  document.querySelectorAll('.feed-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  feedFilter = filter;
+  renderFeed();
+}
+
+function getTimeAgo(ts) {
+  const diff = Math.floor((Date.now() - new Date(ts)) / 1000);
+  if(diff < 60)    return 'just now';
+  if(diff < 3600)  return Math.floor(diff/60) + 'm ago';
+  if(diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return Math.floor(diff/86400) + 'd ago';
+}
+
+async function quickReact(postId, emoji, btn) {
+  const field = emoji === '❤️' ? 'reactions_heart' : 'reactions_fire';
+  const current = parseInt(btn.textContent.split(' ')[1]) || 0;
+  btn.textContent = emoji + ' ' + (current + 1);
+  try {
+    await fetch(SB_URL + '/rest/v1/rpc/increment_reaction', {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ post_id: postId, field_name: field })
+    });
+  } catch(e) {}
+}
+
+// Load feed on init
+window.addEventListener('DOMContentLoaded', () => {
+  loadGlobalFeed();
+  loadRecentMembers();
+  loadNotifCount();
+  // Refresh every 30 seconds
+  setInterval(loadGlobalFeed, 30000);
+  setInterval(loadNotifCount, 30000);
 });
 
-// Sidebar nav
-function setActive(el){
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  el.classList.add('active');
-  if(window.innerWidth<=900) closeSidebar();
-}
+</script>
 
-// Mobile sidebar
-function toggleSidebar(){
-  document.getElementById('sidebar').classList.toggle('open');
-}
-function closeSidebar(){
-  document.getElementById('sidebar').classList.remove('open');
-}
-document.addEventListener('click', e=>{
-  if(window.innerWidth<=900){
-    const sb=document.getElementById('sidebar');
-    const btn=document.getElementById('mobNavBtn');
-    if(sb.classList.contains('open') && !sb.contains(e.target) && !btn.contains(e.target)){
-      closeSidebar();
+<script>
+// Animate progress bars on load
+setTimeout(() => {
+  document.getElementById('lmFill').style.width = '0.088%';
+  document.getElementById('hlpFill').style.width = '0.088%';
+}, 200);
+
+// Chart defaults
+Chart.defaults.color = 'rgba(255,255,255,0.35)';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
+Chart.defaults.font.family = "'DM Mono', monospace";
+Chart.defaults.font.size = 10;
+
+// Revenue chart
+const rCtx = document.getElementById('revenueChart').getContext('2d');
+const rGrad = rCtx.createLinearGradient(0, 0, 0, 180);
+rGrad.addColorStop(0, 'rgba(201,149,42,0.3)');
+rGrad.addColorStop(1, 'rgba(201,149,42,0)');
+new Chart(rCtx, {
+  type: 'line',
+  data: {
+    labels: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
+    datasets: [{
+      data: [820, 1100, 1450, 1890, 2400, 2840],
+      borderColor: '#c9952a',
+      backgroundColor: rGrad,
+      borderWidth: 2,
+      fill: true,
+      tension: 0.4,
+      pointBackgroundColor: '#c9952a',
+      pointRadius: 3,
+      pointHoverRadius: 5,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: {
+      backgroundColor: '#1e1a16', borderColor: 'rgba(255,255,255,0.1)',
+      borderWidth: 1, titleColor: '#f5d58a', bodyColor: 'rgba(255,255,255,0.6)',
+      callbacks: { label: ctx => ' $' + ctx.parsed.y.toLocaleString() }
+    }},
+    scales: {
+      x: { grid: { display: false } },
+      y: { grid: { color: 'rgba(255,255,255,0.05)' },
+           ticks: { callback: v => '$' + (v/1000).toFixed(1) + 'k' } }
     }
   }
 });
 
-// New post stub
-function newPost(){
-  alert('New post editor coming soon! This will open your content editor.');
+// Members chart
+const mCtx = document.getElementById('membersChart').getContext('2d');
+const mGrad = mCtx.createLinearGradient(0, 0, 0, 180);
+mGrad.addColorStop(0, 'rgba(139,111,212,0.3)');
+mGrad.addColorStop(1, 'rgba(139,111,212,0)');
+new Chart(mCtx, {
+  type: 'line',
+  data: {
+    labels: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
+    datasets: [{
+      data: [11, 18, 24, 31, 38, 44],
+      borderColor: '#8b6fd4',
+      backgroundColor: mGrad,
+      borderWidth: 2,
+      fill: true,
+      tension: 0.4,
+      pointBackgroundColor: '#8b6fd4',
+      pointRadius: 3,
+      pointHoverRadius: 5,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: {
+      backgroundColor: '#1e1a16', borderColor: 'rgba(255,255,255,0.1)',
+      borderWidth: 1, titleColor: '#b8a0e8', bodyColor: 'rgba(255,255,255,0.6)',
+      callbacks: { label: ctx => ' ' + ctx.parsed.y + ' members' }
+    }},
+    scales: {
+      x: { grid: { display: false } },
+      y: { grid: { color: 'rgba(255,255,255,0.05)' } }
+    }
+  }
+});
+
+// Tier donut
+const tCtx = document.getElementById('tierChart').getContext('2d');
+new Chart(tCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Palace', 'Gold', 'Silver', 'Free'],
+    datasets: [{
+      data: [7, 12, 15, 10],
+      backgroundColor: ['rgba(139,111,212,0.8)', 'rgba(201,149,42,0.8)', 'rgba(138,176,200,0.7)', 'rgba(45,171,128,0.7)'],
+      borderColor: '#161310',
+      borderWidth: 2,
+      hoverOffset: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: '68%',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1e1a16', borderColor: 'rgba(255,255,255,0.1)',
+        borderWidth: 1, titleColor: 'rgba(255,255,255,0.8)', bodyColor: 'rgba(255,255,255,0.5)',
+      }
+    }
+  }
+});
+</script>
+
+<!-- MOBILE NAV BAR -->
+<div class="mobile-nav-bar" id="mobileNav">
+  <div class="mnb-item active" onclick="setMobileTab(this,'📊')">
+    <span class="mnb-icon">📊</span><span class="mnb-label">Dashboard</span>
+  </div>
+  <div class="mnb-item" onclick="setMobileTab(this,'💰')">
+    <span class="mnb-icon">💰</span><span class="mnb-label">Earnings</span>
+  </div>
+  <div class="mnb-item" onclick="setMobileTab(this,'👥')">
+    <span class="mnb-icon">👥</span><span class="mnb-label">Members</span>
+  </div>
+  <div class="mnb-item" onclick="setMobileTab(this,'✍️')">
+    <span class="mnb-icon">✍️</span><span class="mnb-label">Posts</span>
+  </div>
+  <div class="mnb-item" onclick="setMobileTab(this,'🏯')">
+    <span class="mnb-icon">🏯</span><span class="mnb-label">Town</span>
+  </div>
+</div>
+<script>
+function setMobileTab(el, icon) {
+  document.querySelectorAll('.mnb-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
 }
+
+/* ── LOAD REAL MEMBERS ── */
+async function loadRecentMembers() {
+  try {
+    const res = await fetch(
+      SUPABASE_URL + '/rest/v1/profiles?select=id,username,display_name,avatar_url,tier,created_at&order=created_at.desc&limit=5',
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
+    );
+    if(!res.ok) return;
+    const members = await res.json();
+    if(!members.length) return;
+
+    const TIER_COLORS = {palace:'rgba(139,111,212,0.2)',gold:'rgba(201,149,42,0.15)',silver:'rgba(150,170,190,0.15)',free:'rgba(45,171,128,0.12)'};
+    const TIER_PILLS  = {palace:'tp-palace',gold:'tp-gold',silver:'tp-silver',free:'tp-free'};
+    const TIER_LABELS = {palace:'🏯 Palace',gold:'👑 Gold',silver:'⭐ Silver',free:'🌱 Free'};
+    const TIER_EMOJIS = {palace:'🏯',gold:'👑',silver:'⭐',free:'🌱'};
+
+    const tbody = document.querySelector('.members-table tbody');
+    if(!tbody) return;
+
+    tbody.innerHTML = members.map(m => {
+      const name   = m.display_name || m.username || 'Member';
+      const handle = m.username || '';
+      const tier   = m.tier || 'free';
+      const joined = new Date(m.created_at).toLocaleDateString('en',{month:'short',day:'numeric'});
+      const avatar = m.avatar_url
+        ? `<img src="${m.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+        : TIER_EMOJIS[tier];
+
+      return `<tr onclick="window.location.href='member-hub.html?user=${handle}'" style="cursor:pointer">
+        <td><div class="member-cell">
+          <div class="mem-avatar" style="background:${TIER_COLORS[tier]}">${avatar}</div>
+          <div><div class="mem-name">${name}</div><div class="mem-handle">@${handle}</div></div>
+        </div></td>
+        <td><span class="tier-pill ${TIER_PILLS[tier]}">${TIER_LABELS[tier]}</span></td>
+        <td class="mem-revenue" style="${tier==='free'?'color:var(--text3)':''}">$0</td>
+        <td class="mem-joined" style="color:var(--text3)">${joined}</td>
+      </tr>`;
+    }).join('');
+
+    /* Update "See all" count */
+    const seeAll = document.querySelector('.members-card .card-action');
+    if(seeAll) seeAll.textContent = 'See all ' + members.length + '+ →';
+  } catch(e) { console.log('Members load error:', e); }
+}
+
+
+/* ── NOTIFICATION COUNT ── */
+async function loadNotifCount() {
+  const session = getSession();
+  if(!session) return;
+  const uid   = session.user_id || session.id;
+  const token = session.access_token;
+  try{
+    const res  = await fetch(
+      SUPABASE_URL + '/rest/v1/notifications?user_id=eq.'+uid+'&is_read=eq.false&select=id',
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + token } }
+    );
+    const data = await res.json();
+    const count = Array.isArray(data) ? data.length : 0;
+
+    /* Update badge */
+    const badge = document.getElementById('msgBadge');
+    const dot   = document.getElementById('notifDot');
+    const bell  = document.getElementById('bellCount');
+
+    if(badge){ badge.textContent = count; badge.style.display = count>0?'inline':'none'; }
+    if(dot)  { dot.style.display = count>0?'block':'none'; }
+    if(bell) { bell.textContent  = count; bell.style.display = count>0?'inline':'none'; }
+
+    /* Play sound if new notifications */
+    const prev = parseInt(sessionStorage.getItem('dash_notif_cnt')||'0');
+    if(count > prev && typeof playSound !== 'undefined') playSound('notification');
+    sessionStorage.setItem('dash_notif_cnt', count);
+
+  }catch(e){}
+}
+
 </script>
 </body>
 </html>
